@@ -4,11 +4,17 @@
  */
 
 import { win, nw } from './lib/nw-compat.js';
-import { Directory } from '@capacitor/filesystem';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import mobileStorage from './lib/storage-mobile.js';
 
 // Make win and nw available globally for legacy code
 window.win = win;
 window.nw = nw;
+
+// Replace localStorage with mobile storage wrapper
+// Keep original localStorage as fallback
+window._originalLocalStorage = window.localStorage;
+window.localStorage = mobileStorage;
 
 // Platform detection
 const os = {
@@ -52,6 +58,8 @@ window.path = {
 };
 
 // Node.js fs module replacement using Capacitor Filesystem
+// Note: Mobile fs operations are async, but we keep the sync-style naming
+// for compatibility. Callers should await these functions.
 window.fs = {
     existsSync: async (path) => {
         try {

@@ -131,48 +131,98 @@ var deleteCookies = function () {
   });
 };
 
+// Mobile: Cache cleanup using IndexedDB (works on mobile)
 var delCache = function () {
-  window.indexedDB.deleteDatabase('cache');
-  win.close(true);
-};
-
-win.on('resize', function (width, height) {
-  localStorage.width = Math.round(width);
-  localStorage.height = Math.round(height);
-});
-
-win.on('move', function (x, y) {
-  localStorage.posX = Math.round(x);
-  localStorage.posY = Math.round(y);
-});
-
-win.on('enter-fullscreen', function () {
-  App.vent.trigger('window:focus');
-});
-
-// Now this function is used via global keys (cmd+q and alt+f4)
-function close() {
-  $('.spinner').show();
-
-  App.WebTorrent.destroy(function () {
-    if (App.settings.deleteTmpOnClose) {
-      deleteFolder(App.settings.tmpLocation);
-    }
-    if (fs.existsSync(path.join(data_path, 'logs.txt'))) {
-      fs.unlinkSync(path.join(data_path, 'logs.txt'));
-    }
+  return new Promise((resolve, reject) => {
     try {
-      delCache();
+      const deleteRequest = window.indexedDB.deleteDatabase('cache');
+      deleteRequest.onsuccess = () => {
+        console.log('Cache database deleted successfully');
+        resolve();
+      };
+      deleteRequest.onerror = (e) => {
+        console.error('Failed to delete cache database:', e);
+        reject(e);
+      };
+      deleteRequest.onblocked = () => {
+        console.warn('Cache database deletion blocked - will retry');
+        resolve();
+      };
     } catch (e) {
-      win.close(true);
+      console.error('Error deleting cache:', e);
+      reject(e);
     }
   });
+};
+
+// Mobile: App state cleanup function
+async function close() {
+  console.log('App cleanup initiated');
+
+  $('.spinner').show();
+
+  try {
+    // Mobile: No WebTorrent to destroy (using server-based streaming)
+    // Stop any active streaming sessions
+    if (window.App.StreamingService) {
+      await window.App.StreamingService.stopAll();
+    }
+
+    // Close any open players
+    if (window.App.PlayerView) {
+      try {
+        window.App.PlayerView.closePlayer();
+      } catch (e) {
+        console.warn('Failed to close player:', e);
+      }
+    }
+
+    // Clean up temp files if setting is enabled
+    if (App.settings.deleteTmpOnClose && App.settings.tmpLocation) {
+      try {
+        await deleteFolder(App.settings.tmpLocation);
+        console.log('Temp folder cleaned');
+      } catch (e) {
+        console.error('Failed to clean temp folder:', e);
+      }
+    }
+
+    // Delete log file
+    try {
+      const logPath = window.path.join(window.data_path, 'logs.txt');
+      if (await window.fs.existsSync(logPath)) {
+        await window.fs.unlinkSync(logPath);
+        console.log('Log file deleted');
+      }
+    } catch (e) {
+      console.warn('Failed to delete log file:', e);
+    }
+
+    // Clear cache database
+    try {
+      await delCache();
+    } catch (e) {
+      console.error('Failed to clear cache:', e);
+    }
+
+    // Save any pending state
+    if (window.App.vent) {
+      window.App.vent.trigger('app:cleanup:complete');
+    }
+
+    console.log('App cleanup complete');
+  } catch (error) {
+    console.error('Error during app cleanup:', error);
+  } finally {
+    $('.spinner').hide();
+  }
 }
 
-// Wipe the tmpFolder when closing the app (this frees up disk space)
-win.on('close', function () {
-  close();
-});
+// Mobile: Cleanup on app state change (backgrounding/closing)
+// Handled via Capacitor App plugin in main.js
+if (window.App) {
+  window.App.cleanup = close;
+}
 
 String.prototype.capitalize = function () {
   return this.charAt(0).toUpperCase() + this.slice(1);

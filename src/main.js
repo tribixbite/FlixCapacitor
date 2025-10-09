@@ -12,6 +12,7 @@ import './app/global-mobile.js';
 // Import mobile UI components
 import './app/lib/touch-gestures.js';
 import './app/lib/mobile-ui.js';
+import './app/lib/provider-loader.js';
 
 // Import core libraries
 import $ from 'jquery';
@@ -40,10 +41,37 @@ async function initCapacitorPlugins() {
         }
 
         // Handle app state changes
-        App.addListener('appStateChange', ({ isActive }) => {
+        App.addListener('appStateChange', async ({ isActive }) => {
             console.log('App state changed. Active:', isActive);
+
             if (window.App && window.App.vent) {
                 window.App.vent.trigger('app:stateChange', { isActive });
+            }
+
+            // When app goes to background, perform cleanup
+            if (!isActive && window.App && window.App.cleanup) {
+                console.log('App backgrounding - running cleanup');
+                try {
+                    await window.App.cleanup();
+                } catch (error) {
+                    console.error('Cleanup failed on background:', error);
+                }
+            }
+        });
+
+        // Handle app termination (Android back button)
+        App.addListener('backButton', async () => {
+            console.log('Back button pressed');
+
+            // Check if we're in a nested view
+            if (window.App && window.App.ViewStack && window.App.ViewStack.length > 0) {
+                window.history.back();
+            } else {
+                // Exit app after cleanup
+                if (window.App && window.App.cleanup) {
+                    await window.App.cleanup();
+                }
+                await App.exitApp();
             }
         });
 
