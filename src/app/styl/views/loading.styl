@@ -1,0 +1,243 @@
+.loading
+    position: absolute
+    background-color: $BgColor1
+    -webkit-user-select: none
+    width 100%
+    height 100%
+    opacity 1
+    overflow hidden
+    margin auto
+    left 0
+    right 0
+    padding-top $TitleHeight
+    -webkit-backface-visibility hidden
+
+    #vpn-contents
+        display: none
+
+    #userISP
+        text-decoration: underline
+
+    .vpn
+        margin-top 20px
+        margin-bottom 20px
+
+    .loading-backdrop
+        position: absolute
+        width: 100%
+        height: 100%
+        background-repeat no-repeat
+        background-position-x 50%
+        background-position-y 0px
+        background-size cover
+        -webkit-filter: blur(15px) brightness(0.7)
+
+    .loading-backdrop-overlay
+        width 100%
+        height 100%
+        position absolute
+        opacity 0.65
+        background-color #000
+
+    .state-flex
+        height: 100%
+        display: flex
+        align-items: center
+        justify-content: center
+
+    .state
+        color #fff
+        font-family $MainFont
+        -webkit-font-smoothing antialiased
+        text-align center
+        width 500px
+        height 400px
+        z-index 11
+        -webkit-backface-visibility hidden
+
+        .title
+            font-family $MainFontBold
+            font-size 16px
+            line-height 20px
+            padding-bottom 10px
+            text-overflow ellipsis
+            word-wrap break-word
+
+        .external-play
+            font-size 14px
+            font-style: italic
+            padding-bottom 40px
+
+        .loading-progressbar
+            position relative
+            margin-bottom 10px
+            margin-top 10px
+            width 100%
+            background-color #bababa
+            border-radius 13px
+            overflow hidden
+
+            & > div
+                background-color $ButtonBgActive
+                margin-left -100%
+                width 100%
+                height 5px
+                border-radius 13px
+                left 0px
+                animation-name bounce_bar
+                animation-duration 3s
+                animation-iteration-count infinite
+                animation-timing-function linear
+
+        .playing-progressbar
+            position relative
+            margin-bottom 10px
+            margin-top 10px
+            background-color #bababa
+            border-radius 13px
+            //padding 3px
+
+            & > div
+                background-color $ButtonBgActive
+                height 10px
+                border-radius 13px
+                left 0px
+
+        .player-controls
+            text-align center
+            margin-left 40px
+            color $Text1
+            font-size 24px
+            margin-top 20px
+            i
+                cursor pointer
+                margin-right 20px
+
+        #cancel-button-vpn
+            width 140px!important
+            position inherit!important
+
+        #cancel-button-regular
+            margin-top: 10px
+            font-size: 10px
+            cursor: pointer
+
+        .vpn
+            .heading
+                font-size: 25px
+                margin-bottom: 10px
+            .subheading
+                font-size: 15px
+                margin-bottom: 10px
+                line-height: 20px
+            .flex-map
+                display: flex
+                align-items: center
+                margin-top: 20px
+                margin-bottom: 20px
+                .details
+                    padding-left: 20px
+                    .group
+                        margin-bottom: 15px;
+                        display: flex
+                        text-align: left;
+                        .fixed-width
+                            width: 140px
+
+
+            .map
+                width: 300px
+                img
+                    border: 10px solid #bbb;
+                    width: 100%
+
+        .cancel-button
+            z-index 2
+            cursor pointer
+            width 120px
+            height 35px
+            margin auto
+            -moz-border-radius 3px
+            -webkit-border-radius 3px
+            border-radius 3px
+            -moz-background-clip padding
+            -webkit-background-clip padding-box
+            background-clip padding-box
+            background-color $ButtonBg
+            -webkit-backface-visibility hidden
+
+            &:hover
+                background: $ButtonBgHover
+                text-decoration: none
+
+            &:active
+                box-shadow: inset 0 1px 4px rgba(0,0,0,0.6)
+                background: $ButtonBgActive
+
+            .cancel-button-text
+                -webkit-backface-visibility hidden
+                position relative
+                color #fff
+                font-family $MainFont, $Font, $AlternateFont
+                -webkit-font-smoothing antialiased
+                text-align center
+                top 12px
+                font-size 12px
+
+        .loading-info
+            width 60%
+            max-width 300px
+            height auto
+            margin auto
+            padding 10px
+            padding-bottom 20px
+            border-radius 4px
+            left 0
+            right 0
+            background: rgba(0, 0, 0, .6)
+
+            span
+                position relative
+                color #fff
+                font-family $MainFont
+                -webkit-font-smoothing antialiased
+                font-size 12px
+                line-height 14px
+
+                &.loading-info-text
+                    float left
+                &.value
+                    float right
+
+            .buffer_percent
+                text-align center
+                font-size 14px
+                line-height 10px
+
+    .warning-nospace
+        display none
+        position absolute
+        bottom 30px
+        width 66%
+        left 17%
+        text-align center
+        color #fff
+        .warn
+            font-size 13px
+        .detail
+            opacity .85
+            font-size 11px
+
+        &:before
+            content '\f071'
+            color #FFFF00
+            font-family "Font Awesome 5 Free"
+            font-weight: 900
+            font-size 16px
+            padding-right 8px
+
+@keyframes bounce_bar
+    0%
+        margin-left:-100%;
+    100%
+        margin-left:100%;

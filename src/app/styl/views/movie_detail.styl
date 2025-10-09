@@ -1,0 +1,562 @@
+.movie-detail
+    display: flex
+    flex-direction: row
+    justify-content: flex-start
+    flex-flow: row wrap
+    height: 100vh             //needs to become calc(100vh - 65px)
+    padding-top: 65px        //when webkit calc() is fixed = m34
+    width: 100vw
+    user-select: none
+    backface-visibility: hidden
+    background-color: $BgColor1
+    position: fixed
+    .backdrop-overlay
+        width: 100vw
+        height: 100vh
+        position: absolute
+        opacity: 0.65
+        background-color: #000
+
+    .backdrop
+        width: 100vw
+        height: 100vh
+        position: absolute
+        opacity: 0
+        background-position-x 50%
+        background-position-y -33px
+        -webkit-filter: blur(15px) brightness(0.7)
+        background-repeat: no-repeat
+        background-size: cover
+
+        &.fadein
+            transition: opacity .3s ease-in;
+            opacity: 1
+
+    .poster-box
+        height: 75vh
+        margin-top: 8vh
+        width: 35vw
+        padding-left: 4vw
+
+        .mcover-image
+            float: right
+            width: 100%
+            max-width: 50vh
+            max-height: 75vh
+            position: relative
+            margin-right: 1vw
+            border-radius: 4px
+            opacity 0
+            backface-visibility: hidden
+
+            &.fadein
+                transition: opacity .3s ease-in;
+                opacity: 1
+
+    .content-box
+        height: 75vh
+        margin-top: 8vh
+        width: 65vw
+        padding-right: 4vw
+        display: flex
+        justify-content: space-between
+        flex-direction: column
+
+        .meta-container
+            height: calc(100% - 70px)
+            flex: 2
+
+            .title
+                color: #FFF
+                position: relative
+                top: -4px
+                text-stroke: 1px rgba(0,0,0,0.1)
+                font-size: 38px
+                font-family: $MainFont
+                font-smoothing: antialiased
+
+            .metadatas
+                top: 15px
+                height: 20px
+                position: relative
+
+                .metaitem
+                    color: #f8f8f8
+                    font-size: 12px
+                    position: relative
+                    font-family: $MainFontBold
+                    text-stroke: 1px rgba(0,0,0,0.1)
+                    float: left
+                    font-smoothing: antialiased
+                    max-width: 35%
+                    overflow: hidden
+                    white-space: nowrap
+                    text-overflow: ellipsis
+
+                    &::before
+                        content: ""
+                        margin: 4px 15px 0px 15px
+                        position: relative
+                        display: inline-block
+                        width: 4px
+                        float: left
+                        height: 4px
+                        border-radius: 2px
+                        background-color: #dbdbdd
+
+                    &:first-child::before
+                        display: none
+
+                .movie-imdb-link
+                    margin-top: -3px
+                    padding-top: 3px
+                    width: 59px
+                    float: left
+                    height: 16px
+                    position: relative
+                    cursor: pointer
+                    background: url(../images/icons/imdb.png) right top no-repeat
+
+
+                .rating-container
+                    .hidden
+                        display: none
+
+                    .number-container
+                        width: auto
+                        float: left
+                        font-size: 12px
+                        font-family: $MainFontBold
+                        color: #FFF
+                        cursor: pointer
+                        z-index: 2
+
+                        em
+                            font-size: 0.8em
+
+                    .star-container
+                        width: auto
+                        float: left
+                        position: relative
+                        z-index: 2
+                        cursor: pointer
+
+                        .rating-star
+                            color #ffc900
+                            font-size 11px
+                            padding-right: 3px
+
+                        .rating-star-half
+                            color #ffc900
+                            font-size 11px
+                            margin-left -4px
+                            padding-right: 3px
+
+                        .rating-star-half-empty
+                            color #a3a5a7
+                            font-size 11px
+                            margin-left: -3px
+
+                        .rating-star-empty
+                            color #a3a5a7
+                            font-size 11px
+                            padding-right: 3px
+
+                        .rating-star-half-container
+                            width 1em
+                            height 1em
+                            line-height 1em
+                            margin-right -2px
+                            margin-left 2px
+
+                .health-icon
+                    position: relative
+                    font-size: 14px
+                    float: right
+                    margin-right: 2%
+                    margin-top: -1px
+                    color: #737577
+                    cursor: pointer
+                    &.Bad
+                        color: #d53f3f
+                    &.Medium
+                        color: #ece523
+                    &.Good
+                        color: #a3e147
+                    &.Excellent
+                        color: #2ad942
+
+                .magnet-link
+                    position: relative
+                    font-size: 13px
+                    float: right
+                    margin-right: 10px
+                    color: #DDD
+                    cursor: pointer
+                    &:hover
+                        color: #FFF
+                        transition: all .5s
+
+            .overview
+                position: relative
+                height: 55%
+                overflow: hidden
+                text-overflow: ellipsis
+                float: none
+                color: #FFF
+                top: 25px
+                padding-right: 2%
+                font-family: $MainFont
+                font-smoothing: antialiased
+                font-size: 13px
+                line-height: 22px
+                text-align: justify
+                text-stroke: 1px rgba(0,0,0,0.1)
+                backface-visibility: hidden
+                scrollable();
+
+        .play-control
+            display: flex
+            flex-direction: row
+            justify-content: space-between
+            white-space: nowrap
+
+            height: 70px
+            line-height: 35px
+            margin: 10px
+
+            .setup-container
+              display: flex
+              flex-direction: row
+              justify-content: space-between
+
+            .toggles-container
+              display: flex
+              flex: 2
+
+            .favourites-toggle
+                cursor: pointer
+                padding: 5px
+                padding-left: 24px
+                float: left
+                color: #FFF
+                height: 26px
+                position: relative
+                width: auto
+                font-family: $MainFont
+                font-smoothing: antialiased
+                font-size: 12px
+                line-height: 17px
+                margin-right: 20px
+
+                &:before
+                    content: "\f004"
+                    font-family: "Font Awesome 5 Free"
+                    font-weight: 900
+                    position: absolute
+                    font-size: 18px
+                    color: #FFF
+                    left: 0
+                    opacity: 1
+                    transition: opacity 0.5s
+
+                &:after
+                    content: "\f004"
+                    font-family: "Font Awesome 5 Free"
+                    font-weight: 900
+                    position: absolute
+                    font-size: 18px
+                    color: $ButtonBgActive
+                    left: 0
+                    opacity: 0
+                    transition: opacity 0.5s
+
+                &:hover
+                    &:before
+                        opacity: 0
+                    &:after
+                        opacity: 1
+
+
+                &.selected
+                    height: 18px
+                    position: relative
+
+                    &:before
+                        content: "\f004"
+                        font-family: "Font Awesome 5 Free"
+                        font-weight: 900
+                        position: absolute
+                        font-size: 18px
+                        color: $FavoriteColor
+                        left: 0
+                        opacity: 1
+                        transition: opacity 0.5s
+
+                    &:after
+                        content: "\f004"
+                        font-family: "Font Awesome 5 Free"
+                        font-weight: 900
+                        position: absolute
+                        font-size: 18px
+                        color: #FFF
+                        left: 0
+                        opacity: 0
+                        transition: opacity 0.5s
+
+                    &:hover
+                        &:before
+                            opacity: 0
+                        &:after
+                            opacity: 1
+
+            .watched-toggle
+                cursor: pointer
+                padding: 5px
+                padding-left: 24px
+                float: left
+                color: #FFF
+                height: 26px
+                position: relative
+                width: auto
+                font-family: $MainFont
+                font-smoothing: antialiased
+                font-size: 12px
+                line-height: 17px
+
+                &:before
+                    content: "\f070"
+                    font-family: "Font Awesome 5 Free"
+                    font-weight: 900
+                    position: absolute
+                    font-size: 18px
+                    color: #FFF
+                    left: 0
+                    opacity: 1
+                    transition: opacity 0.5s
+
+                &:after
+                    content: "\f00c"
+                    font-family: "Font Awesome 5 Free"
+                    font-weight: 900
+                    position: absolute
+                    font-size: 20px
+                    color: #299000
+                    left: 0
+                    opacity: 0
+                    transition: opacity 0.5s
+
+                &:hover
+                    &:before
+                        opacity: 0
+                    &:after
+                        opacity: 1
+
+
+                &.selected
+                    &:before
+                        content: "\f00c"
+                        font-family: "Font Awesome 5 Free"
+                        font-weight: 900
+                        position: absolute
+                        font-size: 20px
+                        color: #299000
+                        left: 0
+                        opacity: 1
+                        transition: opacity 0.5s
+
+                    &:after
+                        content: "\f070"
+                        font-family: "Font Awesome 5 Free"
+                        font-weight: 900
+                        position: absolute
+                        font-size: 18px
+                        color: #FFF
+                        left: 0
+                        opacity: 0
+                        transition: opacity 0.5s
+
+                    &:hover
+                        &:before
+                            opacity: 0
+                        &:after
+                            opacity: 1
+
+            .play-selector
+                position: relative
+                float: left
+
+                .startStreaming
+                    margin-left: 12px
+                    margin-right: 12px
+
+                    &:after
+                        content: ''
+                        width: 70%
+                        height: 100%
+                        top: 0
+                        left: 0
+                        position: absolute
+
+            .quality-selector
+                position: relative
+                float: left
+                .sdow-quality
+                    line-height: normal;
+                    padding: 4px;
+
+                    div
+                        cursor: pointer
+                        float: left
+                        font-family: $MainFont;
+                        -webkit-font-smoothing: antialiased;
+                        font-size: 11px
+                        color: $ShowText1
+                        transition: all .2s ease-in
+                        padding: 4px
+                        margin-right: 6px
+
+                    .disabled
+                        opacity: .3
+                        cursor: default
+
+                    .active
+                        cursor: pointer
+                        opacity: 1
+                        color: $QualitySelectorText
+                        background: $QualitySelectorBg
+                        border-radius: 10px
+                        font-family: $MainFontBold
+
+
+            .movie-quality-container
+                margin-top: 10px
+                float: left
+                position: relative
+                height: 15px
+                width: 95px
+                left: 3%
+                line-height: 1
+
+                .sdow-quality
+                    div
+                        cursor: pointer
+                        float: left
+                        font-family: $MainFont;
+                        -webkit-font-smoothing: antialiased;
+                        font-size: 11px
+                        color: $ShowText1
+                        transition: all .2s ease-in
+                        padding: 4px
+
+                .tooltip
+                    width: 85px
+
+                .q720
+                    font-family: $MainFontBold
+                    font-smoothing: antialiased
+                    font-size: 11px
+                    color: #fff
+                    font-weight: normal
+                    position: absolute
+
+                .q1080
+                    font-family: $MainFontBold
+                    font-smoothing: antialiased
+                    font-size: 11px
+                    color: #fff
+                    font-weight: normal
+                    left: 58px
+                    position: absolute
+
+                .q2160
+                    font-family: $MainFontBold
+                    font-smoothing: antialiased
+                    font-size: 11px
+                    color: #fff
+                    font-weight: normal
+                    left: 116px
+                    position: absolute
+
+                .disabled
+                    opacity: .3
+                    cursor: default
+
+                .active
+                    cursor: pointer
+                    opacity: 1
+                    color: $QualitySelectorText
+                    background: $QualitySelectorBg
+                    border-radius: 10px
+                    font-family: $MainFontBold
+
+                .switch
+                    background: transparent
+                    border-radius: 32px
+                    display: block
+                    height: 12px
+                    position: absolute
+                    left: 28px
+                    width: 25px
+                    border: 2px solid #fff
+                    cursor: pointer
+
+                    label
+                        transition: color 0.2s ease
+                        width: 20px
+                        cursor: pointer
+                        &:nth-of-type(1)
+                            left: -38px
+                            position: absolute
+                            text-align: right
+
+                        &:nth-of-type(2)
+                            position: absolute
+                            right: -30px
+                            text-align: left
+
+                    .tooltip
+                        width: 130px
+
+                    input
+                        height: 7px
+                        left: -27px
+                        opacity: 0
+                        position: absolute
+                        top: -4px
+                        width: 79px
+                        z-index: 2
+                        cursor: pointer
+                        &:checked
+                            z-index: 0
+                            & ~ label
+                                &:nth-of-type(1)
+                                    color: $ButtonBgActive
+
+                                &:nth-of-type(2)
+                                    color: #fff
+
+                            & ~ .toggle
+                                left: 0px
+
+
+                        & ~ :checked
+                            & ~ label
+                                &:nth-of-type(1)
+                                    color: #fff
+
+                                &:nth-of-type(2)
+                                    color: $ButtonBgActive
+
+                            & ~ .toggle
+                                left: 11px
+
+                    .toggle
+                        transition: left 0.2s ease
+                        background: $ButtonBgActive
+                        border-radius: 50%
+                        height: 10px
+                        left: -0px
+                        position: absolute
+                        top: -1px
+                        width: 10px
