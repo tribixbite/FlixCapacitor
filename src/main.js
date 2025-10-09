@@ -9,6 +9,10 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 // Import global compatibility layer FIRST
 import './app/global-mobile.js';
 
+// Import mobile UI components
+import './app/lib/touch-gestures.js';
+import './app/lib/mobile-ui.js';
+
 // Import core libraries
 import $ from 'jquery';
 import _ from 'underscore';
@@ -43,15 +47,184 @@ async function initCapacitorPlugins() {
             }
         });
 
-        // Handle deep links
+        // Handle deep links for magnet:// and file:// URIs
         App.addListener('appUrlOpen', (data) => {
             console.log('App opened with URL:', data.url);
-            // # TODO: Implement deep link handling for magnet links
+
+            const url = data.url;
+
+            // Handle magnet links
+            if (url.startsWith('magnet:')) {
+                if (window.App && window.App.vent) {
+                    window.Settings.droppedMagnet = url;
+                    handleTorrent(url);
+                } else {
+                    // App not ready yet, queue for later
+                    window._pendingDeepLink = url;
+                }
+            }
+            // Handle torrent files
+            else if (url.endsWith('.torrent')) {
+                if (window.App && window.App.vent) {
+                    handleTorrent(url);
+                } else {
+                    window._pendingDeepLink = url;
+                }
+            }
+            // Handle video files
+            else if (isVideoFile(url)) {
+                if (window.App && window.App.vent) {
+                    const fileName = url.split('/').pop();
+                    handleVideoFile({
+                        path: url,
+                        name: fileName
+                    });
+                } else {
+                    window._pendingDeepLink = url;
+                }
+            }
         });
 
         console.log('Capacitor plugins initialized');
     } catch (error) {
         console.error('Failed to initialize Capacitor plugins:', error);
+    }
+}
+
+// Helper functions for deep link handling
+function isVideoFile(filepath) {
+    const ext = filepath.toLowerCase().match(/\.[^.]*$/)?.[0] || '';
+    return ['.mp4', '.avi', '.mov', '.mkv', '.wmv'].includes(ext);
+}
+
+function handleVideoFile(file) {
+    console.log('Handling video file:', file.path);
+
+    // Show loading spinner
+    const spinner = document.querySelector('.spinner');
+    if (spinner) spinner.style.display = 'block';
+
+    // Check for local subtitles
+    const checkSubs = () => {
+        const ext = window.path.extname(file.name);
+        const toFind = file.path.replace(ext, '.srt');
+
+        if (window.fs.existsSync(window.path.join(toFind))) {
+            return { local: window.path.join(toFind) };
+        }
+        return null;
+    };
+
+    // Get subtitles from provider
+    const getSubtitles = (subdata) => {
+        return window.Q.Promise((resolve, reject) => {
+            console.log('Subtitles data request:', subdata);
+
+            const subtitleProvider = window.App.Config.getProviderForType('subtitle');
+
+            subtitleProvider.fetch(subdata).then((subs) => {
+                if (subs && Object.keys(subs).length > 0) {
+                    console.info(Object.keys(subs).length + ' subtitles found');
+                    resolve(subs);
+                } else {
+                    console.warn('No subtitles returned');
+                    resolve(null);
+                }
+            }).catch(reject);
+        });
+    };
+
+    // Close any existing player
+    try {
+        if (window.App.PlayerView) {
+            window.App.PlayerView.closePlayer();
+        }
+    } catch (err) {
+        console.warn('No player to close');
+    }
+
+    // Prepare playback object
+    const playObj = {
+        src: 'file://' + window.path.join(file.path),
+        type: 'video/mp4',
+        title: file.name,
+        quality: '480p'
+    };
+
+    const sub_data = {
+        filename: window.path.basename(file.path),
+        path: file.path
+    };
+
+    // Attempt to match with Trakt for metadata
+    if (window.App.Trakt && window.App.Trakt.client) {
+        window.App.Trakt.client.matcher.match({ path: file.path })
+            .then((res) => {
+                // Enrich playObj with Trakt metadata
+                if (res.type === 'movie') {
+                    playObj.title = res.movie.title;
+                    playObj.imdb_id = res.movie.ids.imdb;
+                    playObj.year = res.movie.year;
+                    sub_data.imdbid = res.movie.ids.imdb;
+                } else if (res.type === 'episode') {
+                    playObj.title = `${res.show.title} - S${res.episode.season}E${res.episode.number}`;
+                    playObj.season = res.episode.season;
+                    playObj.episode = res.episode.number;
+                    playObj.tvdb_id = res.show.ids.tvdb;
+                    playObj.imdb_id = res.show.ids.imdb;
+                    sub_data.imdbid = res.show.ids.imdb;
+                    sub_data.season = res.episode.season;
+                    sub_data.episode = res.episode.number;
+                }
+
+                return getSubtitles(sub_data);
+            })
+            .then((subs) => {
+                const localSub = checkSubs();
+                if (localSub) {
+                    playObj.defaultSubtitle = localSub.local;
+                } else if (subs) {
+                    playObj.subtitle = subs;
+                }
+
+                // Start playback
+                const localVideo = new window.App.Model.StreamInfo(playObj);
+                window.App.vent.trigger('stream:ready', localVideo);
+
+                if (spinner) spinner.style.display = 'none';
+            })
+            .catch((err) => {
+                console.warn('Trakt match failed, playing without metadata:', err);
+                // Play anyway without metadata
+                const localVideo = new window.App.Model.StreamInfo(playObj);
+                window.App.vent.trigger('stream:ready', localVideo);
+
+                if (spinner) spinner.style.display = 'none';
+            });
+    } else {
+        // No Trakt, play directly
+        const localVideo = new window.App.Model.StreamInfo(playObj);
+        window.App.vent.trigger('stream:ready', localVideo);
+
+        if (spinner) spinner.style.display = 'none';
+    }
+}
+
+function handleTorrent(torrent) {
+    console.log('Handling torrent:', torrent);
+
+    try {
+        if (window.App.PlayerView) {
+            window.App.PlayerView.closePlayer();
+        }
+    } catch (err) {
+        console.warn('No player to close');
+    }
+
+    if (window.App.Config) {
+        window.App.Config.getProviderForType('torrentCache').resolve(torrent);
+    } else {
+        console.error('App.Config not available for torrent handling');
     }
 }
 
@@ -108,6 +281,21 @@ function initMarionette() {
 
         // Trigger app started event
         AppInstance.vent.trigger('app:started');
+
+        // Process any pending deep links
+        if (window._pendingDeepLink) {
+            const url = window._pendingDeepLink;
+            delete window._pendingDeepLink;
+
+            setTimeout(() => {
+                if (url.startsWith('magnet:') || url.endsWith('.torrent')) {
+                    handleTorrent(url);
+                } else if (isVideoFile(url)) {
+                    const fileName = url.split('/').pop();
+                    handleVideoFile({ path: url, name: fileName });
+                }
+            }, 500);
+        }
     };
 
     return AppInstance;
