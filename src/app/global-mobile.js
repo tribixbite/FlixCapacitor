@@ -6,6 +6,7 @@
 import { win, nw } from './lib/nw-compat.js';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import mobileStorage from './lib/storage-mobile.js';
+import Database from './database-mobile.js';
 
 // Make win and nw available globally for legacy code
 window.win = win;
@@ -180,6 +181,9 @@ window.Q = {
     all: Promise.all.bind(Promise),
     when: Promise.resolve.bind(Promise)
 };
+
+// Make Database available globally
+window.Database = Database;
 
 console.log('Mobile global environment initialized');
 console.log('Platform:', os.platform());

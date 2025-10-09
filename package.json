@@ -24,6 +24,7 @@
     "vite-plugin-html": "^3.2.2"
   },
   "dependencies": {
+    "@capacitor-community/sqlite": "^7.0.1",
     "@capacitor/android": "^7.4.3",
     "@capacitor/app": "^7.1.0",
     "@capacitor/cli": "^7.4.3",
