@@ -1,74 +1,9 @@
-// Special Debug Console Calls!
-win.log = console.log.bind(console);
-win.debug = function () {
-  var params = Array.prototype.slice.call(arguments, 1);
-  params.unshift(
-    '%c[%cDEBUG%c] %c' + arguments[0],
-    'color: black;',
-    'color: green;',
-    'color: black;',
-    'color: blue;'
-  );
-  console.debug.apply(console, params);
-};
-win.info = function () {
-  var params = Array.prototype.slice.call(arguments, 1);
-  params.unshift('[%cINFO%c] ' + arguments[0], 'color: blue;', 'color: black;');
-  console.info.apply(console, params);
-};
-win.warn = function () {
-  var params = Array.prototype.slice.call(arguments, 1);
-  params.unshift(
-    '[%cWARNING%c] ' + arguments[0],
-    'color: orange;',
-    'color: black;'
-  );
-  console.warn.apply(console, params);
-};
-win.error = function () {
-  var params = Array.prototype.slice.call(arguments, 1);
-  params.unshift(
-    '%c[%cERROR%c] ' + arguments[0],
-    'color: black;',
-    'color: red;',
-    'color: black;'
-  );
-  console.error.apply(console, params);
-  fs.appendFileSync(
-    path.join(data_path, 'logs.txt'),
-    '\n\n' + (arguments[0].stack || arguments[0])
-  ); // log errors;
-};
+// Logging functions are now provided by nw-compat.js
+// Imported via global-mobile.js
 
-if (nw.App.fullArgv.indexOf('--reset') !== -1) {
-  localStorage.clear();
-
-  fs.unlinkSync(path.join(data_path, 'data/watched.db'), function (err) {
-    if (err) {
-      throw err;
-    }
-  });
-  fs.unlinkSync(path.join(data_path, 'data/movies.db'), function (err) {
-    if (err) {
-      throw err;
-    }
-  });
-  fs.unlinkSync(path.join(data_path, 'data/bookmarks.db'), function (err) {
-    if (err) {
-      throw err;
-    }
-  });
-  fs.unlinkSync(path.join(data_path, 'data/shows.db'), function (err) {
-    if (err) {
-      throw err;
-    }
-  });
-  fs.unlinkSync(path.join(data_path, 'data/settings.db'), function (err) {
-    if (err) {
-      throw err;
-    }
-  });
-}
+// Mobile: Command-line arguments not supported
+// Reset functionality will be handled via app settings UI
+// # TODO: Implement reset functionality in settings UI
 
 // Global App skeleton for backbone
 var App = new Marionette.Application({
@@ -93,13 +28,9 @@ App.db = Database;
 // Set settings
 App.advsettings = AdvSettings;
 App.settings = Settings;
-App.WebTorrent = new WebTorrent({
-  maxConns: parseInt(Settings.connectionLimit, 10) || 55,
-  tracker: {
-     announce: Settings.trackers.forced
-  },
-  dht: true
-});
+// Mobile: WebTorrent removed - will use server-based streaming
+// # TODO: Implement StreamingService for server-side torrent handling
+App.WebTorrent = null;
 
 fs.readFile('./.git.json', 'utf8', function (err, json) {
   if (!err) {
@@ -107,72 +38,14 @@ fs.readFile('./.git.json', 'utf8', function (err, json) {
   }
 });
 
-// Menu for mac
-if (os.platform() === 'darwin') {
-  var nativeMenuBar = new nw.Menu({
-    type: 'menubar'
-  });
-  nativeMenuBar.createMacBuiltin(Settings.projectName, {
-    hideEdit: false,
-    hideWindow: true
-  });
-  win.menu = nativeMenuBar;
-}
+// Mobile: No menu bar on mobile platforms
 
 //Keeps a list of stacked views
 App.ViewStack = [];
 
 App.onBeforeStart = function (options) {
-  // this is the 'do things with resolutions and size initializer
-  var zoom = 0;
-
-  var screen = window.screen;
-
-  if (ScreenResolution.QuadHD) {
-    zoom = 2;
-  }
-  /*
-	if (ScreenResolution.UltraHD) {
-		zoom = 4;
-	}
-	*/
-
-  var width = parseInt(
-    localStorage.width ? localStorage.width : Settings.defaultWidth
-  );
-  var height = parseInt(
-    localStorage.height ? localStorage.height : Settings.defaultHeight
-  );
-  var x = parseInt(localStorage.posX ? localStorage.posX : -1);
-  var y = parseInt(localStorage.posY ? localStorage.posY : -1);
-
-  // reset app width when the width is bigger than the available width
-  if (screen.availWidth < width) {
-    win.info('Window too big, resetting width');
-    width = screen.availWidth;
-  }
-
-  // reset app height when the width is bigger than the available height
-  if (screen.availHeight < height) {
-    win.info('Window too big, resetting height');
-    height = screen.availHeight;
-  }
-
-  // reset x when the screen width is smaller than the window x-position + the window width
-  if (x < 0 || x + width > screen.width) {
-    win.info('Window out of view, recentering x-pos');
-    x = Math.round((screen.availWidth - width) / 2);
-  }
-
-  // reset y when the screen height is smaller than the window y-position + the window height
-  if (y < 0 || y + height > screen.height) {
-    win.info('Window out of view, recentering y-pos');
-    y = Math.round((screen.availHeight - height) / 2);
-  }
-
-  win.zoomLevel = zoom;
-  win.resizeTo(width, height);
-  win.moveTo(x, y);
+  // Mobile: No window management needed
+  win.info('App starting on mobile platform');
 };
 
 var initTemplates = function () {
@@ -314,157 +187,11 @@ String.prototype.capitalizeEach = function () {
 String.prototype.endsWith = function (suffix) {
   return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
-// Correct closing of the window using 'CMD+Q' on macOS
-Mousetrap.bindGlobal(['alt+f4', 'command+q'], function (e) {
-  close();
-});
-// Developer Shortcuts
-Mousetrap.bindGlobal(['shift+f12', 'f12', 'command+0'], function (e) {
-  win.showDevTools();
-});
-Mousetrap.bindGlobal(['shift+f10', 'f10', 'command+9'], function (e) {
-  win.debug('Opening: ' + App.settings.tmpLocation);
-  nw.Shell.openItem(App.settings.tmpLocation);
-});
-Mousetrap.bind('mod+,', function (e) {
-  App.vent.trigger('about:close');
-  App.vent.trigger('settings:show');
-});
-Mousetrap.bindGlobal('f11', function (e) {
-  Settings.deleteTmpOnClose = false;
-  App.vent.trigger('restartButter');
-});
-Mousetrap.bind(['?', '/', '\''], function (e) {
-  e.preventDefault();
-  App.vent.trigger('keyboard:toggle');
-});
-Mousetrap.bind(
-  'shift+up shift+up shift+down shift+down shift+left shift+right shift+left shift+right shift+b shift+a',
-  function () {
-    var body = $('body');
+// Mobile: Keyboard shortcuts removed - touch gestures will be used instead
+// # TODO: Implement touch gestures for common actions
 
-    if (body.hasClass('knm')) {
-      body.removeClass('knm');
-    } else {
-      body.addClass('knm');
-    }
-  },
-  'keydown'
-);
-Mousetrap.bindGlobal(
-  ['command+ctrl+f', 'ctrl+alt+f'],
-  function (e) {
-    e.preventDefault();
-    win.toggleFullscreen();
-  },
-  'keydown'
-);
-Mousetrap.bind(
-  'shift+b',
-  function (e) {
-    if (!ScreenResolution.SD) {
-      if (App.settings.bigPicture) {
-        win.zoomLevel = Settings.noBigPicture || 0;
-        AdvSettings.set('bigPicture', false);
-      } else {
-        win.maximize();
-        AdvSettings.set('noBigPicture', win.zoomLevel);
-        AdvSettings.set('bigPicture', true);
-        var zoom = ScreenResolution.HD ? 2 : 3;
-        win.zoomLevel = zoom;
-      }
-    } else {
-      App.vent.trigger(
-        'notification:show',
-        new App.Model.Notification({
-          title: i18n.__('Big Picture Mode'),
-          body: i18n.__(
-            'Big Picture Mode is unavailable on your current screen resolution'
-          ),
-          showRestart: false,
-          type: 'error',
-          autoclose: true
-        })
-      );
-    }
-  },
-  'keydown'
-);
-
-// Drag n' Drop Torrent Onto PT Window to start playing (ALPHA)
-window.ondragenter = function (e) {
-  var mask = $('#drop-mask');
-  var showDrag = true;
-  var timeout = -1;
-  mask.show();
-  mask.on('dragenter', function (e) {
-    $('.drop-indicator').show();
-    win.debug('Drag init');
-  });
-  mask.on('dragover', function (e) {
-    var showDrag = true;
-  });
-
-  mask.on('dragleave', function (e) {
-    var showDrag = false;
-    clearTimeout(timeout);
-    timeout = setTimeout(function () {
-      if (!showDrag) {
-        win.debug('Drag aborted');
-        $('.drop-indicator').hide();
-        $('#drop-mask').hide();
-      }
-    }, 100);
-  });
-};
-
-var minimizeToTray = function () {
-  win.hide();
-  win.isTray = true;
-
-  var tray = new nw.Tray({
-    title: Settings.projectName,
-    icon: 'src/app/images/icon.png'
-  });
-
-  var openFromTray = function () {
-    win.show();
-    tray.remove();
-    win.isTray = false;
-  };
-
-  tray.tooltip = Settings.projectName;
-
-  var menu = new nw.Menu();
-  menu.append(
-    new nw.MenuItem({
-      type: 'normal',
-      label: i18n.__('Restore'),
-      click: function () {
-        openFromTray();
-      }
-    })
-  );
-  menu.append(
-    new nw.MenuItem({
-      type: 'normal',
-      label: i18n.__('Close'),
-      click: function () {
-        win.close();
-      }
-    })
-  );
-
-  tray.menu = menu;
-
-  tray.on('click', function () {
-    openFromTray();
-  });
-
-  nw.App.on('open', function (cmd) {
-    openFromTray();
-  });
-};
+// Mobile: Drag-and-drop and tray not supported
+// # TODO: Implement UI button for adding magnet links/torrents
 
 var isVideo = function (file) {
   var ext = path.extname(file).toLowerCase();
@@ -862,54 +589,20 @@ App.vent.on('vpn:install', function () {
   }
 });
 
-nw.App.on('open', function (cmd) {
-  var file;
-  if (os.platform() === 'win32') {
-    file = cmd.split('"');
-    file = file[file.length - 2];
-  } else {
-    file = cmd.split(' /');
-    file = file[file.length - 1];
-    file = '/' + file;
-  }
+// Mobile: Command-line file opening not supported
+// Deep linking for magnet links and video files will be handled via App.addListener('appUrlOpen')
+// # TODO: Implement deep link handler in main.js for magnet:// and video file URIs
 
-  if (file) {
-    win.debug('File loaded:', file);
+// Mobile: Window focus management not needed - apps are always focused when visible
 
-    if (isVideo(file)) {
-      var fileModel = {
-        path: file,
-        name: /([^\\]+)$/.exec(file)[1]
-      };
-      handleVideoFile(fileModel);
-    } else if (file.endsWith('.torrent')) {
-      handleTorrent(file);
-    }
-  }
-});
+// Mobile: Command-line arguments not supported
+// Fullscreen is handled automatically by video player
+// Background/foreground state managed by OS
 
-// When win.focus() doesn't do it's job right, play dirty.
-App.vent.on('window:focus', function () {
-  win.setAlwaysOnTop(true);
-  win.focus();
-  win.setAlwaysOnTop(Settings.alwaysOnTop);
-});
-
-// -f argument to open in fullscreen
-if (nw.App.fullArgv.indexOf('-f') !== -1) {
-  win.enterFullscreen();
-}
-// -m argument to open minimized to tray
-if (nw.App.fullArgv.indexOf('-m') !== -1) {
-  App.vent.on('app:started', function () {
-    minimizeToTray();
-  });
-}
-
-// On uncaught exceptions, log to console.
-process.on('uncaughtException', function (err) {
+// Mobile: Global error handling using window.onerror
+window.onerror = function (message, source, lineno, colno, error) {
   try {
-    if (err.message.indexOf('[sprintf]') !== -1) {
+    if (message && message.indexOf('[sprintf]') !== -1) {
       var currentLocale =
         App.Localization.langcodes[i18n.getLocale()].nativeName;
       AdvSettings.set('language', 'en');
@@ -922,5 +615,5 @@ process.on('uncaughtException', function (err) {
         .fadeOut(400);
     }
   } catch (e) { }
-  win.error(err, err.stack);
-});
+  win.error(error || message, error ? error.stack : '');
+};
