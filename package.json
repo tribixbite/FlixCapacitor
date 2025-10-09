@@ -12,6 +12,7 @@
     "sync:android": "cap sync android",
     "open:ios": "cap open ios",
     "open:android": "cap open android",
+    "mock-server": "node mock-streaming-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -20,6 +21,8 @@
   "type": "module",
   "devDependencies": {
     "@vitejs/plugin-legacy": "^7.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "vite": "^7.1.9",
     "vite-plugin-html": "^3.2.2"
   },

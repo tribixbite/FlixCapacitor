@@ -13,6 +13,7 @@ import './app/global-mobile.js';
 import './app/lib/touch-gestures.js';
 import './app/lib/mobile-ui.js';
 import './app/lib/provider-loader.js';
+import './app/lib/streaming-service.js';
 
 // Import core libraries
 import $ from 'jquery';
