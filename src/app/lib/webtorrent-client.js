@@ -112,6 +112,13 @@ class WebTorrentClient {
             await this.initialize();
         }
 
+        // Check WebRTC support
+        if (typeof RTCPeerConnection === 'undefined') {
+            const error = new Error('WebRTC not supported in this environment. WebTorrent requires WebRTC for peer connections.');
+            console.error(error.message);
+            throw error;
+        }
+
         // Stop current torrent if any
         if (this.currentTorrent) {
             await this.stopStream();
@@ -119,33 +126,55 @@ class WebTorrentClient {
 
         return new Promise((resolve, reject) => {
             console.log('Starting WebTorrent stream:', magnetURI.substring(0, 60) + '...');
+            console.log('WebRTC available:', typeof RTCPeerConnection !== 'undefined');
 
             if (!this.client) {
                 reject(new Error('WebTorrent client not initialized'));
                 return;
             }
 
+            // Timeout for metadata retrieval (60 seconds)
+            const metadataTimeout = setTimeout(() => {
+                console.error('Metadata timeout: No metadata received after 60 seconds');
+                console.error('This usually means:');
+                console.error('1. No peers available for this torrent');
+                console.error('2. WebRTC is blocked or not working properly');
+                console.error('3. Firewall/network restrictions preventing connections');
+
+                reject(new Error('Metadata timeout: Could not connect to peers after 60 seconds. WebTorrent may not work in this environment.'));
+            }, 60000);
+
             // Add torrent
             this.currentTorrent = this.client.add(magnetURI, {
                 path: '/tmp/webtorrent/' // Virtual path for browser
             });
 
+            console.log('Torrent added, waiting for metadata...');
+
             // Handle torrent errors
             this.currentTorrent.on('error', (err) => {
+                clearTimeout(metadataTimeout);
                 console.error('Torrent error:', err);
                 reject(err);
             });
 
             // Handle metadata
             this.currentTorrent.on('infoHash', () => {
-                console.log('Torrent infoHash:', this.currentTorrent.infoHash);
+                console.log('✓ Torrent infoHash received:', this.currentTorrent.infoHash);
+            });
+
+            // Log peer wire connections
+            this.currentTorrent.on('wire', (wire, addr) => {
+                console.log('✓ Peer connected:', addr || 'unknown');
+                console.log('  Total peers:', this.currentTorrent.numPeers);
             });
 
             // Handle metadata ready
             this.currentTorrent.on('metadata', () => {
-                console.log('Torrent metadata received');
-                console.log('Name:', this.currentTorrent.name);
-                console.log('Files:', this.currentTorrent.files.length);
+                clearTimeout(metadataTimeout);
+                console.log('✓ Torrent metadata received');
+                console.log('  Name:', this.currentTorrent.name);
+                console.log('  Files:', this.currentTorrent.files.length);
 
                 // Find the largest video file
                 const videoFile = this.findVideoFile(this.currentTorrent.files);
