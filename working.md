@@ -66,13 +66,28 @@ dependencies {
 - Expected error: "Magnet download not yet implemented - API compatibility issue"
 - Will use error to investigate correct jlibtorrent 2.0.12.5 API
 
+**Gemini-Guided Improvements:**
+1. ✅ Changed `foregroundServiceType` from `dataSync` to `mediaPlayback` (no permission required)
+2. ✅ Removed unused `onPeersFound` callback
+3. ✅ Moved peer detection into `handleProgressUpdate()` to check `status.numPeers()`
+4. ✅ Added `postTorrentUpdates()` method for reliable progress updates
+5. ✅ Updated `startProgressUpdates()` to call `postTorrentUpdates()` every second
+
+**Current Blocker: jlibtorrent 2.0.12.5 API Discovery**
+
+Tried methods (all failed compilation):
+- ❌ `sm.download(magnetUri, saveDirectory)` - expects TorrentInfo, not String
+- ❌ `libtorrent.parseMagnetUri()` - class `libtorrent` doesn't exist
+- ❌ `sm.swig().asyncAddTorrent()` - method doesn't exist
+- ❌ `sm.fetch(magnetUri, saveDirectory)` - method doesn't exist
+
+**Root Cause:** FrostWire's jlibtorrent 2.0.12.5 API differs significantly from documentation and expected methods
+
 **Next Steps:**
-1. ⏳ Click on a movie in the app to trigger torrent streaming
-2. ⏳ Monitor logcat for TorrentSession error messages
-3. ⏳ Identify correct API methods at runtime
-4. ⏳ Fix magnet download implementation with correct API
-5. ⏳ Verify torrent connection and peer discovery
-6. ⏳ Test video playback and seeking
+1. ⏳ Investigate actual SessionManager API methods at runtime or from source
+2. ⏳ Try alternative jlibtorrent versions or different Maven repository
+3. ⏳ Consider using .torrent file approach instead of magnet links as workaround
+4. ⏳ Test with simple magnet URI to verify download workflow once API is found
 
 ---
 
