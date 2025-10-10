@@ -62,7 +62,33 @@
 - `docs: comprehensive quality audit summary and results`
 - `feat: P1 improvements - error handling and production readiness`
 - `feat: enhance TypeScript definitions with comprehensive JSDoc`
-- `feat: P2 accessibility improvements - full ARIA support` (pending)
+- `docs: finalize quality audit with P0/P1/P2 completion summary`
+- `fix: improve video player transition UX with loading states`
+
+#### Video Player UX Improvement (NEW)
+
+**Issue:** Blank screen between stream ready and video load
+- Stream buffer complete → loading UI disappears immediately
+- Video takes time to load from HTTP server → jarring blank screen
+- No visual feedback during critical transition
+
+**Fix Applied:**
+- Loading UI stays visible until video `loadeddata` event fires
+- Updated status messages during transition:
+  - "Starting Stream..." → "Connecting to Torrent..." → "Loading Video..." → fade out
+  - Status: Connecting → Buffered → Playing
+- Added 300ms fade-out animation for smooth transition
+- Show video duration when metadata loads
+- Enhanced error handling with detailed feedback
+
+**Flow Now:**
+1. Torrent connects → "Connecting to Torrent..."
+2. Peers found → "Connected to X peers" with download progress
+3. Buffer threshold reached (5 MB) → "Loading Video..."
+4. Video element loads data → Smooth fade out of loading UI
+5. Video autoplays seamlessly
+
+**Impact:** Prevents jarring blank screen, provides continuous visual feedback
 
 ---
 
