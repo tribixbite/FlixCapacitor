@@ -3,6 +3,89 @@
  * Bootstraps the Capacitor + Marionette application
  */
 
+// ============================================================================
+// GLOBAL ERROR HANDLING
+// ============================================================================
+
+/**
+ * Global error boundary - catches all uncaught errors
+ */
+window.addEventListener('error', (event) => {
+    console.error('💥 UNCAUGHT ERROR:', event.error);
+    console.error('Message:', event.message);
+    console.error('Filename:', event.filename);
+    console.error('Line:', event.lineno, 'Column:', event.colno);
+    console.error('Stack:', event.error?.stack);
+
+    // Show user-friendly error message
+    showErrorNotification('An unexpected error occurred. Please restart the app.');
+
+    // Prevent default browser error handling
+    event.preventDefault();
+});
+
+/**
+ * Global promise rejection handler - catches unhandled promise rejections
+ */
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('💥 UNHANDLED PROMISE REJECTION:', event.reason);
+    console.error('Promise:', event.promise);
+
+    // Show user-friendly error message
+    showErrorNotification('A background operation failed. Some features may not work.');
+
+    // Prevent default browser handling
+    event.preventDefault();
+});
+
+/**
+ * Display error notification to user
+ */
+function showErrorNotification(message) {
+    try {
+        // Try to use existing loading screen for error display
+        const loadingScreen = document.querySelector('.loading-screen');
+        if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+            const title = loadingScreen.querySelector('.loading-title');
+            const subtitle = loadingScreen.querySelector('.loading-subtitle');
+            const spinner = loadingScreen.querySelector('.loading-spinner');
+
+            if (title) title.textContent = 'Error';
+            if (subtitle) subtitle.textContent = message;
+            if (spinner) spinner.style.display = 'none';
+
+            // Add retry button
+            if (!loadingScreen.querySelector('.retry-button')) {
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'retry-button';
+                retryBtn.textContent = 'Retry';
+                retryBtn.style.cssText = `
+                    margin-top: 2rem;
+                    padding: 0.75rem 2rem;
+                    background: var(--accent-primary);
+                    color: white;
+                    border: none;
+                    border-radius: var(--radius-sm);
+                    font-size: 1rem;
+                    cursor: pointer;
+                `;
+                retryBtn.onclick = () => window.location.reload();
+                loadingScreen.appendChild(retryBtn);
+            }
+        } else {
+            // Fallback: alert if loading screen not available
+            alert(message);
+        }
+    } catch (e) {
+        // Last resort: console error
+        console.error('Failed to show error notification:', e);
+    }
+}
+
+// ============================================================================
+// MODULE IMPORTS
+// ============================================================================
+
 import { App } from '@capacitor/app';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
