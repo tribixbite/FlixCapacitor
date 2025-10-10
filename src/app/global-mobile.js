@@ -5,17 +5,20 @@
 
 import { win, nw } from './lib/nw-compat.js';
 import { Directory, Filesystem } from '@capacitor/filesystem';
-import mobileStorage from './lib/storage-mobile.js';
 import Database from './database-mobile.js';
 
 // Make win and nw available globally for legacy code
 window.win = win;
 window.nw = nw;
 
-// Replace localStorage with mobile storage wrapper
-// Keep original localStorage as fallback
-window._originalLocalStorage = window.localStorage;
-window.localStorage = mobileStorage;
+// localStorage works natively in Capacitor - no need to replace it
+// Just ensure it's initialized on app start
+try {
+    localStorage.setItem('_mobile_init', Date.now().toString());
+    console.log('localStorage is available');
+} catch (e) {
+    console.warn('localStorage not available:', e.message);
+}
 
 // Platform detection
 const os = {
