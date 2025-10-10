@@ -13,18 +13,28 @@
     "open:ios": "cap open ios",
     "open:android": "cap open android",
     "mock-server": "node mock-streaming-server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest --coverage"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-legacy": "^7.2.1",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "happy-dom": "^20.0.0",
+    "jsdom": "^27.0.0",
     "vite": "^7.1.9",
-    "vite-plugin-html": "^3.2.2"
+    "vite-plugin-html": "^3.2.2",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@capacitor-community/keep-awake": "^7.1.0",
