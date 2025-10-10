@@ -72,17 +72,41 @@ class WebTorrentClient {
 
             this.client = new this.WebTorrent({
                 maxConns: 55, // Maximum concurrent connections
+                // WebRTC configuration for NAT traversal
+                rtcConfig: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' },
+                        { urls: 'stun:stun3.l.google.com:19302' },
+                        { urls: 'stun:stun4.l.google.com:19302' },
+                        { urls: 'stun:global.stun.twilio.com:3478' }
+                    ],
+                    iceTransportPolicy: 'all'
+                },
                 tracker: {
                     announce: [
+                        // WebTorrent trackers (wss for browser support)
+                        'wss://tracker.openwebtorrent.com',
+                        'wss://tracker.webtorrent.dev',
+                        'wss://tracker.btorrent.xyz',
+                        // Traditional UDP trackers (may not work in browser)
                         'udp://tracker.opentrackr.org:1337/announce',
                         'udp://tracker.openbittorrent.com:6969/announce',
-                        'udp://tracker.coppersurfer.tk:6969/announce',
-                        'udp://glotorrents.pw:6969/announce',
-                        'udp://tracker.leechers-paradise.org:6969/announce',
-                        'udp://p4p.arenabg.com:1337/announce',
-                        'udp://tracker.internetwarriors.net:1337/announce'
-                    ]
-                }
+                        'udp://open.stealth.si:80/announce',
+                        'udp://tracker.torrent.eu.org:451/announce',
+                        'udp://tracker.moeking.me:6969/announce',
+                        'udp://exodus.desync.com:6969/announce'
+                    ],
+                    rtcConfig: {
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:stun1.l.google.com:19302' }
+                        ]
+                    }
+                },
+                dht: true, // Enable DHT for peer discovery
+                webSeeds: true // Enable web seeds if available
             });
 
             this.initialized = true;
@@ -167,6 +191,25 @@ class WebTorrentClient {
             this.currentTorrent.on('wire', (wire, addr) => {
                 console.log('✓ Peer connected:', addr || 'unknown');
                 console.log('  Total peers:', this.currentTorrent.numPeers);
+            });
+
+            // Log WebRTC peer connection state changes
+            this.currentTorrent.on('warning', (err) => {
+                console.warn('⚠ Torrent warning:', err.message);
+            });
+
+            // Log when torrent is ready
+            this.currentTorrent.on('ready', () => {
+                console.log('✓ Torrent ready');
+                console.log('  Name:', this.currentTorrent.name);
+                console.log('  InfoHash:', this.currentTorrent.infoHash);
+                console.log('  Files:', this.currentTorrent.files.length);
+            });
+
+            // Log tracker updates
+            this.currentTorrent.on('noPeers', (announceType) => {
+                console.warn('⚠ No peers found from:', announceType);
+                console.log('  Tried trackers:', this.currentTorrent.announce);
             });
 
             // Handle metadata ready

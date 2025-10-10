@@ -214,7 +214,7 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:1d8e3fcb9fb7e7c8b12c9f7d12c0c25e4c25a25e&dn=Night+of+the+Living+Dead+1968+720p&tr=udp://tracker.opentrackr.org:1337/announce',
+                        url: this.buildMagnetLink('1d8e3fcb9fb7e7c8b12c9f7d12c0c25e4c25a25e', 'Night of the Living Dead 1968 720p'),
                         torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=51',
                         size: '1.2 GB',
                         seed: 150,
@@ -236,7 +236,7 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:2e9f4edc0ec8f8d9c23d0f8e23d1d36f5d36b36f&dn=The+Lost+World+1925&tr=udp://tracker.opentrackr.org:1337/announce',
+                        url: this.buildMagnetLink('2e9f4edc0ec8f8d9c23d0f8e23d1d36f5d36b36f', 'The Lost World 1925'),
                         torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=101',
                         size: '800 MB',
                         seed: 45,
@@ -258,7 +258,7 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:3f0g5fed1fd9g9e0d34e1g9f34e2e47g6e47c47g&dn=Metropolis+1927+Restored+720p&tr=udp://tracker.opentrackr.org:1337/announce',
+                        url: this.buildMagnetLink('3f0g5fed1fd9g9e0d34e1g9f34e2e47g6e47c47g', 'Metropolis 1927 Restored 720p'),
                         torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=83',
                         size: '1.8 GB',
                         seed: 89,
@@ -280,7 +280,7 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:4g1h6gfe2ge0h0f1e45f2h0g45f3f58h7f58d58h&dn=Things+to+Come+1936+720p&tr=udp://tracker.opentrackr.org:1337/announce',
+                        url: this.buildMagnetLink('4g1h6gfe2ge0h0f1e45f2h0g45f3f58h7f58d58h', 'Things to Come 1936 720p'),
                         torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=194',
                         size: '1.4 GB',
                         seed: 32,
@@ -302,7 +302,7 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:5h2i7hgf3hf1i1g2f56g3i1h56g4g69i8g69e69i&dn=The+Phantom+Creeps+1939&tr=udp://tracker.opentrackr.org:1337/announce',
+                        url: this.buildMagnetLink('5h2i7hgf3hf1i1g2f56g3i1h56g4g69i8g69e69i', 'The Phantom Creeps 1939'),
                         torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=120',
                         size: '950 MB',
                         seed: 18,
@@ -324,7 +324,7 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:6i3j8ihg4ig2j2h3g67h4j2i67h5h70j9h70f70j&dn=The+Man+They+Could+Not+Hang+1939&tr=udp://tracker.opentrackr.org:1337/announce',
+                        url: this.buildMagnetLink('6i3j8ihg4ig2j2h3g67h4j2i67h5h70j9h70f70j', 'The Man They Could Not Hang 1939'),
                         torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=139',
                         size: '600 MB',
                         seed: 25,
@@ -346,7 +346,7 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:7j4k9jig5jh3k3i4h78i5k3j78i6i81k0i81g81k&dn=Plan+9+from+Outer+Space+1959&tr=udp://tracker.opentrackr.org:1337/announce',
+                        url: this.buildMagnetLink('7j4k9jig5jh3k3i4h78i5k3j78i6i81k0i81g81k', 'Plan 9 from Outer Space 1959'),
                         torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=156',
                         size: '700 MB',
                         seed: 156,
@@ -368,7 +368,7 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:8k5l0kjh6ki4l4j5i89j6l4k89j7j92l1j92h92l&dn=The+Little+Shop+of+Horrors+1960&tr=udp://tracker.opentrackr.org:1337/announce',
+                        url: this.buildMagnetLink('8k5l0kjh6ki4l4j5i89j6l4k89j7j92l1j92h92l', 'The Little Shop of Horrors 1960'),
                         torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=112',
                         size: '650 MB',
                         seed: 78,
@@ -403,6 +403,30 @@ class PublicDomainProvider {
     async getMovie(imdbId) {
         const movies = await this.fetchMovies();
         return movies.find(m => m.imdb_id === imdbId) || null;
+    }
+
+    /**
+     * Build magnet link with WebTorrent-compatible trackers
+     * @param {string} infoHash - Torrent info hash
+     * @param {string} name - Display name for torrent
+     * @returns {string} Magnet URI with trackers
+     */
+    buildMagnetLink(infoHash, name) {
+        const trackers = [
+            // WebSocket trackers (work in browsers/Capacitor)
+            'wss://tracker.openwebtorrent.com',
+            'wss://tracker.webtorrent.dev',
+            'wss://tracker.btorrent.xyz',
+            // UDP trackers (backup, may not work in browser)
+            'udp://tracker.opentrackr.org:1337/announce',
+            'udp://open.stealth.si:80/announce',
+            'udp://tracker.torrent.eu.org:451/announce'
+        ];
+
+        const encodedName = encodeURIComponent(name);
+        const trackerParams = trackers.map(t => `&tr=${encodeURIComponent(t)}`).join('');
+
+        return `magnet:?xt=urn:btih:${infoHash}&dn=${encodedName}${trackerParams}`;
     }
 }
 
