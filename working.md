@@ -1,6 +1,106 @@
 # Popcorn Time Mobile - Development Progress
 
-## Latest Session: 2025-10-10 (Comprehensive Test Suite)
+## Latest Session: 2025-10-10 (Video Player UX Improvements)
+
+### ✅ THREE MAJOR UX IMPROVEMENTS IMPLEMENTED
+
+**Status:** Enhanced video player with resume confirmation, double-tap skip gestures, and live download progress overlay.
+
+#### New Features Implemented
+
+**1. Resume Confirmation Dialog**
+- **File:** `src/app/lib/mobile-ui-views.js:1563-1625`
+- **Implementation:**
+  - Elegant modal dialog appears when resuming partially-watched content
+  - Shows timestamp of saved position (e.g., "Continue from 15:30")
+  - Two options: "Resume" (primary) or "Start Over" (secondary)
+  - 10-second auto-resume timeout with visual countdown
+  - Pauses video until user makes selection
+  - Smooth fade-in/fade-out animations
+- **UX Impact:** Prevents accidental overwrites of watch progress, professional Netflix-style experience
+
+**2. Double-Tap Skip Gestures**
+- **File:** `src/app/lib/mobile-ui-views.js:1800-1877`
+- **Implementation:**
+  - Left half of screen: double-tap = skip backward 10 seconds
+  - Right half of screen: double-tap = skip forward 10 seconds
+  - Animated skip indicators (⏪ / ⏩) with fade effect
+  - Touch-friendly detection (300ms double-tap window)
+  - Side-specific gesture recognition
+  - Respects video boundaries (won't skip past 0 or duration)
+- **UX Impact:** YouTube/Netflix-style skip functionality for mobile, significantly improves navigation during playback
+
+**3. Download Progress Overlay**
+- **File:** `src/app/lib/mobile-ui-views.js:1376-1387, 1504-1524, 1679-1698`
+- **Implementation:**
+  - Compact overlay in bottom-right corner during video playback
+  - Real-time display of:
+    - Download progress percentage (0-100%)
+    - Download speed (MB/s)
+    - Connected peer count
+  - Animated buffering spinner
+  - Auto-hides 2 seconds after download completes (100%)
+  - Smooth fade-out transition
+  - Doesn't obstruct video controls
+- **UX Impact:** Transparency into torrent download status without interrupting playback, reassures users about buffering
+
+#### Technical Details
+
+**Resume Dialog Structure:**
+```javascript
+// Triggered in loadedmetadata event when savedPosition > 10s
+const resumeDialog = document.createElement('div');
+// Centered modal with glassmorphism effect
+// Buttons: Start Over (secondary) | Resume (primary)
+// Auto-resume after 10s timeout
+```
+
+**Skip Gesture Logic:**
+```javascript
+// Double-tap detection (300ms window)
+if (tapDelay < 300 && tapSide === lastTapSide) {
+    const skipAmount = 10;
+    if (tapSide === 'right') {
+        videoElement.currentTime += skipAmount; // Forward
+    } else {
+        videoElement.currentTime -= skipAmount; // Backward
+    }
+    showSkipIndicator(direction, skipAmount);
+}
+```
+
+**Download Overlay Updates:**
+```javascript
+// Connected to torrent status callback
+if (status.progress !== undefined) {
+    dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
+}
+if (status.downloadSpeed !== undefined) {
+    dlSpeed.textContent = `↓ ${speedMB} MB/s`;
+}
+if (status.numPeers !== undefined) {
+    dlPeers.textContent = `${status.numPeers} peers`;
+}
+```
+
+#### Build Status
+
+```
+✓ vite build completed successfully
+✓ All dynamic imports handled
+✓ 328.76 kB main bundle (96.29 kB gzipped)
+✓ No build errors
+```
+
+**Next Improvements:**
+- Add video quality selector in playback controls
+- Implement subtitle support
+- Add chapter markers for long content
+- Add skip intro/outro buttons
+
+---
+
+## Previous Session: 2025-10-10 (Comprehensive Test Suite)
 
 ### ✅ TEST SUITE IMPLEMENTATION COMPLETE - ALL 52 TESTS PASSING
 
