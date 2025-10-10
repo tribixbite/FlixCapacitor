@@ -73,21 +73,45 @@ dependencies {
 4. ✅ Added `postTorrentUpdates()` method for reliable progress updates
 5. ✅ Updated `startProgressUpdates()` to call `postTorrentUpdates()` every second
 
-**Current Blocker: jlibtorrent 2.0.12.5 API Discovery**
+**✅ SOLUTION FOUND: jlibtorrent 2.0.12.5 API**
 
-Tried methods (all failed compilation):
-- ❌ `sm.download(magnetUri, saveDirectory)` - expects TorrentInfo, not String
-- ❌ `libtorrent.parseMagnetUri()` - class `libtorrent` doesn't exist
-- ❌ `sm.swig().asyncAddTorrent()` - method doesn't exist
-- ❌ `sm.fetch(magnetUri, saveDirectory)` - method doesn't exist
+**Correct Method (via MCP DeepWiki + WebSearch):**
+```kotlin
+sm.download(magnetUri, saveDirectory, null)
+```
 
-**Root Cause:** FrostWire's jlibtorrent 2.0.12.5 API differs significantly from documentation and expected methods
+**Method Signature:**
+```java
+download(String magnetUri, File saveDir, torrent_flags_t flags)
+```
+
+**How Found:**
+1. Used MCP `WebSearch` to find FrostWire GitHub repository examples
+2. Found `GetMagnet2.java` demo showing `fetchMagnet()` method
+3. Fetched `SessionManager.java` source via `WebFetch` MCP
+4. Discovered `download(String, File, torrent_flags_t)` overload
+5. Passing `null` for flags uses default torrent flags
+
+**Build Result:**
+```
+✅ BUILD SUCCESSFUL in 6s
+✅ APK Size: 39 MB
+✅ Kotlin compilation: SUCCESS
+✅ Method signature matches perfectly
+```
+
+**Attempted methods (failed):**
+- ❌ `sm.download(magnetUri, saveDirectory)` - Missing 3rd parameter
+- ❌ `libtorrent.parseMagnetUri()` - Class doesn't exist in 2.x
+- ❌ `sm.swig().asyncAddTorrent()` - Method doesn't exist
+- ❌ `sm.fetch(magnetUri, saveDirectory)` - Method doesn't exist
 
 **Next Steps:**
-1. ⏳ Investigate actual SessionManager API methods at runtime or from source
-2. ⏳ Try alternative jlibtorrent versions or different Maven repository
-3. ⏳ Consider using .torrent file approach instead of magnet links as workaround
-4. ⏳ Test with simple magnet URI to verify download workflow once API is found
+1. ✅ APK installed on device
+2. ⏳ Click Play on movie to test torrent streaming
+3. ⏳ Monitor for ADD_TORRENT and METADATA_RECEIVED alerts
+4. ⏳ Verify video playback from HTTP streaming server
+5. ⏳ Test pause/resume and progress updates
 
 ---
 
