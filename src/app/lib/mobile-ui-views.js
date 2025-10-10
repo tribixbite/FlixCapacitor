@@ -1228,49 +1228,57 @@ export class MobileUIController {
         `;
 
         // Back button handler (stops stream on exit)
-        let currentStreamId = null;
         document.getElementById('player-back')?.addEventListener('click', async () => {
-            if (currentStreamId && window.StreamingService) {
+            // Stop WebTorrent if active
+            if (window.WebTorrentClient) {
                 try {
-                    await window.StreamingService.stopStream(currentStreamId);
-                    console.log('Stream stopped on back button');
+                    await window.WebTorrentClient.stopStream();
+                    console.log('WebTorrent stream stopped on back button');
                 } catch (e) {
-                    console.warn('Failed to stop stream:', e);
+                    console.warn('Failed to stop WebTorrent stream:', e);
                 }
             }
             this.showDetail(movie.imdb_id);
         });
 
-        // Try to start streaming
+        // Try to start streaming with WebTorrent
         try {
-            // Check if streaming service is available
-            if (!window.StreamingService) {
-                throw new Error('StreamingService not available');
+            // Check if WebTorrent is available
+            if (!window.WebTorrentClient) {
+                throw new Error('WebTorrent not available');
             }
 
-            console.log('Starting stream with StreamingService...');
+            console.log('Starting WebTorrent stream...');
 
-            // Start the stream and wait for it to be ready
-            const streamInfo = await window.StreamingService.streamAndWait(
+            const statusText = document.getElementById('status-text');
+            const loadingTitle = document.getElementById('loading-title');
+            const loadingSubtitle = document.getElementById('loading-subtitle');
+            const progressRow = document.getElementById('progress-row');
+            const progressText = document.getElementById('progress-text');
+            const speedRow = document.getElementById('speed-row');
+            const speedText = document.getElementById('speed-text');
+
+            // Update initial status
+            if (loadingTitle) loadingTitle.textContent = 'Connecting to Torrent...';
+            if (loadingSubtitle) loadingSubtitle.textContent = 'Finding peers and downloading...';
+            if (statusText) {
+                statusText.textContent = 'Connecting';
+                statusText.style.color = '#3b82f6';
+            }
+
+            // Start the WebTorrent stream
+            const streamInfo = await window.WebTorrentClient.startStream(
                 torrent.url,
                 { quality: quality },
                 (status) => {
-                    // Progress callback - update UI with streaming status
-                    console.log('Stream status update:', status);
-
-                    const statusText = document.getElementById('status-text');
-                    const loadingTitle = document.getElementById('loading-title');
-                    const loadingSubtitle = document.getElementById('loading-subtitle');
-                    const progressRow = document.getElementById('progress-row');
-                    const progressText = document.getElementById('progress-text');
-                    const speedRow = document.getElementById('speed-row');
-                    const speedText = document.getElementById('speed-text');
+                    // Progress callback - update UI with torrent status
+                    console.log('WebTorrent status:', status);
 
                     if (statusText) {
-                        statusText.textContent = status.status || 'Unknown';
-                        statusText.style.color = status.status === 'downloading' ? '#3b82f6' :
-                                                 status.status === 'ready' ? '#10b981' :
-                                                 status.status === 'error' ? '#ef4444' : '#fbbf24';
+                        statusText.textContent = status.status || 'Downloading';
+                        statusText.style.color = status.status === 'complete' ? '#10b981' :
+                                                 status.status === 'downloading' ? '#3b82f6' :
+                                                 status.status === 'warning' ? '#f59e0b' : '#fbbf24';
                     }
 
                     if (loadingTitle && status.status === 'downloading') {
@@ -1279,6 +1287,8 @@ export class MobileUIController {
 
                     if (loadingSubtitle && status.message) {
                         loadingSubtitle.textContent = status.message;
+                    } else if (loadingSubtitle && status.numPeers !== undefined) {
+                        loadingSubtitle.textContent = `Connected to ${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
                     }
 
                     // Show progress if available
@@ -1291,13 +1301,12 @@ export class MobileUIController {
                     if (status.downloadSpeed !== undefined) {
                         if (speedRow) speedRow.style.display = 'block';
                         const speedMB = (status.downloadSpeed / 1024 / 1024).toFixed(2);
-                        if (speedText) speedText.textContent = `${speedMB} MB/s`;
+                        if (speedText) speedText.textContent = `↓ ${speedMB} MB/s`;
                     }
                 }
             );
 
-            console.log('Stream ready!', streamInfo);
-            currentStreamId = streamInfo.streamId;
+            console.log('WebTorrent stream ready!', streamInfo);
 
             // Stream is ready - show video player
             const loadingContent = document.querySelector('.player-content');
@@ -1310,22 +1319,34 @@ export class MobileUIController {
             // Set video source
             if (videoElement && streamInfo.streamUrl) {
                 videoElement.src = streamInfo.streamUrl;
-                console.log('Video source set:', streamInfo.streamUrl);
+                console.log('Video source set (blob URL):', streamInfo.streamUrl.substring(0, 50) + '...');
 
                 // Handle video errors
                 videoElement.addEventListener('error', (e) => {
                     console.error('Video playback error:', e);
-                    alert('Video playback failed. Please try again.');
+                    const errorMsg = videoElement.error ?
+                        `Error ${videoElement.error.code}: ${videoElement.error.message}` :
+                        'Unknown playback error';
+                    alert(`Video playback failed.\n${errorMsg}\n\nTry another quality or check the torrent health.`);
                 });
 
                 // Handle video loaded
                 videoElement.addEventListener('loadeddata', () => {
                     console.log('Video loaded and ready to play');
+                    if (statusText) {
+                        statusText.textContent = 'Playing';
+                        statusText.style.color = '#10b981';
+                    }
+                });
+
+                // Handle video metadata
+                videoElement.addEventListener('loadedmetadata', () => {
+                    console.log('Video metadata loaded - Duration:', videoElement.duration);
                 });
             }
 
         } catch (error) {
-            console.error('Streaming failed:', error);
+            console.error('WebTorrent streaming failed:', error);
 
             // Show error message
             const statusText = document.getElementById('status-text');
@@ -1338,14 +1359,16 @@ export class MobileUIController {
             }
 
             if (loadingTitle) {
-                loadingTitle.textContent = 'Streaming Unavailable';
+                loadingTitle.textContent = 'Streaming Failed';
             }
 
             if (loadingSubtitle) {
                 loadingSubtitle.innerHTML = `
                     <strong>Error:</strong> ${error.message}<br>
                     <span style="font-size: 0.8rem; margin-top: 1rem; display: block;">
-                        The streaming server may not be running. Please check the server configuration in Settings.
+                        • Check torrent health (seeds/peers)<br>
+                        • Try a different quality<br>
+                        • Check your internet connection
                     </span>
                 `;
             }
