@@ -1229,26 +1229,26 @@ export class MobileUIController {
 
         // Back button handler (stops stream on exit)
         document.getElementById('player-back')?.addEventListener('click', async () => {
-            // Stop WebTorrent if active
-            if (window.WebTorrentClient) {
+            // Stop native torrent stream if active
+            if (window.NativeTorrentClient) {
                 try {
-                    await window.WebTorrentClient.stopStream();
-                    console.log('WebTorrent stream stopped on back button');
+                    await window.NativeTorrentClient.stopStream();
+                    console.log('Native torrent stream stopped on back button');
                 } catch (e) {
-                    console.warn('Failed to stop WebTorrent stream:', e);
+                    console.warn('Failed to stop native torrent stream:', e);
                 }
             }
             this.showDetail(movie.imdb_id);
         });
 
-        // Try to start streaming with WebTorrent
+        // Try to start streaming with native torrent client
         try {
-            // Check if WebTorrent is available
-            if (!window.WebTorrentClient) {
-                throw new Error('WebTorrent not available');
+            // Check if native client is available
+            if (!window.NativeTorrentClient) {
+                throw new Error('Native torrent client not available');
             }
 
-            console.log('Starting WebTorrent stream...');
+            console.log('Starting native torrent stream...');
 
             const statusText = document.getElementById('status-text');
             const loadingTitle = document.getElementById('loading-title');
@@ -1266,13 +1266,13 @@ export class MobileUIController {
                 statusText.style.color = '#3b82f6';
             }
 
-            // Start the WebTorrent stream
-            const streamInfo = await window.WebTorrentClient.startStream(
+            // Start the native torrent stream
+            const streamInfo = await window.NativeTorrentClient.startStream(
                 torrent.url,
                 { quality: quality },
                 (status) => {
                     // Progress callback - update UI with torrent status
-                    console.log('WebTorrent status:', status);
+                    console.log('Native torrent status:', status);
 
                     if (statusText) {
                         statusText.textContent = status.status || 'Downloading';
@@ -1306,7 +1306,7 @@ export class MobileUIController {
                 }
             );
 
-            console.log('WebTorrent stream ready!', streamInfo);
+            console.log('Native torrent stream ready!', streamInfo);
 
             // Stream is ready - show video player
             const loadingContent = document.querySelector('.player-content');
@@ -1319,7 +1319,7 @@ export class MobileUIController {
             // Set video source
             if (videoElement && streamInfo.streamUrl) {
                 videoElement.src = streamInfo.streamUrl;
-                console.log('Video source set (blob URL):', streamInfo.streamUrl.substring(0, 50) + '...');
+                console.log('Video source set (HTTP streaming URL):', streamInfo.streamUrl);
 
                 // Handle video errors
                 videoElement.addEventListener('error', (e) => {
@@ -1346,7 +1346,7 @@ export class MobileUIController {
             }
 
         } catch (error) {
-            console.error('WebTorrent streaming failed:', error);
+            console.error('Native torrent streaming failed:', error);
 
             // Show error message
             const statusText = document.getElementById('status-text');

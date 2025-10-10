@@ -15,7 +15,8 @@ import './app/lib/mobile-ui.js';
 import './app/lib/provider-loader.js';
 import './app/lib/streaming-service.js';
 import './app/lib/settings-manager.js';
-import './app/lib/webtorrent-client.js';
+// Import native torrent client (replaces WebTorrent)
+import './app/lib/native-torrent-client.js';
 import './app/lib/providers/public-domain-provider.js';
 import MobileUIController from './app/lib/mobile-ui-views.js';
 
