@@ -2,6 +2,99 @@
 
 ## Latest Session: 2025-10-10 (Continued)
 
+### ✅ Torrent Streaming Pipeline - Verified & Ready for Testing
+
+**Status:** Complete implementation verified - ready for device testing
+
+**Architecture Overview:**
+
+**1. UI Layer** (`src/app/lib/mobile-ui-views.js`):
+- ✅ Play button handler (line 1137)
+- ✅ `playMovie()` - Selects best quality torrent (1080p > 720p > 480p)
+- ✅ `showVideoPlayer()` - Creates video player with progress tracking
+- ✅ Native torrent client integration with full error handling
+- ✅ Real-time progress updates (download speed, peers, progress %)
+
+**2. JavaScript Bridge** (`src/app/lib/native-torrent-client.js`):
+- ✅ Event listeners: metadata, ready, progress, error, stopped
+- ✅ `startStream()` - Returns Promise with stream URL
+- ✅ Progress callbacks with status updates
+- ✅ Error propagation to UI
+
+**3. Native Android Layer** (Kotlin):
+
+**TorrentSession.kt**:
+- ✅ jlibtorrent 2.0.12.5 integration
+- ✅ **CRITICAL FIX**: `settingsPack.listenInterfaces("")` (line 54)
+  - Disables incoming connections to prevent SIGSEGV crash
+  - Android apps cannot bind to listening sockets
+  - Outgoing connections and DHT still work
+- ✅ Mobile-optimized settings (50 connections, 100 KB/s upload limit)
+- ✅ DHT enabled for peer discovery
+- ✅ Sequential download for streaming
+- ✅ File prioritization (Priority.SEVEN for selected video)
+- ✅ Video file detection (12 formats)
+
+**TorrentStreamingService.kt**:
+- ✅ Android Foreground Service for background operation
+- ✅ Persistent notification with progress updates
+- ✅ Metadata timeout: 90 seconds
+- ✅ Peers timeout: 90 seconds
+- ✅ Progress updates every 1 second
+- ✅ Waits for 5 MB or 2% before streaming starts
+- ✅ Event-driven communication with JavaScript
+
+**StreamingServer.kt**:
+- ✅ NanoHTTPD HTTP server on port 8888
+- ✅ HTTP Range request support for video seeking
+- ✅ MIME type detection for 11 video formats
+- ✅ Efficient 8 KB chunk streaming
+- ✅ Full and partial content responses (206)
+
+**TorrentStreamerPlugin.kt**:
+- ✅ Capacitor plugin bridge
+- ✅ Methods: start(), stop(), pause(), resume(), getStatus()
+- ✅ Event notifications to JavaScript
+- ✅ Saved call resolution for async operations
+
+**Build Status:**
+```
+✅ BUILD SUCCESSFUL in 2s
+✅ APK Size: 73 MB
+✅ All 254 tasks completed
+✅ jlibtorrent libraries packaged (all 4 architectures)
+✅ 16KB page size compatible
+✅ Location: android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+**Implementation Flow:**
+1. User clicks Play on movie → `playMovie()` called
+2. Magnet link sent to `NativeTorrentClient.startStream()`
+3. Capacitor plugin starts `TorrentStreamingService`
+4. Service initializes `TorrentSession` with jlibtorrent
+5. Session adds magnet URI, receives metadata
+6. Largest video file selected and prioritized
+7. `StreamingServer` started on localhost:8888
+8. Service waits for 5 MB buffered
+9. "ready" event sent with stream URL: `http://127.0.0.1:8888/video`
+10. UI sets video element source to stream URL
+11. Video plays while torrent downloads
+12. Progress events sent every second to UI
+
+**Key Features:**
+- ✅ Automatic video file detection
+- ✅ Quality selection (1080p/720p/480p)
+- ✅ Torrent health display (seeds/peers)
+- ✅ Real-time download progress
+- ✅ HTTP Range request seeking
+- ✅ Background operation via foreground service
+- ✅ Graceful error handling and timeouts
+- ✅ Clean stream lifecycle management
+
+**Next Step:** Install APK and test with real torrent
+
+## Latest Session: 2025-10-10 (Continued)
+
 ### ✅ 16KB Page Size Implementation
 
 **Issue:** Ensure jlibtorrent native libraries are built with 16KB page size support (required for Google Play as of Nov 2025)
