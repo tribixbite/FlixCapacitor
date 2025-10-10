@@ -37,9 +37,11 @@ console.log('Marionette version:', Marionette.VERSION);
 // Initialize Capacitor plugins
 async function initCapacitorPlugins() {
     try {
-        // Set status bar style
-        if (window.os.platform() === 'ios') {
+        // Set status bar style (try for iOS, ignore errors on Android)
+        try {
             await StatusBar.setStyle({ style: Style.Dark });
+        } catch (e) {
+            console.log('Status bar style not set (may be Android):', e.message);
         }
 
         // Handle app state changes
@@ -324,27 +326,62 @@ function initMarionette() {
 
 // Main initialization
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('=== Popcorn Time Mobile Initializing ===');
     console.log('DOM Content Loaded');
+
+    // Force hide loading screen after 10 seconds as a failsafe
+    setTimeout(() => {
+        const loadingScreen = document.querySelector('.loading-screen');
+        if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+            console.warn('Loading screen still visible after 10s, forcing hide');
+            loadingScreen.classList.add('hidden');
+        }
+    }, 10000);
 
     try {
         // Initialize Capacitor plugins
+        console.log('Step 1: Initializing Capacitor plugins...');
         await initCapacitorPlugins();
+        console.log('✓ Capacitor plugins initialized');
 
         // Initialize Marionette
+        console.log('Step 2: Initializing Marionette...');
         const app = initMarionette();
+        console.log('✓ Marionette initialized');
 
         // Start the application
-        console.log('Starting Marionette application...');
+        console.log('Step 3: Starting Marionette application...');
         app.start();
+        console.log('✓ Application started');
 
-        console.log('Popcorn Time Mobile initialized successfully');
+        console.log('=== Popcorn Time Mobile Ready ===');
     } catch (error) {
-        console.error('Failed to initialize application:', error);
-        document.querySelector('#app').innerHTML = `
-            <div style="padding: 20px; color: #f44336;">
-                <h2>Initialization Error</h2>
-                <pre>${error.message}\n${error.stack}</pre>
-            </div>
-        `;
+        console.error('!!! Failed to initialize application !!!');
+        console.error('Error:', error);
+        console.error('Stack:', error.stack);
+
+        // Hide loading screen and show error
+        const loadingScreen = document.querySelector('.loading-screen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
+
+        const mainRegion = document.querySelector('.main-window-region');
+        if (mainRegion) {
+            mainRegion.innerHTML = `
+                <div style="padding: 20px; color: #f44336; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <h2 style="margin-bottom: 20px;">❌ Initialization Error</h2>
+                    <div style="background: rgba(229, 9, 20, 0.1); padding: 20px; border-radius: 12px; max-width: 500px; overflow-x: auto;">
+                        <p style="margin-bottom: 10px; font-weight: bold;">Error Message:</p>
+                        <pre style="color: #ff6b6b; font-size: 0.9rem; margin-bottom: 20px; white-space: pre-wrap;">${error.message}</pre>
+                        <p style="margin-bottom: 10px; font-weight: bold;">Stack Trace:</p>
+                        <pre style="color: #b3b3b3; font-size: 0.75rem; white-space: pre-wrap;">${error.stack || 'No stack trace available'}</pre>
+                    </div>
+                    <button onclick="location.reload()" style="margin-top: 20px; padding: 12px 24px; background: #e50914; border: none; border-radius: 8px; color: white; font-size: 1rem; cursor: pointer;">
+                        Reload App
+                    </button>
+                </div>
+            `;
+        }
     }
 });
