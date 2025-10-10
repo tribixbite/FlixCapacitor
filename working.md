@@ -2,6 +2,91 @@
 
 ## Latest Session: 2025-10-10 (Continued)
 
+### ✅ Critical Service Startup Fixes (Gemini-Guided)
+
+**Issue:** Torrent service never started when clicking Play - app silently stopped at "Downloading torrent..." message
+
+**Root Cause Analysis (via Gemini):**
+1. **Incorrect service declaration** in plugin AndroidManifest.xml
+2. **Missing notification permission** for Android 13+ (TIRAMISU)
+
+**Fixes Applied:**
+
+**1. Service Manifest Declaration** (capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml):
+```xml
+<!-- BEFORE: Relative path (incorrect) -->
+<service android:name=".TorrentStreamingService" ... />
+
+<!-- AFTER: Fully qualified name (correct) -->
+<service
+    android:name="com.popcorntime.torrent.TorrentStreamingService"
+    android:enabled="true"
+    android:exported="false"
+    android:foregroundServiceType="mediaPlayback" />
+```
+
+**2. Notification Permission Handling** (TorrentStreamerPlugin.kt):
+```kotlin
+@CapacitorPlugin(
+    name = "TorrentStreamer",
+    permissions = [
+        Permission(
+            alias = "notifications",
+            strings = [Manifest.permission.POST_NOTIFICATIONS]
+        )
+    ]
+)
+class TorrentStreamerPlugin : Plugin() {
+
+    @PluginMethod
+    fun start(call: PluginCall) {
+        // Android 13+ requires runtime permission for POST_NOTIFICATIONS
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (getPermissionState("notifications") != PermissionState.GRANTED) {
+                requestPermissionForAlias("notifications", call, "notificationsPermissionCallback")
+                return
+            }
+        }
+        startService(call)
+    }
+
+    @PermissionCallback
+    private fun notificationsPermissionCallback(call: PluginCall) {
+        if (getPermissionState("notifications") == PermissionState.GRANTED) {
+            startService(call)
+        } else {
+            call.reject("Notification permission is required to run the torrent service.")
+        }
+    }
+}
+```
+
+**Build Result:**
+```
+✅ BUILD SUCCESSFUL in 3s
+✅ APK Size: 73 MB
+✅ Location: android/app/build/outputs/apk/debug/app-debug.apk
+✅ Installed via package installer UI
+```
+
+**Expected Behavior:**
+1. User clicks Play on movie
+2. On Android 13+: Notification permission prompt appears
+3. User grants permission
+4. Service starts with onCreate() logs
+5. Torrent session initializes
+6. Video playback begins
+
+**Files Modified:**
+- `capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml` - Fixed service declaration
+- `capacitor-plugin-torrent-streamer/android/src/main/java/com/popcorntime/torrent/TorrentStreamerPlugin.kt` - Added permission flow
+
+**Next Step:** Test APK and verify service starts successfully with detailed logs
+
+---
+
+## Latest Session: 2025-10-10 (Continued)
+
 ### ✅ Torrent Streaming Pipeline - Verified & Ready for Testing
 
 **Status:** Complete implementation verified - ready for device testing
