@@ -196,6 +196,31 @@ Curated fallback movies (used if fetch fails):
 - Server URL configurable via Settings (default: localhost:3001)
 - WebTorrent takes priority by default
 
+### 📋 Feature Status Audit
+
+**Fully Functional:**
+- ✅ Movies - Real data from PublicDomainProvider (curated 8 movies by default)
+- ✅ WebTorrent streaming - Direct in-browser torrenting with CDN-loaded library
+- ✅ Settings - Complete localStorage persistence with real-time application
+- ✅ Torrent health display - Color-coded seeds/peers on all movie cards
+- ✅ Custom API endpoints - Add/remove/toggle multiple sources
+- ✅ Provider selection - Curated vs PublicDomainTorrents toggle
+- ✅ Both magnet links and .torrent files supported
+
+**Mock/Unfinished Features:**
+- ❌ **TV Shows** - Uses `getMockShows()` with 20 placeholder titles
+- ❌ **Anime** - Uses `getMockAnime()` with 20 placeholder entries
+- ❌ **Search** - UI exists (search bar in browser) but no logic implemented
+- ❌ **Subtitles** - Settings exist but not integrated with video player
+- ❌ **Watchlist** - Only shows empty state, no add/remove functionality
+- ⚠️ **Deep Links** - Code exists in main.js (magnet://, .torrent, video files) but untested
+
+**Technical Notes:**
+- TV Shows mock: `src/app/lib/mobile-ui-views.js:895` - `renderMockShows()`
+- Anime mock: `src/app/lib/mobile-ui-views.js:904` - `renderMockAnime()`
+- Search UI: `src/app/lib/mobile-ui-views.js:554-555` - No event handlers
+- Deep links: `src/main.js:86-121` - `appUrlOpen` listener
+
 ### 🚀 Next Steps
 
 1. ✅ ~~Test UI interactions on device (navigation, search, content cards)~~
