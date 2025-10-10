@@ -1308,12 +1308,20 @@ export class MobileUIController {
 
             console.log('Native torrent stream ready!', streamInfo);
 
-            // Stream is ready - show video player
+            // Stream is ready - update loading UI to show video is loading
             const loadingContent = document.querySelector('.player-content');
             const videoContainer = document.getElementById('video-container');
             const videoElement = document.getElementById('torrent-video');
 
-            if (loadingContent) loadingContent.style.display = 'none';
+            // Update status to show stream is ready, video is loading
+            if (loadingTitle) loadingTitle.textContent = 'Loading Video...';
+            if (loadingSubtitle) loadingSubtitle.textContent = 'Preparing playback from stream...';
+            if (statusText) {
+                statusText.textContent = 'Buffered';
+                statusText.style.color = '#10b981';
+            }
+
+            // Show video container (but keep loading UI visible until video loads)
             if (videoContainer) videoContainer.style.display = 'block';
 
             // Set video source
@@ -1327,22 +1335,55 @@ export class MobileUIController {
                     const errorMsg = videoElement.error ?
                         `Error ${videoElement.error.code}: ${videoElement.error.message}` :
                         'Unknown playback error';
-                    alert(`Video playback failed.\n${errorMsg}\n\nTry another quality or check the torrent health.`);
+
+                    // Show error in loading UI
+                    if (loadingTitle) loadingTitle.textContent = 'Playback Failed';
+                    if (loadingSubtitle) {
+                        loadingSubtitle.innerHTML = `
+                            <strong style="color: #ef4444;">${errorMsg}</strong><br>
+                            <span style="font-size: 0.8rem; margin-top: 1rem; display: block;">
+                                • Try another quality<br>
+                                • Check torrent health<br>
+                                • Check internet connection
+                            </span>
+                        `;
+                    }
+                    if (statusText) {
+                        statusText.textContent = 'Error';
+                        statusText.style.color = '#ef4444';
+                    }
+
+                    // Hide spinner
+                    const spinner = document.querySelector('.loading-spinner-large');
+                    if (spinner) spinner.style.display = 'none';
                 });
 
-                // Handle video loaded
+                // Handle video loaded - ONLY NOW hide loading UI
                 videoElement.addEventListener('loadeddata', () => {
                     console.log('Video loaded and ready to play');
+
+                    // Fade out loading UI
+                    if (loadingContent) {
+                        loadingContent.style.transition = 'opacity 0.3s ease';
+                        loadingContent.style.opacity = '0';
+                        setTimeout(() => {
+                            loadingContent.style.display = 'none';
+                        }, 300);
+                    }
+
                     if (statusText) {
                         statusText.textContent = 'Playing';
                         statusText.style.color = '#10b981';
                     }
-                });
+                }, { once: true });
 
                 // Handle video metadata
                 videoElement.addEventListener('loadedmetadata', () => {
                     console.log('Video metadata loaded - Duration:', videoElement.duration);
-                });
+                    if (loadingSubtitle) {
+                        loadingSubtitle.textContent = `Duration: ${Math.floor(videoElement.duration / 60)}:${String(Math.floor(videoElement.duration % 60)).padStart(2, '0')}`;
+                    }
+                }, { once: true });
             }
 
         } catch (error) {
