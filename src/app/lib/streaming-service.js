@@ -295,7 +295,11 @@ if (typeof window !== 'undefined' && window.Settings && window.Settings.streamin
 // Make available globally
 if (typeof window !== 'undefined') {
     window.StreamingService = streamingService;
-    window.App.StreamingService = streamingService;
+
+    // Attach to App if it exists (will be created in main.js)
+    if (window.App) {
+        window.App.StreamingService = streamingService;
+    }
 }
 
 export { streamingService, StreamingService };
