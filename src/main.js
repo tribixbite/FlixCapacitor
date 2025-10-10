@@ -291,33 +291,66 @@ function initMarionette() {
 
     // Basic startup handler
     AppInstance.onStart = function () {
-        console.log('App.onStart called');
+        console.log('App.onStart called - starting UI initialization');
 
-        // Initialize the beautiful mobile UI
-        const uiController = new MobileUIController(AppInstance);
-        AppInstance.UI = uiController;
-
-        // Show the Movies view by default
+        // ALWAYS hide loading screen after brief delay
         setTimeout(() => {
-            uiController.navigateTo('movies');
+            console.log('Hiding loading screen...');
+            const loadingScreen = document.querySelector('.loading-screen');
+            if (loadingScreen) {
+                loadingScreen.classList.add('hidden');
+                console.log('Loading screen hidden');
+            } else {
+                console.error('Loading screen element not found!');
+            }
         }, 500);
 
-        // Trigger app started event
-        AppInstance.vent.trigger('app:started');
+        try {
+            // Initialize the beautiful mobile UI
+            console.log('Creating MobileUIController...');
+            const uiController = new MobileUIController(AppInstance);
+            AppInstance.UI = uiController;
+            console.log('MobileUIController created successfully');
 
-        // Process any pending deep links
-        if (window._pendingDeepLink) {
-            const url = window._pendingDeepLink;
-            delete window._pendingDeepLink;
-
+            // Show the Movies view by default
             setTimeout(() => {
-                if (url.startsWith('magnet:') || url.endsWith('.torrent')) {
-                    handleTorrent(url);
-                } else if (isVideoFile(url)) {
-                    const fileName = url.split('/').pop();
-                    handleVideoFile({ path: url, name: fileName });
-                }
-            }, 500);
+                console.log('Navigating to movies...');
+                uiController.navigateTo('movies');
+                console.log('Navigation complete');
+            }, 700);
+
+            // Trigger app started event
+            AppInstance.vent.trigger('app:started');
+
+            // Process any pending deep links
+            if (window._pendingDeepLink) {
+                const url = window._pendingDeepLink;
+                delete window._pendingDeepLink;
+
+                setTimeout(() => {
+                    if (url.startsWith('magnet:') || url.endsWith('.torrent')) {
+                        handleTorrent(url);
+                    } else if (isVideoFile(url)) {
+                        const fileName = url.split('/').pop();
+                        handleVideoFile({ path: url, name: fileName });
+                    }
+                }, 1000);
+            }
+        } catch (error) {
+            console.error('!!! Error in App.onStart !!!');
+            console.error('Error:', error);
+            console.error('Stack:', error.stack);
+
+            // Show error in UI
+            const mainRegion = document.querySelector('.main-window-region');
+            if (mainRegion) {
+                mainRegion.innerHTML = `
+                    <div style="padding: 20px; color: #f44336; text-align: center;">
+                        <h2>UI Initialization Error</h2>
+                        <pre style="text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; overflow-x: auto;">${error.message}\n\n${error.stack}</pre>
+                    </div>
+                `;
+            }
         }
     };
 
