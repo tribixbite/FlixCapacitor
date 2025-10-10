@@ -14,6 +14,7 @@ import './app/lib/touch-gestures.js';
 import './app/lib/mobile-ui.js';
 import './app/lib/provider-loader.js';
 import './app/lib/streaming-service.js';
+import MobileUIController from './app/lib/mobile-ui-views.js';
 
 // Import core libraries
 import $ from 'jquery';
@@ -290,23 +291,14 @@ function initMarionette() {
     AppInstance.onStart = function () {
         console.log('App.onStart called');
 
-        // Show initial UI
-        const mainRegion = document.querySelector('.main-window-region');
-        if (mainRegion) {
-            mainRegion.innerHTML = `
-                <div style="padding: 20px; text-align: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                    <h1 style="font-size: 3rem; margin-bottom: 20px;">🍿</h1>
-                    <h2 style="margin-bottom: 10px;">Popcorn Time</h2>
-                    <p style="color: #888; margin-bottom: 20px;">Mobile Edition</p>
-                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; max-width: 300px;">
-                        <p style="font-size: 0.9rem; margin-bottom: 10px;">✅ Capacitor initialized</p>
-                        <p style="font-size: 0.9rem; margin-bottom: 10px;">✅ Marionette ready</p>
-                        <p style="font-size: 0.9rem; margin-bottom: 10px;">✅ Compatibility layer active</p>
-                        <p style="font-size: 0.9rem; color: #4CAF50;">Ready for Phase 2 migration</p>
-                    </div>
-                </div>
-            `;
-        }
+        // Initialize the beautiful mobile UI
+        const uiController = new MobileUIController(AppInstance);
+        AppInstance.UI = uiController;
+
+        // Show the Movies view by default
+        setTimeout(() => {
+            uiController.navigateTo('movies');
+        }, 500);
 
         // Trigger app started event
         AppInstance.vent.trigger('app:started');
