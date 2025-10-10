@@ -82,13 +82,37 @@
 
 **Commit:** `bd4735c`
 
+6. **Phase 6 - Mobile UI Integration** ✅
+   - `NativeTorrentClient.js` - WebTorrent-compatible wrapper (366 lines)
+   - Event listeners: metadata, ready, progress, error, stopped
+   - Methods: startStream(), stopStream(), pauseStream(), resumeStream()
+   - Progress callbacks with download/upload speed, peers, progress
+   - Time remaining estimation
+   - Helper methods: formatBytes(), formatSpeed()
+   - Singleton pattern with global window export
+
+**Integration Changes:**
+- Added `capacitor-plugin-torrent-streamer` as local dependency in package.json
+- Replaced `webtorrent-client.js` with `native-torrent-client.js` in main.js
+- Updated mobile-ui-views.js playback logic:
+  - `window.WebTorrentClient` → `window.NativeTorrentClient`
+  - Blob URL → HTTP streaming URL (http://127.0.0.1:8888/video)
+  - Updated console logs and error messages
+
+**Build Results:**
+- Vite build successful: 310 KB main bundle (gzip: 92.36 KB)
+- Capacitor sync successful
+- Plugin detected: capacitor-plugin-torrent-streamer@1.0.0
+
+**Commits:**
+- `bd4735c` - Phase 2-5 native implementation
+- `b4f65c9` - Phase 6 mobile UI integration
+
 **Remaining Work:**
-- ⏳ Integration testing (Phase 6)
-- ⏳ Replace WebTorrentClient with TorrentStreamer in mobile UI
 - ⏳ Manual testing on physical device with real torrents
 - ⏳ Network monitoring enhancements (optional)
 
-**Next Step:** Integrate plugin into popcorn-mobile app and test
+**Next Step:** Build Android APK and test on physical device
 
 ---
 
