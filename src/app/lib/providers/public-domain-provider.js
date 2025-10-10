@@ -11,6 +11,7 @@ class PublicDomainProvider {
         this.cache = null;
         this.cacheTime = null;
         this.cacheDuration = 1000 * 60 * 30; // 30 minutes
+        this.corsProxy = 'https://corsproxy.io/?'; // CORS proxy for fetching
     }
 
     /**
@@ -24,22 +25,154 @@ class PublicDomainProvider {
             return this.cache;
         }
 
-        console.log('Fetching public domain movies...');
+        console.log('Fetching public domain movies from website...');
 
         try {
-            // For now, return a curated list of popular public domain sci-fi films
-            // In production, this would scrape the actual site or use an API
-            const movies = this.getDefaultMovies();
+            // Fetch the actual page
+            const url = `${this.baseUrl}/nshowcat.html?category=${this.category}`;
+            const response = await fetch(this.corsProxy + encodeURIComponent(url));
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const html = await response.text();
+            const movies = this.parseMoviesFromHTML(html);
+
+            if (movies.length === 0) {
+                console.warn('No movies parsed from HTML, using defaults');
+                return this.getDefaultMovies();
+            }
 
             this.cache = movies;
             this.cacheTime = Date.now();
 
-            console.log(`Loaded ${movies.length} public domain movies`);
+            console.log(`Loaded ${movies.length} public domain movies from website`);
             return movies;
         } catch (error) {
             console.error('Failed to fetch public domain movies:', error);
+            console.log('Falling back to default movie list');
             return this.getDefaultMovies(); // Fallback to defaults
         }
+    }
+
+    /**
+     * Parse movies from the HTML page
+     * @param {string} html - HTML content
+     * @returns {Array} Parsed movie objects
+     */
+    parseMoviesFromHTML(html) {
+        const movies = [];
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // Find all movie links
+        const movieLinks = doc.querySelectorAll('a[href*="nshowmovie.html"]');
+
+        console.log(`Found ${movieLinks.length} movie links in HTML`);
+
+        movieLinks.forEach((link, index) => {
+            try {
+                const href = link.getAttribute('href');
+
+                // Try different parameter names
+                const movieId = href.match(/movieid=([^&]+)/)?.[1] || href.match(/movie=([^&]+)/)?.[1];
+
+                if (!movieId) {
+                    console.log('No movieId found in href:', href);
+                    return;
+                }
+
+                // Get movie title from link text or nearby text
+                let title = link.textContent.trim();
+
+                if (!title || title.length === 0) {
+                    console.log('No title found for movie:', movieId);
+                    return;
+                }
+
+                // Try to find image
+                const img = link.querySelector('img') || link.parentElement.querySelector('img');
+                const posterUrl = img ? img.getAttribute('src') : null;
+
+                // Extract year from title if present
+                const yearMatch = title.match(/\((\d{4})\)/);
+                const year = yearMatch ? parseInt(yearMatch[1]) : null;
+                if (yearMatch) {
+                    title = title.replace(yearMatch[0], '').trim();
+                }
+
+                // Find torrent link - look in parent and siblings
+                let torrentLink = link.parentElement.querySelector('a[href*=".torrent"]');
+                if (!torrentLink) {
+                    // Try looking in next sibling elements
+                    let sibling = link.nextElementSibling;
+                    while (sibling && !torrentLink) {
+                        if (sibling.tagName === 'A' && sibling.getAttribute('href')?.includes('.torrent')) {
+                            torrentLink = sibling;
+                            break;
+                        }
+                        sibling = sibling.nextElementSibling;
+                    }
+                }
+                const torrentUrl = torrentLink ? torrentLink.getAttribute('href') : null;
+
+                const movie = {
+                    imdb_id: `pd_${movieId}`,
+                    title: title || `Movie ${index + 1}`,
+                    year: year || 1960,
+                    rating: {
+                        percentage: 70 + (index % 30),
+                        votes: 1000 + (index * 500)
+                    },
+                    runtime: 90,
+                    synopsis: `A classic public domain film from ${year || 'the golden age of cinema'}.`,
+                    genres: ['Sci-Fi'],
+                    images: {
+                        poster: posterUrl ? (posterUrl.startsWith('http') ? posterUrl : `${this.baseUrl}/${posterUrl}`) : this.getFallbackPoster(index),
+                        fanart: posterUrl ? (posterUrl.startsWith('http') ? posterUrl : `${this.baseUrl}/${posterUrl}`) : this.getFallbackPoster(index)
+                    },
+                    torrents: {}
+                };
+
+                // Add torrent if found
+                if (torrentUrl) {
+                    const fullTorrentUrl = torrentUrl.startsWith('http') ? torrentUrl : `${this.baseUrl}/${torrentUrl}`;
+                    movie.torrents['720p'] = {
+                        url: `magnet:?xt=urn:btih:${movieId}&dn=${encodeURIComponent(title)}&tr=udp://tracker.opentrackr.org:1337/announce&tr=udp://tracker.openbittorrent.com:6969/announce`,
+                        torrentUrl: fullTorrentUrl,
+                        size: '800 MB',
+                        seed: 10 + (index % 50),
+                        peer: 1 + (index % 10)
+                    };
+                }
+
+                movies.push(movie);
+            } catch (error) {
+                console.warn('Failed to parse movie:', error);
+            }
+        });
+
+        return movies.slice(0, 50); // Limit to first 50 movies
+    }
+
+    /**
+     * Get fallback poster image
+     * @param {number} index - Movie index for variety
+     * @returns {string} Fallback image URL
+     */
+    getFallbackPoster(index) {
+        // Use a variety of gradient backgrounds
+        const colors = [
+            '1f1f1f/e50914', // Red
+            '1f1f1f/3b82f6', // Blue
+            '1f1f1f/10b981', // Green
+            '1f1f1f/f59e0b', // Yellow
+            '1f1f1f/8b5cf6', // Purple
+            '1f1f1f/ec4899'  // Pink
+        ];
+        const color = colors[index % colors.length];
+        return `https://placehold.co/300x450/${color}/white?text=🎬`;
     }
 
     /**
@@ -57,8 +190,8 @@ class PublicDomainProvider {
                 synopsis: 'A group of people hide from bloodthirsty zombies in a farmhouse in this genre-defining horror classic.',
                 genres: ['Horror', 'Sci-Fi'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BYjJlZjlkZTctMzFjOS00YzE0LTgwODItNWEzZTJkOGEzMDQxXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BYjJlZjlkZTctMzFjOS00YzE0LTgwODItNWEzZTJkOGEzMDQxXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg'
+                    poster: this.getFallbackPoster(0),
+                    fanart: this.getFallbackPoster(0)
                 },
                 torrents: {
                     '720p': {
@@ -78,8 +211,8 @@ class PublicDomainProvider {
                 synopsis: 'The first film adaptation of Sir Arthur Conan Doyle\'s classic novel about a land where prehistoric creatures still roam.',
                 genres: ['Adventure', 'Sci-Fi'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BNjI5NjYxMjk3Nl5BMl5BanBnXkFtZTgwMjk5NjMyMjE@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BNjI5NjYxMjk3Nl5BMl5BanBnXkFtZTgwMjk5NjMyMjE@._V1_.jpg'
+                    poster: this.getFallbackPoster(1),
+                    fanart: this.getFallbackPoster(1)
                 },
                 torrents: {
                     '480p': {
@@ -99,8 +232,8 @@ class PublicDomainProvider {
                 synopsis: 'In a futuristic city sharply divided between the working class and the city planners, the son of the city\'s mastermind falls in love with a working-class prophet.',
                 genres: ['Drama', 'Sci-Fi'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BMTg5YWIyMWUtZDY5My00Zjc1LTljOTctYTUyOWRkOGEzYjEzXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BMTg5YWIyMWUtZDY5My00Zjc1LTljOTctYTUyOWRkOGEzYjEzXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg'
+                    poster: this.getFallbackPoster(2),
+                    fanart: this.getFallbackPoster(2)
                 },
                 torrents: {
                     '720p': {
@@ -120,8 +253,8 @@ class PublicDomainProvider {
                 synopsis: 'A global war that lasts decades brings civilization to the brink of collapse. Out of the ashes, a new society rebuilds.',
                 genres: ['Drama', 'Sci-Fi', 'War'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BMjE5MzgwMjI3M15BMl5BanBnXkFtZTgwNzI5NzMyMjE@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BMjE5MzgwMjI3M15BMl5BanBnXkFtZTgwNzI5NzMyMjE@._V1_.jpg'
+                    poster: this.getFallbackPoster(3),
+                    fanart: this.getFallbackPoster(3)
                 },
                 torrents: {
                     '720p': {
@@ -141,8 +274,8 @@ class PublicDomainProvider {
                 synopsis: 'A military officer fights a mad scientist who has invented a death ray and an army of killer robots.',
                 genres: ['Action', 'Sci-Fi'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BNTI0NjAxMzY3NF5BMl5BanBnXkFtZTgwNjI0NzMyMjE@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BNTI0NjAxMzY3NF5BMl5BanBnXkFtZTgwNjI0NzMyMjE@._V1_.jpg'
+                    poster: this.getFallbackPoster(4),
+                    fanart: this.getFallbackPoster(4)
                 },
                 torrents: {
                     '480p': {
@@ -162,8 +295,8 @@ class PublicDomainProvider {
                 synopsis: 'A mad scientist develops a revolutionary heart device, but his experiments lead to murder charges and a quest for revenge.',
                 genres: ['Horror', 'Sci-Fi'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BZjM1YjVkYzktOWRjZC00NTcxLWE2YWMtYjQ0YzQ0YzQ0YzQ0XkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BZjM1YjVkYzktOWRjZC00NTcxLWE2YWMtYjQ0YzQ0YzQ0YzQ0XkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_.jpg'
+                    poster: this.getFallbackPoster(5),
+                    fanart: this.getFallbackPoster(5)
                 },
                 torrents: {
                     '480p': {
@@ -183,8 +316,8 @@ class PublicDomainProvider {
                 synopsis: 'Evil aliens attack Earth and plan to resurrect the dead. Often called "the worst movie ever made," it\'s a cult classic.',
                 genres: ['Horror', 'Sci-Fi'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BYjQ0ZGJkZjktOWYwNS00YzViLTk5YjctNzViOWNjMzI0MDJlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BYjQ0ZGJkZjktOWYwNS00YzViLTk5YjctNzViOWNjMzI0MDJlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg'
+                    poster: this.getFallbackPoster(0),
+                    fanart: this.getFallbackPoster(0)
                 },
                 torrents: {
                     '480p': {
@@ -204,8 +337,8 @@ class PublicDomainProvider {
                 synopsis: 'A clumsy young man working at a flower shop discovers a plant that feeds on human blood.',
                 genres: ['Comedy', 'Horror', 'Sci-Fi'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BOGZhM2FhNTAtOTQxYS00NjkxLWI2NzUtNmE4NzU0NzQxNzE1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BOGZhM2FhNTAtOTQxYS00NjkxLWI2NzUtNmE4NzU0NzQxNzE1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg'
+                    poster: this.getFallbackPoster(1),
+                    fanart: this.getFallbackPoster(1)
                 },
                 torrents: {
                     '480p': {
