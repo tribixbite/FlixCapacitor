@@ -51,15 +51,37 @@ Navigation complete
 - **Screen**: 412 x 892
 - **Technologies**: Capacitor + Backbone/Marionette + Vite
 
+### ✅ Public Domain Movie Provider
+
+**Implemented:** Real movie data with torrent playback UI
+
+Features:
+- 8 curated public domain sci-fi movies loaded by default
+- Real IMDB data, posters, ratings, and descriptions
+- Magnet link support for each movie
+- Beautiful detail view with movie information
+- Playback UI showing torrent status and information
+
+Movies included:
+1. **Night of the Living Dead** (1968) - 96% rating
+2. **The Lost World** (1925) - Silent film classic
+3. **Metropolis** (1927) - German expressionist masterpiece
+4. **Things to Come** (1936) - H.G. Wells adaptation
+5. **The Phantom Creeps** (1939) - Classic sci-fi serial
+6. **The Man They Could Not Hang** (1939) - Boris Karloff horror
+7. **Plan 9 from Outer Space** (1959) - Cult classic
+8. **The Little Shop of Horrors** (1960) - Roger Corman comedy
+
 ### 🚀 Next Steps
 
-1. Test UI interactions on device (navigation, search, content cards)
-2. Implement real content provider integration
-3. Test video playback
+1. ✅ ~~Test UI interactions on device (navigation, search, content cards)~~
+2. ✅ ~~Implement real content provider integration~~
+3. Integrate WebTorrent or streaming server for actual playback
 4. Add subtitle support
 5. Implement settings persistence
-6. Add streaming service connection
+6. Add search functionality
 7. Test torrent handling via deep links
+8. Add more public domain movies (157 total available on publicdomaintorrents.info)
 
 ### 🐛 Debugging Notes
 
