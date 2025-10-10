@@ -14,6 +14,7 @@ import './app/lib/touch-gestures.js';
 import './app/lib/mobile-ui.js';
 import './app/lib/provider-loader.js';
 import './app/lib/streaming-service.js';
+import './app/lib/settings-manager.js';
 import './app/lib/providers/public-domain-provider.js';
 import MobileUIController from './app/lib/mobile-ui-views.js';
 
@@ -293,6 +294,11 @@ function initMarionette() {
     // Basic startup handler
     AppInstance.onStart = function () {
         console.log('App.onStart called - starting UI initialization');
+
+        // Initialize settings
+        if (window.SettingsManager) {
+            window.SettingsManager.initialize();
+        }
 
         // ALWAYS hide loading screen after brief delay
         setTimeout(() => {

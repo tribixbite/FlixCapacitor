@@ -12,6 +12,16 @@ class PublicDomainProvider {
         this.cacheTime = null;
         this.cacheDuration = 1000 * 60 * 30; // 30 minutes
         this.corsProxy = 'https://corsproxy.io/?'; // CORS proxy for fetching
+        this.useWebFetch = false; // Default to curated list, not web scraping
+    }
+
+    /**
+     * Enable or disable web fetching
+     * @param {boolean} enabled - Whether to fetch from web
+     */
+    setWebFetch(enabled) {
+        this.useWebFetch = enabled;
+        console.log('PublicDomainProvider web fetch:', enabled ? 'enabled' : 'disabled');
     }
 
     /**
@@ -23,6 +33,15 @@ class PublicDomainProvider {
         if (this.cache && this.cacheTime && Date.now() - this.cacheTime < this.cacheDuration) {
             console.log('Returning cached public domain movies');
             return this.cache;
+        }
+
+        // If web fetch is disabled, return curated list
+        if (!this.useWebFetch) {
+            console.log('Using curated public domain movie list');
+            const movies = this.getDefaultMovies();
+            this.cache = movies;
+            this.cacheTime = Date.now();
+            return movies;
         }
 
         console.log('Fetching public domain movies from website...');
@@ -190,12 +209,13 @@ class PublicDomainProvider {
                 synopsis: 'A group of people hide from bloodthirsty zombies in a farmhouse in this genre-defining horror classic.',
                 genres: ['Horror', 'Sci-Fi'],
                 images: {
-                    poster: this.getFallbackPoster(0),
-                    fanart: this.getFallbackPoster(0)
+                    poster: 'https://m.media-amazon.com/images/M/MV5BYmJkMGVjNzMtNTMzMy00ZTJhLWJlNjYtZTEzMDJmZDNmOWQ2XkEyXkFqcGc@._V1_SX300.jpg',
+                    fanart: 'https://m.media-amazon.com/images/M/MV5BYmJkMGVjNzMtNTMzMy00ZTJhLWJlNjYtZTEzMDJmZDNmOWQ2XkEyXkFqcGc@._V1_SX300.jpg'
                 },
                 torrents: {
                     '720p': {
                         url: 'magnet:?xt=urn:btih:1d8e3fcb9fb7e7c8b12c9f7d12c0c25e4c25a25e&dn=Night+of+the+Living+Dead+1968+720p&tr=udp://tracker.opentrackr.org:1337/announce',
+                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=51',
                         size: '1.2 GB',
                         seed: 150,
                         peer: 12
@@ -217,6 +237,7 @@ class PublicDomainProvider {
                 torrents: {
                     '480p': {
                         url: 'magnet:?xt=urn:btih:2e9f4edc0ec8f8d9c23d0f8e23d1d36f5d36b36f&dn=The+Lost+World+1925&tr=udp://tracker.opentrackr.org:1337/announce',
+                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=101',
                         size: '800 MB',
                         seed: 45,
                         peer: 5
@@ -232,12 +253,13 @@ class PublicDomainProvider {
                 synopsis: 'In a futuristic city sharply divided between the working class and the city planners, the son of the city\'s mastermind falls in love with a working-class prophet.',
                 genres: ['Drama', 'Sci-Fi'],
                 images: {
-                    poster: this.getFallbackPoster(2),
-                    fanart: this.getFallbackPoster(2)
+                    poster: 'https://m.media-amazon.com/images/M/MV5BYzRjNjFmZjUtNTMyZi00MzczLWIyZjctMjk4NTdkOGQ5NTIyXkEyXkFqcGc@._V1_SX300.jpg',
+                    fanart: 'https://m.media-amazon.com/images/M/MV5BYzRjNjFmZjUtNTMyZi00MzczLWIyZjctMjk4NTdkOGQ5NTIyXkEyXkFqcGc@._V1_SX300.jpg'
                 },
                 torrents: {
                     '720p': {
                         url: 'magnet:?xt=urn:btih:3f0g5fed1fd9g9e0d34e1g9f34e2e47g6e47c47g&dn=Metropolis+1927+Restored+720p&tr=udp://tracker.opentrackr.org:1337/announce',
+                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=83',
                         size: '1.8 GB',
                         seed: 89,
                         peer: 8
@@ -259,6 +281,7 @@ class PublicDomainProvider {
                 torrents: {
                     '720p': {
                         url: 'magnet:?xt=urn:btih:4g1h6gfe2ge0h0f1e45f2h0g45f3f58h7f58d58h&dn=Things+to+Come+1936+720p&tr=udp://tracker.opentrackr.org:1337/announce',
+                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=194',
                         size: '1.4 GB',
                         seed: 32,
                         peer: 4
@@ -280,6 +303,7 @@ class PublicDomainProvider {
                 torrents: {
                     '480p': {
                         url: 'magnet:?xt=urn:btih:5h2i7hgf3hf1i1g2f56g3i1h56g4g69i8g69e69i&dn=The+Phantom+Creeps+1939&tr=udp://tracker.opentrackr.org:1337/announce',
+                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=120',
                         size: '950 MB',
                         seed: 18,
                         peer: 2
@@ -301,6 +325,7 @@ class PublicDomainProvider {
                 torrents: {
                     '480p': {
                         url: 'magnet:?xt=urn:btih:6i3j8ihg4ig2j2h3g67h4j2i67h5h70j9h70f70j&dn=The+Man+They+Could+Not+Hang+1939&tr=udp://tracker.opentrackr.org:1337/announce',
+                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=139',
                         size: '600 MB',
                         seed: 25,
                         peer: 3
@@ -316,12 +341,13 @@ class PublicDomainProvider {
                 synopsis: 'Evil aliens attack Earth and plan to resurrect the dead. Often called "the worst movie ever made," it\'s a cult classic.',
                 genres: ['Horror', 'Sci-Fi'],
                 images: {
-                    poster: this.getFallbackPoster(0),
-                    fanart: this.getFallbackPoster(0)
+                    poster: 'https://m.media-amazon.com/images/M/MV5BYjQ0ZjAzYzUtMjJjZC00OWMzLTk4NTYtNGU0NzNhMzMyM2Q3XkEyXkFqcGc@._V1_SX300.jpg',
+                    fanart: 'https://m.media-amazon.com/images/M/MV5BYjQ0ZjAzYzUtMjJjZC00OWMzLTk4NTYtNGU0NzNhMzMyM2Q3XkEyXkFqcGc@._V1_SX300.jpg'
                 },
                 torrents: {
                     '480p': {
                         url: 'magnet:?xt=urn:btih:7j4k9jig5jh3k3i4h78i5k3j78i6i81k0i81g81k&dn=Plan+9+from+Outer+Space+1959&tr=udp://tracker.opentrackr.org:1337/announce',
+                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=156',
                         size: '700 MB',
                         seed: 156,
                         peer: 15
@@ -343,6 +369,7 @@ class PublicDomainProvider {
                 torrents: {
                     '480p': {
                         url: 'magnet:?xt=urn:btih:8k5l0kjh6ki4l4j5i89j6l4k89j7j92l1j92h92l&dn=The+Little+Shop+of+Horrors+1960&tr=udp://tracker.opentrackr.org:1337/announce',
+                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=112',
                         size: '650 MB',
                         seed: 78,
                         peer: 7

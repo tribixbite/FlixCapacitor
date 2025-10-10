@@ -570,27 +570,60 @@ export const UITemplates = {
     `,
 
     // Content Card
-    contentCard: (item) => `
-        <div class="content-card" data-id="${item.imdb_id || item.tvdb_id}">
-            <img class="content-card-poster"
-                 src="${item.images?.poster || item.poster || 'https://via.placeholder.com/300x450/1f1f1f/808080?text=No+Poster'}"
-                 alt="${item.title}"
-                 loading="lazy">
-            ${item.quality ? `<div class="content-card-badge hd">${item.quality}</div>` : ''}
-            <div class="content-card-overlay">
-                <div class="content-card-title">${item.title}</div>
-                <div class="content-card-meta">
-                    ${item.rating?.percentage ? `
-                        <div class="content-card-rating">
-                            <span>⭐</span>
-                            <span>${(item.rating.percentage / 10).toFixed(1)}</span>
-                        </div>
-                    ` : ''}
-                    <span>${item.year || item.first_aired?.split('-')[0] || ''}</span>
+    contentCard: (item) => {
+        // Get torrent health from best available quality
+        const torrents = item.torrents || {};
+        const qualities = ['1080p', '720p', '480p'];
+        let torrentHealth = null;
+
+        for (const quality of qualities) {
+            if (torrents[quality]) {
+                torrentHealth = {
+                    seeds: torrents[quality].seed || 0,
+                    peers: torrents[quality].peer || 0
+                };
+                break;
+            }
+        }
+
+        // Determine health indicator color
+        let healthColor = '#6b7280'; // gray (no data)
+        if (torrentHealth) {
+            if (torrentHealth.seeds >= 50) healthColor = '#10b981'; // green (healthy)
+            else if (torrentHealth.seeds >= 10) healthColor = '#fbbf24'; // yellow (ok)
+            else if (torrentHealth.seeds > 0) healthColor = '#f59e0b'; // orange (poor)
+            else healthColor = '#ef4444'; // red (no seeds)
+        }
+
+        return `
+            <div class="content-card" data-id="${item.imdb_id || item.tvdb_id}">
+                <img class="content-card-poster"
+                     src="${item.images?.poster || item.poster || 'https://via.placeholder.com/300x450/1f1f1f/808080?text=No+Poster'}"
+                     alt="${item.title}"
+                     loading="lazy">
+                ${item.quality ? `<div class="content-card-badge hd">${item.quality}</div>` : ''}
+                ${torrentHealth ? `
+                    <div class="content-card-health" style="position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; display: flex; align-items: center; gap: 6px; z-index: 2;">
+                        <span style="color: ${healthColor};">●</span>
+                        <span style="color: #10b981;">↑${torrentHealth.seeds}</span>
+                        <span style="color: #6b7280;">↓${torrentHealth.peers}</span>
+                    </div>
+                ` : ''}
+                <div class="content-card-overlay">
+                    <div class="content-card-title">${item.title}</div>
+                    <div class="content-card-meta">
+                        ${item.rating?.percentage ? `
+                            <div class="content-card-rating">
+                                <span>⭐</span>
+                                <span>${(item.rating.percentage / 10).toFixed(1)}</span>
+                            </div>
+                        ` : ''}
+                        <span>${item.year || item.first_aired?.split('-')[0] || ''}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    `,
+        `;
+    },
 
     // Grid of Content
     contentGrid: (items) => `
@@ -689,92 +722,108 @@ export const UITemplates = {
     `,
 
     // Settings View
-    settingsView: () => `
-        ${componentStyles}
-        <div class="settings-view">
-            <div class="settings-header">
-                <h1 class="settings-title">Settings</h1>
+    settingsView: () => {
+        const settings = window.SettingsManager || { get: () => null };
+        const serverUrl = settings.get('streamingServerUrl') || 'http://localhost:3001/api';
+        const provider = settings.get('movieProvider') || 'curated';
+        const quality = settings.get('quality') || '720p';
+        const autoplay = settings.get('autoplayNext') !== false;
+        const customEndpoints = settings.get('customApiEndpoints') || [];
+
+        return `
+            ${componentStyles}
+            <div class="settings-view">
+                <div class="settings-header">
+                    <h1 class="settings-title">Settings</h1>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-section">
+                        <div class="settings-section-title">Streaming</div>
+                        <div class="settings-item" id="setting-server-url">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Streaming Server URL</div>
+                                <div class="settings-item-description">Backend torrent streaming API</div>
+                            </div>
+                            <input type="text"
+                                   class="settings-input"
+                                   value="${serverUrl}"
+                                   placeholder="http://localhost:3001/api"
+                                   style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; width: 100%; max-width: 300px; font-size: 0.9rem;">
+                        </div>
+                        <div class="settings-item" id="setting-provider">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Movie Provider</div>
+                                <div class="settings-item-description">Choose content source</div>
+                            </div>
+                            <select class="settings-select"
+                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; font-size: 0.9rem;">
+                                <option value="curated" ${provider === 'curated' ? 'selected' : ''}>Curated Collection (8 movies)</option>
+                                <option value="publicdomaintorrents" ${provider === 'publicdomaintorrents' ? 'selected' : ''}>PublicDomainTorrents.info (50+ movies)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-title">Custom API Endpoints</div>
+                        <div id="custom-endpoints-list" style="margin-bottom: 1rem;">
+                            ${customEndpoints.map(ep => `
+                                <div class="settings-item" data-endpoint-id="${ep.id}" style="position: relative;">
+                                    <div class="settings-item-content">
+                                        <div class="settings-item-label">${ep.name}</div>
+                                        <div class="settings-item-description" style="word-break: break-all; font-size: 0.75rem;">${ep.url}</div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div class="toggle-switch ${ep.enabled ? 'active' : ''}" data-toggle-endpoint="${ep.id}">
+                                            <div class="toggle-switch-thumb"></div>
+                                        </div>
+                                        <button class="btn-icon-danger" data-remove-endpoint="${ep.id}" style="background: rgba(239, 68, 68, 0.1); border: none; color: #ef4444; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button id="add-endpoint-btn" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6; padding: 10px 16px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600;">
+                            + Add Custom Endpoint
+                        </button>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-title">Playback</div>
+                        <div class="settings-item" id="setting-quality">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Default Quality</div>
+                                <div class="settings-item-description">Choose default video quality</div>
+                            </div>
+                            <select class="settings-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; font-size: 0.9rem;">
+                                <option value="1080p" ${quality === '1080p' ? 'selected' : ''}>1080p</option>
+                                <option value="720p" ${quality === '720p' ? 'selected' : ''}>720p</option>
+                                <option value="480p" ${quality === '480p' ? 'selected' : ''}>480p</option>
+                            </select>
+                        </div>
+                        <div class="settings-item" id="setting-autoplay">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Autoplay Next</div>
+                                <div class="settings-item-description">Automatically play next episode</div>
+                            </div>
+                            <div class="toggle-switch ${autoplay ? 'active' : ''}">
+                                <div class="toggle-switch-thumb"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-title">About</div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Version</div>
+                                <div class="settings-item-description">Popcorn Time Mobile</div>
+                            </div>
+                            <div class="settings-item-value">0.4.4</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="settings-content">
-                <div class="settings-section">
-                    <div class="settings-section-title">Playback</div>
-                    <div class="settings-item" id="setting-quality">
-                        <div class="settings-item-content">
-                            <div class="settings-item-label">Default Quality</div>
-                            <div class="settings-item-description">Choose default video quality</div>
-                        </div>
-                        <div class="settings-item-value">1080p</div>
-                    </div>
-                    <div class="settings-item" id="setting-subtitles">
-                        <div class="settings-item-content">
-                            <div class="settings-item-label">Subtitles</div>
-                            <div class="settings-item-description">Subtitle language preference</div>
-                        </div>
-                        <div class="settings-item-value">English</div>
-                    </div>
-                    <div class="settings-item" id="setting-autoplay">
-                        <div class="settings-item-content">
-                            <div class="settings-item-label">Autoplay Next</div>
-                            <div class="settings-item-description">Automatically play next episode</div>
-                        </div>
-                        <div class="toggle-switch active">
-                            <div class="toggle-switch-thumb"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">Streaming</div>
-                    <div class="settings-item" id="setting-server">
-                        <div class="settings-item-content">
-                            <div class="settings-item-label">Streaming Server</div>
-                            <div class="settings-item-description">Configure streaming backend</div>
-                        </div>
-                        <div class="settings-item-value">Default</div>
-                    </div>
-                    <div class="settings-item" id="setting-cache">
-                        <div class="settings-item-content">
-                            <div class="settings-item-label">Cache Size</div>
-                            <div class="settings-item-description">Maximum cache storage</div>
-                        </div>
-                        <div class="settings-item-value">2 GB</div>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">Interface</div>
-                    <div class="settings-item" id="setting-theme">
-                        <div class="settings-item-content">
-                            <div class="settings-item-label">Theme</div>
-                            <div class="settings-item-description">App color theme</div>
-                        </div>
-                        <div class="settings-item-value">Dark</div>
-                    </div>
-                    <div class="settings-item" id="setting-lang">
-                        <div class="settings-item-content">
-                            <div class="settings-item-label">Language</div>
-                            <div class="settings-item-description">Interface language</div>
-                        </div>
-                        <div class="settings-item-value">English</div>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">About</div>
-                    <div class="settings-item" id="setting-version">
-                        <div class="settings-item-content">
-                            <div class="settings-item-label">Version</div>
-                            <div class="settings-item-description">Popcorn Time Mobile</div>
-                        </div>
-                        <div class="settings-item-value">0.4.4</div>
-                    </div>
-                    <div class="settings-item" id="setting-licenses">
-                        <div class="settings-item-content">
-                            <div class="settings-item-label">Open Source Licenses</div>
-                            <div class="settings-item-description">View third-party licenses</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `
+        `;
+    }
 };
 
 // UI Controller
@@ -810,6 +859,9 @@ export class MobileUIController {
         if (loadingScreen) {
             loadingScreen.classList.add('hidden');
         }
+
+        // Track current view
+        this.currentView = route;
 
         switch (route) {
             case 'movies':
@@ -873,6 +925,99 @@ export class MobileUIController {
     showSettings() {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.settingsView();
+
+        // Get settings manager
+        const settings = window.SettingsManager;
+        if (!settings) {
+            console.error('SettingsManager not available');
+            return;
+        }
+
+        // Streaming Server URL
+        const serverInput = document.querySelector('#setting-server-url input');
+        if (serverInput) {
+            serverInput.addEventListener('blur', () => {
+                const url = serverInput.value.trim();
+                if (url) {
+                    settings.set('streamingServerUrl', url);
+                    console.log('Streaming server URL updated:', url);
+                }
+            });
+        }
+
+        // Provider Selection
+        const providerSelect = document.querySelector('#setting-provider select');
+        if (providerSelect) {
+            providerSelect.addEventListener('change', () => {
+                settings.set('movieProvider', providerSelect.value);
+                console.log('Movie provider updated:', providerSelect.value);
+                // Reload movies view if currently viewing movies
+                if (this.currentView === 'movies') {
+                    this.showMovies();
+                }
+            });
+        }
+
+        // Quality Selection
+        const qualitySelect = document.querySelector('#setting-quality select');
+        if (qualitySelect) {
+            qualitySelect.addEventListener('change', () => {
+                settings.set('quality', qualitySelect.value);
+                console.log('Default quality updated:', qualitySelect.value);
+            });
+        }
+
+        // Autoplay Toggle
+        const autoplayToggle = document.querySelector('#setting-autoplay .toggle-switch');
+        if (autoplayToggle) {
+            autoplayToggle.addEventListener('click', () => {
+                const isActive = autoplayToggle.classList.toggle('active');
+                settings.set('autoplayNext', isActive);
+                console.log('Autoplay next updated:', isActive);
+            });
+        }
+
+        // Add Custom Endpoint Button
+        const addEndpointBtn = document.getElementById('add-endpoint-btn');
+        if (addEndpointBtn) {
+            addEndpointBtn.addEventListener('click', () => {
+                const name = prompt('Enter endpoint name:');
+                if (!name) return;
+
+                const url = prompt('Enter endpoint URL:');
+                if (!url) return;
+
+                settings.addCustomEndpoint(name, url);
+                console.log('Added custom endpoint:', name, url);
+
+                // Refresh settings view
+                this.showSettings();
+            });
+        }
+
+        // Custom Endpoint Toggles
+        document.querySelectorAll('[data-toggle-endpoint]').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const id = toggle.getAttribute('data-toggle-endpoint');
+                settings.toggleCustomEndpoint(id);
+                console.log('Toggled endpoint:', id);
+                // Refresh to show updated state
+                this.showSettings();
+            });
+        });
+
+        // Custom Endpoint Remove Buttons
+        document.querySelectorAll('[data-remove-endpoint]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-remove-endpoint');
+                if (confirm('Remove this endpoint?')) {
+                    settings.removeCustomEndpoint(id);
+                    console.log('Removed endpoint:', id);
+                    // Refresh settings view
+                    this.showSettings();
+                }
+            });
+        });
     }
 
     async renderRealMovies() {
