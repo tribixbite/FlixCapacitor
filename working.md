@@ -244,11 +244,26 @@ Curated fallback movies (used if fetch fails):
 - `adb logcat -c` - Clear logs
 - `adb logcat -d -s "Capacitor/Console:*"` - View console output
 - `adb logcat -d -s "Capacitor/Console:E"` - View errors only
+- `adb logcat -d -s "Capacitor/Console:*" | grep -E "(WebRTC|Torrent|metadata)"` - WebTorrent diagnostics
 - `adb shell am start -n app.popcorntime.mobile/.MainActivity` - Launch app
 
 **Common Issues Fixed:**
 1. localStorage override crash - Solution: Use native localStorage
 2. StreamingService undefined error - Solution: Check window.App exists first
+3. WebTorrent null client error - Solution: Added await for initialization
+
+**Active Issue: WebTorrent Stuck on "Connecting"**
+- **Symptom:** Playback shows "Connecting to Torrent..." indefinitely
+- **Root Cause (suspected):** WebRTC may not work properly in Capacitor/Android
+- **Diagnostics Added:**
+  - WebRTC availability check (`RTCPeerConnection`)
+  - 60-second metadata timeout
+  - Peer connection logging
+  - Detailed error messages
+- **Next Steps:**
+  - Check console logs for "WebRTC available: true/false"
+  - If false or timeout: WebTorrent incompatible, need native torrent library
+  - Consider Capacitor plugin for native torrent support (e.g., libtorrent-based)
 
 ### 📝 Technical Architecture
 
