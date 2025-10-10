@@ -154,6 +154,103 @@
 **Commits:**
 - `feat: comprehensive video player improvements`
 
+#### Continue Watching + Advanced Playback Features (NEW)
+
+**Implemented 4 additional UX enhancements** to match modern streaming platforms:
+
+**1. Continue Watching Section**
+- Netflix-style horizontal carousel on home screen
+- Shows movies with saved playback progress (> 10s watched)
+- Visual features:
+  - Progress bar overlay on movie poster (red bar)
+  - Percentage completion badge (bottom-right)
+  - Smooth horizontal scroll with hidden scrollbars
+  - 140px width cards, 210px height posters
+- Quick resume functionality - click to jump back to movie
+- Automatically filters and displays max 10 recent items
+- Reads from localStorage playback positions
+- Inserted between search bar and filter tabs
+
+**2. Playback Speed Control**
+- Speed button in player header (shows current speed: "1x")
+- Click to reveal dropdown with 6 speed options:
+  - 0.5x (slow motion for tutorials)
+  - 0.75x
+  - 1x (normal - default)
+  - 1.25x
+  - 1.5x
+  - 2x (fast for rewatching)
+- Active speed highlighted with red background
+- Hover effects on speed options (light highlight)
+- Click outside or select speed to close
+- Uses `videoElement.playbackRate` API
+- Persistent speed throughout playback
+
+**3. Picture-in-Picture (PiP) Support**
+- PiP button in player header (⧉ icon)
+- Watch video in floating window while browsing
+- Toggle button changes color when PiP active (red highlight)
+- Enter/exit PiP with single click
+- Event listeners for state tracking:
+  - `enterpictureinpicture` → highlight button
+  - `leavepictureinpicture` → reset button
+- Feature detection: only shows if `document.pictureInPictureEnabled`
+- Perfect for multitasking (check messages, browse catalog)
+
+**4. Enhanced Player Controls Layout**
+- Three buttons in player header (right side):
+  1. Speed control ("1x") - leftmost
+  2. PiP toggle (⧉) - middle
+  3. Fullscreen (⛶) - rightmost
+- All buttons hidden until video loads (loadedmetadata event)
+- Consistent 40px circular buttons
+- Uniform spacing and styling
+- Speed selector dropdown positioned below header
+
+**Technical Implementation:**
+
+**Helper Methods:**
+- `getContinueWatchingItems()` - Reads localStorage, filters by position > 10s, max 10 items
+- `continueWatchingSection(items)` - Template renders horizontal carousel
+- Dynamic DOM insertion in `showMovies()` after movies load
+- Click event handlers for resume functionality
+
+**Playback Speed:**
+- Dropdown overlay with speed-option elements
+- `videoElement.playbackRate = speed` for speed changes
+- Active state management and visual feedback
+- Document click listener for close-on-outside-click
+
+**PiP Implementation:**
+- `videoElement.requestPictureInPicture()` for activation
+- `document.exitPictureInPicture()` for deactivation
+- Event listeners update button visual state
+- Graceful degradation if not supported
+
+**Continue Watching Data Flow:**
+1. Playback position saved every `timeupdate` event
+2. Stored in localStorage with movieId as key
+3. `getContinueWatchingItems()` retrieves on home screen
+4. Progress calculated: `(position / (runtime * 60)) * 100`
+5. Template renders cards with progress overlay
+6. Click handlers navigate to detail page
+
+**Bundle Impact:**
+- Main bundle: 322.55 KB (gzip: 95.13 KB) - **+6.65 KB**
+- No new dependencies required
+- All features use native browser APIs
+- Progressive enhancement (features hide if unsupported)
+
+**User Experience Benefits:**
+- ✅ Netflix-style Continue Watching for quick resume
+- ✅ Watch at preferred speed (0.5x for learning, 2x for rewatching)
+- ✅ Multitask with PiP (browse catalog while watching)
+- ✅ Visual progress feedback (know how much is left)
+- ✅ Professional streaming platform UX
+
+**Commits:**
+- `feat: add Continue Watching, playback speed, and PiP support`
+
 ---
 
 ## Previous Session: 2025-10-10 (Quality Audit & P0 Fixes)
