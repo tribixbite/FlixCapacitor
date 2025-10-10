@@ -833,6 +833,9 @@ export class MobileUIController {
         this.currentView = null;
         this.moviesCache = null; // Cache for loaded movies
         this.currentMovieData = new Map(); // Store movie data by ID
+        this.backButtonListener = null; // Android back button handler
+        this.currentVideoElement = null; // Current video element reference
+        this.playbackPositions = new Map(); // Store playback positions by movie ID
         this.setupNavigation();
     }
 
@@ -1174,18 +1177,71 @@ export class MobileUIController {
         this.showVideoPlayer(movie, selectedTorrent, selectedQuality);
     }
 
+    // Save playback position for resume
+    savePlaybackPosition(movieId, position) {
+        this.playbackPositions.set(movieId, position);
+        // Also save to localStorage for persistence
+        try {
+            const positions = JSON.parse(localStorage.getItem('playbackPositions') || '{}');
+            positions[movieId] = position;
+            localStorage.setItem('playbackPositions', JSON.stringify(positions));
+        } catch (e) {
+            console.warn('Failed to save playback position to localStorage:', e);
+        }
+    }
+
+    // Get saved playback position
+    getPlaybackPosition(movieId) {
+        // Check memory first
+        if (this.playbackPositions.has(movieId)) {
+            return this.playbackPositions.get(movieId);
+        }
+        // Check localStorage
+        try {
+            const positions = JSON.parse(localStorage.getItem('playbackPositions') || '{}');
+            return positions[movieId] || 0;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    // Setup Android back button handler
+    async setupBackButtonHandler(callback) {
+        // Remove existing listener if any
+        if (this.backButtonListener) {
+            await this.backButtonListener.remove();
+        }
+
+        // Import App from Capacitor
+        try {
+            const { App } = await import('@capacitor/app');
+            this.backButtonListener = await App.addListener('backButton', callback);
+        } catch (e) {
+            console.warn('Back button handler not available (web platform?):', e);
+        }
+    }
+
+    // Remove Android back button handler
+    async removeBackButtonHandler() {
+        if (this.backButtonListener) {
+            await this.backButtonListener.remove();
+            this.backButtonListener = null;
+        }
+    }
+
     async showVideoPlayer(movie, torrent, quality) {
         const mainRegion = document.querySelector('.main-window-region');
 
         // Create initial loading UI
         mainRegion.innerHTML = `
-            <div class="video-player-container" style="background: #000; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);">
+            <div class="video-player-container" style="background: #000; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left); position: relative;">
                 <div class="player-header" style="position: absolute; top: var(--safe-area-top); left: 0; right: 0; padding: 1rem; display: flex; align-items: center; gap: 1rem; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%); z-index: 100;">
                     <button id="player-back" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer;">←</button>
                     <div style="flex: 1;">
                         <div style="font-weight: 600; margin-bottom: 0.25rem;">${movie.title}</div>
                         <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${quality} • ${movie.year}</div>
                     </div>
+                    <button id="fullscreen-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer;">⛶</button>
                 </div>
 
                 <div class="player-content" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 800px; padding: 2rem;">
@@ -1227,19 +1283,56 @@ export class MobileUIController {
             </style>
         `;
 
-        // Back button handler (stops stream on exit)
-        document.getElementById('player-back')?.addEventListener('click', async () => {
+        // Helper function to exit video player
+        const exitVideoPlayer = async () => {
+            // Save current playback position
+            if (this.currentVideoElement && !this.currentVideoElement.paused) {
+                this.savePlaybackPosition(movie.imdb_id, this.currentVideoElement.currentTime);
+            }
+
             // Stop native torrent stream if active
             if (window.NativeTorrentClient) {
                 try {
                     await window.NativeTorrentClient.stopStream();
-                    console.log('Native torrent stream stopped on back button');
+                    console.log('Native torrent stream stopped');
                 } catch (e) {
                     console.warn('Failed to stop native torrent stream:', e);
                 }
             }
+
+            // Remove Android back button handler
+            await this.removeBackButtonHandler();
+
+            // Disable keep awake
+            try {
+                const { KeepAwake } = await import('@capacitor-community/keep-awake');
+                await KeepAwake.allowSleep();
+                console.log('Screen sleep re-enabled');
+            } catch (e) {
+                // Keep awake not available (web)
+            }
+
+            // Clear video reference
+            this.currentVideoElement = null;
+
+            // Return to detail view
             this.showDetail(movie.imdb_id);
-        });
+        };
+
+        // Back button handler (stops stream on exit)
+        document.getElementById('player-back')?.addEventListener('click', exitVideoPlayer);
+
+        // Android back button handler (same as UI back button)
+        await this.setupBackButtonHandler(exitVideoPlayer);
+
+        // Keep screen awake during video playback
+        try {
+            const { KeepAwake } = await import('@capacitor-community/keep-awake');
+            await KeepAwake.keepAwake();
+            console.log('Screen will stay awake during playback');
+        } catch (e) {
+            console.log('KeepAwake not available (web platform)');
+        }
 
         // Try to start streaming with native torrent client
         try {
@@ -1358,6 +1451,30 @@ export class MobileUIController {
                     if (spinner) spinner.style.display = 'none';
                 });
 
+                // Store video element reference
+                this.currentVideoElement = videoElement;
+
+                // Handle video metadata
+                videoElement.addEventListener('loadedmetadata', () => {
+                    console.log('Video metadata loaded - Duration:', videoElement.duration);
+                    if (loadingSubtitle) {
+                        loadingSubtitle.textContent = `Duration: ${Math.floor(videoElement.duration / 60)}:${String(Math.floor(videoElement.duration % 60)).padStart(2, '0')}`;
+                    }
+
+                    // Resume from saved position
+                    const savedPosition = this.getPlaybackPosition(movie.imdb_id);
+                    if (savedPosition > 10 && savedPosition < videoElement.duration - 10) {
+                        videoElement.currentTime = savedPosition;
+                        console.log(`Resuming from ${Math.floor(savedPosition)}s`);
+                    }
+
+                    // Show fullscreen button
+                    const fullscreenBtn = document.getElementById('fullscreen-btn');
+                    if (fullscreenBtn && document.fullscreenEnabled) {
+                        fullscreenBtn.style.display = 'flex';
+                    }
+                }, { once: true });
+
                 // Handle video loaded - ONLY NOW hide loading UI
                 videoElement.addEventListener('loadeddata', () => {
                     console.log('Video loaded and ready to play');
@@ -1377,13 +1494,78 @@ export class MobileUIController {
                     }
                 }, { once: true });
 
-                // Handle video metadata
-                videoElement.addEventListener('loadedmetadata', () => {
-                    console.log('Video metadata loaded - Duration:', videoElement.duration);
-                    if (loadingSubtitle) {
-                        loadingSubtitle.textContent = `Duration: ${Math.floor(videoElement.duration / 60)}:${String(Math.floor(videoElement.duration % 60)).padStart(2, '0')}`;
+                // Save playback position periodically
+                videoElement.addEventListener('timeupdate', () => {
+                    if (!videoElement.paused && videoElement.currentTime > 10) {
+                        this.savePlaybackPosition(movie.imdb_id, videoElement.currentTime);
                     }
-                }, { once: true });
+                });
+
+                // Fullscreen toggle handler
+                const fullscreenBtn = document.getElementById('fullscreen-btn');
+                if (fullscreenBtn) {
+                    fullscreenBtn.addEventListener('click', async () => {
+                        const container = document.querySelector('.video-player-container');
+                        if (!document.fullscreenElement) {
+                            try {
+                                await container.requestFullscreen();
+                                fullscreenBtn.textContent = '⛶';
+                            } catch (e) {
+                                console.warn('Fullscreen not available:', e);
+                            }
+                        } else {
+                            await document.exitFullscreen();
+                            fullscreenBtn.textContent = '⛶';
+                        }
+                    });
+                }
+
+                // Touch gesture controls for volume and brightness
+                let startY = 0;
+                let startX = 0;
+                let isVerticalGesture = false;
+                let isLeftSide = false;
+
+                videoElement.addEventListener('touchstart', (e) => {
+                    if (e.touches.length === 1) {
+                        const touch = e.touches[0];
+                        startY = touch.clientY;
+                        startX = touch.clientX;
+                        isLeftSide = touch.clientX < window.innerWidth / 2;
+                    }
+                }, { passive: true });
+
+                videoElement.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 1) {
+                        const touch = e.touches[0];
+                        const deltaY = startY - touch.clientY;
+                        const deltaX = Math.abs(touch.clientX - startX);
+
+                        // Determine if this is a vertical gesture
+                        if (!isVerticalGesture && Math.abs(deltaY) > 20 && deltaX < 30) {
+                            isVerticalGesture = true;
+                        }
+
+                        if (isVerticalGesture) {
+                            e.preventDefault();
+
+                            if (isLeftSide) {
+                                // Left side - brightness control (visual feedback only, actual brightness control requires plugin)
+                                console.log('Brightness gesture:', deltaY > 0 ? 'increase' : 'decrease');
+                            } else {
+                                // Right side - volume control
+                                const volumeChange = deltaY / 200;
+                                videoElement.volume = Math.max(0, Math.min(1, videoElement.volume + volumeChange));
+                            }
+
+                            startY = touch.clientY;
+                        }
+                    }
+                }, { passive: false });
+
+                videoElement.addEventListener('touchend', () => {
+                    isVerticalGesture = false;
+                }, { passive: true });
             }
 
         } catch (error) {

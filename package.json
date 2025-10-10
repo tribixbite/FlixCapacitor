@@ -27,6 +27,7 @@
     "vite-plugin-html": "^3.2.2"
   },
   "dependencies": {
+    "@capacitor-community/keep-awake": "^7.1.0",
     "@capacitor-community/sqlite": "^7.0.1",
     "@capacitor/android": "^7.4.3",
     "@capacitor/app": "^7.1.0",
