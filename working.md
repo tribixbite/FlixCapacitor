@@ -252,26 +252,34 @@ Curated fallback movies (used if fetch fails):
 2. StreamingService undefined error - Solution: Check window.App exists first
 3. WebTorrent null client error - Solution: Added await for initialization
 
-**Active Issue: WebTorrent Stuck on "Connecting"**
-- **Symptom:** Playback shows "Connecting to Torrent..." indefinitely
-- **Root Cause:** No peer connections despite WebRTC being available
-  - Missing NAT traversal (STUN/TURN servers)
-  - Only UDP trackers (don't work in browsers/Capacitor)
-  - No WebSocket trackers for browser compatibility
-- **Fixes Applied:**
-  - ✅ Added STUN servers (Google STUN, Twilio) for NAT traversal
-  - ✅ Added WebSocket trackers (wss://) that work in browsers:
-    - wss://tracker.openwebtorrent.com
-    - wss://tracker.webtorrent.dev
-    - wss://tracker.btorrent.xyz
-  - ✅ Enabled DHT and webSeeds in WebTorrent config
-  - ✅ Updated all 8 curated movie magnet links with WebSocket trackers
-  - ✅ Created `buildMagnetLink()` helper for consistent tracker configuration
-  - ✅ Enhanced logging (warnings, ready events, noPeers events)
-- **Testing Needed:**
-  - Try playing a movie to see if peers connect
-  - Check for "✓ Peer connected" logs
-  - Watch for "⚠ No peers found from:" warnings
+**❌ WebTorrent NOT Viable in Capacitor/Android**
+- **Conclusion:** WebTorrent cannot work reliably in Capacitor/mobile environment
+- **Testing Results:**
+  - ✅ WebRTC available (RTCPeerConnection detected)
+  - ✅ WebTorrent library loads from CDN
+  - ✅ Torrent infoHash received
+  - ❌ UDP trackers unsupported (expected in browsers)
+  - ❌ WebSocket trackers fail to connect:
+    - `wss://tracker.btorrent.xyz` - Connection error
+    - `wss://tracker.openwebtorrent.com` - No response
+    - `wss://tracker.webtorrent.dev` - No response
+  - ❌ No peers discovered (requires working trackers)
+  - ❌ Metadata timeout after 60 seconds
+- **Fixes Attempted (Did Not Resolve):**
+  - Added STUN servers for NAT traversal
+  - Added WebSocket trackers (wss://)
+  - Enabled DHT and webSeeds
+  - Enhanced logging and diagnostics
+- **Root Cause:** WebSocket tracker infrastructure unreliable + mobile network restrictions
+- **Alternatives:**
+  1. **StreamingService (Already Implemented)** - Backend server streaming
+     - File: `src/app/lib/streaming-service.js`
+     - Configurable in Settings
+     - Requires backend server (not included)
+  2. **Native Torrent Library** - Capacitor plugin with libtorrent
+     - More reliable for mobile
+     - Requires creating/integrating Capacitor plugin
+     - Examples: capacitor-torrent, react-native-torrent (adapt for Capacitor)
 
 ### 📝 Technical Architecture
 
