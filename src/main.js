@@ -397,6 +397,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('✓ Application started');
 
         console.log('=== Popcorn Time Mobile Ready ===');
+
+        // DEBUG: Auto-start torrent service on app load for testing
+        console.log('DEBUG: Auto-starting torrent service...');
+        setTimeout(() => {
+            if (window.NativeTorrentClient) {
+                console.log('DEBUG: Starting test torrent...');
+                const testMagnet = 'magnet:?xt=urn:btih:1d8e3fcb9fb7e7c8b12c9f7d12c0c25e4c25a25e&dn=Night%20of%20the%20Living%20Dead%201968%20720p&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce';
+
+                window.NativeTorrentClient.startStream(testMagnet, {
+                    maxDownloadSpeed: 0,
+                    maxUploadSpeed: 100 * 1024,
+                    maxConnections: 50
+                }).then((result) => {
+                    console.log('DEBUG: Service started successfully:', result);
+                }).catch((error) => {
+                    console.error('DEBUG: Service failed to start:', error);
+                });
+            } else {
+                console.error('DEBUG: NativeTorrentClient not available');
+            }
+        }, 2000); // Wait 2 seconds for UI to settle
     } catch (error) {
         console.error('!!! Failed to initialize application !!!');
         console.error('Error:', error);
