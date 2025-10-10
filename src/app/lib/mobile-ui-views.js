@@ -782,6 +782,8 @@ export class MobileUIController {
     constructor(app) {
         this.app = app;
         this.currentView = null;
+        this.moviesCache = null; // Cache for loaded movies
+        this.currentMovieData = new Map(); // Store movie data by ID
         this.setupNavigation();
     }
 
@@ -830,14 +832,12 @@ export class MobileUIController {
         }
     }
 
-    showMovies() {
+    async showMovies() {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Movies', 'movies');
 
-        // Simulate loading mock data
-        setTimeout(() => {
-            this.renderMockMovies();
-        }, 800);
+        // Load real public domain movies
+        await this.renderRealMovies();
     }
 
     showShows() {
@@ -875,7 +875,49 @@ export class MobileUIController {
         mainRegion.innerHTML = UITemplates.settingsView();
     }
 
+    async renderRealMovies() {
+        const contentGrid = document.querySelector('.content-grid');
+
+        try {
+            // Get public domain provider
+            const provider = window.PublicDomainProvider;
+            if (!provider) {
+                console.error('PublicDomainProvider not loaded');
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⚠️',
+                    'Provider Error',
+                    'Movie provider failed to load'
+                );
+                return;
+            }
+
+            // Fetch movies
+            const movies = await provider.fetchMovies();
+            console.log(`Loaded ${movies.length} public domain movies`);
+
+            // Store movies for detail view
+            this.moviesCache = movies;
+            movies.forEach(movie => {
+                this.currentMovieData.set(movie.imdb_id, movie);
+            });
+
+            // Render movies
+            contentGrid.innerHTML = UITemplates.contentGrid(movies);
+
+            // Add click handlers
+            this.attachCardHandlers();
+        } catch (error) {
+            console.error('Failed to load movies:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load Movies',
+                'Please check your connection and try again'
+            );
+        }
+    }
+
     renderMockMovies() {
+        // Fallback to mock data if needed
         const mockMovies = this.getMockMovies();
         const contentGrid = document.querySelector('.content-grid');
         contentGrid.innerHTML = UITemplates.contentGrid(mockMovies);
@@ -910,32 +952,45 @@ export class MobileUIController {
     }
 
     showDetail(id) {
-        const mockItem = {
-            imdb_id: id,
-            title: 'Sample Movie Title',
-            year: '2024',
-            rating: { percentage: 85 },
-            runtime: 142,
-            certification: 'PG-13',
-            synopsis: 'This is a sample movie description that would normally come from the API. It describes the plot, characters, and overall theme of the movie.',
-            genres: ['Action', 'Adventure', 'Sci-Fi'],
-            country: 'USA',
-            images: {
-                poster: 'https://via.placeholder.com/300x450/1f1f1f/e50914?text=Movie+Poster',
-                fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Movie+Backdrop'
-            }
-        };
+        // Get real movie data
+        const movie = this.currentMovieData.get(id);
 
+        if (!movie) {
+            console.warn('Movie not found:', id);
+            // Fallback to mock data
+            const mockItem = {
+                imdb_id: id,
+                title: 'Sample Movie Title',
+                year: '2024',
+                rating: { percentage: 85 },
+                runtime: 142,
+                certification: 'PG-13',
+                synopsis: 'This is a sample movie description that would normally come from the API. It describes the plot, characters, and overall theme of the movie.',
+                genres: ['Action', 'Adventure', 'Sci-Fi'],
+                country: 'USA',
+                images: {
+                    poster: 'https://via.placeholder.com/300x450/1f1f1f/e50914?text=Movie+Poster',
+                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Movie+Backdrop'
+                }
+            };
+            this.renderDetailView(mockItem);
+            return;
+        }
+
+        this.renderDetailView(movie);
+    }
+
+    renderDetailView(movie) {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.detailView(mockItem);
+        mainRegion.innerHTML = UITemplates.detailView(movie);
 
         // Add event listeners
         document.getElementById('detail-back')?.addEventListener('click', () => {
-            window.history.back();
+            this.navigateTo('movies');
         });
 
         document.getElementById('play-btn')?.addEventListener('click', () => {
-            alert('Streaming will be implemented in Phase 5');
+            this.playMovie(movie);
         });
 
         document.getElementById('bookmark-btn')?.addEventListener('click', (e) => {
@@ -943,6 +998,90 @@ export class MobileUIController {
             e.currentTarget.querySelector('span').textContent =
                 e.currentTarget.classList.contains('bookmarked') ? '★' : '☆';
         });
+    }
+
+    playMovie(movie) {
+        console.log('Playing movie:', movie.title);
+
+        // Get the best available torrent
+        const torrents = movie.torrents || {};
+        const qualities = ['1080p', '720p', '480p'];
+        let selectedTorrent = null;
+        let selectedQuality = null;
+
+        for (const quality of qualities) {
+            if (torrents[quality]) {
+                selectedTorrent = torrents[quality];
+                selectedQuality = quality;
+                break;
+            }
+        }
+
+        if (!selectedTorrent) {
+            alert('No torrent available for this movie');
+            return;
+        }
+
+        console.log(`Starting playback: ${movie.title} (${selectedQuality})`);
+        console.log('Magnet link:', selectedTorrent.url);
+
+        // Create a basic video player view
+        this.showVideoPlayer(movie, selectedTorrent, selectedQuality);
+    }
+
+    showVideoPlayer(movie, torrent, quality) {
+        const mainRegion = document.querySelector('.main-window-region');
+
+        mainRegion.innerHTML = `
+            <div class="video-player-container" style="background: #000; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);">
+                <div class="player-header" style="position: absolute; top: var(--safe-area-top); left: 0; right: 0; padding: 1rem; display: flex; align-items: center; gap: 1rem; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%); z-index: 100;">
+                    <button id="player-back" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer;">←</button>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${movie.title}</div>
+                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${quality} • ${movie.year}</div>
+                    </div>
+                </div>
+
+                <div class="player-content" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 800px; padding: 2rem;">
+                    <div class="loading-spinner-large" style="width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 2rem;"></div>
+
+                    <div style="text-align: center; color: rgba(255,255,255,0.9);">
+                        <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Connecting to Torrent</h3>
+                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 1.5rem;">This may take a moment while we find peers...</p>
+
+                        <div id="torrent-status" style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; text-align: left; font-family: monospace; font-size: 0.85rem; line-height: 1.8;">
+                            <div>Status: <span style="color: #fbbf24;">Initializing...</span></div>
+                            <div>Magnet: <span style="color: rgba(255,255,255,0.5); word-break: break-all;">${torrent.url.substring(0, 60)}...</span></div>
+                            <div>Quality: <span style="color: #10b981;">${quality}</span></div>
+                            <div>Size: <span>${torrent.size || 'Unknown'}</span></div>
+                            <div>Seeds: <span style="color: #10b981;">${torrent.seed || 0}</span></div>
+                            <div>Peers: <span>${torrent.peer || 0}</span></div>
+                        </div>
+
+                        <div style="margin-top: 2rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
+                            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">
+                                ℹ️ <strong>Note:</strong> WebTorrent streaming requires a backend server. For now, this shows the torrent information. Full playback will be implemented with the streaming server.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+
+        // Back button handler
+        document.getElementById('player-back')?.addEventListener('click', () => {
+            this.showDetail(movie.imdb_id);
+        });
+
+        // TODO: Integrate with StreamingService for actual playback
+        // For now, just show the torrent information
+        console.log('To implement full playback, integrate with:', torrent.url);
     }
 
     // Mock data generators
