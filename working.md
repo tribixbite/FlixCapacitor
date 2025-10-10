@@ -107,12 +107,35 @@
 **Commits:**
 - `bd4735c` - Phase 2-5 native implementation
 - `b4f65c9` - Phase 6 mobile UI integration
+- `ef0abb3` - Fix jlibtorrent dependencies (plugin)
+- `7d6ee4c` - Add FrostWire Maven repository (app)
+
+### 🎉 Build Fix & Success
+
+**Issue:** Initial build failed with 401 Unauthorized from JitPack
+- jlibtorrent NOT on JitPack (was using wrong repository)
+- Wrong version: 2.0.9-31 (doesn't exist)
+- Wrong artifact names: jlibtorrent-android-arm64-v8a
+
+**Solution:**
+- Changed repository to FrostWire Maven: `https://dl.frostwire.com/maven`
+- Updated version to 2.0.12.5 (latest stable)
+- Corrected artifact names: `jlibtorrent-android-arm64`
+- Added repository to both plugin and main app build.gradle
+
+**Build Result:**
+```
+✅ BUILD SUCCESSFUL in 13s
+✅ APK Size: 42 MB
+✅ Native library: libjlibtorrent-2.0.12.5.so packaged
+✅ Location: android/app/build/outputs/apk/debug/app-debug.apk
+```
 
 **Remaining Work:**
 - ⏳ Manual testing on physical device with real torrents
 - ⏳ Network monitoring enhancements (optional)
 
-**Next Step:** Build Android APK and test on physical device
+**Next Step:** Install APK on device and test torrent streaming
 
 ---
 
