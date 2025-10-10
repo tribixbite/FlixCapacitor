@@ -1,6 +1,44 @@
 # Popcorn Time Mobile - Development Progress
 
-## Latest Session: 2025-10-10 (Continued)
+## Latest Session: 2025-10-10 (Continued Part 2)
+
+### ✅ CRITICAL ROOT CAUSE DISCOVERED - Service Not Registered in Manifest
+
+**Issue:** App crashes ~2 seconds after opening, toasts show progress until "All initialization complete"
+
+**User Insight:** "is it trying to load a player that you never actually coded or registered"
+
+**ROOT CAUSES FOUND:**
+
+**1. Service Not Registered in AndroidManifest.xml** ⚠️ PRIMARY CAUSE
+- `TorrentStreamingService` was never declared in the manifest
+- Attempting to start an unregistered service causes Android to crash the app
+- **Fix:** Added service declaration in AndroidManifest.xml:27-32
+
+**2. STATE_UPDATE Alerts Before Metadata**
+- jlibtorrent sends `STATE_UPDATE` alerts immediately after `addMagnet()`
+- Calling `handle.status()` BEFORE metadata is received can return invalid data or crash
+- **Fix:** Added check in `handleStateUpdate()` to ignore alerts until `hasReceivedMetadata` is true (TorrentSession.kt:180-200)
+
+**3. Defensive Logging**
+- Added comprehensive alert logging to identify which alert crashes
+- Each alert type now logs before/after processing
+- **Fix:** Enhanced alert handler with detailed logging (TorrentSession.kt:85-117)
+
+**Expected Behavior After Fix:**
+- Service starts successfully (now registered in manifest)
+- STATE_UPDATE alerts are ignored until metadata arrives
+- First STATE_UPDATE processing happens AFTER "Metadata received!" toast
+- No crash from calling status() on torrent without metadata
+
+**Files Modified:**
+- android/app/src/main/AndroidManifest.xml - Added service declaration
+- TorrentSession.kt - Defensive STATE_UPDATE handling + comprehensive logging
+- TorrentSession.kt - Wrapped handleAddTorrent in try-catch
+
+---
+
+## Previous Session: 2025-10-10 (Continued)
 
 ### ✅ CRITICAL CRASH FIX - Native Thread Exception Handling (Gemini Analysis)
 

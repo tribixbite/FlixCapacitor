@@ -24,6 +24,13 @@
 
         </activity>
 
+        <!-- Torrent Streaming Service -->
+        <service
+            android:name="com.popcorntime.torrent.TorrentStreamingService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
