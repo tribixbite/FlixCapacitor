@@ -126,31 +126,75 @@ Curated fallback movies (used if fetch fails):
 - torrentUrl field added to all torrent objects
 - Can handle direct .torrent file downloads
 
+### ✅ WebTorrent Integration (Latest)
+
+**Implemented:** Direct in-browser torrent streaming with WebTorrent
+
+**No Backend Server Required!** WebTorrent runs entirely in the browser.
+
+**Features:**
+- ✅ **CDN-loaded WebTorrent** - Loads from jsdelivr.net (avoids npm native dependency issues)
+- ✅ **Direct torrent streaming** - No backend server required
+- ✅ **Real-time progress updates**:
+  - Download/upload speeds (MB/s)
+  - Number of connected peers
+  - Download progress percentage
+  - Time remaining
+- ✅ **Automatic video file detection**:
+  - Finds largest video file in torrent
+  - Supports: mp4, mkv, avi, mov, wmv, flv, webm, m4v
+- ✅ **Blob URL streaming** - Creates blob URLs for HTML5 video playback
+- ✅ **Multi-tracker support**:
+  - opentrackr.org
+  - openbittorrent.com
+  - coppersurfer.tk
+  - And more for better peer discovery
+- ✅ **Stream cleanup** - Properly destroys torrents on navigation
+- ✅ **Error handling** - Helpful error messages and recovery suggestions
+
+**Technical:**
+- File: `src/app/lib/webtorrent-client.js` - WebTorrent wrapper class (369 lines)
+- File: `src/app/lib/mobile-ui-views.js` - Updated playback integration
+- Dynamic CDN loading: `https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js`
+- Maximum 55 concurrent connections per torrent
+- Singleton pattern for client instance
+
+**How It Works:**
+1. User clicks Play on a movie
+2. WebTorrent library loads from CDN (if not already loaded)
+3. WebTorrent client initializes with tracker configuration
+4. Torrent added via magnet link
+5. Metadata received → largest video file identified
+6. Blob URL created for video file
+7. HTML5 video element plays blob URL
+8. Real-time progress updates during download
+9. Video plays while downloading (streaming)
+
+**Bundle Impact:**
+- Main: 301.81 KB (gzip: 89.28 KB) - +5.53 KB from WebTorrent wrapper
+- WebTorrent library: ~650 KB (loaded from CDN, not in bundle)
+
+**Why CDN Loading:**
+- Native dependencies fail to build on Termux/Android
+- Avoids npm install issues with node-datachannel, wrtc, etc.
+- Smaller app bundle (library not included)
+- Always uses latest stable WebTorrent version
+
 ### ✅ StreamingService Integration
 
-**Implemented:** Torrent streaming playback integration
+**Implemented:** Backend server streaming option (fallback)
 
-Features:
-- ✅ **StreamingService integration** in playback flow
-- ✅ **Real-time progress updates** during torrent download
-- ✅ **Dynamic UI updates** showing status, progress %, download speed
-- ✅ **Video player component** with HTML5 video element
-- ✅ **Stream cleanup** on back button (stops torrent)
-- ✅ **Error handling** with user-friendly messages
-- ✅ **Progress callback system** for live status updates
-- ✅ **Graceful fallback** when streaming server unavailable
+**Note:** WebTorrent is now the primary streaming method. StreamingService remains available as a fallback option if WebTorrent fails or for server-based streaming scenarios.
 
-**Technical Details:**
-- File: `src/app/lib/mobile-ui-views.js` - `showVideoPlayer()` method
-- Uses `StreamingService.streamAndWait()` API
-- Displays download progress, speed, and status
-- Shows HTML5 video player when stream ready
-- Handles video playback errors
+**Features:**
+- ✅ **StreamingService API** client in playback flow
+- ✅ **Server URL configuration** in Settings
+- ✅ **Fallback option** for environments where WebTorrent doesn't work
 
 **Status:**
-- Client-side streaming integration complete
-- Requires backend streaming server to be running
+- Available as alternative streaming method
 - Server URL configurable via Settings (default: localhost:3001)
+- WebTorrent takes priority by default
 
 ### 🚀 Next Steps
 

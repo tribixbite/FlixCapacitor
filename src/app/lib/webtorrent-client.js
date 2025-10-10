@@ -107,8 +107,9 @@ class WebTorrentClient {
      * @returns {Promise<Object>} Stream info with video URL
      */
     async startStream(magnetURI, options = {}, onProgress = null) {
+        // Ensure WebTorrent is initialized
         if (!this.initialized) {
-            this.initialize();
+            await this.initialize();
         }
 
         // Stop current torrent if any
@@ -118,6 +119,11 @@ class WebTorrentClient {
 
         return new Promise((resolve, reject) => {
             console.log('Starting WebTorrent stream:', magnetURI.substring(0, 60) + '...');
+
+            if (!this.client) {
+                reject(new Error('WebTorrent client not initialized'));
+                return;
+            }
 
             // Add torrent
             this.currentTorrent = this.client.add(magnetURI, {
