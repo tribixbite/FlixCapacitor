@@ -2,6 +2,78 @@
 
 ## Latest Session: 2025-10-10 (Continued)
 
+### ✅ CRITICAL CRASH FIX - Native Thread Exception Handling (Gemini Analysis)
+
+**Issue:** App crashes immediately when torrent connects or finds peers
+
+**Root Cause (Gemini Diagnosis):**
+1. **Primary**: Uncaught exception in jlibtorrent alert listener (native thread) → crashes entire app process
+2. **Specific**: `status.progress()` returns `NaN`/`Infinity` before metadata received → `JSONException` when adding to `JSObject`
+
+**Technical Explanation:**
+The `AlertListener` runs on a background thread created by native jlibtorrent library. Any Kotlin exception thrown in this listener propagates to the native layer, which cannot handle JVM exceptions. This causes a signal (SIGABRT) that terminates the entire application.
+
+**Fixes Applied:**
+
+**1. Exception Guard in Alert Listener** (TorrentSession.kt:85):
+```kotlin
+override fun alert(alert: Alert<*>) {
+    try {
+        when (alert.type()) {
+            AlertType.ADD_TORRENT -> handleAddTorrent(alert as AddTorrentAlert)
+            AlertType.METADATA_RECEIVED -> handleMetadataReceived()
+            AlertType.STATE_UPDATE -> handleStateUpdate()
+            AlertType.TORRENT_ERROR -> handleTorrentError(alert as TorrentErrorAlert)
+            else -> { /* No-op for unhandled alerts */ }
+        }
+    } catch (e: Throwable) {
+        // CRITICAL: Log any exception from the alert loop to prevent a native crash
+        android.util.Log.e("TorrentSession", "Unhandled exception in jlibtorrent alert listener", e)
+        onError?.invoke("Internal torrent error: ${e.message}")
+    }
+}
+```
+
+**2. Sanitize Progress Float Values** (TorrentStreamingService.kt:332):
+```kotlin
+val progressData = JSObject().apply {
+    val progressFloat = status.progress()
+    // Prevent JSONException from non-finite float values (NaN, Infinity)
+    put("progress", if (progressFloat.isFinite()) progressFloat else 0.0f)
+    // ... other fields
+}
+```
+
+**3. Same Fix in getStatus()** (TorrentSession.kt:332):
+```kotlin
+val progressFloat = status.progress()
+// Prevent JSONException from non-finite float values (NaN, Infinity)
+statusObj.put("progress", if (progressFloat.isFinite()) progressFloat else 0.0f)
+```
+
+**Build Result:**
+```
+✅ BUILD SUCCESSFUL in 3m 26s
+✅ APK Size: 73 MB
+✅ Gradle cache cleared and rebuilt fresh
+```
+
+**Files Modified:**
+- `TorrentSession.kt` - Added try-catch to alert listener + progress sanitization
+- `TorrentStreamingService.kt` - Sanitized progress float before JSObject
+
+**Expected Behavior:**
+1. Peers connect → `STATE_UPDATE` alert fires
+2. Exception caught and logged (instead of crashing)
+3. Error callback notifies service
+4. App continues running with error handling
+
+**Next Step:** Test with real torrent - should see either success or detailed error logs
+
+---
+
+## Latest Session: 2025-10-10 (Continued)
+
 ### ✅ Critical Service Startup Fixes (Gemini-Guided)
 
 **Issue:** Torrent service never started when clicking Play - app silently stopped at "Downloading torrent..." message
