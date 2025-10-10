@@ -1,6 +1,67 @@
 # Popcorn Time Mobile - Development Progress
 
-## Latest Session: 2025-10-10
+## Latest Session: 2025-10-10 (Continued)
+
+### ✅ Kotlin Compilation & API Compatibility Fixes
+
+**Issue:** jlibtorrent 2.0.12.5 API differs significantly from documentation
+
+**Errors Fixed:**
+1. **Kotlin plugin missing** - Added `kotlin-android` plugin to build.gradle
+2. **SettingsPack API** - Used simplified method calls instead of complex enum pattern:
+   - `settingsPack.connectionsLimit(50)`
+   - `settingsPack.downloadRateLimit(0)`
+   - `settingsPack.uploadRateLimit(100 * 1024)`
+3. **Info hash retrieval** - Changed `infoHashes().v1()` to simpler `infoHash().toHex()`
+4. **Magnet download** - Temporarily disabled due to API incompatibility (TODO for runtime investigation)
+
+**Build Configuration Updates:**
+```gradle
+buildscript {
+    ext.kotlin_version = '1.9.20'
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+apply plugin: 'kotlin-android'
+
+android {
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+```
+
+**Build Result:**
+```
+✅ BUILD SUCCESSFUL in 15s
+✅ APK Size: 39 MB
+✅ Kotlin compilation: SUCCESS
+✅ Location: android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+**Commits:**
+- `8c23ba0` - Add Kotlin plugin support to build.gradle
+- `714a8d8` - Update TorrentSession.kt for jlibtorrent 2.x API compatibility
+- `d478f61` - Simplify TorrentSession.kt to get compilation working
+
+**Next Steps:**
+1. ⏳ Install APK on device
+2. ⏳ Test plugin initialization and identify correct API at runtime
+3. ⏳ Fix magnet download implementation with correct API
+4. ⏳ Verify torrent connection and peer discovery
+5. ⏳ Test video playback and seeking
+
+---
+
+## Session: 2025-10-10
 
 ### ✅ Native Torrent Plugin - Phases 2-5 Complete
 
