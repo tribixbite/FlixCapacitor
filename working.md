@@ -254,16 +254,24 @@ Curated fallback movies (used if fetch fails):
 
 **Active Issue: WebTorrent Stuck on "Connecting"**
 - **Symptom:** Playback shows "Connecting to Torrent..." indefinitely
-- **Root Cause (suspected):** WebRTC may not work properly in Capacitor/Android
-- **Diagnostics Added:**
-  - WebRTC availability check (`RTCPeerConnection`)
-  - 60-second metadata timeout
-  - Peer connection logging
-  - Detailed error messages
-- **Next Steps:**
-  - Check console logs for "WebRTC available: true/false"
-  - If false or timeout: WebTorrent incompatible, need native torrent library
-  - Consider Capacitor plugin for native torrent support (e.g., libtorrent-based)
+- **Root Cause:** No peer connections despite WebRTC being available
+  - Missing NAT traversal (STUN/TURN servers)
+  - Only UDP trackers (don't work in browsers/Capacitor)
+  - No WebSocket trackers for browser compatibility
+- **Fixes Applied:**
+  - ✅ Added STUN servers (Google STUN, Twilio) for NAT traversal
+  - ✅ Added WebSocket trackers (wss://) that work in browsers:
+    - wss://tracker.openwebtorrent.com
+    - wss://tracker.webtorrent.dev
+    - wss://tracker.btorrent.xyz
+  - ✅ Enabled DHT and webSeeds in WebTorrent config
+  - ✅ Updated all 8 curated movie magnet links with WebSocket trackers
+  - ✅ Created `buildMagnetLink()` helper for consistent tracker configuration
+  - ✅ Enhanced logging (warnings, ready events, noPeers events)
+- **Testing Needed:**
+  - Try playing a movie to see if peers connect
+  - Check for "✓ Peer connected" logs
+  - Watch for "⚠ No peers found from:" warnings
 
 ### 📝 Technical Architecture
 
