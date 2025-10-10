@@ -1,6 +1,98 @@
 # Popcorn Time Mobile - Development Progress
 
-## Latest Session: 2025-10-09
+## Latest Session: 2025-10-10
+
+### ✅ Native Torrent Plugin - Phases 2-5 Complete
+
+**Plugin Location:** `../capacitor-plugin-torrent-streamer/`
+
+**Completed Implementation:**
+
+1. **Phase 1 - Plugin Skeleton** ✅
+   - TypeScript definitions with event-driven API
+   - Android build configuration
+   - Dependencies: jlibtorrent 2.0.9-31, NanoHTTPD 2.3.1
+   - Plugin entry point: TorrentStreamerPlugin.kt
+   - Commit: `c31277b`
+
+2. **Phase 2 - Native Torrent Session** ✅
+   - `TorrentSession.kt` - Complete jlibtorrent integration (376 lines)
+   - Mobile-optimized settings (DHT, connection limits, bandwidth)
+   - Magnet link parsing and torrent addition
+   - Alert listeners for metadata, progress, errors, peers
+   - Video file selection: `findLargestVideoFile()` with 12 formats
+   - Sequential download for streaming
+   - File prioritization for selected video
+   - Pause/resume/status methods
+
+3. **Phase 3 - HTTP Streaming Server** ✅
+   - `StreamingServer.kt` - NanoHTTPD implementation (165 lines)
+   - HTTP Range request support for video seeking
+   - Efficient chunked streaming (8 KB chunks)
+   - MIME type detection for 11 video formats
+   - Localhost streaming on port 8888
+   - Full/partial content responses
+
+4. **Phase 4 - Foreground Service** ✅
+   - `TorrentStreamingService.kt` - Android Service (400+ lines)
+   - Persistent notification with progress updates
+   - Lifecycle management (start/pause/resume/stop)
+   - Event-driven communication with plugin
+   - Automatic file availability detection
+   - Streaming URL generation
+
+5. **Phase 5 - Timeout & Error Handling** ✅
+   - Metadata timeout: 90 seconds
+   - Peers timeout: 90 seconds
+   - Graceful error propagation to JavaScript
+   - Network state monitoring
+   - Progress updates every 1 second
+
+**Implementation Details:**
+
+**TorrentSession.kt:**
+- DHT enabled for peer discovery without trackers
+- 50 connection limit (mobile-friendly)
+- 100 KB/s default upload limit
+- Supports: mp4, mkv, avi, mov, wmv, flv, webm, m4v, mpg, mpeg, 3gp, ogv
+- Callbacks: onMetadataReceived, onProgress, onError, onPeersFound
+- Prioritizes selected file with `Priority.TOP_PRIORITY`
+
+**StreamingServer.kt:**
+- Serves on `http://127.0.0.1:8888/video`
+- Parses Range header: `bytes=start-end`
+- Returns Status.PARTIAL_CONTENT (206) for range requests
+- Adds Content-Range header for seeking
+- FileInputStream with skip() for efficient range serving
+
+**TorrentStreamingService.kt:**
+- Creates foreground notification (ID: 1001)
+- Channel: "torrent_streaming_channel" (low priority)
+- Waits for 5 MB or 2% of file before starting stream
+- Updates notification with progress/speed/peers
+- Resolves/rejects pending plugin calls via callback ID
+- Cleanup on destroy: cancels timeouts, destroys session
+
+**Events Emitted:**
+- `metadata` - Torrent info received
+- `ready` - Stream URL available
+- `progress` - Download updates (1/sec)
+- `error` - Error occurred
+- `stopped` - Service stopped
+
+**Commit:** `bd4735c`
+
+**Remaining Work:**
+- ⏳ Integration testing (Phase 6)
+- ⏳ Replace WebTorrentClient with TorrentStreamer in mobile UI
+- ⏳ Manual testing on physical device with real torrents
+- ⏳ Network monitoring enhancements (optional)
+
+**Next Step:** Integrate plugin into popcorn-mobile app and test
+
+---
+
+## Previous Session: 2025-10-09
 
 ### ✅ Completed Tasks
 
