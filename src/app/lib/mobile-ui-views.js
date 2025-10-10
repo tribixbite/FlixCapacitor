@@ -640,6 +640,46 @@ export const UITemplates = {
         </div>
     `,
 
+    // Continue Watching Section
+    continueWatchingSection: (items) => {
+        if (!items || items.length === 0) return '';
+
+        return `
+            <div class="continue-watching-section" style="padding: 1rem; padding-top: 0.5rem;">
+                <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Continue Watching</h2>
+                <div class="continue-watching-scroll" style="display: flex; gap: 1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 1rem; scrollbar-width: none;">
+                    ${items.map(item => {
+                        const progress = item.continuePosition && item.runtime ?
+                            (item.continuePosition / (item.runtime * 60)) * 100 : 0;
+
+                        return `
+                            <div class="continue-card" data-id="${item.imdb_id}" style="flex-shrink: 0; width: 140px; cursor: pointer;">
+                                <div style="position: relative; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 0.5rem;">
+                                    <img src="${item.images?.poster || ''}"
+                                         alt="${item.title}"
+                                         style="width: 100%; height: 210px; object-fit: cover; display: block;">
+                                    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(255,255,255,0.3);">
+                                        <div style="height: 100%; background: var(--accent-primary); width: ${Math.min(progress, 100)}%;"></div>
+                                    </div>
+                                    <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">
+                                        ${Math.round(progress)}%
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.85rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.title}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">${item.year}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+            <style>
+                .continue-watching-scroll::-webkit-scrollbar {
+                    display: none;
+                }
+            </style>
+        `;
+    },
+
     // Empty State
     emptyState: (icon, title, message) => `
         <div class="content-empty">
@@ -893,6 +933,25 @@ export class MobileUIController {
 
         // Load real public domain movies
         await this.renderRealMovies();
+
+        // Add Continue Watching section if there are items
+        const continueItems = this.getContinueWatchingItems();
+        if (continueItems.length > 0) {
+            const searchBar = document.querySelector('.search-bar');
+            if (searchBar) {
+                const continueSection = document.createElement('div');
+                continueSection.innerHTML = UITemplates.continueWatchingSection(continueItems);
+                searchBar.insertAdjacentElement('afterend', continueSection.firstElementChild);
+
+                // Add click handlers for continue watching cards
+                document.querySelectorAll('.continue-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const id = card.dataset.id;
+                        this.showDetail(id);
+                    });
+                });
+            }
+        }
     }
 
     showShows() {
@@ -1205,6 +1264,34 @@ export class MobileUIController {
         }
     }
 
+    // Get Continue Watching items
+    getContinueWatchingItems() {
+        try {
+            const positions = JSON.parse(localStorage.getItem('playbackPositions') || '{}');
+            const items = [];
+
+            // Get movies that have been started
+            for (const [movieId, position] of Object.entries(positions)) {
+                if (position > 10) { // Only include if watched > 10s
+                    // Try to get movie data from cache
+                    const movieData = this.currentMovieData.get(movieId);
+                    if (movieData) {
+                        items.push({
+                            ...movieData,
+                            continuePosition: position
+                        });
+                    }
+                }
+            }
+
+            // Sort by most recently watched (we'll need to track timestamps later)
+            return items.slice(0, 10); // Max 10 items
+        } catch (e) {
+            console.warn('Failed to get Continue Watching items:', e);
+            return [];
+        }
+    }
+
     // Setup Android back button handler
     async setupBackButtonHandler(callback) {
         // Remove existing listener if any
@@ -1241,7 +1328,19 @@ export class MobileUIController {
                         <div style="font-weight: 600; margin-bottom: 0.25rem;">${movie.title}</div>
                         <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${quality} • ${movie.year}</div>
                     </div>
+                    <button id="speed-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; cursor: pointer;">1x</button>
+                    <button id="pip-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer;">⧉</button>
                     <button id="fullscreen-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer;">⛶</button>
+                </div>
+
+                <!-- Speed selector overlay -->
+                <div id="speed-selector" style="display: none; position: absolute; top: calc(var(--safe-area-top) + 60px); right: 90px; background: rgba(20,20,20,0.95); border-radius: var(--radius-md); padding: 0.5rem; z-index: 150; backdrop-filter: blur(10px);">
+                    <div class="speed-option" data-speed="0.5" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">0.5x</div>
+                    <div class="speed-option" data-speed="0.75" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">0.75x</div>
+                    <div class="speed-option active" data-speed="1" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s; background: var(--accent-primary);">1x</div>
+                    <div class="speed-option" data-speed="1.25" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">1.25x</div>
+                    <div class="speed-option" data-speed="1.5" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">1.5x</div>
+                    <div class="speed-option" data-speed="2" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">2x</div>
                 </div>
 
                 <div class="player-content" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 800px; padding: 2rem;">
@@ -1500,6 +1599,80 @@ export class MobileUIController {
                         this.savePlaybackPosition(movie.imdb_id, videoElement.currentTime);
                     }
                 });
+
+                // Playback speed control
+                const speedBtn = document.getElementById('speed-btn');
+                const speedSelector = document.getElementById('speed-selector');
+                if (speedBtn && speedSelector) {
+                    speedBtn.style.display = 'flex';
+
+                    speedBtn.addEventListener('click', () => {
+                        speedSelector.style.display = speedSelector.style.display === 'none' ? 'block' : 'none';
+                    });
+
+                    document.querySelectorAll('.speed-option').forEach(option => {
+                        option.addEventListener('click', () => {
+                            const speed = parseFloat(option.dataset.speed);
+                            videoElement.playbackRate = speed;
+                            speedBtn.textContent = `${speed}x`;
+
+                            // Update active state
+                            document.querySelectorAll('.speed-option').forEach(opt => {
+                                opt.style.background = 'transparent';
+                                opt.classList.remove('active');
+                            });
+                            option.style.background = 'var(--accent-primary)';
+                            option.classList.add('active');
+
+                            speedSelector.style.display = 'none';
+                        });
+
+                        // Hover effect
+                        option.addEventListener('mouseenter', () => {
+                            if (!option.classList.contains('active')) {
+                                option.style.background = 'rgba(255,255,255,0.1)';
+                            }
+                        });
+                        option.addEventListener('mouseleave', () => {
+                            if (!option.classList.contains('active')) {
+                                option.style.background = 'transparent';
+                            }
+                        });
+                    });
+
+                    // Close selector when clicking outside
+                    document.addEventListener('click', (e) => {
+                        if (!speedBtn.contains(e.target) && !speedSelector.contains(e.target)) {
+                            speedSelector.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Picture-in-Picture toggle
+                const pipBtn = document.getElementById('pip-btn');
+                if (pipBtn && document.pictureInPictureEnabled) {
+                    pipBtn.style.display = 'flex';
+
+                    pipBtn.addEventListener('click', async () => {
+                        try {
+                            if (document.pictureInPictureElement) {
+                                await document.exitPictureInPicture();
+                            } else {
+                                await videoElement.requestPictureInPicture();
+                            }
+                        } catch (e) {
+                            console.warn('PiP not available:', e);
+                        }
+                    });
+
+                    // Update button when PiP state changes
+                    videoElement.addEventListener('enterpictureinpicture', () => {
+                        pipBtn.style.background = 'var(--accent-primary)';
+                    });
+                    videoElement.addEventListener('leavepictureinpicture', () => {
+                        pipBtn.style.background = 'rgba(255,255,255,0.1)';
+                    });
+                }
 
                 // Fullscreen toggle handler
                 const fullscreenBtn = document.getElementById('fullscreen-btn');
