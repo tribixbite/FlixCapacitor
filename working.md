@@ -90,6 +90,70 @@
 
 **Impact:** Prevents jarring blank screen, provides continuous visual feedback
 
+#### Comprehensive Video Player Improvements (NEW)
+
+**Implemented 5 major UX enhancements** based on analysis of mobile video player best practices:
+
+**1. Android Back Button Handling**
+- Hardware back button exits video player gracefully
+- Automatically stops torrent stream
+- Saves playback position before exit
+- Cleans up event listeners to prevent memory leaks
+- Uses Capacitor App plugin for native back button events
+
+**2. Keep Screen Awake**
+- Screen stays on during video playback (no dimming/sleep)
+- Uses `@capacitor-community/keep-awake` plugin
+- Automatically re-enables sleep on exit
+- Prevents interruptions during playback
+
+**3. Fullscreen Toggle**
+- Fullscreen button appears when video metadata loads
+- Toggle between fullscreen and normal view
+- Uses native Fullscreen API (document.requestFullscreen)
+- Icon changes based on fullscreen state
+- Positioned in player header for easy access
+
+**4. Playback Position Save/Resume**
+- Automatically saves current position every `timeupdate` event
+- Persisted to localStorage for cross-session resume
+- Resumes from saved position when reopening video
+- Smart resume logic (only if 10s < position < duration - 10s)
+- Per-movie tracking using imdb_id as key
+- Memory + localStorage dual storage for reliability
+
+**5. Touch Gesture Controls**
+- **Left side vertical swipe**: Brightness control (logged for future plugin integration)
+- **Right side vertical swipe**: Volume control (functional)
+- Gesture detection with 20px threshold to prevent accidental triggers
+- Prevents horizontal scroll interference
+- Smooth volume adjustment based on swipe distance
+
+**Technical Implementation:**
+- Helper methods: `savePlaybackPosition()`, `getPlaybackPosition()`
+- Unified `exitVideoPlayer()` function for consistent cleanup
+- Video element reference tracking via `this.currentVideoElement`
+- Android back button setup/teardown: `setupBackButtonHandler()`, `removeBackButtonHandler()`
+- Playback positions Map + localStorage persistence
+
+**Dependencies Added:**
+- `@capacitor-community/keep-awake@7.1.0` (1.16 KB)
+- `@capacitor/app@7.1.0` (0.31 KB)
+
+**Build Impact:**
+- Main bundle: 315.90 KB (gzip: 93.94 KB) - **+3.47 KB**
+- 281 Gradle tasks: 59 executed, 222 up-to-date
+
+**User Benefits:**
+- Professional mobile video player experience
+- Seamless resume from where you left off
+- No accidental exits or interruptions
+- Intuitive touch controls matching platform expectations
+- Battery-friendly (screen stays awake only during playback)
+
+**Commits:**
+- `feat: comprehensive video player improvements`
+
 ---
 
 ## Previous Session: 2025-10-10 (Quality Audit & P0 Fixes)
