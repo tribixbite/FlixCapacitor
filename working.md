@@ -51,18 +51,28 @@ Navigation complete
 - **Screen**: 412 x 892
 - **Technologies**: Capacitor + Backbone/Marionette + Vite
 
-### ✅ Public Domain Movie Provider
+### ✅ Dynamic Public Domain Movie Provider
 
-**Implemented:** Real movie data with torrent playback UI
+**Implemented:** Real-time movie data loading from publicdomaintorrents.info
 
 Features:
-- 8 curated public domain sci-fi movies loaded by default
-- Real IMDB data, posters, ratings, and descriptions
-- Magnet link support for each movie
-- Beautiful detail view with movie information
-- Playback UI showing torrent status and information
+- ✅ **Fetches 50+ movies dynamically** from publicdomaintorrents.info on app start
+- ✅ **HTML parsing** to extract movie titles, years, and torrent links
+- ✅ **CORS proxy** (corsproxy.io) for accessing external website
+- ✅ **Colorful fallback posters** using placehold.co gradients
+- ✅ **Smart caching** (30-minute cache to reduce requests)
+- ✅ **Graceful fallbacks** to 8 curated movies if fetch fails
+- ✅ **Magnet link generation** for each movie
+- ✅ **Beautiful detail view** with movie information
+- ✅ **Playback UI** showing torrent status and information
 
-Movies included:
+**Testing Results:**
+- Found **157 movie links** in sci-fi category
+- Successfully loading **50 movies** per session (limited to reduce memory)
+- All images displaying with gradient fallback posters
+- Torrent links ready for playback integration
+
+Curated fallback movies (used if fetch fails):
 1. **Night of the Living Dead** (1968) - 96% rating
 2. **The Lost World** (1925) - Silent film classic
 3. **Metropolis** (1927) - German expressionist masterpiece
@@ -72,16 +82,45 @@ Movies included:
 7. **Plan 9 from Outer Space** (1959) - Cult classic
 8. **The Little Shop of Horrors** (1960) - Roger Corman comedy
 
+### ✅ StreamingService Integration (Latest)
+
+**Implemented:** Torrent streaming playback integration
+
+Features:
+- ✅ **StreamingService integration** in playback flow
+- ✅ **Real-time progress updates** during torrent download
+- ✅ **Dynamic UI updates** showing status, progress %, download speed
+- ✅ **Video player component** with HTML5 video element
+- ✅ **Stream cleanup** on back button (stops torrent)
+- ✅ **Error handling** with user-friendly messages
+- ✅ **Progress callback system** for live status updates
+- ✅ **Graceful fallback** when streaming server unavailable
+
+**Technical Details:**
+- File: `src/app/lib/mobile-ui-views.js` - `showVideoPlayer()` method
+- Uses `StreamingService.streamAndWait()` API
+- Displays download progress, speed, and status
+- Shows HTML5 video player when stream ready
+- Handles video playback errors
+
+**Status:**
+- Client-side streaming integration complete
+- Requires backend streaming server to be running
+- Server URL configurable via Settings (default: localhost:3001)
+
+**Next:** Deploy streaming server backend or configure WebTorrent bridge
+
 ### 🚀 Next Steps
 
 1. ✅ ~~Test UI interactions on device (navigation, search, content cards)~~
 2. ✅ ~~Implement real content provider integration~~
-3. Integrate WebTorrent or streaming server for actual playback
-4. Add subtitle support
-5. Implement settings persistence
-6. Add search functionality
-7. Test torrent handling via deep links
-8. Add more public domain movies (157 total available on publicdomaintorrents.info)
+3. ✅ ~~Integrate WebTorrent or streaming server for actual playback~~ (Client-side complete)
+4. Deploy or configure backend streaming server
+5. Add subtitle support
+6. Implement settings persistence (streaming server URL)
+7. Add search functionality
+8. Test torrent handling via deep links
+9. Add more public domain movies (157 total available on publicdomaintorrents.info)
 
 ### 🐛 Debugging Notes
 
