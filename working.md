@@ -82,7 +82,51 @@ Curated fallback movies (used if fetch fails):
 7. **Plan 9 from Outer Space** (1959) - Cult classic
 8. **The Little Shop of Horrors** (1960) - Roger Corman comedy
 
-### ✅ StreamingService Integration (Latest)
+### ✅ Torrent Health & Settings System (Latest)
+
+**Implemented:** Comprehensive torrent health display and settings management
+
+**Torrent Health Features:**
+- ✅ **Seeds/Peers display** on every movie card
+- ✅ **Color-coded health indicator**:
+  - 🟢 Green: 50+ seeds (healthy)
+  - 🟡 Yellow: 10-49 seeds (good)
+  - 🟠 Orange: 1-9 seeds (poor)
+  - 🔴 Red: 0 seeds (dead)
+- ✅ **Visual indicators**: ↑ seeds, ↓ peers
+- ✅ **Reads from best quality** (1080p > 720p > 480p)
+
+**Settings System:**
+- ✅ **localStorage persistence** - Settings saved across sessions
+- ✅ **Streaming server URL** - Configurable backend endpoint
+- ✅ **Movie provider selection**:
+  - Curated Collection (8 classic movies) - DEFAULT
+  - PublicDomainTorrents.info (50+ movies via web scraping)
+- ✅ **Custom API endpoints**:
+  - Add multiple custom providers
+  - Toggle endpoints on/off
+  - Remove endpoints
+  - Each endpoint has name + URL
+- ✅ **Quality preferences** (1080p/720p/480p)
+- ✅ **Autoplay next** toggle
+- ✅ **Real-time application** - No app restart needed
+
+**Technical:**
+- File: `src/app/lib/settings-manager.js` - Settings management system
+- File: `src/app/lib/mobile-ui-views.js` - Settings UI and torrent health display
+- File: `src/app/lib/providers/public-domain-provider.js` - Provider toggle system
+
+**Default Provider:**
+- Now defaults to curated 8 movie collection
+- Movies include: Night of the Living Dead, Metropolis, Plan 9 from Outer Space
+- PublicDomainTorrents.info available as opt-in via Settings
+
+**Torrent File Support:**
+- ✅ Both magnet links and .torrent files supported
+- torrentUrl field added to all torrent objects
+- Can handle direct .torrent file downloads
+
+### ✅ StreamingService Integration
 
 **Implemented:** Torrent streaming playback integration
 
@@ -108,19 +152,20 @@ Features:
 - Requires backend streaming server to be running
 - Server URL configurable via Settings (default: localhost:3001)
 
-**Next:** Deploy streaming server backend or configure WebTorrent bridge
-
 ### 🚀 Next Steps
 
 1. ✅ ~~Test UI interactions on device (navigation, search, content cards)~~
 2. ✅ ~~Implement real content provider integration~~
 3. ✅ ~~Integrate WebTorrent or streaming server for actual playback~~ (Client-side complete)
-4. Deploy or configure backend streaming server
-5. Add subtitle support
-6. Implement settings persistence (streaming server URL)
-7. Add search functionality
-8. Test torrent handling via deep links
-9. Add more public domain movies (157 total available on publicdomaintorrents.info)
+4. ✅ ~~Torrent health display (seeds/peers)~~
+5. ✅ ~~Settings system with persistence~~
+6. ✅ ~~Configurable streaming server endpoint~~
+7. ✅ ~~Provider selection (curated vs publicdomaintorrents)~~
+8. ✅ ~~Custom API endpoints support~~
+9. Deploy or configure backend streaming server
+10. Add subtitle support
+11. Add search functionality
+12. Test torrent handling via deep links
 
 ### 🐛 Debugging Notes
 
