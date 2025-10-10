@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# jlibtorrent - Keep JNI native methods for torrent functionality
+# Required for FrostWire jlibtorrent to work correctly with ProGuard/R8
+-keep class com.frostwire.jlibtorrent.swig.libtorrent_jni {*;}
