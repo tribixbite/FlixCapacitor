@@ -200,16 +200,18 @@ Curated fallback movies (used if fetch fails):
 
 1. ✅ ~~Test UI interactions on device (navigation, search, content cards)~~
 2. ✅ ~~Implement real content provider integration~~
-3. ✅ ~~Integrate WebTorrent or streaming server for actual playback~~ (Client-side complete)
+3. ✅ ~~Integrate WebTorrent for actual playback~~ **COMPLETE - Direct streaming works!**
 4. ✅ ~~Torrent health display (seeds/peers)~~
 5. ✅ ~~Settings system with persistence~~
 6. ✅ ~~Configurable streaming server endpoint~~
 7. ✅ ~~Provider selection (curated vs publicdomaintorrents)~~
 8. ✅ ~~Custom API endpoints support~~
-9. Deploy or configure backend streaming server
-10. Add subtitle support
-11. Add search functionality
-12. Test torrent handling via deep links
+9. Add subtitle support
+10. Add search functionality
+11. Test torrent handling via deep links
+12. Improve video player controls (fullscreen, quality switching)
+13. Add watch history tracking
+14. Implement offline download capability
 
 ### 🐛 Debugging Notes
 
