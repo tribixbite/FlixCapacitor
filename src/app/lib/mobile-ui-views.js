@@ -1363,7 +1363,7 @@ export class MobileUIController {
                     </div>
                 </div>
 
-                <div id="video-container" style="display: none; width: 100%; height: 100%;">
+                <div id="video-container" style="display: none; width: 100%; height: 100%; position: relative;">
                     <video id="torrent-video"
                            controls
                            autoplay
@@ -1372,6 +1372,19 @@ export class MobileUIController {
                            poster="${movie.images?.fanart || movie.images?.poster || ''}">
                         Your browser doesn't support HTML5 video.
                     </video>
+
+                    <!-- Download progress overlay -->
+                    <div id="download-overlay" style="display: none; position: absolute; bottom: calc(var(--safe-area-bottom) + 80px); right: 1rem; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-radius: var(--radius-md); padding: 0.75rem 1rem; font-size: 0.75rem; z-index: 90; min-width: 120px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                            <div class="download-spinner" style="width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.2); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                            <span style="color: rgba(255,255,255,0.9); font-weight: 600;">Buffering</span>
+                        </div>
+                        <div style="color: rgba(255,255,255,0.6);">
+                            <div id="dl-progress">0%</div>
+                            <div id="dl-speed">0 MB/s</div>
+                            <div id="dl-peers">0 peers</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1487,6 +1500,10 @@ export class MobileUIController {
                     if (status.progress !== undefined) {
                         if (progressRow) progressRow.style.display = 'block';
                         if (progressText) progressText.textContent = `${Math.round(status.progress * 100)}%`;
+
+                        // Update download overlay during playback
+                        const dlProgress = document.getElementById('dl-progress');
+                        if (dlProgress) dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
                     }
 
                     // Show download speed if available
@@ -1494,6 +1511,16 @@ export class MobileUIController {
                         if (speedRow) speedRow.style.display = 'block';
                         const speedMB = (status.downloadSpeed / 1024 / 1024).toFixed(2);
                         if (speedText) speedText.textContent = `↓ ${speedMB} MB/s`;
+
+                        // Update download overlay during playback
+                        const dlSpeed = document.getElementById('dl-speed');
+                        if (dlSpeed) dlSpeed.textContent = `↓ ${speedMB} MB/s`;
+                    }
+
+                    // Update peer count in overlay
+                    if (status.numPeers !== undefined) {
+                        const dlPeers = document.getElementById('dl-peers');
+                        if (dlPeers) dlPeers.textContent = `${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
                     }
                 }
             );
@@ -1560,11 +1587,68 @@ export class MobileUIController {
                         loadingSubtitle.textContent = `Duration: ${Math.floor(videoElement.duration / 60)}:${String(Math.floor(videoElement.duration % 60)).padStart(2, '0')}`;
                     }
 
-                    // Resume from saved position
+                    // Resume from saved position with confirmation
                     const savedPosition = this.getPlaybackPosition(movie.imdb_id);
                     if (savedPosition > 10 && savedPosition < videoElement.duration - 10) {
-                        videoElement.currentTime = savedPosition;
-                        console.log(`Resuming from ${Math.floor(savedPosition)}s`);
+                        // Show resume confirmation dialog
+                        const resumeDialog = document.createElement('div');
+                        resumeDialog.id = 'resume-dialog';
+                        resumeDialog.style.cssText = `
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background: rgba(0,0,0,0.95);
+                            padding: 2rem;
+                            border-radius: var(--radius-lg);
+                            z-index: 200;
+                            text-align: center;
+                            min-width: 300px;
+                            backdrop-filter: blur(20px);
+                            border: 1px solid rgba(255,255,255,0.1);
+                        `;
+
+                        const minutes = Math.floor(savedPosition / 60);
+                        const seconds = Math.floor(savedPosition % 60);
+                        const timeStr = `${minutes}:${String(seconds).padStart(2, '0')}`;
+
+                        resumeDialog.innerHTML = `
+                            <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">Resume Playback?</div>
+                            <div style="color: rgba(255,255,255,0.7); margin-bottom: 2rem;">Continue from ${timeStr}</div>
+                            <div style="display: flex; gap: 1rem; justify-content: center;">
+                                <button id="resume-start-over" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.75rem 1.5rem; border-radius: var(--radius-md); cursor: pointer; font-weight: 500;">Start Over</button>
+                                <button id="resume-continue" style="flex: 1; background: var(--accent-primary); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: var(--radius-md); cursor: pointer; font-weight: 600;">Resume</button>
+                            </div>
+                        `;
+
+                        document.querySelector('.video-player-container').appendChild(resumeDialog);
+
+                        // Pause video until user decides
+                        videoElement.pause();
+
+                        document.getElementById('resume-continue').addEventListener('click', () => {
+                            videoElement.currentTime = savedPosition;
+                            videoElement.play();
+                            resumeDialog.remove();
+                            console.log(`Resuming from ${Math.floor(savedPosition)}s`);
+                        });
+
+                        document.getElementById('resume-start-over').addEventListener('click', () => {
+                            videoElement.currentTime = 0;
+                            videoElement.play();
+                            resumeDialog.remove();
+                            console.log('Starting from beginning');
+                        });
+
+                        // Auto-select resume after 10 seconds
+                        setTimeout(() => {
+                            if (document.getElementById('resume-dialog')) {
+                                videoElement.currentTime = savedPosition;
+                                videoElement.play();
+                                resumeDialog.remove();
+                                console.log('Auto-resumed after timeout');
+                            }
+                        }, 10000);
                     }
 
                     // Show fullscreen button
@@ -1590,6 +1674,27 @@ export class MobileUIController {
                     if (statusText) {
                         statusText.textContent = 'Playing';
                         statusText.style.color = '#10b981';
+                    }
+
+                    // Show download overlay during playback (hide when download complete)
+                    const downloadOverlay = document.getElementById('download-overlay');
+                    if (downloadOverlay) {
+                        downloadOverlay.style.display = 'block';
+
+                        // Hide overlay when download is complete (100%)
+                        const checkProgress = setInterval(() => {
+                            const dlProgress = document.getElementById('dl-progress');
+                            if (dlProgress && dlProgress.textContent.includes('100%')) {
+                                setTimeout(() => {
+                                    downloadOverlay.style.transition = 'opacity 0.3s ease';
+                                    downloadOverlay.style.opacity = '0';
+                                    setTimeout(() => {
+                                        downloadOverlay.style.display = 'none';
+                                    }, 300);
+                                }, 2000); // Keep visible for 2s after completion
+                                clearInterval(checkProgress);
+                            }
+                        }, 500);
                     }
                 }, { once: true });
 
@@ -1739,6 +1844,85 @@ export class MobileUIController {
                 videoElement.addEventListener('touchend', () => {
                     isVerticalGesture = false;
                 }, { passive: true });
+
+                // Double-tap to skip (10s forward/backward)
+                let lastTapTime = 0;
+                let lastTapSide = null;
+
+                const showSkipIndicator = (direction, seconds) => {
+                    const indicator = document.createElement('div');
+                    indicator.style.cssText = `
+                        position: absolute;
+                        top: 50%;
+                        ${direction === 'forward' ? 'right: 20%;' : 'left: 20%;'}
+                        transform: translateY(-50%);
+                        background: rgba(0,0,0,0.8);
+                        color: white;
+                        padding: 1.5rem 2rem;
+                        border-radius: 50%;
+                        font-size: 1.5rem;
+                        z-index: 150;
+                        animation: skipFade 0.6s ease-out;
+                        pointer-events: none;
+                    `;
+                    indicator.innerHTML = direction === 'forward' ? `⏩<br><small style="font-size: 0.8rem;">${seconds}s</small>` : `⏪<br><small style="font-size: 0.8rem;">${seconds}s</small>`;
+
+                    // Add animation keyframes if not already added
+                    if (!document.getElementById('skip-animation-styles')) {
+                        const style = document.createElement('style');
+                        style.id = 'skip-animation-styles';
+                        style.textContent = `
+                            @keyframes skipFade {
+                                0% { opacity: 0; transform: translateY(-50%) scale(0.8); }
+                                50% { opacity: 1; transform: translateY(-50%) scale(1); }
+                                100% { opacity: 0; transform: translateY(-50%) scale(0.8); }
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
+
+                    document.querySelector('.video-player-container').appendChild(indicator);
+                    setTimeout(() => indicator.remove(), 600);
+                };
+
+                videoElement.addEventListener('click', (e) => {
+                    const now = Date.now();
+                    const tapDelay = now - lastTapTime;
+                    const clickX = e.clientX || (e.touches && e.touches[0].clientX);
+                    const tapSide = clickX < window.innerWidth / 2 ? 'left' : 'right';
+
+                    // Double-tap detected (within 300ms and same side)
+                    if (tapDelay < 300 && tapSide === lastTapSide) {
+                        e.preventDefault();
+                        const skipAmount = 10;
+
+                        if (tapSide === 'right') {
+                            // Forward 10 seconds
+                            videoElement.currentTime = Math.min(
+                                videoElement.duration,
+                                videoElement.currentTime + skipAmount
+                            );
+                            showSkipIndicator('forward', skipAmount);
+                            console.log(`Skipped forward ${skipAmount}s`);
+                        } else {
+                            // Backward 10 seconds
+                            videoElement.currentTime = Math.max(
+                                0,
+                                videoElement.currentTime - skipAmount
+                            );
+                            showSkipIndicator('backward', skipAmount);
+                            console.log(`Skipped backward ${skipAmount}s`);
+                        }
+
+                        // Reset tap tracking
+                        lastTapTime = 0;
+                        lastTapSide = null;
+                    } else {
+                        // First tap
+                        lastTapTime = now;
+                        lastTapSide = tapSide;
+                    }
+                });
             }
 
         } catch (error) {
