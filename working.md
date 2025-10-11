@@ -41,6 +41,31 @@ SafeToast.updateProgress(streamId, progressData);
 
 **Commit:** `1977c90` - fix: prevent crash on peer connect with safe toast wrapper
 
+#### Additional Fix - streaming-service.js
+
+**Root Cause Identified:**
+- streaming-service.js had 4 unprotected `ToastManager` calls
+- Line 327: `window.App.ToastManager.loading()` - no try-catch
+- Line 401: `window.App.ToastManager.update()` - no try-catch
+- Lines 417-418, 434-435: Had checks but no try-catch
+
+**Solution:**
+- Wrapped all ToastManager calls with comprehensive try-catch blocks
+- Added function existence checks before calling
+- Silent fail for progress updates (non-critical)
+- Fixed init() method calls (SafeToast → ToastManager)
+
+**Changes:**
+- streaming-service.js: 4 methods wrapped with try-catch
+- loading.js & player.js: Fixed init() calls
+
+**Testing:**
+✅ All 52 tests passing
+✅ All toast calls now crash-proof
+✅ Progress updates silently skip if unavailable
+
+**Commit:** `0acd413` - fix: add comprehensive try-catch to streaming-service toast calls
+
 ---
 
 ### ✅ COMPREHENSIVE STREAMING IMPROVEMENTS - Toast Notifications & Event Flow
