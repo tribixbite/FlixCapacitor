@@ -74,7 +74,7 @@
 
       // Initialize toast manager if not already done
       if (window.App && window.App.ToastManager) {
-        window.App.ToastManager.init();
+        window.App.SafeToast.init();
       }
 
       this.lastPeerUpdate = 0; // Track last peer notification time
@@ -292,7 +292,7 @@
             this.lastPeerUpdate = Date.now();
             var peers = streamInfo.get('active_peers');
             if (peers > 0 && window.App && window.App.ToastManager) {
-                window.App.ToastManager.peer(
+                window.App.SafeToast.peer(
                     'Peer Connection',
                     `Connected to ${peers} peer(s) • ${streamInfo.get('downloadSpeed')}`,
                     3000
@@ -319,7 +319,7 @@
 
             // Show completion toast
             if (window.App && window.App.ToastManager) {
-                window.App.ToastManager.success(
+                window.App.SafeToast.success(
                     'Download Complete',
                     'File fully downloaded and ready to play',
                     5000

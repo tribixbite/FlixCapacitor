@@ -30,7 +30,7 @@
         initialize: function () {
             // Initialize toast manager
             if (window.App && window.App.ToastManager) {
-                window.App.ToastManager.init();
+                window.App.SafeToast.init();
             }
 
             this.listenTo(this.model, 'change:downloadSpeed', this.updateDownloadSpeed);
@@ -346,7 +346,7 @@
                             errorMessage = `Playback error (code ${playerError.code})`;
                     }
                 }
-                window.App.ToastManager.error('Player Error', errorMessage, 0);
+                window.App.SafeToast.error('Player Error', errorMessage, 0);
             }
 
             // TODO: user errors

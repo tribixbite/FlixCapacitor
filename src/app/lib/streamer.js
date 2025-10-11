@@ -152,9 +152,9 @@
         handleErrors: function (reason) {
             if (!this.stopped) {
                 win.error(reason);
-                // Show toast notification for errors
-                if (window.App && window.App.ToastManager) {
-                    window.App.ToastManager.error(
+                // Show toast notification for errors (safe wrapper)
+                if (window.App && window.App.SafeToast) {
+                    window.App.SafeToast.error(
                         'Streaming Error',
                         typeof reason === 'string' ? reason : (reason.message || 'An error occurred')
                     );
@@ -194,9 +194,9 @@
                 this.torrent.on('metadata', function () {
                     this.torrentModel.set('torrent', this.torrent);
 
-                    // Notify metadata received
-                    if (window.App && window.App.ToastManager) {
-                        window.App.ToastManager.peer(
+                    // Notify metadata received (safe wrapper)
+                    if (window.App && window.App.SafeToast) {
+                        window.App.SafeToast.peer(
                             'Metadata Received',
                             `Found ${this.torrent.files.length} file(s) in torrent`,
                             3000
@@ -217,9 +217,9 @@
                         this.torrentModel.set('total_peers', this.torrent.numPeers);
                         this.torrentModel.set('time_left', (this.torrent.timeRemaining));
 
-                        // Update streaming service progress if available
-                        if (window.App && window.App.StreamingService && this.torrent.infoHash) {
-                            window.App.StreamingService.updateProgress(this.torrent.infoHash, {
+                        // Update streaming service progress if available (safe wrapper)
+                        if (window.App && window.App.SafeToast && this.torrent.infoHash) {
+                            window.App.SafeToast.updateProgress(this.torrent.infoHash, {
                                 progress: (this.torrent.progress * 100) || 0,
                                 downloaded: this.torrent.downloaded,
                                 total: this.torrent.length,
@@ -245,9 +245,9 @@
                    } else {
                      win.error('Torrent fatal error', error);
 
-                     // Show error toast
-                     if (window.App && window.App.ToastManager) {
-                        window.App.ToastManager.error(
+                     // Show error toast (safe wrapper)
+                     if (window.App && window.App.SafeToast) {
+                        window.App.SafeToast.error(
                             'Torrent Error',
                             error.message || 'Fatal torrent error occurred'
                         );
@@ -262,9 +262,9 @@
                 App.WebTorrent.on('error', function (error) {
                     win.error('WebTorrent fatal error', error);
 
-                    // Show error toast
-                    if (window.App && window.App.ToastManager) {
-                        window.App.ToastManager.error(
+                    // Show error toast (safe wrapper)
+                    if (window.App && window.App.SafeToast) {
+                        window.App.SafeToast.error(
                             'WebTorrent Error',
                             error.message || 'Fatal WebTorrent error occurred'
                         );
@@ -458,9 +458,9 @@
             this.video.volume = 0;
             this.video.src = url;
 
-            // Show buffering toast
-            if (window.App && window.App.ToastManager) {
-                this.bufferingToastId = window.App.ToastManager.info(
+            // Show buffering toast (safe wrapper)
+            if (window.App && window.App.SafeToast) {
+                this.bufferingToastId = window.App.SafeToast.info(
                     'Buffering',
                     'Preparing video stream...',
                     0
@@ -473,10 +473,12 @@
                 this.video.src = '';
                 this.video.load();
 
-                // Close buffering toast
-                if (this.bufferingToastId && window.App && window.App.ToastManager) {
-                    window.App.ToastManager.close(this.bufferingToastId);
-                    window.App.ToastManager.success(
+                // Close buffering toast (safe wrapper)
+                if (window.App && window.App.SafeToast) {
+                    if (this.bufferingToastId) {
+                        window.App.SafeToast.close(this.bufferingToastId);
+                    }
+                    window.App.SafeToast.success(
                         'Ready to Play',
                         'Stream is ready',
                         3000
@@ -487,12 +489,12 @@
                 if (!this.stopped) {
                     win.error('Can\'t play video %s: %s, code %d', url, error.name, error.code);
 
-                    // Show error toast
-                    if (window.App && window.App.ToastManager) {
+                    // Show error toast (safe wrapper)
+                    if (window.App && window.App.SafeToast) {
                         if (this.bufferingToastId) {
-                            window.App.ToastManager.close(this.bufferingToastId);
+                            window.App.SafeToast.close(this.bufferingToastId);
                         }
-                        window.App.ToastManager.error(
+                        window.App.SafeToast.error(
                             'Playback Error',
                             `Can't play video: ${error.name}`,
                             0
