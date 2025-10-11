@@ -74,7 +74,7 @@
 
       // Initialize toast manager if not already done
       if (window.App && window.App.ToastManager) {
-        window.App.SafeToast.init();
+        window.App.ToastManager.init();
       }
 
       this.lastPeerUpdate = 0; // Track last peer notification time

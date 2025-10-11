@@ -30,7 +30,7 @@
         initialize: function () {
             // Initialize toast manager
             if (window.App && window.App.ToastManager) {
-                window.App.SafeToast.init();
+                window.App.ToastManager.init();
             }
 
             this.listenTo(this.model, 'change:downloadSpeed', this.updateDownloadSpeed);

@@ -322,10 +322,16 @@ class StreamingService {
                 const peers = data.peers || 0;
                 this.showToast('peer', 'Downloading', `Connected to ${peers} peer(s)`, 3000);
 
-                // Create or update loading toast
+                // Create or update loading toast (with safe wrapper)
                 if (!this.loadingToasts.has(streamId)) {
-                    const toastId = window.App.ToastManager.loading('Downloading', 'Preparing stream...');
-                    this.loadingToasts.set(streamId, toastId);
+                    try {
+                        if (window.App && window.App.ToastManager && typeof window.App.ToastManager.loading === 'function') {
+                            const toastId = window.App.ToastManager.loading('Downloading', 'Preparing stream...');
+                            this.loadingToasts.set(streamId, toastId);
+                        }
+                    } catch (e) {
+                        console.warn('Failed to create loading toast:', e);
+                    }
                 }
                 break;
 
@@ -398,11 +404,19 @@ class StreamingService {
             details += ` • ${peers} peer(s)`;
         }
 
-        window.App.ToastManager.update(toastId, {
-            progress,
-            message,
-            details
-        });
+        // Update toast with safe wrapper
+        try {
+            if (window.App && window.App.ToastManager && typeof window.App.ToastManager.update === 'function') {
+                window.App.ToastManager.update(toastId, {
+                    progress,
+                    message,
+                    details
+                });
+            }
+        } catch (e) {
+            // Silent fail - progress updates are non-critical
+            console.debug('Progress update skipped:', e.message);
+        }
     }
 
     /**
@@ -414,13 +428,18 @@ class StreamingService {
      * @returns {string} Toast ID
      */
     showToast(type, title, message, duration = 5000) {
-        if (typeof window !== 'undefined' && window.App && window.App.ToastManager) {
-            return window.App.ToastManager.show({
-                type,
-                title,
-                message,
-                duration
-            });
+        try {
+            if (typeof window !== 'undefined' && window.App && window.App.ToastManager &&
+                typeof window.App.ToastManager.show === 'function') {
+                return window.App.ToastManager.show({
+                    type,
+                    title,
+                    message,
+                    duration
+                });
+            }
+        } catch (e) {
+            console.warn('Failed to show toast:', e);
         }
         console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
         return null;
@@ -431,8 +450,13 @@ class StreamingService {
      * @param {string} toastId - Toast ID
      */
     closeToast(toastId) {
-        if (toastId && typeof window !== 'undefined' && window.App && window.App.ToastManager) {
-            window.App.ToastManager.close(toastId);
+        try {
+            if (toastId && typeof window !== 'undefined' && window.App && window.App.ToastManager &&
+                typeof window.App.ToastManager.close === 'function') {
+                window.App.ToastManager.close(toastId);
+            }
+        } catch (e) {
+            console.warn('Failed to close toast:', e);
         }
     }
 
