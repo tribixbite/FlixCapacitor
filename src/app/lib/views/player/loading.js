@@ -72,6 +72,13 @@
     initialize: function() {
       var that = this;
 
+      // Initialize toast manager if not already done
+      if (window.App && window.App.ToastManager) {
+        window.App.ToastManager.init();
+      }
+
+      this.lastPeerUpdate = 0; // Track last peer notification time
+
       App.vent.trigger('settings:close');
       App.vent.trigger('about:close');
 
@@ -264,6 +271,8 @@
     var downloaded = streamInfo.get('downloaded') / (1024 * 1024);
     this.ui.progressTextDownload.text(downloaded.toFixed(2) + ' Mb');
 
+    var downloadedPercent = streamInfo.get('downloadedPercent').toFixed();
+
     if (streamInfo.get('downloaded') < streamInfo.get('size')) {
         this.ui.stateTextDownload.text(i18n.__('Downloading'));
         this.ui.stateTextDownloadedFormatted.text(Common.fileSize(streamInfo.get('downloaded')) + ' / ');
@@ -271,6 +280,25 @@
         this.ui.progressTextSeeds.text(streamInfo.get('total_peers'));
         this.ui.downloadSpeed.text(streamInfo.get('downloadSpeed'));
         this.ui.stateTextRemaining.text(this.remainingTime());
+
+        // Update visual progress bar with smooth animation
+        this.ui.progressbar.css({
+            'width': downloadedPercent + '%',
+            'transition': 'width 0.3s ease-out'
+        });
+
+        // Show peer connection status via toast (throttled)
+        if (!this.lastPeerUpdate || Date.now() - this.lastPeerUpdate > 10000) {
+            this.lastPeerUpdate = Date.now();
+            var peers = streamInfo.get('active_peers');
+            if (peers > 0 && window.App && window.App.ToastManager) {
+                window.App.ToastManager.peer(
+                    'Peer Connection',
+                    `Connected to ${peers} peer(s) • ${streamInfo.get('downloadSpeed')}`,
+                    3000
+                );
+            }
+        }
     } else {
         this.ui.stateTextDownload.text(i18n.__('Downloaded'));
         this.ui.stateTextDownloadedFormatted.hide();
@@ -288,6 +316,16 @@
             this.ddone = 'true';
             cancelButton.css('background-color', '#27ae60');
             cancelButton.css('left', '-45px');
+
+            // Show completion toast
+            if (window.App && window.App.ToastManager) {
+                window.App.ToastManager.success(
+                    'Download Complete',
+                    'File fully downloaded and ready to play',
+                    5000
+                );
+            }
+
             if (Settings.activateLoCtrl === false) {
                 $('.open-button').css('visibility', 'visible').css('display', 'block');
             } else if (Settings.activateLoCtrl === true) {
@@ -301,13 +339,13 @@
         }
     }
 
-    this.ui.bufferPercent.text(streamInfo.get('downloadedPercent').toFixed() + '%');
+    this.ui.bufferPercent.text(downloadedPercent + '%');
     this.ui.uploadSpeed.text(streamInfo.get('uploadSpeed'));
 
     this.ui.loadingInfos.show();
 
     if (this.model.get('state') === 'playingExternally') {
-        this.ui.bufferPercent.text(streamInfo.get('downloadedPercent').toFixed() + '%');
+        this.ui.bufferPercent.text(downloadedPercent + '%');
     }
 },
 

@@ -1,6 +1,7 @@
 /**
  * Streaming Service Client
  * Communicates with backend streaming API for server-based torrent streaming
+ * With comprehensive event notifications and error handling
  */
 
 class StreamingService {
@@ -9,6 +10,8 @@ class StreamingService {
         this.activeStreams = new Map();
         this.pollingIntervals = new Map();
         this.defaultPollInterval = 2000; // 2 seconds
+        this.loadingToasts = new Map(); // Track loading toasts per stream
+        this.eventHandlers = new Map(); // Track event handlers per stream
     }
 
     /**
@@ -29,6 +32,9 @@ class StreamingService {
     async startStream(magnetLink, options = {}) {
         console.log('Starting stream:', magnetLink.substring(0, 60) + '...');
 
+        // Show initial toast
+        const toastId = this.showToast('info', 'Starting Stream', 'Initializing torrent stream...');
+
         const payload = {
             magnetLink,
             quality: options.quality || '720p',
@@ -46,6 +52,7 @@ class StreamingService {
 
             if (!response.ok) {
                 const error = await response.json();
+                this.closeToast(toastId);
                 throw new Error(error.error || `HTTP ${response.status}`);
             }
 
@@ -62,9 +69,14 @@ class StreamingService {
 
             console.log('Stream created:', data.streamId);
 
+            // Update toast
+            this.closeToast(toastId);
+            this.showToast('success', 'Stream Created', 'Connecting to peers...', 3000);
+
             return data;
         } catch (error) {
             console.error('Failed to start stream:', error);
+            this.showToast('error', 'Stream Failed', error.message, 0);
             throw error;
         }
     }
@@ -85,15 +97,22 @@ class StreamingService {
 
             const data = await response.json();
 
-            // Update stored stream info
+            // Update stored stream info and track state changes
             if (this.activeStreams.has(streamId)) {
                 const stream = this.activeStreams.get(streamId);
+                const previousStatus = stream.status;
                 Object.assign(stream, data);
+
+                // Notify on status changes
+                if (previousStatus !== data.status) {
+                    this.handleStatusChange(streamId, previousStatus, data.status, data);
+                }
             }
 
             return data;
         } catch (error) {
             console.error('Failed to get stream status:', error);
+            this.showToast('error', 'Status Error', `Failed to get stream status: ${error.message}`, 5000);
             throw error;
         }
     }
@@ -281,6 +300,153 @@ class StreamingService {
             console.error('Health check failed:', error);
             return false;
         }
+    }
+
+    /**
+     * Handle status changes with notifications
+     * @param {string} streamId - Stream ID
+     * @param {string} previousStatus - Previous status
+     * @param {string} newStatus - New status
+     * @param {Object} data - Status data
+     */
+    handleStatusChange(streamId, previousStatus, newStatus, data) {
+        console.log(`Stream ${streamId} status changed: ${previousStatus} → ${newStatus}`);
+
+        // Status transition notifications
+        switch (newStatus) {
+            case 'connecting':
+                this.showToast('peer', 'Connecting', 'Searching for peers...', 3000);
+                break;
+
+            case 'downloading':
+                const peers = data.peers || 0;
+                this.showToast('peer', 'Downloading', `Connected to ${peers} peer(s)`, 3000);
+
+                // Create or update loading toast
+                if (!this.loadingToasts.has(streamId)) {
+                    const toastId = window.App.ToastManager.loading('Downloading', 'Preparing stream...');
+                    this.loadingToasts.set(streamId, toastId);
+                }
+                break;
+
+            case 'buffering':
+                this.showToast('info', 'Buffering', 'Building buffer for smooth playback...', 3000);
+                break;
+
+            case 'ready':
+                this.showToast('success', 'Ready to Play', 'Stream is ready for playback', 3000);
+
+                // Close loading toast if exists
+                const loadingToastId = this.loadingToasts.get(streamId);
+                if (loadingToastId) {
+                    this.closeToast(loadingToastId);
+                    this.loadingToasts.delete(streamId);
+                }
+                break;
+
+            case 'error':
+                const errorMsg = data.message || 'Unknown error occurred';
+                this.showToast('error', 'Stream Error', errorMsg, 0);
+
+                // Close loading toast if exists
+                const errorLoadingToastId = this.loadingToasts.get(streamId);
+                if (errorLoadingToastId) {
+                    this.closeToast(errorLoadingToastId);
+                    this.loadingToasts.delete(streamId);
+                }
+                break;
+
+            case 'stopped':
+                this.showToast('info', 'Stream Stopped', 'Streaming has been stopped', 3000);
+                break;
+        }
+
+        // Emit custom event for other listeners
+        if (typeof window !== 'undefined' && window.App && window.App.vent) {
+            window.App.vent.trigger('stream:status:changed', {
+                streamId,
+                previousStatus,
+                newStatus,
+                data
+            });
+        }
+    }
+
+    /**
+     * Update progress in loading toast
+     * @param {string} streamId - Stream ID
+     * @param {Object} progressData - Progress data
+     */
+    updateProgress(streamId, progressData) {
+        const toastId = this.loadingToasts.get(streamId);
+        if (!toastId) return;
+
+        const { progress, downloaded, total, speed, peers } = progressData;
+
+        let message = `${progress.toFixed(1)}% complete`;
+        let details = '';
+
+        if (speed) {
+            message += ` • ${this.formatBytes(speed)}/s`;
+        }
+
+        if (downloaded && total) {
+            details = `${this.formatBytes(downloaded)} / ${this.formatBytes(total)}`;
+        }
+
+        if (peers !== undefined) {
+            details += ` • ${peers} peer(s)`;
+        }
+
+        window.App.ToastManager.update(toastId, {
+            progress,
+            message,
+            details
+        });
+    }
+
+    /**
+     * Show a toast notification
+     * @param {string} type - Toast type
+     * @param {string} title - Toast title
+     * @param {string} message - Toast message
+     * @param {number} duration - Duration in ms (0 = no auto-close)
+     * @returns {string} Toast ID
+     */
+    showToast(type, title, message, duration = 5000) {
+        if (typeof window !== 'undefined' && window.App && window.App.ToastManager) {
+            return window.App.ToastManager.show({
+                type,
+                title,
+                message,
+                duration
+            });
+        }
+        console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        return null;
+    }
+
+    /**
+     * Close a toast
+     * @param {string} toastId - Toast ID
+     */
+    closeToast(toastId) {
+        if (toastId && typeof window !== 'undefined' && window.App && window.App.ToastManager) {
+            window.App.ToastManager.close(toastId);
+        }
+    }
+
+    /**
+     * Format bytes to human readable string
+     * @param {number} bytes - Bytes
+     * @returns {string} Formatted string
+     */
+    formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 }
 

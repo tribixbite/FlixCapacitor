@@ -152,6 +152,13 @@
         handleErrors: function (reason) {
             if (!this.stopped) {
                 win.error(reason);
+                // Show toast notification for errors
+                if (window.App && window.App.ToastManager) {
+                    window.App.ToastManager.error(
+                        'Streaming Error',
+                        typeof reason === 'string' ? reason : (reason.message || 'An error occurred')
+                    );
+                }
             }
         },
 
@@ -186,6 +193,16 @@
 
                 this.torrent.on('metadata', function () {
                     this.torrentModel.set('torrent', this.torrent);
+
+                    // Notify metadata received
+                    if (window.App && window.App.ToastManager) {
+                        window.App.ToastManager.peer(
+                            'Metadata Received',
+                            `Found ${this.torrent.files.length} file(s) in torrent`,
+                            3000
+                        );
+                    }
+
                     resolve(this.torrent);
                 }.bind(this));
 
@@ -199,6 +216,17 @@
                         this.torrentModel.set('active_peers', this.torrent.numPeers);
                         this.torrentModel.set('total_peers', this.torrent.numPeers);
                         this.torrentModel.set('time_left', (this.torrent.timeRemaining));
+
+                        // Update streaming service progress if available
+                        if (window.App && window.App.StreamingService && this.torrent.infoHash) {
+                            window.App.StreamingService.updateProgress(this.torrent.infoHash, {
+                                progress: (this.torrent.progress * 100) || 0,
+                                downloaded: this.torrent.downloaded,
+                                total: this.torrent.length,
+                                speed: this.torrent.downloadSpeed,
+                                peers: this.torrent.numPeers
+                            });
+                        }
                     }
                 }.bind(this));
 
@@ -216,6 +244,15 @@
                      this.torrent.add(this.torrent.infoHash);
                    } else {
                      win.error('Torrent fatal error', error);
+
+                     // Show error toast
+                     if (window.App && window.App.ToastManager) {
+                        window.App.ToastManager.error(
+                            'Torrent Error',
+                            error.message || 'Fatal torrent error occurred'
+                        );
+                     }
+
                      this.stop();
                      reject(error);
                    }
@@ -224,6 +261,15 @@
 
                 App.WebTorrent.on('error', function (error) {
                     win.error('WebTorrent fatal error', error);
+
+                    // Show error toast
+                    if (window.App && window.App.ToastManager) {
+                        window.App.ToastManager.error(
+                            'WebTorrent Error',
+                            error.message || 'Fatal WebTorrent error occurred'
+                        );
+                    }
+
                     this.stop();
                     reject(error);
                 }.bind(this));
@@ -412,15 +458,47 @@
             this.video.volume = 0;
             this.video.src = url;
 
+            // Show buffering toast
+            if (window.App && window.App.ToastManager) {
+                this.bufferingToastId = window.App.ToastManager.info(
+                    'Buffering',
+                    'Preparing video stream...',
+                    0
+                );
+            }
+
             this.video.play().then(function () {
                 this.canPlay = true;
                 this.video.pause();
                 this.video.src = '';
                 this.video.load();
+
+                // Close buffering toast
+                if (this.bufferingToastId && window.App && window.App.ToastManager) {
+                    window.App.ToastManager.close(this.bufferingToastId);
+                    window.App.ToastManager.success(
+                        'Ready to Play',
+                        'Stream is ready',
+                        3000
+                    );
+                }
             }.bind(this)).catch(function (error) {
                 //catch the correct error and avoid erroring on server destroy (stream:stop while still loading the play())
                 if (!this.stopped) {
                     win.error('Can\'t play video %s: %s, code %d', url, error.name, error.code);
+
+                    // Show error toast
+                    if (window.App && window.App.ToastManager) {
+                        if (this.bufferingToastId) {
+                            window.App.ToastManager.close(this.bufferingToastId);
+                        }
+                        window.App.ToastManager.error(
+                            'Playback Error',
+                            `Can't play video: ${error.name}`,
+                            0
+                        );
+                    }
+
                     // TODO: set state to error
                     // TODO: once we have a global option for extplayer, loads it instead
                     // for now, we ignore that so we can display error in the player:

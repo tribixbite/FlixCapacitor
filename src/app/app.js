@@ -76,6 +76,11 @@ var initApp = function () {
 };
 
 App.onStart = function (options) {
+  // Initialize toast notification system
+  if (window.App && window.App.ToastManager) {
+    window.App.ToastManager.init();
+  }
+
   initTemplates().then(initApp);
 };
 

@@ -28,6 +28,11 @@
         },
 
         initialize: function () {
+            // Initialize toast manager
+            if (window.App && window.App.ToastManager) {
+                window.App.ToastManager.init();
+            }
+
             this.listenTo(this.model, 'change:downloadSpeed', this.updateDownloadSpeed);
             this.listenTo(this.model, 'change:uploadSpeed', this.updateUploadSpeed);
             this.listenTo(this.model, 'change:active_peers', this.updateActivePeers);
@@ -314,15 +319,42 @@
 
         onPlayerError: function (error) {
             this.sendToTrakt('stop');
+
+            var videoPlayer = $('#video_player');
+            var playerError = videoPlayer.get(0) && videoPlayer.get(0).player ? videoPlayer.get(0).player.error() : null;
+
+            win.error('video.js error code: ' + (playerError ? playerError.code : 'unknown'), playerError);
+
+            // Show error toast with user-friendly message
+            if (window.App && window.App.ToastManager) {
+                var errorMessage = 'An error occurred during playback';
+                if (playerError) {
+                    switch (playerError.code) {
+                        case 1:
+                            errorMessage = 'Video loading aborted';
+                            break;
+                        case 2:
+                            errorMessage = 'Network error occurred';
+                            break;
+                        case 3:
+                            errorMessage = 'Video decoding failed';
+                            break;
+                        case 4:
+                            errorMessage = 'Video format not supported';
+                            break;
+                        default:
+                            errorMessage = `Playback error (code ${playerError.code})`;
+                    }
+                }
+                window.App.ToastManager.error('Player Error', errorMessage, 0);
+            }
+
             // TODO: user errors
             if (this.model.get('type') === 'video/youtube') {
                 setTimeout(function () {
                     App.vent.trigger('player:close');
                 }, 2000);
             }
-            var videoPlayer = $('#video_player');
-
-            win.error('video.js error code: ' + videoPlayer.get(0).player.error().code, videoPlayer.get(0).player.error());
         },
 
         metadataCheck: function () {
