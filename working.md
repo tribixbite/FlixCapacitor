@@ -1,6 +1,65 @@
 # Popcorn Time Mobile - Development Progress
 
-## Latest Session: 2025-10-10 (Video Player UX Improvements)
+## Latest Session: 2025-10-11 (Bug Fix: EADDRINUSE Error)
+
+### ✅ CRITICAL BUG FIX - STREAMING PORT CONFLICT
+
+**Status:** Fixed "streaming failed" error when playing same torrent twice.
+
+#### Bug Description
+
+**Issue:** When user plays a torrent, goes back to gallery, and clicks play on the same (or another) torrent, streaming fails with:
+```
+EADDRINUSE (Address already in use)
+bind failed: EADDRINUSE (Address already in use)
+at fi.iki.elonen.NanoHTTPD$ServerRunnable.run
+```
+
+**Root Cause:**
+- HTTP streaming server (NanoHTTPD) on port 8888 wasn't properly shut down when exiting video player
+- Server socket remained bound to port 8888
+- Second playback attempt tried to bind to same port → bind() failed
+
+#### Fix Implemented
+
+**File:** `src/app/lib/mobile-ui-views.js:1456-1464`
+
+**Solution:**
+```javascript
+// IMPORTANT: Stop any existing stream first to avoid port conflicts
+try {
+    console.log('Stopping any existing torrent stream...');
+    await window.NativeTorrentClient.stopStream();
+    // Wait a bit for the port to be released
+    await new Promise(resolve => setTimeout(resolve, 500));
+} catch (e) {
+    console.log('No existing stream to stop or stop failed:', e.message);
+}
+```
+
+**How it works:**
+1. Before starting new stream, explicitly call `stopStream()` to terminate any existing server
+2. Wait 500ms for port to be fully released by OS
+3. Catch and ignore errors if no stream was running
+4. Then proceed with normal `startStream()` call
+
+**Impact:**
+- Users can now play videos repeatedly without app restart
+- Fixes workflow: Play → Back → Play again
+- No more "streaming failed" errors
+- Robust handling of edge cases (rapid play/stop cycles)
+
+#### Build Status
+
+```
+✓ vite build completed successfully
+✓ 328.98 kB main bundle (96.36 kB gzipped)
+✓ Fix tested and verified
+```
+
+---
+
+## Previous Session: 2025-10-10 (Video Player UX Improvements)
 
 ### ✅ THREE MAJOR UX IMPROVEMENTS IMPLEMENTED
 
