@@ -2,6 +2,48 @@
 
 ## Latest Session: 2025-10-11 (Stream/Peer Connect Enhancement + Crash Fix)
 
+### ✅ COMPREHENSIVE PIPELINE DOCUMENTATION
+
+**Status:** Complete documentation of all streaming pipeline files created.
+
+#### Documentation Created
+
+**File:** `STREAMING_PIPELINE_FILES.md` (325 lines)
+- Complete map of all 16 files involved in torrent streaming and peer connection pipeline
+- Core streaming engine files (streamer.js, streaming-service.js, native/webtorrent clients)
+- Toast notification system (toast-manager.js, toast-safe-wrapper.js)
+- Player UI components (loading.js, player.js)
+- Data models and configuration files
+- Event flow diagram showing complete peer connection lifecycle
+- All toast call locations mapped with protection status
+- Critical dependencies listed (Backbone, Marionette, WebTorrent, Video.js, etc.)
+- Testing files documented (52 tests, all passing)
+- Recent changes summary
+- Known issues and future improvements
+
+**Key Sections:**
+1. **Core Streaming Engine** - 4 files with role descriptions and key events
+2. **Toast Notification System** - 2 files with crash-prevention architecture
+3. **Player UI Components** - 2 files with real-time stats and controls
+4. **Data Models** - Stream state tracking and legacy notifications
+5. **Configuration & Bootstrap** - Script loading order and initialization
+6. **Native Android Plugin** - External repository components
+7. **Event Flow Diagram** - Complete user→stream→play lifecycle with crash point identified
+8. **Toast Call Locations** - Every toast call mapped by file and line number
+9. **Critical Dependencies** - External libraries required
+10. **Testing Files** - Test suite coverage summary
+
+**Purpose:**
+- Reference guide for developers working on streaming pipeline
+- Documents complete architecture and data flow from UI → native layers
+- Details crash fixes and protection measures implemented
+- Serves as onboarding document for new contributors
+- Maps relationships between 16 different files
+
+**Commit:** Documentation created after completing crash fixes.
+
+---
+
 ### ✅ CRITICAL CRASH FIX - Peer Connect Crash Resolved
 
 **Status:** Fixed app crash on peer connection by adding SafeToast wrapper with defensive checks.
