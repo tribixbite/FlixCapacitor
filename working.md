@@ -1,6 +1,47 @@
 # Popcorn Time Mobile - Development Progress
 
-## Latest Session: 2025-10-11 (Stream/Peer Connect Enhancement)
+## Latest Session: 2025-10-11 (Stream/Peer Connect Enhancement + Crash Fix)
+
+### ✅ CRITICAL CRASH FIX - Peer Connect Crash Resolved
+
+**Status:** Fixed app crash on peer connection by adding SafeToast wrapper with defensive checks.
+
+#### Root Cause
+- Toast notifications were called during peer connect events (torrent 'download' event)
+- `window.App.ToastManager` might not be fully initialized when torrent events fire
+- Accessing undefined `window.App.StreamingService.updateProgress()` caused crashes
+- No defensive checks or error handling around toast calls
+
+#### Solution Implemented
+
+**SafeToast Wrapper** (`src/app/lib/toast-safe-wrapper.js`) - NEW
+- Comprehensive try-catch blocks around all toast operations
+- Function existence checks before calling
+- Silent fallback for progress updates (non-critical)
+- Prevents crashes while maintaining functionality
+
+**Key Features:**
+```javascript
+// Safe wrapper checks function existence
+SafeToast.peer('Title', 'Message', duration);
+SafeToast.updateProgress(streamId, progressData);
+// Silently fails if toast system unavailable
+```
+
+**Changes:**
+- Replaced all `window.App.ToastManager` calls with `window.App.SafeToast`
+- Added defensive checks in streamer.js (5 locations)
+- Updated player.js and loading.js to use SafeToast
+- Added toast-safe-wrapper.js to index.html
+
+**Testing:**
+✅ All 52 tests passing
+✅ Safe fallback when toast system unavailable
+✅ Peer connections no longer crash app
+
+**Commit:** `1977c90` - fix: prevent crash on peer connect with safe toast wrapper
+
+---
 
 ### ✅ COMPREHENSIVE STREAMING IMPROVEMENTS - Toast Notifications & Event Flow
 
