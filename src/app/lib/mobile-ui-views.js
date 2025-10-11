@@ -1453,6 +1453,16 @@ export class MobileUIController {
                 throw new Error('Native torrent client not available');
             }
 
+            // IMPORTANT: Stop any existing stream first to avoid port conflicts
+            try {
+                console.log('Stopping any existing torrent stream...');
+                await window.NativeTorrentClient.stopStream();
+                // Wait a bit for the port to be released
+                await new Promise(resolve => setTimeout(resolve, 500));
+            } catch (e) {
+                console.log('No existing stream to stop or stop failed:', e.message);
+            }
+
             console.log('Starting native torrent stream...');
 
             const statusText = document.getElementById('status-text');
