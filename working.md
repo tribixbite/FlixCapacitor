@@ -1,6 +1,126 @@
 # Popcorn Time Mobile - Development Progress
 
-## Latest Session: 2025-10-11 (Bug Fix: EADDRINUSE Error)
+## Latest Session: 2025-10-11 (Stream/Peer Connect Enhancement)
+
+### ✅ COMPREHENSIVE STREAMING IMPROVEMENTS - Toast Notifications & Event Flow
+
+**Status:** Rebuilt stream/peer connect handling with toast notifications, enhanced error handling, and improved UI feedback.
+
+#### Implementation Summary
+
+**Major Changes:**
+1. **Toast Notification System** (`src/app/lib/toast-manager.js`) - NEW
+   - 5 notification types: success, error, warning, info, peer
+   - Auto-dismiss with configurable duration
+   - Progress bar support for loading states
+   - Dark mode design optimized for mobile
+   - Smooth slide-in/slide-out animations
+
+2. **Enhanced Streaming Service** (`src/app/lib/streaming-service.js`)
+   - Comprehensive event flow notifications
+   - Status change tracking (connecting → downloading → buffering → ready)
+   - Real-time progress updates with stats (speed, peers, downloaded/total)
+   - Automatic toast notifications for all state transitions
+   - Loading toast with live progress bar
+
+3. **Enhanced WebTorrent Streamer** (`src/app/lib/streamer.js`)
+   - Toast notifications for all torrent events
+   - Metadata received notifications
+   - Peer connection updates
+   - Error handling with user-friendly messages
+   - Buffering status feedback
+
+4. **Enhanced Loading UI** (`src/app/lib/views/player/loading.js`)
+   - Smooth progress bar animations
+   - Throttled peer connection toasts (every 10s)
+   - Download completion notification
+   - Visual progress percentage display
+
+5. **Enhanced Player UI** (`src/app/lib/views/player/player.js`)
+   - User-friendly error messages for video.js errors
+   - Error code mapping (codes 1-4)
+   - Persistent error display
+
+#### User Experience Improvements
+
+**Event Flow Visibility:**
+- Stream Start: "Starting Stream" → "Stream Created"
+- Peer Discovery: "Searching for peers..." → "Connected to X peer(s)"
+- Download Progress: Live progress bar with speed and stats
+- Buffering: "Preparing video stream..." → "Stream is ready"
+- Playback Ready: "Ready to Play" notification
+- Completion: "Download Complete" notification
+
+**Error Handling:**
+- All errors show user-friendly toasts
+- Network errors, torrent errors, WebTorrent errors
+- Player errors with specific codes
+- Persistent display (manual close required)
+
+**Visual Feedback:**
+- Progress bar with smooth CSS transitions
+- Peer status updates every 10 seconds
+- Download speed and percentage display
+- Time remaining estimation
+
+#### Technical Details
+
+**Toast API:**
+```javascript
+// Show toasts
+App.ToastManager.success(title, message, duration);
+App.ToastManager.error(title, message, duration);
+App.ToastManager.peer(title, message, duration);
+
+// Loading with progress
+const toastId = App.ToastManager.loading(title, message);
+App.ToastManager.update(toastId, { progress: 50 });
+App.ToastManager.close(toastId);
+```
+
+**Status Transitions:**
+- connecting → downloading → buffering → ready
+- Automatic notifications for each transition
+- Progress updates integrated with loading toast
+
+**Error Code Mapping:**
+- Code 1: "Video loading aborted"
+- Code 2: "Network error occurred"
+- Code 3: "Video decoding failed"
+- Code 4: "Video format not supported"
+
+#### Build Status
+
+```
+✅ All tests passing: 52/52
+✅ No breaking changes
+✅ Main bundle: 328.98 kB (gzipped: 96.36 kB)
+```
+
+#### Files Modified
+
+- NEW: `src/app/lib/toast-manager.js` - Toast notification system
+- NEW: `STREAMING_IMPROVEMENTS.md` - Comprehensive documentation
+- MODIFIED: `src/app/lib/streaming-service.js` - Event notifications
+- MODIFIED: `src/app/lib/streamer.js` - Toast integration
+- MODIFIED: `src/app/lib/views/player/loading.js` - Progress UI
+- MODIFIED: `src/app/lib/views/player/player.js` - Error handling
+- MODIFIED: `src/app/index.html` - Script loading
+- MODIFIED: `src/app/app.js` - Bootstrap initialization
+
+#### Commit
+
+- `ea5465a` - feat: rebuild stream/peer connect handling with comprehensive notifications
+
+**Next Improvements:**
+- Add toast position customization
+- Implement toast history/log viewer
+- Add network quality indicators
+- Enhance peer quality metrics
+
+---
+
+## Previous Session: 2025-10-11 (Bug Fix: EADDRINUSE Error)
 
 ### ✅ CRITICAL BUG FIX - STREAMING PORT CONFLICT
 
