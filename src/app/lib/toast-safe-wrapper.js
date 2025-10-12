@@ -47,6 +47,38 @@
         },
 
         /**
+         * Safely show a loading toast with progress bar
+         * @param {string} title - Title
+         * @param {string} message - Message
+         * @returns {string|null} Toast ID or null
+         */
+        loading(title, message = '') {
+            try {
+                if (window.App && window.App.ToastManager && typeof window.App.ToastManager.loading === 'function') {
+                    return window.App.ToastManager.loading(title, message);
+                }
+            } catch (e) {
+                console.warn('Failed to show loading toast:', e);
+            }
+            return null;
+        },
+
+        /**
+         * Safely update a toast
+         * @param {string} toastId - Toast ID
+         * @param {Object} updates - Updates to apply
+         */
+        update(toastId, updates) {
+            try {
+                if (toastId && window.App && window.App.ToastManager && typeof window.App.ToastManager.update === 'function') {
+                    window.App.ToastManager.update(toastId, updates);
+                }
+            } catch (e) {
+                console.warn('Failed to update toast:', e);
+            }
+        },
+
+        /**
          * Safely close a toast
          * @param {string} toastId - Toast ID
          */

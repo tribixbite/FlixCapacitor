@@ -291,7 +291,7 @@
         if (!this.lastPeerUpdate || Date.now() - this.lastPeerUpdate > 10000) {
             this.lastPeerUpdate = Date.now();
             var peers = streamInfo.get('active_peers');
-            if (peers > 0 && window.App && window.App.ToastManager) {
+            if (peers > 0 && window.App && window.App.SafeToast) {
                 window.App.SafeToast.peer(
                     'Peer Connection',
                     `Connected to ${peers} peer(s) • ${streamInfo.get('downloadSpeed')}`,
@@ -318,7 +318,7 @@
             cancelButton.css('left', '-45px');
 
             // Show completion toast
-            if (window.App && window.App.ToastManager) {
+            if (window.App && window.App.SafeToast) {
                 window.App.SafeToast.success(
                     'Download Complete',
                     'File fully downloaded and ready to play',

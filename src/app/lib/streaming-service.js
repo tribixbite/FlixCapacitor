@@ -322,15 +322,13 @@ class StreamingService {
                 const peers = data.peers || 0;
                 this.showToast('peer', 'Downloading', `Connected to ${peers} peer(s)`, 3000);
 
-                // Create or update loading toast (with safe wrapper)
+                // Create loading toast using SafeToast wrapper
                 if (!this.loadingToasts.has(streamId)) {
-                    try {
-                        if (window.App && window.App.ToastManager && typeof window.App.ToastManager.loading === 'function') {
-                            const toastId = window.App.ToastManager.loading('Downloading', 'Preparing stream...');
+                    if (window.App && window.App.SafeToast) {
+                        const toastId = window.App.SafeToast.loading('Downloading', 'Preparing stream...');
+                        if (toastId) {
                             this.loadingToasts.set(streamId, toastId);
                         }
-                    } catch (e) {
-                        console.warn('Failed to create loading toast:', e);
                     }
                 }
                 break;
@@ -404,23 +402,18 @@ class StreamingService {
             details += ` • ${peers} peer(s)`;
         }
 
-        // Update toast with safe wrapper
-        try {
-            if (window.App && window.App.ToastManager && typeof window.App.ToastManager.update === 'function') {
-                window.App.ToastManager.update(toastId, {
-                    progress,
-                    message,
-                    details
-                });
-            }
-        } catch (e) {
-            // Silent fail - progress updates are non-critical
-            console.debug('Progress update skipped:', e.message);
+        // Update toast using SafeToast wrapper
+        if (window.App && window.App.SafeToast) {
+            window.App.SafeToast.update(toastId, {
+                progress,
+                message,
+                details
+            });
         }
     }
 
     /**
-     * Show a toast notification
+     * Show a toast notification using SafeToast wrapper
      * @param {string} type - Toast type
      * @param {string} title - Toast title
      * @param {string} message - Toast message
@@ -428,35 +421,20 @@ class StreamingService {
      * @returns {string} Toast ID
      */
     showToast(type, title, message, duration = 5000) {
-        try {
-            if (typeof window !== 'undefined' && window.App && window.App.ToastManager &&
-                typeof window.App.ToastManager.show === 'function') {
-                return window.App.ToastManager.show({
-                    type,
-                    title,
-                    message,
-                    duration
-                });
-            }
-        } catch (e) {
-            console.warn('Failed to show toast:', e);
+        if (window.App && window.App.SafeToast) {
+            return window.App.SafeToast.show(type, title, message, duration);
         }
         console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
         return null;
     }
 
     /**
-     * Close a toast
+     * Close a toast using SafeToast wrapper
      * @param {string} toastId - Toast ID
      */
     closeToast(toastId) {
-        try {
-            if (toastId && typeof window !== 'undefined' && window.App && window.App.ToastManager &&
-                typeof window.App.ToastManager.close === 'function') {
-                window.App.ToastManager.close(toastId);
-            }
-        } catch (e) {
-            console.warn('Failed to close toast:', e);
+        if (window.App && window.App.SafeToast) {
+            window.App.SafeToast.close(toastId);
         }
     }
 

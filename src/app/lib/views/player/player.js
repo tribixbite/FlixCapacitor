@@ -326,7 +326,7 @@
             win.error('video.js error code: ' + (playerError ? playerError.code : 'unknown'), playerError);
 
             // Show error toast with user-friendly message
-            if (window.App && window.App.ToastManager) {
+            if (window.App && window.App.SafeToast) {
                 var errorMessage = 'An error occurred during playback';
                 if (playerError) {
                     switch (playerError.code) {
