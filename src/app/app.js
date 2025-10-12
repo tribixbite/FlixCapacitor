@@ -9,6 +9,10 @@
 var App = new Marionette.Application({
   region: '.main-window-region'
 });
+
+// Expose App globally for other modules
+window.App = App;
+
 _.extend(App, {
   Controller: {},
   View: {},
