@@ -1489,6 +1489,8 @@ export class MobileUIController {
 
             // Start the native torrent stream with timeout
             let streamInfo;
+            let hasVideoError = false; // Track if video player has errored
+
             try {
                 streamInfo = await Promise.race([
                     window.NativeTorrentClient.startStream(
@@ -1497,6 +1499,13 @@ export class MobileUIController {
                         (status) => {
                             // Progress callback - update UI with torrent status
                             console.log('Native torrent status:', status);
+
+                            // IMPORTANT: Don't update UI if video player has errored
+                            // This prevents progress updates from overwriting the error screen
+                            if (hasVideoError) {
+                                console.log('Skipping progress UI update - video error state active');
+                                return;
+                            }
 
                             if (statusText) {
                                 statusText.textContent = status.status || 'Downloading';
@@ -1608,6 +1617,10 @@ export class MobileUIController {
                 // Handle video errors
                 videoElement.addEventListener('error', (e) => {
                     console.error('Video playback error:', e);
+
+                    // CRITICAL: Set error flag to prevent progress updates from overwriting this UI
+                    hasVideoError = true;
+
                     const errorMsg = videoElement.error ?
                         `Error ${videoElement.error.code}: ${videoElement.error.message}` :
                         'Unknown playback error';
