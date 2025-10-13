@@ -1445,7 +1445,8 @@ export class MobileUIController {
             await KeepAwake.keepAwake();
             console.log('Screen will stay awake during playback');
         } catch (e) {
-            console.log('KeepAwake not available (web platform)');
+            console.warn('KeepAwake failed:', e.message);
+            // Non-critical, continue anyway
         }
 
         // Try to start streaming with native torrent client
@@ -1453,6 +1454,11 @@ export class MobileUIController {
             // Check if native client is available
             if (!window.NativeTorrentClient) {
                 throw new Error('Native torrent client not available');
+            }
+
+            // Check if TorrentStreamer plugin is available
+            if (!window.TorrentStreamer && typeof TorrentStreamer === 'undefined') {
+                throw new Error('TorrentStreamer plugin not loaded. Did you run: npm run build && npx cap sync?');
             }
 
             // IMPORTANT: Stop any existing stream first to avoid port conflicts

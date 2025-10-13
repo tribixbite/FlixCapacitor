@@ -4,6 +4,8 @@
  * Compatible interface with WebTorrentClient for easy drop-in replacement
  */
 
+// Import TorrentStreamer plugin
+// Note: If this fails, make sure you've run: npm install && npm run build && npx cap sync
 import { TorrentStreamer } from 'capacitor-plugin-torrent-streamer';
 
 
