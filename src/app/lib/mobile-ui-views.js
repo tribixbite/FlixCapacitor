@@ -1612,21 +1612,80 @@ export class MobileUIController {
                         `Error ${videoElement.error.code}: ${videoElement.error.message}` :
                         'Unknown playback error';
 
-                    // Show error in loading UI
-                    if (loadingTitle) loadingTitle.textContent = 'Playback Failed';
+                    // Show error in loading UI with external player option
+                    if (loadingTitle) loadingTitle.textContent = 'In-App Player Failed';
                     if (loadingSubtitle) {
                         loadingSubtitle.innerHTML = `
                             <strong style="color: #ef4444;">${errorMsg}</strong><br>
-                            <span style="font-size: 0.8rem; margin-top: 1rem; display: block;">
-                                • Try another quality<br>
-                                • Check torrent health<br>
-                                • Check internet connection
+                            <button id="open-external-player-btn" style="
+                                background: #10b981;
+                                color: white;
+                                border: none;
+                                padding: 12px 24px;
+                                border-radius: 8px;
+                                font-size: 1rem;
+                                font-weight: 600;
+                                margin-top: 1rem;
+                                cursor: pointer;
+                                box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+                            ">
+                                📱 Open in External Player (VLC, MX Player, etc.)
+                            </button>
+                            <span style="font-size: 0.8rem; margin-top: 1rem; display: block; opacity: 0.7;">
+                                Stream URL: ${streamInfo.streamUrl}
                             </span>
                         `;
+
+                        // Add click handler for external player button
+                        setTimeout(() => {
+                            const externalBtn = document.getElementById('open-external-player-btn');
+                            if (externalBtn) {
+                                externalBtn.addEventListener('click', async () => {
+                                    console.log('Opening in external player:', streamInfo.streamUrl);
+                                    try {
+                                        // Import TorrentStreamer plugin dynamically
+                                        const { TorrentStreamer } = await import('capacitor-plugin-torrent-streamer');
+
+                                        // Call native method to open external player (VLC, MX Player, etc.)
+                                        const result = await TorrentStreamer.openExternalPlayer({
+                                            streamUrl: streamInfo.streamUrl
+                                        });
+
+                                        console.log('External player opened:', result);
+
+                                        // Show success message
+                                        if (loadingSubtitle) {
+                                            loadingSubtitle.innerHTML = `
+                                                <strong style="color: #10b981;">✓ Opened in external player!</strong><br>
+                                                <span style="font-size: 0.8rem; margin-top: 1rem; display: block;">
+                                                    You can now watch the video in your chosen player app.<br>
+                                                    The stream will continue running in the background.
+                                                </span>
+                                            `;
+                                        }
+                                    } catch (err) {
+                                        console.error('Failed to open external player:', err);
+
+                                        // Show error with stream URL as fallback
+                                        const errorMsg = err.message || 'Unknown error';
+                                        if (loadingSubtitle) {
+                                            loadingSubtitle.innerHTML = `
+                                                <strong style="color: #ef4444;">Failed to open external player</strong><br>
+                                                <span style="font-size: 0.9rem; margin-top: 0.5rem; display: block;">${errorMsg}</span>
+                                                <span style="font-size: 0.8rem; margin-top: 1rem; display: block; opacity: 0.7;">
+                                                    Manual URL: ${streamInfo.streamUrl}<br>
+                                                    <small>Copy this URL and paste into VLC or MX Player</small>
+                                                </span>
+                                            `;
+                                        }
+                                    }
+                                });
+                            }
+                        }, 100);
                     }
                     if (statusText) {
-                        statusText.textContent = 'Error';
-                        statusText.style.color = '#ef4444';
+                        statusText.textContent = 'Use External Player';
+                        statusText.style.color = '#f59e0b';
                     }
 
                     // Hide spinner
