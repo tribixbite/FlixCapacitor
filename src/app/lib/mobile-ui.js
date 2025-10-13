@@ -315,8 +315,12 @@
                 alert('Failed to add magnet link. Please try again.');
             }
         } else {
-            console.error('App not ready for torrent handling');
-            alert('App not ready. Please wait and try again.');
+            console.log('App not ready yet, queueing magnet link for later...');
+            // Queue the magnet link to be processed when app is ready
+            window._pendingDeepLink = magnetURL;
+
+            // Show feedback to user
+            alert('Magnet link saved. It will be opened when the app finishes loading.');
         }
     }
 
@@ -334,8 +338,12 @@
                 alert('Failed to add torrent. Please try again.');
             }
         } else {
-            console.error('App not ready for torrent handling');
-            alert('App not ready. Please wait and try again.');
+            console.log('App not ready yet, queueing torrent URL for later...');
+            // Queue the torrent URL to be processed when app is ready
+            window._pendingDeepLink = torrentURL;
+
+            // Show feedback to user
+            alert('Torrent URL saved. It will be opened when the app finishes loading.');
         }
     }
 
@@ -366,8 +374,12 @@
                     alert('Failed to add torrent file. Please try again.');
                 }
             } else {
-                console.error('App not ready for torrent handling');
-                alert('App not ready. Please wait and try again.');
+                console.log('App not ready yet, queueing torrent file for later...');
+                // Queue the torrent file to be processed when app is ready
+                window._pendingDeepLink = url;
+
+                // Show feedback to user
+                alert('Torrent file saved. It will be opened when the app finishes loading.');
             }
         };
 

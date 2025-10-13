@@ -1,10 +1,7 @@
 (function (App) {
     'use strict';
 
-    var client = App.WebTorrent,
-        CHANNELS = ['stable', 'beta', 'nightly'],
-        FILENAME = 'package.nw.new',
-        VERIFY_PUBKEY = Settings.updateKey;
+
 
     function forcedBind(func, thisVar) {
         return function () {
@@ -74,44 +71,13 @@
                 self.updateData = updateData;
                 return true;
             }
-            if (App.settings.UpdateSeed) {
-              client.add(updateData.updateUrl, { path: os.tmpdir() }, function (torrent) {
-                torrent.on('error', function (err) {
-                    win.log('ERROR' + err.message);
-                });
-                torrent.on('done', function () {
-                    win.log('Seeding the Current Update!');
-                });
-              });
 
-            }
             win.log('Not updating because we are running the latest version');
             return false;
         });
     };
 
-    Updater.prototype.download = function (source, outputDir) {
-        var defer = Q.defer();
 
-        client.on('error', function (err) {
-          win.log('ERROR: ' + err.message);
-            defer.reject(err);
-        });
-
-        client.add(source, { path: outputDir }, function (torrent) {
-            win.log('Downloading update... Please allow a few minutes');
-            torrent.on('error', function (err) {
-                win.log('ERROR' + err.message);
-                defer.reject(err);
-            });
-            torrent.on('done', function () {
-                win.log('Update downloaded!');
-                defer.resolve(path.join(outputDir, torrent.name));
-            });
-        });
-
-        return defer.promise;
-      };
 
     Updater.prototype.verify = function (source) {
         var defer = Q.defer();

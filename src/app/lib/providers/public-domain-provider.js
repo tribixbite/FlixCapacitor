@@ -413,10 +413,6 @@ class PublicDomainProvider {
      */
     buildMagnetLink(infoHash, name) {
         const trackers = [
-            // WebSocket trackers (work in browsers/Capacitor)
-            'wss://tracker.openwebtorrent.com',
-            'wss://tracker.webtorrent.dev',
-            'wss://tracker.btorrent.xyz',
             // UDP trackers (backup, may not work in browser)
             'udp://tracker.opentrackr.org:1337/announce',
             'udp://open.stealth.si:80/announce',

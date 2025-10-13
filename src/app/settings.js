@@ -88,21 +88,7 @@ Settings.providers = {
   torrentCache: 'TorrentCache'
 };
 
-Settings.trackers = {
-  blacklisted: ['demonii'],
-  forced: [
-    'udp://glotorrents.pw:6969/announce',
-    'udp://tracker.opentrackr.org:1337/announce',
-    'udp://torrent.gresille.org:80/announce',
-    'udp://tracker.openbittorrent.com:80',
-    'udp://tracker.coppersurfer.tk:6969',
-    'udp://tracker.leechers-paradise.org:6969',
-    'udp://p4p.arenabg.ch:1337',
-    'udp://tracker.internetwarriors.net:1337',
-    'wss://tracker.openwebtorrent.com',
-    'wss://tracker.btorrent.xyz'
-  ]
-};
+
 
 // API Servers
 Settings.apiServer = '';
@@ -187,9 +173,7 @@ Settings.events = true;
 Settings.minimizeToTray = false;
 Settings.bigPicture = false;
 
-// Streaming options
-Settings.streamingMethod = 'server'; // 'server' or 'native'
-Settings.streamingServerUrl = 'http://localhost:3001/api'; // Default server URL
+
 
 // Features
 Settings.activateTorrentCollection = false;

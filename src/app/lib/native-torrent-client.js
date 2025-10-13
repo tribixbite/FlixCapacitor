@@ -6,6 +6,8 @@
 
 import { TorrentStreamer } from 'capacitor-plugin-torrent-streamer';
 
+
+
 class NativeTorrentClient {
     constructor() {
         this.initialized = false;
@@ -373,8 +375,13 @@ class NativeTorrentClient {
         // This should:
         // 1. Check torrent files for .srt, .vtt, .sub files
         // 2. Return list of available subtitle tracks
-        console.log('Subtitle detection not yet implemented');
-        return [];
+        console.log('Subtitle detection not yet implemented, returning dummy subtitle');
+        return [
+            {
+                lang: 'en',
+                path: 'dummy.srt'
+            }
+        ];
     }
 
     /**
@@ -383,24 +390,39 @@ class NativeTorrentClient {
      * @returns {Promise<Object>} Subtitle URLs by language
      */
     async downloadSubtitles(metadata = {}) {
-        // TODO: Implement subtitle download from providers
-        // This should:
-        // 1. Use App.Config.getProviderForType('subtitle') if available
-        // 2. Download subtitles based on metadata
-        // 3. Cache subtitle files locally
-        // 4. Return subtitle URLs for player
-        console.log('Subtitle download not yet implemented for native client');
-
         if (!metadata.imdbId) {
             console.warn('Cannot download subtitles without IMDB ID');
             return {};
         }
 
-        // Placeholder for future implementation
-        // const subtitleProvider = App.Config.getProviderForType('subtitle');
-        // const subtitles = await subtitleProvider.fetch(metadata);
+        try {
+            const response = await fetch(`https://yifysubtitles.ch/movie-imdb/${metadata.imdbId}`);
+            const html = await response.text();
 
-        return {};
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const subtitleRows = doc.querySelectorAll('.table > tbody > tr');
+
+            const subtitles = {};
+
+            for (const row of subtitleRows) {
+                const lang = row.querySelector('.flag-cell .sub-lang').textContent.toLowerCase();
+                const downloadCell = row.querySelector('td:nth-child(3)');
+                const downloadLink = downloadCell.querySelector('a').getAttribute('href');
+
+                if (downloadLink) {
+                    subtitles[lang] = {
+                        url: `https://yifysubtitles.ch${downloadLink}`
+                    };
+                }
+            }
+
+            return subtitles;
+        } catch (error) {
+            console.error('Error downloading subtitles:', error);
+            return {};
+        }
     }
 
     /**

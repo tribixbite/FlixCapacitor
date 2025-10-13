@@ -1331,9 +1331,11 @@ export class MobileUIController {
                     <button id="speed-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; cursor: pointer;">1x</button>
                     <button id="pip-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer;">⧉</button>
                     <button id="fullscreen-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer;">⛶</button>
+                    <button id="subtitle-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer;">CC</button>
                 </div>
 
-                <!-- Speed selector overlay -->
+                <!-- Subtitle selector overlay -->
+                <div id="subtitle-selector" style="display: none; position: absolute; top: calc(var(--safe-area-top) + 60px); right: 140px; background: rgba(20,20,20,0.95); border-radius: var(--radius-md); padding: 0.5rem; z-index: 150; backdrop-filter: blur(10px);"></div>
                 <div id="speed-selector" style="display: none; position: absolute; top: calc(var(--safe-area-top) + 60px); right: 90px; background: rgba(20,20,20,0.95); border-radius: var(--radius-md); padding: 0.5rem; z-index: 150; backdrop-filter: blur(10px);">
                     <div class="speed-option" data-speed="0.5" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">0.5x</div>
                     <div class="speed-option" data-speed="0.75" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">0.75x</div>
@@ -1482,60 +1484,64 @@ export class MobileUIController {
             }
 
             // Start the native torrent stream
-            const streamInfo = await window.NativeTorrentClient.startStream(
-                torrent.url,
-                { quality: quality },
-                (status) => {
-                    // Progress callback - update UI with torrent status
-                    console.log('Native torrent status:', status);
+            try {
+                const streamInfo = await window.NativeTorrentClient.startStream(
+                    torrent.url,
+                    { quality: quality },
+                    (status) => {
+                        // Progress callback - update UI with torrent status
+                        console.log('Native torrent status:', status);
 
-                    if (statusText) {
-                        statusText.textContent = status.status || 'Downloading';
-                        statusText.style.color = status.status === 'complete' ? '#10b981' :
-                                                 status.status === 'downloading' ? '#3b82f6' :
-                                                 status.status === 'warning' ? '#f59e0b' : '#fbbf24';
+                        if (statusText) {
+                            statusText.textContent = status.status || 'Downloading';
+                            statusText.style.color = status.status === 'complete' ? '#10b981' :
+                                                     status.status === 'downloading' ? '#3b82f6' :
+                                                     status.status === 'warning' ? '#f59e0b' : '#fbbf24';
+                        }
+
+                        if (loadingTitle && status.status === 'downloading') {
+                            loadingTitle.textContent = 'Downloading Torrent...';
+                        }
+
+                        if (loadingSubtitle && status.message) {
+                            loadingSubtitle.textContent = status.message;
+                        } else if (loadingSubtitle && status.numPeers !== undefined) {
+                            loadingSubtitle.textContent = `Connected to ${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
+                        }
+
+                        // Show progress if available
+                        if (status.progress !== undefined) {
+                            if (progressRow) progressRow.style.display = 'block';
+                            if (progressText) progressText.textContent = `${Math.round(status.progress * 100)}%`;
+
+                            // Update download overlay during playback
+                            const dlProgress = document.getElementById('dl-progress');
+                            if (dlProgress) dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
+                        }
+
+                        // Show download speed if available
+                        if (status.downloadSpeed !== undefined) {
+                            if (speedRow) speedRow.style.display = 'block';
+                            const speedMB = (status.downloadSpeed / 1024 / 1024).toFixed(2);
+                            if (speedText) speedText.textContent = `↓ ${speedMB} MB/s`;
+
+                            // Update download overlay during playback
+                            const dlSpeed = document.getElementById('dl-speed');
+                            if (dlSpeed) dlSpeed.textContent = `↓ ${speedMB} MB/s`;
+                        }
+
+                        // Update peer count in overlay
+                        if (status.numPeers !== undefined) {
+                            const dlPeers = document.getElementById('dl-peers');
+                            if (dlPeers) dlPeers.textContent = `${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
+                        }
                     }
+                );
 
-                    if (loadingTitle && status.status === 'downloading') {
-                        loadingTitle.textContent = 'Downloading Torrent...';
-                    }
-
-                    if (loadingSubtitle && status.message) {
-                        loadingSubtitle.textContent = status.message;
-                    } else if (loadingSubtitle && status.numPeers !== undefined) {
-                        loadingSubtitle.textContent = `Connected to ${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
-                    }
-
-                    // Show progress if available
-                    if (status.progress !== undefined) {
-                        if (progressRow) progressRow.style.display = 'block';
-                        if (progressText) progressText.textContent = `${Math.round(status.progress * 100)}%`;
-
-                        // Update download overlay during playback
-                        const dlProgress = document.getElementById('dl-progress');
-                        if (dlProgress) dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
-                    }
-
-                    // Show download speed if available
-                    if (status.downloadSpeed !== undefined) {
-                        if (speedRow) speedRow.style.display = 'block';
-                        const speedMB = (status.downloadSpeed / 1024 / 1024).toFixed(2);
-                        if (speedText) speedText.textContent = `↓ ${speedMB} MB/s`;
-
-                        // Update download overlay during playback
-                        const dlSpeed = document.getElementById('dl-speed');
-                        if (dlSpeed) dlSpeed.textContent = `↓ ${speedMB} MB/s`;
-                    }
-
-                    // Update peer count in overlay
-                    if (status.numPeers !== undefined) {
-                        const dlPeers = document.getElementById('dl-peers');
-                        if (dlPeers) dlPeers.textContent = `${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
-                    }
-                }
-            );
-
-            console.log('Native torrent stream ready!', streamInfo);
+                console.log('Native torrent stream ready!', streamInfo);
+            } catch (error) {
+                console.error('Error starting stream:', error);
+            }
 
             // Stream is ready - update loading UI to show video is loading
             const loadingContent = document.querySelector('.player-content');
@@ -1715,7 +1721,66 @@ export class MobileUIController {
                     }
                 });
 
-                // Playback speed control
+                videoElement.addEventListener('pause', () => {
+                    if (window.NativeTorrentClient) {
+                        window.NativeTorrentClient.pauseStream();
+                    }
+                });
+
+                videoElement.addEventListener('play', () => {
+                    if (window.NativeTorrentClient) {
+                        window.NativeTorrentClient.resumeStream();
+                    }
+                });
+
+                // Subtitle selection
+                const subtitleBtn = document.getElementById('subtitle-btn');
+                const subtitleSelector = document.getElementById('subtitle-selector');
+
+                if (subtitleBtn && subtitleSelector) {
+                    subtitleBtn.style.display = 'flex';
+
+                    subtitleBtn.addEventListener('click', async () => {
+                        if (subtitleSelector.style.display === 'none') {
+                            subtitleSelector.innerHTML = '<div class="loading-spinner-large"></div>';
+                            subtitleSelector.style.display = 'block';
+
+                            const subtitles = await window.NativeTorrentClient.downloadSubtitles({ imdbId: movie.imdb_id });
+
+                            subtitleSelector.innerHTML = '';
+
+                            if (subtitles && Object.keys(subtitles).length > 0) {
+                                for (const lang in subtitles) {
+                                    const option = document.createElement('div');
+                                    option.classList.add('subtitle-option');
+                                    option.textContent = lang;
+                                    option.dataset.url = subtitles[lang].url;
+                                    option.addEventListener('click', () => {
+                                        const track = document.createElement('track');
+                                        track.kind = 'subtitles';
+                                        track.label = lang;
+                                        track.srclang = lang;
+                                        track.src = subtitles[lang].url;
+                                        track.default = true;
+
+                                        // Remove existing tracks
+                                        const existingTracks = videoElement.querySelectorAll('track');
+                                        existingTracks.forEach(t => t.remove());
+
+                                        videoElement.appendChild(track);
+                                        videoElement.textTracks[0].mode = 'showing';
+                                        subtitleSelector.style.display = 'none';
+                                    });
+                                    subtitleSelector.appendChild(option);
+                                }
+                            } else {
+                                subtitleSelector.innerHTML = '<div>No subtitles found</div>';
+                            }
+                        } else {
+                            subtitleSelector.style.display = 'none';
+                        }
+                    });
+                }
                 const speedBtn = document.getElementById('speed-btn');
                 const speedSelector = document.getElementById('speed-selector');
                 if (speedBtn && speedSelector) {

@@ -1,9 +1,7 @@
 (function (App) {
     'use strict';
 
-    var torrentHealth = require('webtorrent-health');
-    var cancelTorrentHealth = function () {};
-    var torrentHealthRestarted = null;
+
 
     var _this, bookmarked;
     var ShowDetail = Marionette.View.extend({
@@ -712,50 +710,7 @@
             );
         },
 
-        getTorrentHealth: function (e) {
-            var torrent = $('.startStreaming').attr('data-torrent');
 
-            cancelTorrentHealth();
-
-            // Use fancy coding to cancel
-            // pending webtorrent-health's
-            var cancelled = false;
-            cancelTorrentHealth = function () {
-                cancelled = true;
-            };
-
-            if (torrent.substring(0, 8) === 'magnet:?') {
-                // if 'magnet:?' is because api sometimes sends back links, not magnets
-                torrentHealth(torrent, {
-                    timeout: 1000,
-                    trackers: Settings.trackers.forced
-                }, function (err, res) {
-                    if (cancelled || err) {
-                        return;
-                    }
-                    if (res.seeds === 0 && torrentHealthRestarted < 5) {
-                        torrentHealthRestarted++;
-                        $('.health-icon').click();
-                    } else {
-                        torrentHealthRestarted = 0;
-                        var h = Common.calcHealth({
-                            seed: res.seeds,
-                            peer: res.peers
-                        });
-                        var health = Common.healthMap[h].capitalize();
-                        var ratio = res.peers > 0 ? res.seeds / res.peers : +res.seeds;
-
-                        $('.health-icon').tooltip({
-                                html: true
-                            })
-                            .removeClass('Bad Medium Good Excellent')
-                            .addClass(health)
-                            .attr('data-original-title', i18n.__('Health ' + health) + ' - ' + i18n.__('Ratio:') + ' ' + ratio.toFixed(2) + ' <br> ' + i18n.__('Seeds:') + ' ' + res.seeds + ' - ' + i18n.__('Peers:') + ' ' + res.peers)
-                            .tooltip('fixTitle');
-                    }
-                });
-            }
-        },
 
         resetHealth: function () {
             $('.health-icon').tooltip({

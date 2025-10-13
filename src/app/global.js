@@ -34,7 +34,6 @@ var _ = require('underscore'),
   URI = require('urijs'),
   Trakt = require('trakt.tv'),
   // Torrent engines
-  WebTorrent = require('webtorrent'),
   torrentCollection = require('torrentcollection2'),
   // VPN
   VPNht = require('@vpnht/sdk'),
