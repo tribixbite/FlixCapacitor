@@ -10,7 +10,7 @@ class SQLiteService {
     constructor() {
         this.sqlite = null;
         this.db = null;
-        this.dbName = 'popcorntime.db';
+        this.dbName = 'flixcapacitor.db';
         this.dbVersion = 1;
         this.isInitialized = false;
         this.platform = Capacitor.getPlatform();

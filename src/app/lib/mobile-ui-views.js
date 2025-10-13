@@ -1,5 +1,5 @@
 /**
- * Popcorn Time Mobile - Beautiful UI View Components
+ * FlixCapacitor - Beautiful UI View Components
  * Gorgeous, modern, mobile-first interface design
  */
 
@@ -855,7 +855,7 @@ export const UITemplates = {
                         <div class="settings-item">
                             <div class="settings-item-content">
                                 <div class="settings-item-label">Version</div>
-                                <div class="settings-item-description">Popcorn Time Mobile</div>
+                                <div class="settings-item-description">FlixCapacitor</div>
                             </div>
                             <div class="settings-item-value">0.4.4</div>
                         </div>

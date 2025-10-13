@@ -1,4 +1,4 @@
-package app.popcorntime.mobile;
+package app.flixcapacitor.mobile;
 
 import com.getcapacitor.BridgeActivity;
 

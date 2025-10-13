@@ -44,7 +44,7 @@ Navigation complete
     - src/app/lib/providers/opensubtitles.js: User agent → "FlixCapacitor"
     - src/app/settings.js: projectName → "FlixCapacitor"
   - **Preserved (for compatibility)**:
-    - Package names: app.popcorntime.mobile, com.popcorntime.torrent
+    - Package names: app.flixcapacitor.mobile, com.flixcapacitor.torrent
     - Database name: popcorntime.db (to preserve user data)
     - Service class names in AndroidManifest.xml
   - **GitHub**: New repository created at https://github.com/tribixbite/FlixCapacitor
@@ -89,7 +89,7 @@ Navigation complete
   - **Problem**: Insufficient logging to debug why HTTP streaming server or streamUrl generation fails
   - **Solution**: Implemented comprehensive logging infrastructure
     - Created `LogHelper.kt` - centralized logging utility
-    - Writes to both logcat AND `/sdcard/pop/log.txt` for debugging without adb
+    - Writes to both logcat AND external file for debugging without adb
     - Added detailed logging to track complete flow:
       * Metadata received event with torrent details
       * findLargestVideoFile() execution with all video files found
@@ -100,7 +100,7 @@ Navigation complete
     - NEW: `capacitor-plugin-torrent-streamer/android/src/main/java/com/popcorntime/torrent/LogHelper.kt`
     - Modified: `TorrentSession.kt` - added logging to metadata and file selection
     - Modified: `TorrentStreamingService.kt` - added logging to HTTP server and streaming
-  - **Log File Location**: `/sdcard/Android/data/app.popcorntime.mobile/files/Documents/pop/log.txt`
+  - **Log File Location**: `/sdcard/Android/data/app.flixcapacitor.mobile/files/Documents/FlixCapacitor/log.txt`
     - Uses app-specific external storage (no special permissions needed)
     - Includes timestamps on every log entry
     - Session markers for multiple test runs
@@ -109,7 +109,7 @@ Navigation complete
   - **Status**: ✅ Ready for testing!
     - APK: `android/app/build/outputs/apk/debug/app-debug.apk` (73 MB)
     - Install: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`
-    - **Test with**: Add magnet link, check `/sdcard/pop/log.txt` for full flow
+    - **Test with**: Add magnet link, check log file for full flow
   - **Next Steps**: Test with magnet link to identify why MEDIA_ELEMENT_ERROR 4 occurs
 
 **Comprehensive JNI Handle Fix - ARCHITECTURAL SOLUTION** (✅ RESOLVED) (2025-10-13)
@@ -233,7 +233,7 @@ Navigation complete
   - **Root Cause**: TorrentStreamingService used `applicationContext.cacheDir` for torrent storage
   - **Solution**:
     - Changed to `getExternalFilesDir(Environment.DIRECTORY_MOVIES)`
-    - Files now saved to `/sdcard/Android/data/app.popcorntime.mobile/files/Movies/PopcornTime/`
+    - Files now saved to `/sdcard/Android/data/app.flixcapacitor.mobile/files/Movies/FlixCapacitor/`
     - Accessible via file manager
     - Uses Android scoped storage (no extra permissions needed on Android 10+)
   - **Status**: ✅ Built successfully!
@@ -260,7 +260,7 @@ Navigation complete
    - "HTTP server started on port 8888"
    - "Adding magnet URI..."
    - "Magnet added, waiting for alerts..."
-3. Files are saved to: `/sdcard/Android/data/app.popcorntime.mobile/files/Movies/PopcornTime/`
+3. Files are saved to: `/sdcard/Android/data/app.flixcapacitor.mobile/files/Movies/FlixCapacitor/`
 4. HTTP streaming server starts on `http://127.0.0.1:8888/video`
 5. Video element at line 1568 gets stream URL when ready
 
@@ -271,7 +271,7 @@ Navigation complete
 
 **External Storage (Build 7da300f5c48922ac):**
 - Files now saved to external app-specific directory
-- Location: `/sdcard/Android/data/app.popcorntime.mobile/files/Movies/FlixCapacitor/`
+- Location: `/sdcard/Android/data/app.flixcapacitor.mobile/files/Movies/FlixCapacitor/`
 - Accessible via file manager
 - Uses Android scoped storage (no extra permissions needed on Android 10+)
 - Automatically cleaned up when app is uninstalled

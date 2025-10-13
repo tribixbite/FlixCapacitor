@@ -70,8 +70,8 @@ npm run build
 - Stream URL: `http://127.0.0.1:8888/video`
 
 ### File Storage
-- **Torrents**: `/sdcard/Android/data/app.popcorntime.mobile/files/Movies/FlixCapacitor/`
-- **Logs**: `/sdcard/Android/data/app.popcorntime.mobile/files/Documents/pop/log.txt`
+- **Torrents**: `/sdcard/Android/data/app.flixcapacitor.mobile/files/Movies/FlixCapacitor/`
+- **Logs**: `/sdcard/Android/data/app.flixcapacitor.mobile/files/Documents/FlixCapacitor/log.txt`
 - Uses Android scoped storage (no special permissions required)
 
 ### External Player Fallback
