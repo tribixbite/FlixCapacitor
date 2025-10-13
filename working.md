@@ -44,7 +44,8 @@ Navigation complete
     - NEW: `capacitor-plugin-torrent-streamer/android/src/main/java/com/popcorntime/torrent/LogHelper.kt`
     - Modified: `TorrentSession.kt` - added logging to metadata and file selection
     - Modified: `TorrentStreamingService.kt` - added logging to HTTP server and streaming
-  - **Log File Location**: `/sdcard/pop/log.txt`
+  - **Log File Location**: `/sdcard/Android/data/app.popcorntime.mobile/files/Documents/pop/log.txt`
+    - Uses app-specific external storage (no special permissions needed)
     - Includes timestamps on every log entry
     - Session markers for multiple test runs
     - Emoji markers for easy visual scanning
