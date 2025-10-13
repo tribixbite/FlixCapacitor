@@ -28,6 +28,17 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
+**App Rebrand to FlixCapacitor** (✅ COMPLETED) (2025-10-13)
+- **Rebrand**: Complete rebrand from "Popcorn Time" to "FlixCapacitor" with ⚡ emoji
+  - Updated app name in capacitor.config.json
+  - Changed loading emoji from 🍿 to ⚡
+  - Updated Android strings.xml for app_name and title_activity_main
+  - Created comprehensive README.md with features and architecture
+  - Updated package.json with new name and description
+  - Updated all documentation references
+  - **GitHub**: New repository created at https://github.com/tribixbite/FlixCapacitor
+  - **Status**: ✅ Pushed to GitHub!
+
 **External Player Fallback** (✅ IMPLEMENTED) (2025-10-13)
 - **Issue 11**: HTML5 video player fails with MEDIA_ELEMENT_ERROR 4, need fallback to external apps
   - **Root Cause**: In-app HTML5 video player can't handle certain codecs/formats
