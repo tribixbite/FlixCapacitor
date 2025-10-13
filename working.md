@@ -29,16 +29,24 @@ Navigation complete
 ### 🔧 Recent Fixes
 
 **Magnet Link Handling for Mobile App** (2025-10-13)
-- **Issue**: "App not ready" error when pasting magnet links - app never finished loading
-- **Root Cause**: Mobile app doesn't use desktop `App.Config` system; relied on non-existent provider infrastructure
-- **Solution**:
-  - Use `NativeTorrentClient` directly via `App.UI.playMovie()`
-  - Parse magnet link to extract title from `dn=` parameter
-  - Create mock movie object with magnet as torrent source
-  - Auto-retry after 2s if UI not ready yet
-- **Files Changed**: `src/app/lib/mobile-ui.js` (handleMagnetLink, handleTorrentURL, handleTorrentFile)
-- **User Experience**: Magnet links now play immediately using native torrent streaming
-- **Commits**: bc076d7, [latest]
+- **Issue 1**: "App not ready" error when pasting magnet links
+  - **Root Cause**: Mobile app doesn't use desktop `App.Config` system
+  - **Solution**: Use `NativeTorrentClient` directly via `App.UI.playMovie()`
+  - **Commit**: f42e17c
+
+- **Issue 2**: App crashes when trying to play videos
+  - **Root Cause**: Missing `WAKE_LOCK` permission for KeepAwake plugin
+  - **Solution**:
+    - Added `WAKE_LOCK` permission to AndroidManifest.xml
+    - Improved error handling for KeepAwake and TorrentStreamer plugins
+    - Shows helpful error messages if plugins not loaded
+  - **Commit**: f01d4a6
+  - **Requires**: Rebuild app with `npm run build && npx cap sync android && npx cap run android`
+
+- **Files Changed**:
+  - `src/app/lib/mobile-ui.js` (magnet link handling)
+  - `src/app/lib/mobile-ui-views.js` (error handling)
+  - `android/app/src/main/AndroidManifest.xml` (permissions)
 
 ### 🚀 Next Steps
 
