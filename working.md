@@ -28,6 +28,26 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
+**External Player Fallback** (✅ IMPLEMENTED) (2025-10-13)
+- **Issue 11**: HTML5 video player fails with MEDIA_ELEMENT_ERROR 4, need fallback to external apps
+  - **Root Cause**: In-app HTML5 video player can't handle certain codecs/formats
+  - **Solution**: Added seamless fallback to external players (VLC, MX Player, etc.)
+    - New plugin method: `TorrentStreamer.openExternalPlayer()`
+    - Uses Android `Intent.ACTION_VIEW` to launch player chooser dialog
+    - Green "📱 Open in External Player" button shown on video error
+    - Displays stream URL for manual copying if needed
+    - Success/error feedback with clear messaging
+    - Stream continues running in background while external player is active
+  - **Files Changed**:
+    - Plugin: `TorrentStreamerPlugin.kt:176-220` - new native method
+    - Plugin: `definitions.ts:84-109,332-349` - TypeScript definitions
+    - Plugin: `web.ts:36-40` - web stub
+    - UI: `mobile-ui-views.js:1609-1690` - error handler with button
+  - **Status**: ✅ Ready for testing!
+    - **Try it**: Add magnet link, when video fails, tap "Open in External Player"
+    - **Requires**: VLC, MX Player, or any video player app installed
+  - **Next Steps**: Test with various video codecs/formats
+
 **Port 8888 Already In Use Error** (✅ FIXED) (2025-10-13)
 - **Issue 10**: HTTP streaming server fails to start with "Address already in use" on port 8888
   - **Root Cause**: When app crashes, HTTP server port isn't released by OS, blocking new sessions
