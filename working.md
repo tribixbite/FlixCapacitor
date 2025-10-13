@@ -1,4 +1,4 @@
-# Popcorn Time Mobile - Development Progress
+# ⚡ FlixCapacitor - Development Progress
 
 ### 🎯 Current Status
 
@@ -10,7 +10,7 @@ Console logs confirm successful initialization:
 ✓ Marionette initialized
 ✓ MobileUIController created successfully
 ✓ Application started
-=== Popcorn Time Mobile Ready ===
+=== FlixCapacitor Ready ===
 Hiding loading screen...
 Loading screen hidden
 Navigating to movies...
@@ -249,7 +249,7 @@ Navigation complete
 
 **External Storage (Build 7da300f5c48922ac):**
 - Files now saved to external app-specific directory
-- Location: `/sdcard/Android/data/app.popcorntime.mobile/files/Movies/PopcornTime/`
+- Location: `/sdcard/Android/data/app.popcorntime.mobile/files/Movies/FlixCapacitor/`
 - Accessible via file manager
 - Uses Android scoped storage (no extra permissions needed on Android 10+)
 - Automatically cleaned up when app is uninstalled

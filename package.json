@@ -1,7 +1,7 @@
 {
-  "name": "popcorn-mobile",
+  "name": "flixcapacitor",
   "version": "1.0.0",
-  "description": "",
+  "description": "A modern, mobile-first streaming app with native torrent support",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
