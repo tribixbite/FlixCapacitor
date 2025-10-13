@@ -30,6 +30,11 @@ class NativeTorrentClient {
         }
 
         try {
+            // Check if TorrentStreamer plugin is available
+            if (typeof TorrentStreamer === 'undefined') {
+                throw new Error('TorrentStreamer plugin not available. Make sure the app is rebuilt with the plugin.');
+            }
+
             // Set up event listeners
             this.setupEventListeners();
 
@@ -46,8 +51,9 @@ class NativeTorrentClient {
      * Set up event listeners for TorrentStreamer plugin
      */
     setupEventListeners() {
-        // Metadata received event
-        const metadataListener = TorrentStreamer.addListener('metadata', (data) => {
+        try {
+            // Metadata received event
+            const metadataListener = TorrentStreamer.addListener('metadata', (data) => {
             console.log('✓ Torrent metadata received');
             console.log('  Name:', data.name);
             console.log('  Files:', data.numFiles);
@@ -162,6 +168,12 @@ class NativeTorrentClient {
             }
         });
         this.listeners.push(stoppedListener);
+
+            console.log('✓ Event listeners set up successfully');
+        } catch (error) {
+            console.error('Failed to set up event listeners:', error);
+            throw error;
+        }
     }
 
     /**
