@@ -29,24 +29,35 @@ Navigation complete
 ### 🔧 Recent Fixes
 
 **App Rebrand to FlixCapacitor** (✅ COMPLETED) (2025-10-13)
-- **Rebrand**: Complete rebrand from "Popcorn Time" to "FlixCapacitor" with ⚡ emoji
+- **Complete rebrand** from "Popcorn Time" to "FlixCapacitor" with ⚡ emoji - NO backward compatibility
   - **Display & UI**:
-    - capacitor.config.json: appName → "FlixCapacitor"
+    - capacitor.config.json: appId → "app.flixcapacitor.mobile", appName → "FlixCapacitor"
     - index.html: Loading emoji 🍿 → ⚡, title → "FlixCapacitor"
-    - android/strings.xml: app_name → "FlixCapacitor"
-  - **Documentation**:
-    - Created comprehensive README.md
-    - Updated package.json name and description
-    - Updated working.md references
+    - android/strings.xml: All references updated
+  - **Package Rename** (BREAKING CHANGE):
+    - Main app: app.popcorntime.mobile → app.flixcapacitor.mobile
+    - Plugin: com.popcorntime.torrent → com.flixcapacitor.torrent
+    - Database: popcorntime.db → flixcapacitor.db
+    - MainActivity moved to new package structure
+  - **Native Code**:
+    - TorrentStreamingService: Folder name "PopcornTime" → "FlixCapacitor"
+    - TorrentStreamingService: Notification title updated
+    - LogHelper: Log folder "pop" → "FlixCapacitor"
+    - AndroidManifest.xml: Service class name updated
   - **Source Code**:
     - src/main.js: Console logs updated
     - src/app/lib/device/generic.js: Device name → "FlixCapacitor"
     - src/app/lib/providers/opensubtitles.js: User agent → "FlixCapacitor"
     - src/app/settings.js: projectName → "FlixCapacitor"
-  - **Preserved (for compatibility)**:
-    - Package names: app.flixcapacitor.mobile, com.flixcapacitor.torrent
-    - Database name: popcorntime.db (to preserve user data)
-    - Service class names in AndroidManifest.xml
+    - src/app/lib/mobile-ui-views.js: Settings description updated
+    - src/app/lib/sqlite-service.js: Database name updated
+  - **Documentation**:
+    - Created comprehensive README.md
+    - Updated package.json name and description
+    - Updated working.md with all new paths
+  - **Build**:
+    - capacitor-plugin-torrent-streamer rebuilt with new package
+    - Main app synchronized and built successfully
   - **GitHub**: New repository created at https://github.com/tribixbite/FlixCapacitor
   - **Status**: ✅ Pushed to GitHub (commit a225074)
 
