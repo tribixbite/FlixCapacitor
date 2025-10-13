@@ -47,7 +47,7 @@ Navigation complete
     - TorrentStreamer plugin compiled with try-catch protection
     - Install: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`
 
-- **Issue 3**: App crashes during loading stage
+- **Issue 3**: App crashes during loading stage (✅ FIXED)
   - **Root Cause**: `setupEventListeners()` called `TorrentStreamer.addListener()` before plugin was ready
   - **Solution**:
     - Added try-catch around event listener setup
@@ -59,6 +59,22 @@ Navigation complete
   - `src/app/lib/mobile-ui.js` (magnet link handling)
   - `src/app/lib/mobile-ui-views.js` (error handling)
   - `android/app/src/main/AndroidManifest.xml` (permissions)
+
+### ⚠️ Known Issues
+
+**Torrent Metadata Timeout**
+- **Symptom**: "Timeout: Failed to receive torrent metadata after 90 seconds"
+- **Causes**:
+  - Mobile carrier blocking torrent traffic (common on cellular networks)
+  - Firewall blocking DHT/torrent ports (UDP 6881)
+  - Specific torrent has no active seeds/peers
+  - Network restrictions on device
+- **Solutions**:
+  - Try using WiFi instead of mobile data
+  - Test with a popular/recent torrent (more seeds = faster)
+  - Check device firewall settings
+  - Some networks completely block torrent protocols
+  - Consider using a VPN if torrents are blocked
 
 ### 🚀 Next Steps
 
