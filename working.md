@@ -28,13 +28,17 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
-**Magnet Link Early Paste Fix** (2025-10-13)
-- **Issue**: "App not ready" error when pasting magnet links before app initialization completes
-- **Root Cause**: `mobile-ui.js` checked for `App.Config` existence and showed error if not ready
-- **Solution**: Queue magnet links/torrents in `window._pendingDeepLink` for deferred processing
+**Magnet Link Handling for Mobile App** (2025-10-13)
+- **Issue**: "App not ready" error when pasting magnet links - app never finished loading
+- **Root Cause**: Mobile app doesn't use desktop `App.Config` system; relied on non-existent provider infrastructure
+- **Solution**:
+  - Use `NativeTorrentClient` directly via `App.UI.playMovie()`
+  - Parse magnet link to extract title from `dn=` parameter
+  - Create mock movie object with magnet as torrent source
+  - Auto-retry after 2s if UI not ready yet
 - **Files Changed**: `src/app/lib/mobile-ui.js` (handleMagnetLink, handleTorrentURL, handleTorrentFile)
-- **User Experience**: Shows helpful message "Magnet link saved. It will be opened when the app finishes loading."
-- **Commit**: bc076d7
+- **User Experience**: Magnet links now play immediately using native torrent streaming
+- **Commits**: bc076d7, [latest]
 
 ### 🚀 Next Steps
 
