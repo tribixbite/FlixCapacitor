@@ -187,6 +187,10 @@ Settings.events = true;
 Settings.minimizeToTray = false;
 Settings.bigPicture = false;
 
+// Streaming options
+Settings.streamingMethod = 'server'; // 'server' or 'native'
+Settings.streamingServerUrl = 'http://localhost:3001/api'; // Default server URL
+
 // Features
 Settings.activateTorrentCollection = false;
 Settings.activateWatchlist = true;

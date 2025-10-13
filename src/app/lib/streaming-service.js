@@ -33,7 +33,7 @@ class StreamingService {
         console.log('Starting stream:', magnetLink.substring(0, 60) + '...');
 
         // Show initial toast
-        const toastId = this.showToast('info', 'Starting Stream', 'Initializing torrent stream...');
+        const toastId = window.App.SafeToast.show('info', 'Starting Stream', 'Initializing torrent stream...');
 
         const payload = {
             magnetLink,
@@ -47,13 +47,31 @@ class StreamingService {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                signal: options.signal // Support for AbortController
             });
 
             if (!response.ok) {
-                const error = await response.json();
-                this.closeToast(toastId);
-                throw new Error(error.error || `HTTP ${response.status}`);
+                window.App.SafeToast.close(toastId);
+
+                // Provide specific error messages based on status
+                if (response.status === 404) {
+                    throw new Error('Streaming server not found. Check your server URL in settings.');
+                } else if (response.status === 503) {
+                    throw new Error('Streaming server is unavailable. Please try again later.');
+                } else if (response.status >= 500) {
+                    throw new Error('Streaming server error. Please check the server status.');
+                }
+
+                try {
+                    const error = await response.json();
+                    throw new Error(error.error || error.message || `Server error (${response.status})`);
+                } catch (e) {
+                    if (e.message && !e.message.includes('JSON')) {
+                        throw e;
+                    }
+                    throw new Error(`Server returned error ${response.status}`);
+                }
             }
 
             const data = await response.json();
@@ -70,13 +88,22 @@ class StreamingService {
             console.log('Stream created:', data.streamId);
 
             // Update toast
-            this.closeToast(toastId);
-            this.showToast('success', 'Stream Created', 'Connecting to peers...', 3000);
+            window.App.SafeToast.close(toastId);
+            window.App.SafeToast.show('success', 'Stream Created', 'Connecting to peers...', 3000);
 
             return data;
         } catch (error) {
             console.error('Failed to start stream:', error);
-            this.showToast('error', 'Stream Failed', error.message, 0);
+            window.App.SafeToast.close(toastId);
+
+            // Provide specific error messages for common failure scenarios
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                error.message = 'Cannot reach streaming server. Check network connection and server URL.';
+            } else if (error.name === 'AbortError') {
+                error.message = 'Stream request was cancelled.';
+            }
+
+            window.App.SafeToast.show('error', 'Stream Failed', error.message, 0);
             throw error;
         }
     }
@@ -112,7 +139,7 @@ class StreamingService {
             return data;
         } catch (error) {
             console.error('Failed to get stream status:', error);
-            this.showToast('error', 'Status Error', `Failed to get stream status: ${error.message}`, 5000);
+            window.App.SafeToast.show('error', 'Status Error', `Failed to get stream status: ${error.message}`, 5000);
             throw error;
         }
     }
@@ -315,12 +342,12 @@ class StreamingService {
         // Status transition notifications
         switch (newStatus) {
             case 'connecting':
-                this.showToast('peer', 'Connecting', 'Searching for peers...', 3000);
+                window.App.SafeToast.show('peer', 'Connecting', 'Searching for peers...', 3000);
                 break;
 
             case 'downloading':
                 const peers = data.peers || 0;
-                this.showToast('peer', 'Downloading', `Connected to ${peers} peer(s)`, 3000);
+                window.App.SafeToast.show('peer', 'Downloading', `Connected to ${peers} peer(s)`, 3000);
 
                 // Create loading toast using SafeToast wrapper
                 if (!this.loadingToasts.has(streamId)) {
@@ -334,34 +361,34 @@ class StreamingService {
                 break;
 
             case 'buffering':
-                this.showToast('info', 'Buffering', 'Building buffer for smooth playback...', 3000);
+                window.App.SafeToast.show('info', 'Buffering', 'Building buffer for smooth playback...', 3000);
                 break;
 
             case 'ready':
-                this.showToast('success', 'Ready to Play', 'Stream is ready for playback', 3000);
+                window.App.SafeToast.show('success', 'Ready to Play', 'Stream is ready for playback', 3000);
 
                 // Close loading toast if exists
                 const loadingToastId = this.loadingToasts.get(streamId);
                 if (loadingToastId) {
-                    this.closeToast(loadingToastId);
+                    window.App.SafeToast.close(loadingToastId);
                     this.loadingToasts.delete(streamId);
                 }
                 break;
 
             case 'error':
                 const errorMsg = data.message || 'Unknown error occurred';
-                this.showToast('error', 'Stream Error', errorMsg, 0);
+                window.App.SafeToast.show('error', 'Stream Error', errorMsg, 0);
 
                 // Close loading toast if exists
                 const errorLoadingToastId = this.loadingToasts.get(streamId);
                 if (errorLoadingToastId) {
-                    this.closeToast(errorLoadingToastId);
+                    window.App.SafeToast.close(errorLoadingToastId);
                     this.loadingToasts.delete(streamId);
                 }
                 break;
 
             case 'stopped':
-                this.showToast('info', 'Stream Stopped', 'Streaming has been stopped', 3000);
+                window.App.SafeToast.show('info', 'Stream Stopped', 'Streaming has been stopped', 3000);
                 break;
         }
 
@@ -412,31 +439,7 @@ class StreamingService {
         }
     }
 
-    /**
-     * Show a toast notification using SafeToast wrapper
-     * @param {string} type - Toast type
-     * @param {string} title - Toast title
-     * @param {string} message - Toast message
-     * @param {number} duration - Duration in ms (0 = no auto-close)
-     * @returns {string} Toast ID
-     */
-    showToast(type, title, message, duration = 5000) {
-        if (window.App && window.App.SafeToast) {
-            return window.App.SafeToast.show(type, title, message, duration);
-        }
-        console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
-        return null;
-    }
 
-    /**
-     * Close a toast using SafeToast wrapper
-     * @param {string} toastId - Toast ID
-     */
-    closeToast(toastId) {
-        if (window.App && window.App.SafeToast) {
-            window.App.SafeToast.close(toastId);
-        }
-    }
 
     /**
      * Format bytes to human readable string
@@ -456,8 +459,9 @@ class StreamingService {
 const streamingService = new StreamingService();
 
 // Auto-configure from settings if available
-if (typeof window !== 'undefined' && window.Settings && window.Settings.streamingApiUrl) {
-    streamingService.configure(window.Settings.streamingApiUrl);
+if (typeof window !== 'undefined' && window.Settings && window.Settings.streamingServerUrl) {
+    streamingService.configure(window.Settings.streamingServerUrl);
+    console.log('StreamingService auto-configured from Settings:', window.Settings.streamingServerUrl);
 }
 
 // Make available globally
@@ -467,6 +471,12 @@ if (typeof window !== 'undefined') {
     // Attach to App if it exists (will be created in main.js)
     if (window.App) {
         window.App.StreamingService = streamingService;
+
+        // Re-configure when App is fully loaded with settings
+        if (window.App.settings && window.App.settings.streamingServerUrl) {
+            streamingService.configure(window.App.settings.streamingServerUrl);
+            console.log('StreamingService configured from App.settings:', window.App.settings.streamingServerUrl);
+        }
     }
 }
 

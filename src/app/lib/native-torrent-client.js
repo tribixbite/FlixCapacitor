@@ -13,6 +13,7 @@ class NativeTorrentClient {
         this.currentTorrentInfo = null;
         this.progressCallback = null;
         this.listeners = [];
+        this.loadingToastId = null;
     }
 
     /**
@@ -48,6 +49,8 @@ class NativeTorrentClient {
             console.log('  Files:', data.numFiles);
             console.log('  Selected file:', data.selectedFile);
 
+            window.App.SafeToast.peer('Metadata Received', `Found ${data.numFiles} files in torrent.`);
+
             this.currentTorrentInfo = {
                 name: data.name,
                 totalSize: data.totalSize,
@@ -63,6 +66,12 @@ class NativeTorrentClient {
             console.log('✓ Stream ready:', data.streamUrl);
             this.currentStreamUrl = data.streamUrl;
 
+            window.App.SafeToast.success('Stream Ready', 'Video is now ready to play.');
+            if (this.loadingToastId) {
+                window.App.SafeToast.close(this.loadingToastId);
+                this.loadingToastId = null;
+            }
+
             if (this.currentTorrentInfo) {
                 this.currentTorrentInfo.streamUrl = data.streamUrl;
             }
@@ -71,6 +80,20 @@ class NativeTorrentClient {
 
         // Progress event
         const progressListener = TorrentStreamer.addListener('progress', (status) => {
+            if (!this.loadingToastId) {
+                this.loadingToastId = window.App.SafeToast.loading('Downloading', 'Starting download...');
+            }
+
+            const progress = status.progress * 100;
+            const message = `${progress.toFixed(1)}% complete`;
+            const details = `${this.formatBytes(status.totalDownloaded)} / ${this.formatBytes(this.currentTorrentInfo?.selectedFileSize || 0)} • ${status.numPeers} peers`;
+
+            window.App.SafeToast.update(this.loadingToastId, {
+                progress,
+                message,
+                details
+            });
+
             if (this.progressCallback) {
                 this.progressCallback({
                     status: 'downloading',
@@ -90,6 +113,12 @@ class NativeTorrentClient {
         const errorListener = TorrentStreamer.addListener('error', (error) => {
             console.error('Native torrent error:', error.message);
 
+            window.App.SafeToast.error('Torrent Error', error.message);
+            if (this.loadingToastId) {
+                window.App.SafeToast.close(this.loadingToastId);
+                this.loadingToastId = null;
+            }
+
             if (this.progressCallback) {
                 this.progressCallback({
                     status: 'error',
@@ -104,6 +133,12 @@ class NativeTorrentClient {
             console.log('Torrent stream stopped');
             this.currentStreamUrl = null;
             this.currentTorrentInfo = null;
+
+            window.App.SafeToast.info('Stream Stopped', 'The torrent stream has been stopped.');
+            if (this.loadingToastId) {
+                window.App.SafeToast.close(this.loadingToastId);
+                this.loadingToastId = null;
+            }
 
             if (this.progressCallback) {
                 this.progressCallback({

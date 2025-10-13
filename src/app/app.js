@@ -451,13 +451,101 @@ var handleVideoFile = function (file) {
   });
 };
 
-var handleTorrent = function (torrent) {
+// Store last torrent for retry functionality
+var lastTorrent = null;
+var retryCount = 0;
+var maxRetries = 3;
+
+var handleTorrent = async function (torrent, isRetry = false) {
   try {
     App.PlayerView.closePlayer();
   } catch (err) {
     // The player wasn't running
   }
-  App.Config.getProviderForType('torrentCache').resolve(torrent);
+
+  // Store torrent for retry
+  if (!isRetry) {
+    lastTorrent = torrent;
+    retryCount = 0;
+  }
+
+  try {
+    const streamingMethod = Settings.streamingMethod || 'server';
+
+    if (streamingMethod === 'native') {
+      // Use native torrent client
+      console.log('Using native torrent client for streaming');
+
+      if (!window.NativeTorrentClient) {
+        throw new Error('Native torrent client not available. Please install the native client or switch to server-based streaming in settings.');
+      }
+
+      const streamInfo = await window.NativeTorrentClient.startStream(torrent, {}, (progress) => {
+        console.log('Native client progress:', progress);
+      });
+
+      // Convert to model format expected by player
+      const stream = {
+        src: streamInfo.streamUrl,
+        type: 'video/mp4',
+        title: streamInfo.file?.name || 'Video',
+        torrent: streamInfo.torrent
+      };
+
+      App.vent.trigger('stream:ready', new Backbone.Model(stream));
+    } else {
+      // Use server-based streaming
+      console.log('Using server-based streaming');
+      const stream = await App.StreamingService.streamAndWait(torrent);
+      App.vent.trigger('stream:ready', new Backbone.Model(stream));
+    }
+
+    // Reset retry count on success
+    retryCount = 0;
+
+  } catch (error) {
+    console.error('Torrent streaming error:', error);
+
+    // Show detailed error with retry option
+    const errorMsg = error.message || 'Unknown streaming error occurred';
+
+    if (retryCount < maxRetries) {
+      window.App.SafeToast.error(
+        'Streaming Error',
+        `${errorMsg}\n\nClick to retry (${retryCount}/${maxRetries})`,
+        0,
+        () => {
+          // Retry callback
+          retryCount++;
+          console.log(`Retrying stream (attempt ${retryCount}/${maxRetries})...`);
+          handleTorrent(lastTorrent, true);
+        }
+      );
+    } else {
+      window.App.SafeToast.error(
+        'Streaming Error',
+        `${errorMsg}\n\nMax retries reached. Please check your settings or try a different torrent.`,
+        0
+      );
+      retryCount = 0;
+    }
+
+    // Trigger error event for other components
+    if (App.vent) {
+      App.vent.trigger('stream:error', { error: error, torrent: torrent });
+    }
+  }
+};
+
+// Expose retry function for manual retry
+window.retryLastTorrent = function() {
+  if (lastTorrent) {
+    retryCount++;
+    console.log('Manual retry triggered');
+    handleTorrent(lastTorrent, true);
+  } else {
+    console.warn('No torrent to retry');
+  }
 };
 
 window.ondrop = function (e) {

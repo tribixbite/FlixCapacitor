@@ -208,7 +208,7 @@
         this.listenTo(
           this.model.get('streamInfo'),
           'change:downloaded',
-          this.onProgressUpdate
+          _.throttle(this.onProgressUpdate, 250)
         );
       }
 

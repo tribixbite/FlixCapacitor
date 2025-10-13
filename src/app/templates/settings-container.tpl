@@ -333,6 +333,32 @@
         </div>
     </section>
 
+    <section id="streaming" class="advanced">
+        <div class="title"><%= i18n.__("Streaming") %></div>
+        <div class="content">
+            <span>
+                <div class="dropdown streaming-method">
+                    <p><%= i18n.__("Streaming Method") %></p>
+                    <select name="streamingMethod">
+                        <option <%=(Settings.streamingMethod == "server"? "selected='selected'":"") %> value="server"><%= i18n.__("Server-based Streaming") %></option>
+                        <option <%=(Settings.streamingMethod == "native"? "selected='selected'":"") %> value="native"><%= i18n.__("Native Client") %></option>
+                    </select>
+                    <div class="dropdown-arrow"></div>
+                </div>
+            </span>
+            <span>
+                <div class="streaming-server-url">
+                    <p><%= i18n.__("Streaming Server URL") %></p>
+                    <input type="text" size="100" id="streamingServerUrl" name="streamingServerUrl" value="<%= Settings.streamingServerUrl %>"
+                           placeholder="http://localhost:3001/api">
+                </div>
+            </span>
+            <span>
+                <em><%= i18n.__("Configure your streaming server URL for server-based streaming, or use native client for direct P2P streaming") %></em>
+            </span>
+        </div>
+    </section>
+
     <% if(App.Trakt) { %>
     <section id="trakt-tv">
         <div class="title">Trakt.tv</div>
