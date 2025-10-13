@@ -41,7 +41,11 @@ Navigation complete
     - Improved error handling for KeepAwake and TorrentStreamer plugins
     - Shows helpful error messages if plugins not loaded
   - **Commit**: f01d4a6
-  - **Status**: ✅ Built and synced - ready to rebuild app with `npx cap run android`
+  - **Status**: ✅ Built successfully!
+    - APK: `android/app/build/outputs/apk/debug/app-debug.apk`
+    - Build time: 24 seconds
+    - TorrentStreamer plugin compiled
+    - Install: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`
 
 - **Files Changed**:
   - `src/app/lib/mobile-ui.js` (magnet link handling)
