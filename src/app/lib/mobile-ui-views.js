@@ -1456,10 +1456,8 @@ export class MobileUIController {
                 throw new Error('Native torrent client not available');
             }
 
-            // Check if TorrentStreamer plugin is available
-            if (!window.TorrentStreamer && typeof TorrentStreamer === 'undefined') {
-                throw new Error('TorrentStreamer plugin not loaded. Did you run: npm run build && npx cap sync?');
-            }
+            // Note: TorrentStreamer plugin will be checked when NativeTorrentClient.startStream() is called
+            // If the plugin isn't loaded, we'll get a proper error from Capacitor
 
             // IMPORTANT: Stop any existing stream first to avoid port conflicts
             try {
