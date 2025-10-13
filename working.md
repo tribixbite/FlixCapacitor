@@ -42,10 +42,18 @@ Navigation complete
     - Shows helpful error messages if plugins not loaded
   - **Commit**: f01d4a6
   - **Status**: ✅ Built successfully!
-    - APK: `android/app/build/outputs/apk/debug/app-debug.apk`
-    - Build time: 24 seconds
-    - TorrentStreamer plugin compiled
+    - APK: `android/app/build/outputs/apk/debug/app-debug.apk` (73 MB)
+    - Build time: 4-24 seconds
+    - TorrentStreamer plugin compiled with try-catch protection
     - Install: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`
+
+- **Issue 3**: App crashes during loading stage
+  - **Root Cause**: `setupEventListeners()` called `TorrentStreamer.addListener()` before plugin was ready
+  - **Solution**:
+    - Added try-catch around event listener setup
+    - Check if TorrentStreamer is defined before initializing
+    - Log successful initialization
+  - **Commit**: d30ec1c
 
 - **Files Changed**:
   - `src/app/lib/mobile-ui.js` (magnet link handling)
