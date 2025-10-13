@@ -41,7 +41,7 @@ Navigation complete
     - Improved error handling for KeepAwake and TorrentStreamer plugins
     - Shows helpful error messages if plugins not loaded
   - **Commit**: f01d4a6
-  - **Requires**: Rebuild app with `npm run build && npx cap sync android && npx cap run android`
+  - **Status**: ✅ Built and synced - ready to rebuild app with `npx cap run android`
 
 - **Files Changed**:
   - `src/app/lib/mobile-ui.js` (magnet link handling)
