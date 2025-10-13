@@ -55,10 +55,52 @@ Navigation complete
     - Log successful initialization
   - **Commit**: d30ec1c
 
+- **Issue 4**: Files saved to internal cache, not accessible (✅ FIXED)
+  - **Root Cause**: TorrentStreamingService used `applicationContext.cacheDir` for torrent storage
+  - **Solution**:
+    - Changed to `getExternalFilesDir(Environment.DIRECTORY_MOVIES)`
+    - Files now saved to `/sdcard/Android/data/app.popcorntime.mobile/files/Movies/PopcornTime/`
+    - Accessible via file manager
+    - Uses Android scoped storage (no extra permissions needed on Android 10+)
+  - **Status**: ✅ Built successfully!
+    - APK: `android/app/build/outputs/apk/debug/app-debug.apk` (74 MB)
+    - SHA256: `7da300f5c48922ac295fe34941a82559705690a7c7fc99f537af6eb4111af90a`
+    - Build time: 8 seconds
+    - Install: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`
+
 - **Files Changed**:
   - `src/app/lib/mobile-ui.js` (magnet link handling)
   - `src/app/lib/mobile-ui-views.js` (error handling)
   - `android/app/src/main/AndroidManifest.xml` (permissions)
+  - `capacitor-plugin-torrent-streamer/android/src/main/java/com/popcorntime/torrent/TorrentStreamingService.kt` (file storage)
+
+### 🔍 Debugging Information
+
+**What happens when you paste a magnet link:**
+1. App shows video player loading screen with torrent status
+2. Plugin shows toast notifications:
+   - "Service starting..."
+   - "Creating torrent directory..."
+   - "Initializing jlibtorrent..."
+   - "Starting HTTP server..."
+   - "HTTP server started on port 8888"
+   - "Adding magnet URI..."
+   - "Magnet added, waiting for alerts..."
+3. Files are saved to: `/sdcard/Android/data/app.popcorntime.mobile/files/Movies/PopcornTime/`
+4. HTTP streaming server starts on `http://127.0.0.1:8888/video`
+5. Video element at line 1568 gets stream URL when ready
+
+**If app crashes with no toasts**, the crash is happening before service starts.
+**If you see some toasts**, the last toast shows where it crashed.
+
+### 📁 File Storage Location
+
+**External Storage (Build 7da300f5c48922ac):**
+- Files now saved to external app-specific directory
+- Location: `/sdcard/Android/data/app.popcorntime.mobile/files/Movies/PopcornTime/`
+- Accessible via file manager
+- Uses Android scoped storage (no extra permissions needed on Android 10+)
+- Automatically cleaned up when app is uninstalled
 
 ### ⚠️ Known Issues
 
