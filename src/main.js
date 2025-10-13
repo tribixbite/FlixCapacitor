@@ -1,5 +1,5 @@
 /**
- * Popcorn Time Mobile - Main Entry Point
+ * FlixCapacitor - Main Entry Point
  * Bootstraps the Capacitor + Marionette application
  */
 
@@ -115,7 +115,7 @@ window._ = _;
 window.Backbone = Backbone;
 window.Marionette = Marionette;
 
-console.log('Popcorn Time Mobile starting...');
+console.log('FlixCapacitor starting...');
 console.log('jQuery version:', $.fn.jquery);
 console.log('Backbone version:', Backbone.VERSION);
 console.log('Marionette version:', Marionette.VERSION);
@@ -450,7 +450,7 @@ function initMarionette() {
 
 // Main initialization
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('=== Popcorn Time Mobile Initializing ===');
+    console.log('=== FlixCapacitor Initializing ===');
     console.log('DOM Content Loaded');
 
     // Force hide loading screen after 10 seconds as a failsafe
@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         app.start();
         console.log('✓ Application started');
 
-        console.log('=== Popcorn Time Mobile Ready ==='); // Wait 2 seconds for UI to settle
+        console.log('=== FlixCapacitor Ready ==='); // Wait 2 seconds for UI to settle
     } catch (error) {
         console.error('!!! Failed to initialize application !!!');
         console.error('Error:', error);

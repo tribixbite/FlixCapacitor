@@ -1,6 +1,6 @@
 /** Default settings **/
 var Settings = {
-  projectName: 'Popcorn-Time',
+  projectName: 'FlixCapacitor',
   projectUrl: 'http://butterproject.org',
   projectTwitter: 'butterproject',
   projectFacebook: 'ButterProjectOrg',
