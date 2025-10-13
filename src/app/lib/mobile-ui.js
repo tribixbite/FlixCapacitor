@@ -307,20 +307,55 @@
             window.Settings.droppedMagnet = magnetURL;
         }
 
-        if (window.App && window.App.Config) {
+        // Mobile app: Use NativeTorrentClient directly instead of old provider system
+        if (window.NativeTorrentClient && window.App && window.App.UI) {
             try {
-                window.App.Config.getProviderForType('torrentCache').resolve(magnetURL);
+                // Parse magnet link to get a title if possible
+                const magnetMatch = magnetURL.match(/dn=([^&]+)/);
+                const title = magnetMatch ? decodeURIComponent(magnetMatch[1]) : 'Unknown Video';
+
+                // Show video player with the magnet link
+                const mockMovie = {
+                    title: title,
+                    imdb_id: 'magnet-link',
+                    year: new Date().getFullYear(),
+                    torrents: {
+                        '720p': {
+                            url: magnetURL,
+                            seed: 0,
+                            peer: 0
+                        }
+                    },
+                    images: {
+                        poster: 'https://via.placeholder.com/300x450/1f1f1f/808080?text=Magnet+Link',
+                        fanart: 'https://via.placeholder.com/1280x720/1f1f1f/808080?text=Magnet+Link'
+                    }
+                };
+
+                // Use the UI controller to play the movie
+                window.App.UI.playMovie(mockMovie);
+
+                console.log('Magnet link handled successfully');
             } catch (err) {
                 console.error('Failed to handle magnet link:', err);
-                alert('Failed to add magnet link. Please try again.');
+                alert('Failed to play magnet link. Please try again.');
             }
         } else {
             console.log('App not ready yet, queueing magnet link for later...');
             // Queue the magnet link to be processed when app is ready
-            window._pendingDeepLink = magnetURL;
+            window._pendingMagnetLink = magnetURL;
 
             // Show feedback to user
-            alert('Magnet link saved. It will be opened when the app finishes loading.');
+            alert('Magnet link saved. It will open automatically in a moment...');
+
+            // Retry after a short delay
+            setTimeout(() => {
+                if (window._pendingMagnetLink) {
+                    const url = window._pendingMagnetLink;
+                    delete window._pendingMagnetLink;
+                    handleMagnetLink(url);
+                }
+            }, 2000);
         }
     }
 
@@ -330,21 +365,9 @@
     function handleTorrentURL(torrentURL) {
         console.log('Adding torrent URL:', torrentURL);
 
-        if (window.App && window.App.Config) {
-            try {
-                window.App.Config.getProviderForType('torrentCache').resolve(torrentURL);
-            } catch (err) {
-                console.error('Failed to handle torrent URL:', err);
-                alert('Failed to add torrent. Please try again.');
-            }
-        } else {
-            console.log('App not ready yet, queueing torrent URL for later...');
-            // Queue the torrent URL to be processed when app is ready
-            window._pendingDeepLink = torrentURL;
-
-            // Show feedback to user
-            alert('Torrent URL saved. It will be opened when the app finishes loading.');
-        }
+        // For now, treat torrent URLs as magnet links
+        // In a full implementation, you would fetch and parse the .torrent file
+        alert('Torrent URLs not yet supported. Please use magnet links or .torrent files instead.');
     }
 
     /**
@@ -366,21 +389,9 @@
                 window.Settings.droppedTorrent = file.name;
             }
 
-            if (window.App && window.App.Config) {
-                try {
-                    window.App.Config.getProviderForType('torrentCache').resolve(url);
-                } catch (err) {
-                    console.error('Failed to handle torrent file:', err);
-                    alert('Failed to add torrent file. Please try again.');
-                }
-            } else {
-                console.log('App not ready yet, queueing torrent file for later...');
-                // Queue the torrent file to be processed when app is ready
-                window._pendingDeepLink = url;
-
-                // Show feedback to user
-                alert('Torrent file saved. It will be opened when the app finishes loading.');
-            }
+            // Torrent files not supported yet in mobile app
+            // Would need to parse .torrent file and convert to magnet link
+            alert('Torrent files not yet supported. Please use magnet links instead.');
         };
 
         reader.onerror = function () {
