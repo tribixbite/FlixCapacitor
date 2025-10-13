@@ -2004,10 +2004,151 @@ Completed major phases of torrent streaming pipeline transition: server-based st
 5. Write comprehensive unit tests
 6. Perform thorough end-to-end testing with both streaming methods
 
-### Git Commit
+### Git Commits
 ```
-feat: implement server-based streaming with method selection and remove WebTorrent
+31002d3 - feat: implement server-based streaming with method selection and remove WebTorrent
+210fc2f - docs: document torrent streaming pipeline implementation (phases 1-3)
+a659221 - feat: add loading screen enhancements and subtitle support
+```
 
-BREAKING CHANGE: Removed WebTorrent dependency and legacy streaming code
-Commit: 31002d3
+---
+
+## 2025-10-12: Loading Screen Enhancements & Subtitle Support (Phase 4)
+
+### Overview
+Completed UI/UX polish and subtitle integration, bringing the total to 10/12 tasks complete from TODO.md.
+
+### Completed Tasks (Additional 4 tasks)
+
+#### Phase 4: Loading Screen Refinements ✅
+- **Streaming Method Indicator**:
+  - Shows "Using Native P2P Client" for native streaming
+  - Shows "Using Streaming Server: [URL]" for server-based streaming
+  - Updates on attach to reflect current settings
+  - Styled with subtle opacity for non-intrusive display
+
+- **Enhanced Cancel Button**:
+  - Method-aware cancellation logic
+  - Stops native client streams via `NativeTorrentClient.stopStream()`
+  - Stops server streams via `StreamingService.stopAll()`
+  - Graceful error handling for both methods
+  - Shows cancellation toast notification
+  - Proper cleanup of all streaming resources
+
+#### Phase 3 (Continued): Subtitle Support ✅
+- **StreamingService Subtitle Methods**:
+  - `getSubtitles(streamId, options)` - Request subtitles from server
+    - Accepts imdbId, language, season, episode parameters
+    - Returns subtitle URLs for all available languages
+    - Non-blocking - returns null if unavailable
+  - `getSubtitleUrl(streamId, language)` - Get direct subtitle URL
+
+- **Automatic Subtitle Fetching**:
+  - Integrated into handleTorrent() for server-based streams
+  - Automatically requests subtitles when stream is ready
+  - Uses user's preferred language from Settings
+  - Handles TV shows with season/episode metadata
+  - Converts subtitle URLs to player-compatible format
+  - Attaches to stream model before triggering 'stream:ready'
+
+- **Graceful Fallback**:
+  - No errors shown if subtitles unavailable
+  - Console logging for debugging
+  - Optional feature - doesn't block playback
+
+#### Native Client UI ✅
+- Already fully integrated with SafeToast notification system
+- Progress updates, metadata, ready events all have toast notifications
+- Error handling with proper toast messages
+- No additional work needed
+
+#### Player Controls ✅
+- Cancel button works for both streaming methods
+- Proper cleanup and resource management
+- Toast notifications for user feedback
+- Keyboard shortcuts (ESC/Backspace) properly bound
+
+### Status Summary
+
+**Completed: 10/12 Tasks** ✅
+1. ✅ Streaming Server Configuration
+2. ✅ Streaming Method Selection
+3. ✅ Enhanced Error Handling & Recovery
+4. ✅ Delete Legacy Files
+5. ✅ Remove Code References
+6. ✅ Remove Dependencies
+7. ✅ Refine Loading Screen
+8. ✅ Add Subtitle Support
+9. ✅ Improve Native Client UI
+10. ✅ Improve Player Controls
+
+**Remaining: 2/12 Tasks** ⏳
+11. ⏳ Write Unit Tests
+12. ⏳ End-to-End Testing
+
+### Technical Implementation Details
+
+**Streaming Method Indicator**:
+```javascript
+updateStreamingMethodIndicator: function() {
+  const streamingMethod = Settings.streamingMethod || 'server';
+  let methodText = '';
+
+  if (streamingMethod === 'native') {
+    methodText = i18n.__('Using Native P2P Client');
+  } else {
+    const serverUrl = Settings.streamingServerUrl || 'http://localhost:3001/api';
+    methodText = i18n.__('Using Streaming Server') + ': ' + serverUrl;
+  }
+
+  this.ui.streamingMethodIndicator.text(methodText);
+}
 ```
+
+**Subtitle Integration**:
+```javascript
+// In handleTorrent() after stream is ready
+if (stream.streamId && stream.imdbId) {
+  const subtitles = await App.StreamingService.getSubtitles(stream.streamId, {
+    imdbId: stream.imdbId,
+    language: Settings.subtitle_language || 'en',
+    season: stream.season,
+    episode: stream.episode
+  });
+
+  if (subtitles && subtitles.subtitles) {
+    stream.subtitle = subtitleMap;
+    stream.defaultSubtitle = Settings.subtitle_language || 'en';
+  }
+}
+```
+
+**Cancel Button Enhancement**:
+```javascript
+cancelStreaming: function() {
+  const streamingMethod = Settings.streamingMethod || 'server';
+
+  if (streamingMethod === 'native') {
+    window.NativeTorrentClient.stopStream();
+  } else {
+    window.App.StreamingService.stopAll();
+  }
+
+  // Trigger cleanup events
+  App.vent.trigger('stream:stop');
+  App.vent.trigger('player:close');
+
+  window.App.SafeToast.info('Stream Cancelled', 'Streaming has been stopped', 3000);
+}
+```
+
+### Next Steps
+1. Create unit tests for StreamingService methods
+2. Create unit tests for NativeTorrentClient methods
+3. Perform manual end-to-end testing with:
+   - Real streaming server
+   - Native torrent client
+   - Both streaming methods
+   - Settings UI and method switching
+   - Subtitle loading
+   - Cancel functionality
