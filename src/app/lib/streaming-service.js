@@ -453,6 +453,60 @@ class StreamingService {
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
+
+    /**
+     * Request subtitles for a stream
+     * @param {string} streamId - Stream ID
+     * @param {Object} options - Subtitle options
+     * @param {string} options.imdbId - IMDB ID
+     * @param {string} options.language - Subtitle language code (e.g., 'en', 'es')
+     * @param {number} options.season - Season number (for TV shows)
+     * @param {number} options.episode - Episode number (for TV shows)
+     * @returns {Promise<Object>} Subtitle info with URLs
+     */
+    async getSubtitles(streamId, options = {}) {
+        console.log('Requesting subtitles for stream:', streamId, options);
+
+        try {
+            const params = new URLSearchParams();
+            if (options.imdbId) params.append('imdbId', options.imdbId);
+            if (options.language) params.append('language', options.language);
+            if (options.season) params.append('season', options.season);
+            if (options.episode) params.append('episode', options.episode);
+
+            const response = await fetch(`${this.baseUrl}/stream/${streamId}/subtitles?${params.toString()}`, {
+                method: 'GET'
+            });
+
+            if (!response.ok) {
+                // Subtitles are optional, so don't throw on 404
+                if (response.status === 404) {
+                    console.log('No subtitles available for this stream');
+                    return null;
+                }
+                throw new Error(`Failed to get subtitles: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Subtitles received:', Object.keys(data.subtitles || {}).length, 'languages');
+
+            return data;
+        } catch (error) {
+            console.warn('Failed to get subtitles:', error);
+            // Don't show error toast for subtitle failures - they're optional
+            return null;
+        }
+    }
+
+    /**
+     * Get direct subtitle URL from server
+     * @param {string} streamId - Stream ID
+     * @param {string} language - Language code
+     * @returns {string} Subtitle URL
+     */
+    getSubtitleUrl(streamId, language) {
+        return `${this.baseUrl}/stream/${streamId}/subtitles/${language}`;
+    }
 }
 
 // Create singleton instance

@@ -32,6 +32,7 @@
       title: '.title',
       player: '.player-name',
       streaming: '.external-play',
+      streamingMethodIndicator: '.streaming-method-indicator',
       controls: '.player-controls',
       cancel_button: '#cancel-button',
       cancel_button_vpn: '#cancel-button-vpn',
@@ -189,7 +190,24 @@
 
       App.LoadingView = this;
 
+      // Display streaming method indicator
+      this.updateStreamingMethodIndicator();
+
       this.initKeyboardShortcuts();
+    },
+
+    updateStreamingMethodIndicator: function() {
+      const streamingMethod = Settings.streamingMethod || 'server';
+      let methodText = '';
+
+      if (streamingMethod === 'native') {
+        methodText = i18n.__('Using Native P2P Client');
+      } else {
+        const serverUrl = Settings.streamingServerUrl || 'http://localhost:3001/api';
+        methodText = i18n.__('Using Streaming Server') + ': ' + serverUrl;
+      }
+
+      this.ui.streamingMethodIndicator.text(methodText);
     },
 
     onStateUpdate: function() {
@@ -375,6 +393,8 @@
     },
 
     cancelStreaming: function() {
+      win.info('Cancel streaming requested');
+
       // call stop if we play externally
       if (this.model.get('state') === 'playingExternally') {
         if (this.extPlayerStatusUpdater) {
@@ -384,10 +404,36 @@
         App.vent.trigger('device:stop');
       }
 
+      // Stop streaming based on method
+      const streamingMethod = Settings.streamingMethod || 'server';
+
+      if (streamingMethod === 'native') {
+        // Stop native torrent client
+        if (window.NativeTorrentClient) {
+          win.info('Stopping native torrent client');
+          window.NativeTorrentClient.stopStream().catch(function(err) {
+            win.warn('Error stopping native client:', err);
+          });
+        }
+      } else {
+        // Stop server-based streaming
+        if (window.App.StreamingService) {
+          win.info('Stopping all server streams');
+          window.App.StreamingService.stopAll().catch(function(err) {
+            win.warn('Error stopping server streams:', err);
+          });
+        }
+      }
+
       win.info('Closing loading view');
       App.vent.trigger('stream:stop');
       App.vent.trigger('player:close');
       App.vent.trigger('torrentcache:stop');
+
+      // Show cancellation toast
+      if (window.App && window.App.SafeToast) {
+        window.App.SafeToast.info('Stream Cancelled', 'Streaming has been stopped', 3000);
+      }
     },
 
     cancelStreamingVPN: function() {

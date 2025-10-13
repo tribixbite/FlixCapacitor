@@ -497,6 +497,34 @@ var handleTorrent = async function (torrent, isRetry = false) {
       // Use server-based streaming
       console.log('Using server-based streaming');
       const stream = await App.StreamingService.streamAndWait(torrent);
+
+      // Try to fetch subtitles if we have metadata
+      if (stream.streamId && stream.imdbId) {
+        const subtitleOptions = {
+          imdbId: stream.imdbId,
+          language: Settings.subtitle_language || 'en'
+        };
+
+        // Add season/episode for TV shows
+        if (stream.season) subtitleOptions.season = stream.season;
+        if (stream.episode) subtitleOptions.episode = stream.episode;
+
+        console.log('Fetching subtitles with options:', subtitleOptions);
+
+        const subtitles = await App.StreamingService.getSubtitles(stream.streamId, subtitleOptions);
+
+        if (subtitles && subtitles.subtitles) {
+          // Convert subtitle URLs to format expected by player
+          const subtitleMap = {};
+          for (const [lang, url] of Object.entries(subtitles.subtitles)) {
+            subtitleMap[lang] = App.StreamingService.getSubtitleUrl(stream.streamId, lang);
+          }
+          stream.subtitle = subtitleMap;
+          stream.defaultSubtitle = Settings.subtitle_language || 'en';
+          console.log('Subtitles attached to stream:', Object.keys(subtitleMap));
+        }
+      }
+
       App.vent.trigger('stream:ready', new Backbone.Model(stream));
     }
 

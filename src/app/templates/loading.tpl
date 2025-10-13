@@ -7,6 +7,9 @@
             <div class="title"></div>
             <div class="external-play" style="visibility:hidden"><%= i18n.__("Streaming to") %> <span class="player-name"></span></div>
 
+            <!-- streaming method indicator -->
+            <div class="streaming-method-indicator" style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;"></div>
+
             <!-- download -->
             <div class="text_download"><%= i18n.__(state) %></div>
 
