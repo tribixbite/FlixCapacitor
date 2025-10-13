@@ -28,6 +28,33 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
+**Comprehensive Logging and Debug Support** (✅ IMPLEMENTED) (2025-10-13)
+- **Issue 9**: MEDIA_ELEMENT_ERROR 4 (SRC_NOT_SUPPORTED) - video won't play after metadata received
+  - **Problem**: Insufficient logging to debug why HTTP streaming server or streamUrl generation fails
+  - **Solution**: Implemented comprehensive logging infrastructure
+    - Created `LogHelper.kt` - centralized logging utility
+    - Writes to both logcat AND `/sdcard/pop/log.txt` for debugging without adb
+    - Added detailed logging to track complete flow:
+      * Metadata received event with torrent details
+      * findLargestVideoFile() execution with all video files found
+      * HTTP StreamingServer startup status
+      * streamUrl generation
+      * Ready event and JavaScript callback resolution
+  - **Files Changed**:
+    - NEW: `capacitor-plugin-torrent-streamer/android/src/main/java/com/popcorntime/torrent/LogHelper.kt`
+    - Modified: `TorrentSession.kt` - added logging to metadata and file selection
+    - Modified: `TorrentStreamingService.kt` - added logging to HTTP server and streaming
+  - **Log File Location**: `/sdcard/pop/log.txt`
+    - Includes timestamps on every log entry
+    - Session markers for multiple test runs
+    - Emoji markers for easy visual scanning
+    - Survives across app restarts
+  - **Status**: ✅ Ready for testing!
+    - APK: `android/app/build/outputs/apk/debug/app-debug.apk` (73 MB)
+    - Install: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`
+    - **Test with**: Add magnet link, check `/sdcard/pop/log.txt` for full flow
+  - **Next Steps**: Test with magnet link to identify why MEDIA_ELEMENT_ERROR 4 occurs
+
 **Comprehensive JNI Handle Fix - ARCHITECTURAL SOLUTION** (✅ RESOLVED) (2025-10-13)
 - **Issue 8**: App crashes when calling ANY method that accesses stored `torrentHandle`
   - **Root Cause** (discovered via Gemini code review):
