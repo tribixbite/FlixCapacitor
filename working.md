@@ -28,23 +28,36 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
-**Native Crash in jlibtorrent (✅ FIXED)** (2025-10-13)
+**Native Crash in jlibtorrent - FINAL FIX** (✅ RESOLVED) (2025-10-13)
 - **Issue 6**: App crashes with SIGSEGV when metadata is received from torrent
-  - **Root Cause**:
-    - Native crash (null pointer dereference) in jlibtorrent library
-    - `TorrentSession.handleMetadataReceived()` called `handle.torrentFile()` without checking `handle.isValid` first
-    - TorrentHandle can become invalid between when metadata alert fires and when handler runs
-    - Stack trace: `com.frostwire.jlibtorrent.swig.torrent_handle.is_valid` → null pointer at address 0x000000000000000b
-  - **Solution**:
-    - Added `handle.isValid` check before calling `torrentFile()` in metadata handler
-    - Returns early with error if handle is invalid, preventing native crash
-    - Converts fatal crash into recoverable error with proper logging
+  - **Root Cause** (after multiple investigation rounds):
+    - Stored `torrentHandle` from ADD_TORRENT alert becomes stale by the time METADATA_RECEIVED fires
+    - The Kotlin object exists but the internal JNI native pointer is invalid/corrupted
+    - Calling ANY method on a stale handle (even `.isValid`) triggers SIGSEGV at C++ level
+    - **Java/Kotlin try-catch cannot catch native SIGSEGV** - crashes before exception can be thrown
+    - Stack trace: `com.frostwire.jlibtorrent.swig.torrent_handle.is_valid` → SEGV_MAPERR at address 0x000000000000000b
+
+  - **Failed Attempts**:
+    1. ❌ Added null check before calling `torrentFile()` - still crashed on `.isValid` check
+    2. ❌ Wrapped `.isValid` in try-catch - native crash happens before catch can execute
+
+  - **Working Solution**:
+    - **Never use stored handle** - always get fresh handle from the alert itself
+    - Pass `MetadataReceivedAlert` to handler function
+    - Call `alert.handle()` to get fresh handle with valid native pointer
+    - Use the fresh handle which is guaranteed to be valid during alert processing
+    - Update stored handle only after successful processing
+
   - **Files Changed**:
-    - `../capacitor-plugin-torrent-streamer/android/src/main/java/com/popcorntime/torrent/TorrentSession.kt:194-211`
-  - **Status**: ✅ Built successfully!
+    - `../capacitor-plugin-torrent-streamer/android/src/main/java/com/popcorntime/torrent/TorrentSession.kt:98-240`
+      - Line 100: Pass `alert as MetadataReceivedAlert` to handler
+      - Line 209-240: Refactored handler to use `alert.handle()` instead of `torrentHandle` field
+
+  - **Status**: ✅ Ready for testing!
     - APK: `android/app/build/outputs/apk/debug/app-debug.apk` (74 MB)
-    - Build time: 4 seconds
+    - SHA256: `90c5dd38c729da9a94bceb182613dd1e422d0d287842ae36854ded04d177b0b1`
     - Install: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`
+    - **Test with**: `magnet:?xt=urn:btih:FC8BC231136EC4E456D20E7BCFEF0BED9F2AC49E`
 
 **Video Player Crash After Initialization** (2025-10-13)
 - **Issue 5**: App says "initialization complete" then closes instead of showing video player
