@@ -1898,3 +1898,116 @@ Curated fallback movies (used if fetch fails):
 - Search functionality
 - Settings modal
 - Beautiful loading states
+
+---
+
+## 2025-10-12: Torrent Streaming Pipeline Implementation (Phases 1-3)
+
+### Overview
+Completed major phases of torrent streaming pipeline transition: server-based streaming configuration, native client integration, error handling, and WebTorrent removal.
+
+### Completed Tasks (6/12 from TODO.md)
+
+#### Phase 1: Server-Based Streaming Configuration ✅
+- **Settings UI**: Added streaming configuration section in advanced settings
+  - Streaming method dropdown (Server-based / Native Client)
+  - Streaming server URL input field with placeholder
+  - Explanatory text for users
+- **Backend Integration**:
+  - Added `streamingMethod` and `streamingServerUrl` settings to settings.js
+  - Auto-configuration of StreamingService from settings on startup
+  - Dynamic reconfiguration when settings change
+  - Settings handler in settings_container.js
+
+#### Phase 1.5: Enhanced Error Handling & Recovery ✅
+- **Specific Error Messages**:
+  - Server not found (404)
+  - Server unavailable (503)
+  - Server errors (5xx)
+  - Network connection failures
+  - Fetch errors with helpful context
+- **Retry Mechanism**:
+  - Automatic retry counter (max 3 attempts)
+  - Store last torrent for retry capability
+  - Click-to-retry on error toasts
+  - Manual retry function exposed globally
+  - Reset counter on success
+- **Error Context**: Improved error messages guide users to settings or alternative actions
+
+#### Phase 2: Native Client Integration ✅
+- **Method Selection**: handleTorrent() now checks `streamingMethod` setting
+- **Dual Support**: Both server-based and native streaming fully integrated
+- **Error Handling**: Proper error messages when native client unavailable
+- **Progress Callbacks**: Native client progress properly logged
+
+#### Phase 3: Complete WebTorrent Removal ✅
+- **Deleted Files**:
+  - `src/app/lib/streamer.js` (739 lines removed)
+  - `src/app/lib/webtorrent-client.js` (432 lines removed)
+- **Cleaned References**:
+  - Removed `<script src="lib/streamer.js">` from index.html
+  - Verified no remaining WebTorrent/parse-torrent references in codebase
+  - Dependencies already absent from package.json
+- **Total Reduction**: -1218 lines, +220 lines net change
+
+### Files Modified
+1. `src/app/settings.js` - Added streaming settings
+2. `src/app/templates/settings-container.tpl` - New streaming UI section
+3. `src/app/lib/views/settings_container.js` - Settings handlers
+4. `src/app/lib/streaming-service.js` - Enhanced error handling, auto-config
+5. `src/app/app.js` - Retry mechanism, method selection, error handling
+6. `src/app/index.html` - Removed legacy script reference
+7. `src/app/lib/native-torrent-client.js` - Minor updates (already had SafeToast)
+8. `src/app/lib/views/player/loading.js` - Minor SafeToast integration
+
+### Remaining Tasks (6/12 from TODO.md)
+
+#### Phase 2 (Continued): Native Client UI
+- Display detailed loading info for native client (download speed, peers, progress)
+- Ensure all SafeToast notifications work correctly
+
+#### Phase 3: Subtitle Support
+- Modify StreamingService to request subtitles from server
+- Server should fetch subtitles and provide in VTT format
+- Player should load subtitles from StreamingService URL
+
+#### Phase 4: UI/UX Polish
+- **Loading Screen**:
+  - Indicate which streaming method is being used
+  - Add functional cancel button for both methods
+- **Player Controls**:
+  - Verify play/pause/seek work with both streaming clients
+  - Test control responsiveness
+
+#### Phase 5: Testing
+- **Unit Tests**:
+  - StreamingService (mock server responses, all states)
+  - NativeTorrentClient (mock native events, toasts)
+- **E2E Tests**:
+  - Manual test with real streaming server
+  - Manual test with native torrent client
+  - Test fallback logic (server unavailable → native)
+  - Test settings UI and method switching
+
+### Technical Notes
+- StreamingService configuration is reactive - changes in settings apply immediately
+- Retry mechanism includes counter display and max retry limit
+- Error messages are specific and actionable
+- Native client integration preserves existing SafeToast notification system
+- No breaking changes to existing player or loading screen logic
+
+### Next Steps
+1. Implement subtitle support from streaming server
+2. Enhance native client UI with detailed progress display
+3. Add streaming method indicator to loading screen
+4. Implement cancel button functionality for both streaming methods
+5. Write comprehensive unit tests
+6. Perform thorough end-to-end testing with both streaming methods
+
+### Git Commit
+```
+feat: implement server-based streaming with method selection and remove WebTorrent
+
+BREAKING CHANGE: Removed WebTorrent dependency and legacy streaming code
+Commit: 31002d3
+```
