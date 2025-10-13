@@ -28,6 +28,24 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
+**Native Crash in jlibtorrent (✅ FIXED)** (2025-10-13)
+- **Issue 6**: App crashes with SIGSEGV when metadata is received from torrent
+  - **Root Cause**:
+    - Native crash (null pointer dereference) in jlibtorrent library
+    - `TorrentSession.handleMetadataReceived()` called `handle.torrentFile()` without checking `handle.isValid` first
+    - TorrentHandle can become invalid between when metadata alert fires and when handler runs
+    - Stack trace: `com.frostwire.jlibtorrent.swig.torrent_handle.is_valid` → null pointer at address 0x000000000000000b
+  - **Solution**:
+    - Added `handle.isValid` check before calling `torrentFile()` in metadata handler
+    - Returns early with error if handle is invalid, preventing native crash
+    - Converts fatal crash into recoverable error with proper logging
+  - **Files Changed**:
+    - `../capacitor-plugin-torrent-streamer/android/src/main/java/com/popcorntime/torrent/TorrentSession.kt:194-211`
+  - **Status**: ✅ Built successfully!
+    - APK: `android/app/build/outputs/apk/debug/app-debug.apk` (74 MB)
+    - Build time: 4 seconds
+    - Install: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`
+
 **Video Player Crash After Initialization** (2025-10-13)
 - **Issue 5**: App says "initialization complete" then closes instead of showing video player
   - **Root Cause**:
@@ -40,6 +58,7 @@ Navigation complete
     - Added validation for `streamUrl` before trying to load video
     - Show detailed error messages in UI when stream fails
   - **Files Changed**: `src/app/lib/mobile-ui-views.js:1490-1580`
+  - **Note**: This fix was not the root cause - the actual issue was in native code (Issue 6)
 
 **Magnet Link Handling for Mobile App** (2025-10-13)
 - **Issue 1**: "App not ready" error when pasting magnet links
