@@ -28,6 +28,20 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
+**Port 8888 Already In Use Error** (✅ FIXED) (2025-10-13)
+- **Issue 10**: HTTP streaming server fails to start with "Address already in use" on port 8888
+  - **Root Cause**: When app crashes, HTTP server port isn't released by OS, blocking new sessions
+  - **Solution**: Added retry logic with aggressive cleanup
+    - Stop any existing StreamingServer instance before starting new one
+    - Catch `java.net.BindException` specifically
+    - Wait 500ms and retry once if port is busy
+    - Clear user feedback: "Port 8888 busy, retrying..." → "HTTP server started (retry)"
+    - If retry fails: "FATAL: Port 8888 locked. Restart app."
+    - Enhanced logging in server lifecycle
+  - **Files Changed**: `TorrentStreamingService.kt:277-319, 693-700`
+  - **Status**: ✅ Ready for testing!
+    - **Workaround if port stays locked**: Force-stop app from Android Settings → Apps
+
 **Comprehensive Logging and Debug Support** (✅ IMPLEMENTED) (2025-10-13)
 - **Issue 9**: MEDIA_ELEMENT_ERROR 4 (SRC_NOT_SUPPORTED) - video won't play after metadata received
   - **Problem**: Insufficient logging to debug why HTTP streaming server or streamUrl generation fails
