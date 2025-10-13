@@ -26,6 +26,16 @@ Navigation complete
 - **Screen**: 412 x 892
 - **Technologies**: Capacitor + Backbone/Marionette + Vite
 
+### 🔧 Recent Fixes
+
+**Magnet Link Early Paste Fix** (2025-10-13)
+- **Issue**: "App not ready" error when pasting magnet links before app initialization completes
+- **Root Cause**: `mobile-ui.js` checked for `App.Config` existence and showed error if not ready
+- **Solution**: Queue magnet links/torrents in `window._pendingDeepLink` for deferred processing
+- **Files Changed**: `src/app/lib/mobile-ui.js` (handleMagnetLink, handleTorrentURL, handleTorrentFile)
+- **User Experience**: Shows helpful message "Magnet link saved. It will be opened when the app finishes loading."
+- **Commit**: bc076d7
+
 ### 🚀 Next Steps
 
 1.  Add subtitle support
