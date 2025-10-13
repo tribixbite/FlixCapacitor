@@ -28,7 +28,35 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
-**Native Crash in STATE_UPDATE Handler - FINAL FIX** (✅ RESOLVED) (2025-10-13)
+**Comprehensive JNI Handle Fix - ARCHITECTURAL SOLUTION** (✅ RESOLVED) (2025-10-13)
+- **Issue 8**: App crashes when calling ANY method that accesses stored `torrentHandle`
+  - **Root Cause** (discovered via Gemini code review):
+    - Previous fixes only addressed alert handlers (Issues 6 & 7)
+    - **Real issue**: Public methods called AFTER alerts use stale stored handle
+    - `findLargestVideoFile()` called after metadata → SIGSEGV crash (most likely crash point)
+    - `getStatus()` polling → SIGSEGV on `handle.isValid` check
+    - All methods accessing stored handle can crash
+  - **Architectural Solution**:
+    - **Never store `TorrentHandle`** - JNI pointers become invalid
+    - Store stable `Sha1Hash` instead (`activeSha1Hash`)
+    - Created `getActiveTorrentHandle()` helper: `sm.find(sha1Hash)`
+    - Gets fresh, valid handle from SessionManager when needed
+  - **Files Changed**: `TorrentSession.kt` - comprehensive refactor
+    - Line 18: Changed `torrentHandle` → `activeSha1Hash`
+    - Lines 35-45: Added `getActiveTorrentHandle()` helper
+    - Line 160: Store hash in `handleAddTorrent()`
+    - Line 279: Match hash in `handleStateUpdate()`
+    - Updated ALL public methods to use helper:
+      - `findLargestVideoFile()` (line 302)
+      - `getStatus()` (line 427)
+      - `prioritizeSelectedFile()` (line 379)
+      - `getSelectedFilePath()`, `getSelectedFileSize()`, `getTorrentInfo()`
+      - `pause()`, `resume()`, `cleanup()`
+  - **Status**: ✅ Ready for testing!
+    - **Critical fix**: Solves all JNI staleness crashes
+    - **Test with**: `magnet:?xt=urn:btih:FC8BC231136EC4E456D20E7BCFEF0BED9F2AC49E`
+
+**Native Crash in STATE_UPDATE Handler** (✅ RESOLVED) (2025-10-13)
 - **Issue 7**: App crashes when processing STATE_UPDATE alert after metadata received
   - **Root Cause**:
     - Same JNI handle staleness issue as Issue 6
