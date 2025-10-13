@@ -171,10 +171,9 @@ async function close() {
   $('.spinner').show();
 
   try {
-    // Mobile: No WebTorrent to destroy (using server-based streaming)
-    // Stop any active streaming sessions
-    if (window.App.StreamingService) {
-      await window.App.StreamingService.stopAll();
+    // Stop any active native torrent streams
+    if (window.NativeTorrentClient) {
+      await window.NativeTorrentClient.stopStream();
     }
 
     // Close any open players
@@ -470,63 +469,26 @@ var handleTorrent = async function (torrent, isRetry = false) {
   }
 
   try {
-    const streamingMethod = Settings.streamingMethod || 'server';
+    // Always use native torrent client for streaming
+    console.log('Using native torrent client for streaming');
 
-    if (streamingMethod === 'native') {
-      // Use native torrent client
-      console.log('Using native torrent client for streaming');
-
-      if (!window.NativeTorrentClient) {
-        throw new Error('Native torrent client not available. Please install the native client or switch to server-based streaming in settings.');
-      }
-
-      const streamInfo = await window.NativeTorrentClient.startStream(torrent, {}, (progress) => {
-        console.log('Native client progress:', progress);
-      });
-
-      // Convert to model format expected by player
-      const stream = {
-        src: streamInfo.streamUrl,
-        type: 'video/mp4',
-        title: streamInfo.file?.name || 'Video',
-        torrent: streamInfo.torrent
-      };
-
-      App.vent.trigger('stream:ready', new Backbone.Model(stream));
-    } else {
-      // Use server-based streaming
-      console.log('Using server-based streaming');
-      const stream = await App.StreamingService.streamAndWait(torrent);
-
-      // Try to fetch subtitles if we have metadata
-      if (stream.streamId && stream.imdbId) {
-        const subtitleOptions = {
-          imdbId: stream.imdbId,
-          language: Settings.subtitle_language || 'en'
-        };
-
-        // Add season/episode for TV shows
-        if (stream.season) subtitleOptions.season = stream.season;
-        if (stream.episode) subtitleOptions.episode = stream.episode;
-
-        console.log('Fetching subtitles with options:', subtitleOptions);
-
-        const subtitles = await App.StreamingService.getSubtitles(stream.streamId, subtitleOptions);
-
-        if (subtitles && subtitles.subtitles) {
-          // Convert subtitle URLs to format expected by player
-          const subtitleMap = {};
-          for (const [lang, url] of Object.entries(subtitles.subtitles)) {
-            subtitleMap[lang] = App.StreamingService.getSubtitleUrl(stream.streamId, lang);
-          }
-          stream.subtitle = subtitleMap;
-          stream.defaultSubtitle = Settings.subtitle_language || 'en';
-          console.log('Subtitles attached to stream:', Object.keys(subtitleMap));
-        }
-      }
-
-      App.vent.trigger('stream:ready', new Backbone.Model(stream));
+    if (!window.NativeTorrentClient) {
+      throw new Error('Native torrent client not available. Please ensure the native plugin is installed.');
     }
+
+    const streamInfo = await window.NativeTorrentClient.startStream(torrent, {}, (progress) => {
+      console.log('Native client progress:', progress);
+    });
+
+    // Convert to model format expected by player
+    const stream = {
+      src: streamInfo.streamUrl,
+      type: 'video/mp4',
+      title: streamInfo.file?.name || 'Video',
+      torrent: streamInfo.torrent
+    };
+
+    App.vent.trigger('stream:ready', new Backbone.Model(stream));
 
     // Reset retry count on success
     retryCount = 0;
@@ -552,7 +514,7 @@ var handleTorrent = async function (torrent, isRetry = false) {
     } else {
       window.App.SafeToast.error(
         'Streaming Error',
-        `${errorMsg}\n\nMax retries reached. Please check your settings or try a different torrent.`,
+        `${errorMsg}\n\nMax retries reached. Please try a different torrent.`,
         0
       );
       retryCount = 0;

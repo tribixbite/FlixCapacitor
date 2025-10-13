@@ -190,24 +190,10 @@
 
       App.LoadingView = this;
 
-      // Display streaming method indicator
-      this.updateStreamingMethodIndicator();
+      // Always using native torrent client
+      this.ui.streamingMethodIndicator.text(i18n.__('Using Native P2P Client'));
 
       this.initKeyboardShortcuts();
-    },
-
-    updateStreamingMethodIndicator: function() {
-      const streamingMethod = Settings.streamingMethod || 'server';
-      let methodText = '';
-
-      if (streamingMethod === 'native') {
-        methodText = i18n.__('Using Native P2P Client');
-      } else {
-        const serverUrl = Settings.streamingServerUrl || 'http://localhost:3001/api';
-        methodText = i18n.__('Using Streaming Server') + ': ' + serverUrl;
-      }
-
-      this.ui.streamingMethodIndicator.text(methodText);
     },
 
     onStateUpdate: function() {
@@ -404,25 +390,12 @@
         App.vent.trigger('device:stop');
       }
 
-      // Stop streaming based on method
-      const streamingMethod = Settings.streamingMethod || 'server';
-
-      if (streamingMethod === 'native') {
-        // Stop native torrent client
-        if (window.NativeTorrentClient) {
-          win.info('Stopping native torrent client');
-          window.NativeTorrentClient.stopStream().catch(function(err) {
-            win.warn('Error stopping native client:', err);
-          });
-        }
-      } else {
-        // Stop server-based streaming
-        if (window.App.StreamingService) {
-          win.info('Stopping all server streams');
-          window.App.StreamingService.stopAll().catch(function(err) {
-            win.warn('Error stopping server streams:', err);
-          });
-        }
+      // Stop native torrent client
+      if (window.NativeTorrentClient) {
+        win.info('Stopping native torrent client');
+        window.NativeTorrentClient.stopStream().catch(function(err) {
+          win.warn('Error stopping native client:', err);
+        });
       }
 
       win.info('Closing loading view');

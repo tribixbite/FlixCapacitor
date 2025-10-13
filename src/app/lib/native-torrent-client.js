@@ -355,6 +355,45 @@ class NativeTorrentClient {
     }
 
     /**
+     * Find and extract subtitle files from the torrent
+     * @returns {Promise<Array>} Array of subtitle file paths
+     */
+    async findSubtitles() {
+        // TODO: Implement subtitle file detection from torrent
+        // This should:
+        // 1. Check torrent files for .srt, .vtt, .sub files
+        // 2. Return list of available subtitle tracks
+        console.log('Subtitle detection not yet implemented');
+        return [];
+    }
+
+    /**
+     * Download subtitles for the current video
+     * @param {Object} metadata - Video metadata (imdbId, season, episode)
+     * @returns {Promise<Object>} Subtitle URLs by language
+     */
+    async downloadSubtitles(metadata = {}) {
+        // TODO: Implement subtitle download from providers
+        // This should:
+        // 1. Use App.Config.getProviderForType('subtitle') if available
+        // 2. Download subtitles based on metadata
+        // 3. Cache subtitle files locally
+        // 4. Return subtitle URLs for player
+        console.log('Subtitle download not yet implemented for native client');
+
+        if (!metadata.imdbId) {
+            console.warn('Cannot download subtitles without IMDB ID');
+            return {};
+        }
+
+        // Placeholder for future implementation
+        // const subtitleProvider = App.Config.getProviderForType('subtitle');
+        // const subtitles = await subtitleProvider.fetch(metadata);
+
+        return {};
+    }
+
+    /**
      * Destroy client and cleanup
      */
     async destroy() {

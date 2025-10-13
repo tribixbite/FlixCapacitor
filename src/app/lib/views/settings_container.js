@@ -273,16 +273,6 @@
                     tmpLocationChanged = true;
                     value = path.join(field.val(), 'Popcorn-Time');
                     break;
-                case 'streamingMethod':
-                    value = $('option:selected', field).val();
-                    break;
-                case 'streamingServerUrl':
-                    value = field.val();
-                    // Update StreamingService configuration
-                    if (window.App && window.App.StreamingService) {
-                        window.App.StreamingService.configure(value);
-                    }
-                    break;
                 case 'opensubtitlesUsername':
                 case 'opensubtitlesPassword':
                     return;
