@@ -30,14 +30,25 @@ Navigation complete
 
 **App Rebrand to FlixCapacitor** (✅ COMPLETED) (2025-10-13)
 - **Rebrand**: Complete rebrand from "Popcorn Time" to "FlixCapacitor" with ⚡ emoji
-  - Updated app name in capacitor.config.json
-  - Changed loading emoji from 🍿 to ⚡
-  - Updated Android strings.xml for app_name and title_activity_main
-  - Created comprehensive README.md with features and architecture
-  - Updated package.json with new name and description
-  - Updated all documentation references
+  - **Display & UI**:
+    - capacitor.config.json: appName → "FlixCapacitor"
+    - index.html: Loading emoji 🍿 → ⚡, title → "FlixCapacitor"
+    - android/strings.xml: app_name → "FlixCapacitor"
+  - **Documentation**:
+    - Created comprehensive README.md
+    - Updated package.json name and description
+    - Updated working.md references
+  - **Source Code**:
+    - src/main.js: Console logs updated
+    - src/app/lib/device/generic.js: Device name → "FlixCapacitor"
+    - src/app/lib/providers/opensubtitles.js: User agent → "FlixCapacitor"
+    - src/app/settings.js: projectName → "FlixCapacitor"
+  - **Preserved (for compatibility)**:
+    - Package names: app.popcorntime.mobile, com.popcorntime.torrent
+    - Database name: popcorntime.db (to preserve user data)
+    - Service class names in AndroidManifest.xml
   - **GitHub**: New repository created at https://github.com/tribixbite/FlixCapacitor
-  - **Status**: ✅ Pushed to GitHub!
+  - **Status**: ✅ Pushed to GitHub (commit a225074)
 
 **External Player Fallback** (✅ IMPLEMENTED) (2025-10-13)
 - **Issue 11**: HTML5 video player fails with MEDIA_ELEMENT_ERROR 4, need fallback to external apps
