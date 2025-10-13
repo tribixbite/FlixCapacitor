@@ -28,7 +28,24 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
-**Native Crash in jlibtorrent - FINAL FIX** (✅ RESOLVED) (2025-10-13)
+**Native Crash in STATE_UPDATE Handler - FINAL FIX** (✅ RESOLVED) (2025-10-13)
+- **Issue 7**: App crashes when processing STATE_UPDATE alert after metadata received
+  - **Root Cause**:
+    - Same JNI handle staleness issue as Issue 6
+    - `handleStateUpdate()` was calling `.isValid` on stored `torrentHandle`
+    - The stored handle becomes stale immediately after metadata, causing SIGSEGV
+  - **Solution**:
+    - Modified `handleStateUpdate()` to accept `StateUpdateAlert` parameter
+    - Get status directly from `alert.status()` array instead of calling `status()` on stored handle
+    - Avoids accessing stale handle completely - uses data from alert
+  - **Files Changed**:
+    - `../capacitor-plugin-torrent-streamer/android/src/main/java/com/popcorntime/torrent/TorrentSession.kt:102-275`
+      - Line 104: Pass `alert as StateUpdateAlert` to handler
+      - Lines 247-275: Refactored to use `alert.status()` instead of `handle.status()`
+  - **Status**: ✅ Ready for testing!
+    - **Test with**: `magnet:?xt=urn:btih:FC8BC231136EC4E456D20E7BCFEF0BED9F2AC49E`
+
+**Native Crash in jlibtorrent Metadata Handler** (✅ RESOLVED) (2025-10-13)
 - **Issue 6**: App crashes with SIGSEGV when metadata is received from torrent
   - **Root Cause** (after multiple investigation rounds):
     - Stored `torrentHandle` from ADD_TORRENT alert becomes stale by the time METADATA_RECEIVED fires
