@@ -28,6 +28,19 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
+**Video Player Crash After Initialization** (2025-10-13)
+- **Issue 5**: App says "initialization complete" then closes instead of showing video player
+  - **Root Cause**:
+    1. Error handling in `showVideoPlayer()` caught exceptions but continued execution
+    2. Code tried to use undefined `streamInfo` causing crash
+    3. No timeout for torrent metadata download
+  - **Solution**:
+    - Added 90-second timeout for `startStream()` using `Promise.race()`
+    - Fixed error handling to properly stop execution on failure
+    - Added validation for `streamUrl` before trying to load video
+    - Show detailed error messages in UI when stream fails
+  - **Files Changed**: `src/app/lib/mobile-ui-views.js:1490-1580`
+
 **Magnet Link Handling for Mobile App** (2025-10-13)
 - **Issue 1**: "App not ready" error when pasting magnet links
   - **Root Cause**: Mobile app doesn't use desktop `App.Config` system

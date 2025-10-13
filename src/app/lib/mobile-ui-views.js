@@ -1487,64 +1487,101 @@ export class MobileUIController {
                 statusText.style.color = '#3b82f6';
             }
 
-            // Start the native torrent stream
+            // Start the native torrent stream with timeout
+            let streamInfo;
             try {
-                const streamInfo = await window.NativeTorrentClient.startStream(
-                    torrent.url,
-                    { quality: quality },
-                    (status) => {
-                        // Progress callback - update UI with torrent status
-                        console.log('Native torrent status:', status);
+                streamInfo = await Promise.race([
+                    window.NativeTorrentClient.startStream(
+                        torrent.url,
+                        { quality: quality },
+                        (status) => {
+                            // Progress callback - update UI with torrent status
+                            console.log('Native torrent status:', status);
 
-                        if (statusText) {
-                            statusText.textContent = status.status || 'Downloading';
-                            statusText.style.color = status.status === 'complete' ? '#10b981' :
-                                                     status.status === 'downloading' ? '#3b82f6' :
-                                                     status.status === 'warning' ? '#f59e0b' : '#fbbf24';
+                            if (statusText) {
+                                statusText.textContent = status.status || 'Downloading';
+                                statusText.style.color = status.status === 'complete' ? '#10b981' :
+                                                         status.status === 'downloading' ? '#3b82f6' :
+                                                         status.status === 'warning' ? '#f59e0b' : '#fbbf24';
+                            }
+
+                            if (loadingTitle && status.status === 'downloading') {
+                                loadingTitle.textContent = 'Downloading Torrent...';
+                            }
+
+                            if (loadingSubtitle && status.message) {
+                                loadingSubtitle.textContent = status.message;
+                            } else if (loadingSubtitle && status.numPeers !== undefined) {
+                                loadingSubtitle.textContent = `Connected to ${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
+                            }
+
+                            // Show progress if available
+                            if (status.progress !== undefined) {
+                                if (progressRow) progressRow.style.display = 'block';
+                                if (progressText) progressText.textContent = `${Math.round(status.progress * 100)}%`;
+
+                                // Update download overlay during playback
+                                const dlProgress = document.getElementById('dl-progress');
+                                if (dlProgress) dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
+                            }
+
+                            // Show download speed if available
+                            if (status.downloadSpeed !== undefined) {
+                                if (speedRow) speedRow.style.display = 'block';
+                                const speedMB = (status.downloadSpeed / 1024 / 1024).toFixed(2);
+                                if (speedText) speedText.textContent = `↓ ${speedMB} MB/s`;
+
+                                // Update download overlay during playback
+                                const dlSpeed = document.getElementById('dl-speed');
+                                if (dlSpeed) dlSpeed.textContent = `↓ ${speedMB} MB/s`;
+                            }
+
+                            // Update peer count in overlay
+                            if (status.numPeers !== undefined) {
+                                const dlPeers = document.getElementById('dl-peers');
+                                if (dlPeers) dlPeers.textContent = `${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
+                            }
                         }
-
-                        if (loadingTitle && status.status === 'downloading') {
-                            loadingTitle.textContent = 'Downloading Torrent...';
-                        }
-
-                        if (loadingSubtitle && status.message) {
-                            loadingSubtitle.textContent = status.message;
-                        } else if (loadingSubtitle && status.numPeers !== undefined) {
-                            loadingSubtitle.textContent = `Connected to ${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
-                        }
-
-                        // Show progress if available
-                        if (status.progress !== undefined) {
-                            if (progressRow) progressRow.style.display = 'block';
-                            if (progressText) progressText.textContent = `${Math.round(status.progress * 100)}%`;
-
-                            // Update download overlay during playback
-                            const dlProgress = document.getElementById('dl-progress');
-                            if (dlProgress) dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
-                        }
-
-                        // Show download speed if available
-                        if (status.downloadSpeed !== undefined) {
-                            if (speedRow) speedRow.style.display = 'block';
-                            const speedMB = (status.downloadSpeed / 1024 / 1024).toFixed(2);
-                            if (speedText) speedText.textContent = `↓ ${speedMB} MB/s`;
-
-                            // Update download overlay during playback
-                            const dlSpeed = document.getElementById('dl-speed');
-                            if (dlSpeed) dlSpeed.textContent = `↓ ${speedMB} MB/s`;
-                        }
-
-                        // Update peer count in overlay
-                        if (status.numPeers !== undefined) {
-                            const dlPeers = document.getElementById('dl-peers');
-                            if (dlPeers) dlPeers.textContent = `${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
-                        }
-                    }
-                );
+                    ),
+                    // 90 second timeout for torrent metadata
+                    new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('Timeout: Failed to receive torrent metadata after 90 seconds')), 90000)
+                    )
+                ]);
 
                 console.log('Native torrent stream ready!', streamInfo);
+
+                // Validate stream info
+                if (!streamInfo || !streamInfo.streamUrl) {
+                    throw new Error('Stream started but no URL was provided');
+                }
             } catch (error) {
                 console.error('Error starting stream:', error);
+
+                // Show error in UI
+                if (statusText) {
+                    statusText.textContent = 'Error';
+                    statusText.style.color = '#ef4444';
+                }
+                if (loadingTitle) {
+                    loadingTitle.textContent = 'Streaming Failed';
+                }
+                if (loadingSubtitle) {
+                    loadingSubtitle.innerHTML = `
+                        <strong>Error:</strong> ${error.message}<br>
+                        <span style="font-size: 0.8rem; margin-top: 1rem; display: block;">
+                            • Check if torrent has seeds/peers<br>
+                            • Try WiFi instead of mobile data<br>
+                            • Some networks block torrents
+                        </span>
+                    `;
+                }
+                // Hide spinner
+                const spinner = document.querySelector('.loading-spinner-large');
+                if (spinner) spinner.style.display = 'none';
+
+                // Stop here - don't continue to video player
+                return;
             }
 
             // Stream is ready - update loading UI to show video is loading
