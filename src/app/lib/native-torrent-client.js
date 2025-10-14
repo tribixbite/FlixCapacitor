@@ -357,6 +357,38 @@ class NativeTorrentClient {
     }
 
     /**
+     * Get list of all video files in the current torrent
+     * @returns {Promise<Array>} Array of {index, name, size} for each video file
+     */
+    async getVideoFileList() {
+        try {
+            const result = await TorrentStreamer.getVideoFileList();
+            console.log(`Found ${result.files.length} video files in torrent`);
+            return result.files;
+        } catch (error) {
+            console.error('Error getting video file list:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Select a specific file index to stream
+     * Must be called after metadata is received but before streaming starts
+     * @param {number} fileIndex - Index of the file to select (0-based)
+     * @returns {Promise<boolean>} True if file was selected successfully
+     */
+    async selectFile(fileIndex) {
+        try {
+            const result = await TorrentStreamer.selectFile({ fileIndex });
+            console.log(`File ${fileIndex} selected successfully`);
+            return result.success;
+        } catch (error) {
+            console.error(`Error selecting file ${fileIndex}:`, error);
+            return false;
+        }
+    }
+
+    /**
      * Format bytes to human-readable size
      * @param {number} bytes - Number of bytes
      * @returns {string} Formatted size
