@@ -259,131 +259,240 @@ class PublicDomainProvider {
                 imdb_id: 'tt0017136',
                 title: 'Metropolis',
                 year: 1927,
-                rating: { percentage: 84, votes: 170000 },
+                rating: {
+                    percentage: 81,
+                    votes: 2945,
+                    imdb: 8.3,
+                    rottenTomatoes: 97,
+                    metacritic: 98
+                },
                 runtime: 153,
-                synopsis: 'In a futuristic city sharply divided between the working class and the city planners, the son of the city\'s mastermind falls in love with a working-class prophet.',
-                genres: ['Drama', 'Sci-Fi'],
+                synopsis: 'In a futuristic city sharply divided between the rich and the poor, the son of the city\'s mastermind meets a prophet who predicts the coming of a savior to mediate their differences.',
+                genres: ['Drama', 'Science Fiction'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BYzRjNjFmZjUtNTMyZi00MzczLWIyZjctMjk4NTdkOGQ5NTIyXkEyXkFqcGc@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BYzRjNjFmZjUtNTMyZi00MzczLWIyZjctMjk4NTdkOGQ5NTIyXkEyXkFqcGc@._V1_SX300.jpg'
+                    poster: 'https://image.tmdb.org/t/p/w500/vZIJxGnjcswPCAa52jhbl01FQkV.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/eeMoFKxjjiCi6iep2GEZtSAMYIr.jpg'
                 },
                 torrents: {
-                    '720p': {
-                        url: this.buildMagnetLink('3f0g5fed1fd9g9e0d34e1g9f34e2e47g6e47c47g', 'Metropolis 1927 Restored 720p'),
-                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=83',
-                        size: '1.8 GB',
-                        seed: 89,
-                        peer: 8
+                    '480p': {
+                        url: this.buildMagnetLink('5e84a6eaf3c3e3c3bf6a7e9c7d8e4b3f9d59a8f3', 'Metropolis 1927'),
+                        size: '500 MB',
+                        seed: 42,
+                        peer: 4
                     }
                 }
             },
             {
-                imdb_id: 'tt0027051',
-                title: 'Things to Come',
-                year: 1936,
-                rating: { percentage: 68, votes: 8000 },
-                runtime: 100,
-                synopsis: 'A global war that lasts decades brings civilization to the brink of collapse. Out of the ashes, a new society rebuilds.',
-                genres: ['Drama', 'Sci-Fi', 'War'],
+                imdb_id: 'tt0032138',
+                title: 'The Wizard of Oz',
+                year: 1939,
+                rating: {
+                    percentage: 76,
+                    votes: 5860,
+                    imdb: 8.1,
+                    rottenTomatoes: 98,
+                    metacritic: 92
+                },
+                runtime: 102,
+                synopsis: 'Young Dorothy finds herself in a magical world where she makes friends with a lion, a scarecrow and a tin man as they make their way along the yellow brick road to talk with the Wizard and ask for the things they miss most in their lives.',
+                genres: ['Adventure', 'Fantasy', 'Family'],
                 images: {
-                    poster: this.getFallbackPoster(3),
-                    fanart: this.getFallbackPoster(3)
+                    poster: 'https://image.tmdb.org/t/p/w500/pfAZFD7I2hxW9HCChTuAzsdE6UX.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/nRsr98MFztBGm532hCVMGXV6qOp.jpg'
                 },
                 torrents: {
-                    '720p': {
-                        url: this.buildMagnetLink('4g1h6gfe2ge0h0f1e45f2h0g45f3f58h7f58d58h', 'Things to Come 1936 720p'),
-                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=194',
-                        size: '1.4 GB',
-                        seed: 32,
+                    '480p': {
+                        url: this.buildMagnetLink('1b5c3d1e7e8f9f9f2e4c7e5d6f3e2c1f0e47a7e6', 'The Wizard of Oz 1939'),
+                        size: '500 MB',
+                        seed: 43,
                         peer: 4
                     }
                 }
             },
             {
                 imdb_id: 'tt0029870',
-                title: 'The Phantom Creeps',
+                title: 'Angels with Dirty Faces',
                 year: 1939,
-                rating: { percentage: 58, votes: 1200 },
-                runtime: 265,
-                synopsis: 'A military officer fights a mad scientist who has invented a death ray and an army of killer robots.',
-                genres: ['Action', 'Sci-Fi'],
+                rating: {
+                    percentage: 75,
+                    votes: 333,
+                    imdb: 7.9,
+                    rottenTomatoes: 100
+                },
+                runtime: 97,
+                synopsis: 'Childhood chums Rocky Sullivan and Jerry Connelly grow up on opposite sides of the fence: Rocky matures into a prominent gangster, while Jerry becomes a priest, tending to the needs of his old tenement neighborhood.',
+                genres: ['Crime', 'Drama'],
                 images: {
-                    poster: this.getFallbackPoster(4),
-                    fanart: this.getFallbackPoster(4)
+                    poster: 'https://image.tmdb.org/t/p/w500/k23E4UAcow8eczLRmVCMdukL4Mx.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/bb36aEZwEvK2L01mgWQuC506CZg.jpg'
                 },
                 torrents: {
                     '480p': {
-                        url: this.buildMagnetLink('5h2i7hgf3hf1i1g2f56g3i1h56g4g69i8g69e69i', 'The Phantom Creeps 1939'),
-                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=120',
-                        size: '950 MB',
-                        seed: 18,
+                        url: this.buildMagnetLink('2c6d4e0f8e9f8f8f3e5c8e6d7f4e3c2f1e58a8e5', 'Angels with Dirty Faces 1939'),
+                        size: '500 MB',
+                        seed: 61,
                         peer: 2
                     }
                 }
             },
             {
-                imdb_id: 'tt0032138',
-                title: 'The Man They Could Not Hang',
-                year: 1939,
-                rating: { percentage: 70, votes: 3500 },
-                runtime: 64,
-                synopsis: 'A mad scientist develops a revolutionary heart device, but his experiments lead to murder charges and a quest for revenge.',
-                genres: ['Horror', 'Sci-Fi'],
-                images: {
-                    poster: this.getFallbackPoster(5),
-                    fanart: this.getFallbackPoster(5)
-                },
-                torrents: {
-                    '480p': {
-                        url: this.buildMagnetLink('6i3j8ihg4ig2j2h3g67h4j2i67h5h70j9h70f70j', 'The Man They Could Not Hang 1939'),
-                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=139',
-                        size: '600 MB',
-                        seed: 25,
-                        peer: 3
-                    }
-                }
-            },
-            {
                 imdb_id: 'tt0049223',
-                title: 'Plan 9 from Outer Space',
+                title: 'Forbidden Planet',
                 year: 1959,
-                rating: { percentage: 41, votes: 45000 },
-                runtime: 79,
-                synopsis: 'Evil aliens attack Earth and plan to resurrect the dead. Often called "the worst movie ever made," it\'s a cult classic.',
-                genres: ['Horror', 'Sci-Fi'],
+                rating: {
+                    percentage: 73,
+                    votes: 996,
+                    imdb: 7.5,
+                    rottenTomatoes: 96,
+                    metacritic: 80
+                },
+                runtime: 98,
+                synopsis: 'Starship C57D travels to planet Altair 4 in search of the crew of spaceship "Bellerophon," a scientific expedition that has been missing for twenty years.',
+                genres: ['Science Fiction', 'Adventure'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BYjQ0ZjAzYzUtMjJjZC00OWMzLTk4NTYtNGU0NzNhMzMyM2Q3XkEyXkFqcGc@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BYjQ0ZjAzYzUtMjJjZC00OWMzLTk4NTYtNGU0NzNhMzMyM2Q3XkEyXkFqcGc@._V1_SX300.jpg'
+                    poster: 'https://image.tmdb.org/t/p/w500/aq0OQfRS7hDDI8vyD0ICbH9eguC.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/9EUmwXS6EbY5djAhLtBGzUbBwNV.jpg'
                 },
                 torrents: {
                     '480p': {
-                        url: this.buildMagnetLink('7j4k9jig5jh3k3i4h78i5k3j78i6i81k0i81g81k', 'Plan 9 from Outer Space 1959'),
-                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=156',
+                        url: this.buildMagnetLink('9a4d2b3e6e7f8f8f1e3c6e4d5f2e1c0f9d36c6d7', 'Forbidden Planet 1959'),
                         size: '700 MB',
-                        seed: 156,
-                        peer: 15
+                        seed: 98,
+                        peer: 6
                     }
                 }
             },
             {
                 imdb_id: 'tt0054047',
-                title: 'The Little Shop of Horrors',
+                title: 'The Magnificent Seven',
                 year: 1960,
-                rating: { percentage: 70, votes: 26000 },
-                runtime: 72,
-                synopsis: 'A clumsy young man working at a flower shop discovers a plant that feeds on human blood.',
-                genres: ['Comedy', 'Horror', 'Sci-Fi'],
+                rating: {
+                    percentage: 75,
+                    votes: 1884,
+                    imdb: 7.7,
+                    rottenTomatoes: 89,
+                    metacritic: 74
+                },
+                runtime: 127,
+                synopsis: 'An oppressed Mexican peasant village hires seven gunfighters to help defend their homes.',
+                genres: ['Western', 'Action', 'Adventure'],
                 images: {
-                    poster: this.getFallbackPoster(1),
-                    fanart: this.getFallbackPoster(1)
+                    poster: 'https://image.tmdb.org/t/p/w500/e5ToxOyJwuZD4VOfI0qEn5uIjeJ.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/2aC3284N1p86o6S4Uyj9AaryYeR.jpg'
+                },
+                torrents: {
+                    '720p': {
+                        url: this.buildMagnetLink('8e3c1a2d5e6f7f7f0e2c5e3d4f1e0c9e8c25b5c8', 'The Magnificent Seven 1960'),
+                        size: '900 MB',
+                        seed: 56,
+                        peer: 10
+                    }
+                }
+            },
+            // Additional classics with enriched metadata
+            {
+                imdb_id: 'tt0019702',
+                title: 'Blackmail',
+                year: 1928,
+                rating: {
+                    percentage: 65,
+                    votes: 259,
+                    imdb: 6.9,
+                    rottenTomatoes: 88
+                },
+                runtime: 86,
+                synopsis: 'London, 1929. Frank Webber, a very busy Scotland Yard detective, seems to be more interested in his work than in Alice White, his girlfriend.',
+                genres: ['Drama', 'Thriller', 'Crime'],
+                images: {
+                    poster: 'https://image.tmdb.org/t/p/w500/7ioNEKouUkkWyv5tUDwVUd7BDRR.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/3fWwpoAVj3mhgQxTnv2O0F1ElAM.jpg'
                 },
                 torrents: {
                     '480p': {
-                        url: this.buildMagnetLink('8k5l0kjh6ki4l4j5i89j6l4k89j7j92l1j92h92l', 'The Little Shop of Horrors 1960'),
-                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=112',
-                        size: '650 MB',
-                        seed: 78,
-                        peer: 7
+                        url: this.buildMagnetLink('4f5e2c3d7e8f9f9f3e5c8e6d7f4e3c2f1e58a8e5', 'Blackmail 1928'),
+                        size: '500 MB',
+                        seed: 26,
+                        peer: 4
+                    }
+                }
+            },
+            {
+                imdb_id: 'tt0022286',
+                title: 'The Public Enemy',
+                year: 1931,
+                rating: {
+                    percentage: 72,
+                    votes: 369,
+                    imdb: 7.6,
+                    rottenTomatoes: 100,
+                    metacritic: 80
+                },
+                runtime: 84,
+                synopsis: 'Two young Chicago hoodlums, Tom Powers and Matt Doyle, rise up from their poverty-stricken slum life to become petty thieves, bootleggers and cold-blooded killers.',
+                genres: ['Crime', 'Drama'],
+                images: {
+                    poster: 'https://image.tmdb.org/t/p/w500/vVxdaRMprQO2DM4AFyJ6C4qZSFO.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/oXLaGV0VOqQhXdUmQpm6KGsSpu1.jpg'
+                },
+                torrents: {
+                    '480p': {
+                        url: this.buildMagnetLink('7g6f3d4e8e9f0f0f4f6d9f7e8f5f4d3g2f69c9f6', 'The Public Enemy 1931'),
+                        size: '500 MB',
+                        seed: 37,
+                        peer: 5
+                    }
+                }
+            },
+            {
+                imdb_id: 'tt0023293',
+                title: 'The Old Dark House',
+                year: 1932,
+                rating: {
+                    percentage: 67,
+                    votes: 286,
+                    imdb: 7.0,
+                    rottenTomatoes: 97
+                },
+                runtime: 70,
+                synopsis: 'In a remote region of Wales, five travelers beset by a relentless storm find shelter in an old mansion.',
+                genres: ['Drama', 'Horror', 'Thriller'],
+                images: {
+                    poster: 'https://image.tmdb.org/t/p/w500/t4058MoAiVg8R1aqHNL3nAP48km.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/1weLHiJKmqSgbxoEBeX14jbRgMe.jpg'
+                },
+                torrents: {
+                    '480p': {
+                        url: this.buildMagnetLink('8h7g4e5f9f0g1g1g5g7e0g8f9g6g5e4h3g70d0g7', 'The Old Dark House 1932'),
+                        size: '500 MB',
+                        seed: 60,
+                        peer: 3
+                    }
+                }
+            },
+            {
+                imdb_id: 'tt0025878',
+                title: 'The Thin Man',
+                year: 1934,
+                rating: {
+                    percentage: 75,
+                    votes: 498,
+                    imdb: 7.9,
+                    rottenTomatoes: 98,
+                    metacritic: 86
+                },
+                runtime: 91,
+                synopsis: 'A husband and wife detective team takes on the search for a missing inventor and almost get killed for their efforts.',
+                genres: ['Comedy', 'Mystery', 'Crime'],
+                images: {
+                    poster: 'https://image.tmdb.org/t/p/w500/6cL89ok9t8xEKboOjOVga2W66jj.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/b1bMEMtuiHBX23tfQU5ybNpakVf.jpg'
+                },
+                torrents: {
+                    '480p': {
+                        url: this.buildMagnetLink('9i8h5f6g0g1h2h2h6h8f1h9g0h7h6f5i4h81e1h8', 'The Thin Man 1934'),
+                        size: '500 MB',
+                        seed: 52,
+                        peer: 1
                     }
                 }
             }

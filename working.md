@@ -841,3 +841,78 @@ Completed comprehensive research of 5 major media streaming services to identify
 3. Replace old OpenSubtitles XML-RPC with REST API (see Task 3)
 4. Add persistent caching with SQLite
 5. Implement progressive image loading
+
+---
+
+## 2025-10-13: Library & Learning Infrastructure
+
+### Overview
+Started implementation of consolidated navigation with Library and Learning sections. Completed backend infrastructure for local media library and educational content.
+
+### Completed: Backend Services ✅
+
+**Library & Learning Database Schemas** (commit 88eaaf8)
+- **local_media table**: Stores scanned media files with metadata
+  - Fields: file_path, media_type (movie/tvshow/other), title, year, season, episode
+  - Metadata: imdb_id, tmdb_id, poster_url, backdrop_url, genres, rating
+  - Indexes on media_type and title for efficient queries
+- **scan_history table**: Tracks media scanning sessions
+  - Fields: scan_type, folders_scanned, items_found, items_matched, status
+  - Status: running, completed, cancelled, error
+- **learning_courses table**: Stores Academic Torrents educational content
+  - Fields: title, provider, subject_area, infohash, magnet_link, size_bytes
+  - Derived from Academic Torrents CSV format
+  - Indexes on provider and subject for filtering
+
+**FilenameParser Service** (src/app/lib/filename-parser.js)
+- Extracts metadata from media filenames
+- **Movie patterns**: Handles year extraction from various formats
+  - `Movie.Name.(2020).[1080p].mkv` → title + year
+  - `Movie.Name.2020.BluRay.mkv` → title + year
+  - `[Group] Movie Name (2020)` → title + year
+- **TV Show patterns**: Extracts season/episode numbers
+  - `Show.Name.S01E05.mkv` → title + season + episode
+  - `Show Name 1x05.mkv` → title + season + episode
+- Cleans quality indicators (1080p, BluRay, etc.)
+- Returns structured metadata: {title, year, season, episode, type}
+
+**LearningService** (src/app/lib/learning-service.js)
+- Fetches and parses Academic Torrents CSV
+- CSV URL: https://academictorrents.com/collection/video-lectures.csv
+- CSV columns: TYPE, NAME, INFOHASH, SIZEBYTES, MIRRORS, DOWNLOADERS, TIMESCOMPLETED
+- **Provider extraction**: Detects MIT, Stanford, Harvard, Udemy, Coursera, etc.
+- **Subject extraction**: Categorizes into Physics, CS, Math, Biology, etc.
+- **Magnet link generation**: Creates magnet URLs from infohash
+- Provider logo mapping for branded thumbnails
+- Methods: syncCourses(), getCourses(filters), getProviders(), getSubjects()
+
+**LibraryService** (src/app/lib/library-service.js)
+- Manages local media library scanning and metadata
+- **Scan operations**: scanFolders(), scanFullDevice() with progress callbacks
+- **Metadata fetching**: Integration points for TMDB/OMDB clients
+- **File classification**: Automatic movie vs TV show detection
+- **Query operations**: getLibraryItems(filters), getGenres(), getStats()
+- **Management**: removeItem(), updateMetadata(), refreshMetadata(), clearLibrary()
+- Supported video extensions: mp4, mkv, avi, mov, wmv, flv, webm, m4v, mpg, mpeg
+- # TODO: Implement Capacitor Filesystem API integration for actual scanning
+- # TODO: Connect to existing TMDB/OMDB clients for metadata enrichment
+
+**Integration**
+- All services registered in index.html
+- Singleton pattern for global access (window.LibraryService, window.LearningService)
+- SQLite schema auto-created on database initialization
+
+### In Progress: Navigation Consolidation
+
+**Planned Changes:**
+- Filter-bar template: Consolidate Movies/TV/Anime into single "Browse" dropdown
+- Add "Library" and "Learning" tabs to bottom navigation
+- 5-tab layout: Browse | Favorites | Watchlist | Library | Learning
+
+### Next Steps
+1. Modify filter-bar template for new navigation structure
+2. Update filter_bar.js event handlers
+3. Update main_window.js with library:list and learning:list handlers
+4. Create LibraryBrowser and LearningBrowser views
+5. Create media type selector dropdown component
+6. Test and commit navigation changes

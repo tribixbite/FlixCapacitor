@@ -716,6 +716,37 @@ export const UITemplates = {
                     ${item.runtime ? `<span>${item.runtime} min</span>` : ''}
                     ${item.certification ? `<span>${item.certification}</span>` : ''}
                 </div>
+                ${(item.rating?.imdb || item.rating?.rottenTomatoes || item.rating?.metacritic) ? `
+                    <div class="detail-ratings" style="display: flex; gap: 0.75rem; margin: 1rem 0; flex-wrap: wrap;">
+                        ${item.rating.imdb ? `
+                            <div class="rating-badge" style="background: rgba(245, 197, 24, 0.15); border: 1px solid rgba(245, 197, 24, 0.3); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.2rem;">⭐</span>
+                                <div>
+                                    <div style="font-weight: 600; color: #f5c518;">${item.rating.imdb}/10</div>
+                                    <div style="font-size: 0.7rem; color: rgba(255,255,255,0.6);">IMDb</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${item.rating.rottenTomatoes ? `
+                            <div class="rating-badge" style="background: rgba(250, 50, 10, 0.15); border: 1px solid rgba(250, 50, 10, 0.3); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.2rem;">🍅</span>
+                                <div>
+                                    <div style="font-weight: 600; color: #fa320a;">${item.rating.rottenTomatoes}%</div>
+                                    <div style="font-size: 0.7rem; color: rgba(255,255,255,0.6);">RT</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${item.rating.metacritic ? `
+                            <div class="rating-badge" style="background: rgba(102, 204, 0, 0.15); border: 1px solid rgba(102, 204, 0, 0.3); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.2rem;">M</span>
+                                <div>
+                                    <div style="font-weight: 600; color: #66cc00;">${item.rating.metacritic}/100</div>
+                                    <div style="font-size: 0.7rem; color: rgba(255,255,255,0.6);">Metacritic</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : ''}
                 <div class="detail-actions">
                     <button class="btn-primary" id="play-btn">
                         <span>▶</span>
@@ -757,6 +788,39 @@ export const UITemplates = {
                         ` : ''}
                     </div>
                 </div>
+                ${item.torrents && Object.keys(item.torrents).length > 0 ? `
+                    <div class="detail-section">
+                        <h2 class="detail-section-title">Available Torrents</h2>
+                        <div class="torrent-options" style="display: grid; gap: 0.75rem;">
+                            ${Object.entries(item.torrents).map(([quality, torrent]) => {
+                                const seedHealth = torrent.seed > 100 ? 'excellent' : torrent.seed > 50 ? 'good' : torrent.seed > 20 ? 'fair' : 'poor';
+                                const healthColor = seedHealth === 'excellent' ? '#10b981' : seedHealth === 'good' ? '#22c55e' : seedHealth === 'fair' ? '#f59e0b' : '#ef4444';
+
+                                return `
+                                    <div class="torrent-option" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.1);">
+                                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem;">${quality}</div>
+                                                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">${torrent.size || 'Unknown size'}</div>
+                                            </div>
+                                            <div style="text-align: right;">
+                                                <div style="font-size: 0.75rem; color: ${healthColor}; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">${seedHealth}</div>
+                                                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">
+                                                    <span style="color: #10b981;">↑ ${torrent.seed || 0}</span> •
+                                                    <span style="color: #3b82f6;">↓ ${torrent.peer || 0}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; font-size: 0.75rem; color: rgba(255,255,255,0.5);">
+                                            <div>Seeds: ${torrent.seed || 0} peers</div>
+                                            <div>Peers: ${torrent.peer || 0} downloading</div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                ` : ''}
             </div>
         </div>
     `,
