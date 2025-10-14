@@ -2,6 +2,18 @@
 
 ### 🎯 Current Status
 
+**Library & Learning Features - Ready for Testing** (✅ COMPLETED) (2025-10-13)
+- **Navigation**: Movies/TV/Anime consolidated into Browse dropdown
+- **New Tabs**: Library and Learning added to bottom navigation
+- **Backend**: LibraryService and LearningService fully implemented
+- **Database**: Tables for local_media, scan_history, and learning_courses
+- **Collections**: LibraryCollection and LearningCollection with movie-compatible format
+- **Views**: LibraryBrowser and LearningBrowser extending PCTBrowser
+- **Filters**: Full support for types, genres, and sorters with proper normalization
+- **Integration**: All files registered, event handlers wired, services exported
+- **Build**: Successfully built and synced with Capacitor (384.04 kB / 108.31 kB gzip)
+- **Status**: ✅ Ready for testing on device
+
 **Public Domain Torrents - Tracker URL Fix** (✅ COMPLETED) (2025-10-13)
 - **Critical Fix**: Torrents now work - replaced wrong UDP trackers with correct HTTP trackers
   - **Root Cause**: Magnet links used generic UDP trackers that don't work with publicdomaintorrents.com
