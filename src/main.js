@@ -102,6 +102,9 @@ import './app/lib/native-torrent-client.js';
 import './app/lib/providers/public-domain-provider.js';
 import MobileUIController from './app/lib/mobile-ui-views.js';
 
+// Import API bridge for TMDB, OMDb, OpenSubtitles
+import { initializeAPIClients } from './app/lib/api-bridge.js';
+
 // Import core libraries
 import $ from 'jquery';
 import _ from 'underscore';
@@ -382,6 +385,13 @@ function initMarionette() {
         // Initialize settings
         if (window.SettingsManager) {
             window.SettingsManager.initialize();
+        }
+
+        // Initialize API clients (TMDB, OMDb, OpenSubtitles)
+        try {
+            initializeAPIClients();
+        } catch (error) {
+            console.warn('Failed to initialize API clients:', error);
         }
 
         // ALWAYS hide loading screen after brief delay
