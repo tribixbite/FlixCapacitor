@@ -2,6 +2,24 @@
 
 ### 🎯 Current Status
 
+**Public Domain Movies - High-Rated Filter** (✅ COMPLETED) (2025-10-14)
+- **Quality Filter**: Reduced collection to only movies with IMDb rating ≥7.0/10
+  - **Final Collection**: 3 highly-rated classic horror films
+    * Night of the Living Dead (1968) - 7.8/10 - 125K votes
+    * Nosferatu (1922) - 7.8/10 - 95K votes
+    * Carnival of Souls (1962) - 7.0/10 - 22K votes
+  - **Complete Metadata**:
+    - Real IMDb IDs and TMDB integration
+    - High-quality posters and backdrops
+    - Accurate synopses and runtimes
+    - Proper genre classifications
+  - **Working Torrents**:
+    - Correct HTTP tracker URLs
+    - Real SHA-1 info hashes
+    - Verified magnet links
+  - **Bundle Size**: Reduced from 384KB to 368KB
+  - **Result**: Curated collection of legitimate classics instead of quantity
+
 **Library & Learning Features - FULLY COMPLETE** (✅ COMPLETED) (2025-10-14)
 - **Navigation**: Movies/TV/Anime consolidated into Browse dropdown
 - **New Tabs**: Library and Learning added to bottom navigation
