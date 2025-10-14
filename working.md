@@ -989,11 +989,68 @@ Started implementation of consolidated navigation with Library and Learning sect
 - src/app/lib/views/browser/filter_bar.js - Event handlers for library/learning
 - src/app/lib/views/main_window.js - Tab show methods with TODO placeholders
 
+### Completed: View Implementation ✅ (commit 1ba829c)
+
+**LibraryCollection Model** (src/app/lib/models/library_collection.js)
+- Extends Backbone.Collection with Movie model compatibility
+- Fetches local media from LibraryService
+- Transforms library items to movie-like format for display compatibility
+- Supports filtering by media type (all, movie, tvshow, other) and genre
+- Pseudo-torrent format with `file://` URLs for local playback
+- No pagination needed (local collection)
+
+**LearningCollection Model** (src/app/lib/models/learning_collection.js)
+- Extends Backbone.Collection with Movie model compatibility
+- Fetches courses from LearningService (Academic Torrents)
+- Transforms courses to movie-like format for display compatibility
+- Supports filtering by provider (MIT, Stanford, Udemy, etc.) and subject area
+- Uses actual magnet links from Academic Torrents CSV
+- Displays metadata: downloaders, mirrors, times_completed
+
+**LibraryBrowser View** (src/app/lib/views/browser/library_browser.js)
+- Extends PCTBrowser for consistent UI/UX
+- Custom filters:
+  - Types: All Media, Movies, TV Shows, Other
+  - Genres: Standard genre list from App.Config
+  - Sorters: title, year, rating, last_played, play_count, date_added
+- Auto-checks library status on load
+- Prompts user to scan folders if library is empty
+- Uses window.LibraryService for data access
+
+**LearningBrowser View** (src/app/lib/views/browser/learning_browser.js)
+- Extends PCTBrowser for consistent UI/UX
+- Custom filters:
+  - Providers: all, MIT, Stanford, Udemy, UC Berkeley, Khan Academy, Coursera, edX
+  - Subjects: Computer Science, Mathematics, Physics, Chemistry, Biology, etc.
+  - Sorters: title, provider, subject_area, downloaders, size, date_added
+- Auto-checks courses database on load
+- Auto-syncs from Academic Torrents CSV if empty
+- Uses window.LearningService for data access
+
+**View Integration**
+- main_window.js: Updated libraryTabShow() and learningTabShow()
+  - Replaced placeholder "coming soon" messages
+  - Proper view instantiation: `new App.View.LibraryBrowser()`
+  - Proper overlay management with App.vent triggers
+- index.html: Registered new models and views
+  - library_collection.js and learning_collection.js after other collections
+  - library_browser.js and learning_browser.js after other browsers
+
+**Files Created:**
+- src/app/lib/models/library_collection.js
+- src/app/lib/models/learning_collection.js
+- src/app/lib/views/browser/library_browser.js
+- src/app/lib/views/browser/learning_browser.js
+
+**Files Modified:**
+- src/app/lib/views/main_window.js - View instantiation
+- src/app/index.html - Script registration
+
 ### Next Steps
-1. Create LibraryBrowser view extending GenericBrowser
-2. Create LearningBrowser view for courses display
-3. Create media type selector dropdown component
-4. Implement library scanning UI with progress indicators
-5. Implement learning course grid with provider logos
-6. Add Capacitor Filesystem integration for actual scanning
-7. Connect metadata fetching to TMDB/OMDb clients
+1. Create media type selector dropdown component for Library filtering
+2. Implement library scanning UI with progress indicators
+3. Implement learning course grid with provider logo thumbnails
+4. Add Capacitor Filesystem integration for actual local scanning
+5. Connect metadata fetching to existing TMDB/OMDb clients
+6. Test Library and Learning views in the mobile app
+7. Add provider logo assets (MIT, Stanford, Udemy, etc.)
