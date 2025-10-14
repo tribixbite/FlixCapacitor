@@ -61,15 +61,40 @@
     - src/app/index.html edits - Not used by Vite build
   - **Status**: ✅ PRODUCTION READY - Properly integrated with MobileUIController!
   - **Commits**:
+    - b8e6f3d - "feat: implement Learning tab with Academic Torrents integration"
     - f6243ef - "fix: restore Settings, add Browse dropdown with Movies/TV/Anime"
     - 822380e - "feat: implement mobile bottom navigation with Browse/Favorites/Library/Learning"
     - 28ed467 - "fix: update build script with FlixCapacitor branding and package name"
-  - **Lessons Learned**:
-    - ❌ Don't blindly implement without reviewing existing functionality
-    - ❌ Don't remove critical features (Settings button)
-    - ✅ Always review what's already there before making changes
-    - ✅ Extend and enhance existing patterns, don't replace them
-    - ✅ Mobile navigation should have 3-5 tabs max (we have 5)
+
+**Learning Tab - Academic Torrents Integration** (✅ COMPLETED) (2025-10-14)
+- **Feature**: Display educational courses from Academic Torrents in Learning tab
+  - **Implementation**:
+    - Imported LearningService in src/main.js (line 103)
+    - Created renderRealCourses() method (84 lines)
+    - Updated showLearning() to async and call renderRealCourses()
+    - Auto-sync courses on first load from academictorrents.com
+  - **Data Flow**:
+    1. User clicks Learning tab
+    2. Check if database has courses (getCachedCourseCount())
+    3. If empty: syncCourses() downloads CSV and populates DB
+    4. getCourses({ limit: 50 }) fetches courses
+    5. Transform to content card format
+    6. Render with UITemplates.contentGrid()
+  - **Course Data Structure**:
+    - Title, provider, subject_area
+    - Thumbnail URL / provider logo
+    - Description, infohash, magnet_link
+    - Size, downloaders, times_completed
+    - date_added, date_modified
+  - **Loading States**:
+    - ⏳ "Loading Courses" - Initial fetch
+    - ⏳ "First Time Setup" - Syncing from Academic Torrents
+    - 📚 "No Courses Available" - Empty database after sync
+    - ⚠️ "Service Error" - LearningService not loaded
+    - ⚠️ "Failed to Load Courses" - Network or database error
+  - **Provider Logos**: Uses ProviderLogos.js for MIT, Stanford, Harvard, etc.
+  - **Status**: ✅ WORKING - Fetches real data from Academic Torrents
+  - **Commit**: b8e6f3d
 
 **Public Domain Movies - High-Rated Filter** (✅ COMPLETED) (2025-10-14)
 - **Quality Filter**: Reduced collection to only movies with IMDb rating ≥7.0/10
