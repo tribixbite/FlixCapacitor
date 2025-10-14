@@ -65,7 +65,7 @@ class AnimeProvider {
                 num_seasons: 1,
                 rating: { percentage: 90 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BNjRiNmNjMmMtN2U2Yi00ODgxLTk3OTMtMmI1MTI1NjYyZTEzXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Death+Note'
                 },
                 genres: ['Anime', 'Mystery', 'Thriller'],
@@ -80,7 +80,7 @@ class AnimeProvider {
                 num_seasons: 4,
                 rating: { percentage: 92 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BNzc5MTczNjQtNjFiNC00MmQ5LTk3NzgtZjUyNWI1NDdlYTExXkEyXkFqcGdeQXVyNTgyNTA4MjM@._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Attack+on+Titan'
                 },
                 genres: ['Anime', 'Action', 'Fantasy'],
@@ -95,7 +95,7 @@ class AnimeProvider {
                 num_seasons: 1,
                 rating: { percentage: 93 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BZmEzN2YzOTItMDI5MS00MGU4LWI1NWQtOTg5ZThhNGQwYTEzXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Fullmetal+Alchemist'
                 },
                 genres: ['Anime', 'Adventure', 'Fantasy'],
@@ -110,7 +110,7 @@ class AnimeProvider {
                 num_seasons: 2,
                 rating: { percentage: 89 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BMTkzMDE3MjQ3MV5BMl5BanBnXkFtZTgwNzk4ODE1OTE@._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=One+Punch+Man'
                 },
                 genres: ['Anime', 'Action', 'Comedy'],
@@ -125,7 +125,7 @@ class AnimeProvider {
                 num_seasons: 6,
                 rating: { percentage: 87 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BYzJjNTg4YTUtOWE5ZC00YzdlLTkyNDYtNjM3OTUwZjliNTdkXkEyXkFqcGdeQXVyNzg3NjQyOQ@@._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=My+Hero+Academia'
                 },
                 genres: ['Anime', 'Action', 'Adventure'],
@@ -140,7 +140,7 @@ class AnimeProvider {
                 num_seasons: 3,
                 rating: { percentage: 88 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BZjZjNzI5MDctY2Y4YS00NmM4LTljMmItZTFkOTExNGI3ODRhXkEyXkFqcGdeQXVyNjc3MjQzNTI@._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Demon+Slayer'
                 },
                 genres: ['Anime', 'Action', 'Fantasy'],

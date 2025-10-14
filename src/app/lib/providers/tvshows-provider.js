@@ -65,8 +65,8 @@ class TVShowsProvider {
                 num_seasons: 8,
                 rating: { percentage: 92 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTQtNGZmMi00NDI5LTgxMzMtN2EzZjA1NjhlOGMxXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Game+of+Thrones'
+                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=Game+of+Thrones',
+                    fanart: 'https://via.placeholder.com/1280x720/1a1a2e/e50914?text=Game+of+Thrones'
                 },
                 genres: ['Drama', 'Fantasy', 'Adventure'],
                 synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
@@ -80,8 +80,8 @@ class TVShowsProvider {
                 num_seasons: 5,
                 rating: { percentage: 96 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BYmQ4YWMxYjUtNjZmYi00MDQ1LWFjMjMtNjA5ZDdiYjdiODU5XkEyXkFqcGdeQXVyMTMzNDExODE5._V1_SX300.jpg',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Breaking+Bad'
+                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=Breaking+Bad',
+                    fanart: 'https://via.placeholder.com/1280x720/1a1a2e/e50914?text=Breaking+Bad'
                 },
                 genres: ['Crime', 'Drama', 'Thriller'],
                 synopsis: 'A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student.'
@@ -95,7 +95,7 @@ class TVShowsProvider {
                 num_seasons: 8,
                 rating: { percentage: 86 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BZjkzMmU5MjMtODllZS00OTA5LTk2ZTEtNmI0Nzc1YWQ0NGEyXkEyXkFqcGdeQXVyOTA3MTMyOTk@._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=TV+Show',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Dexter'
                 },
                 genres: ['Crime', 'Drama', 'Mystery'],
@@ -110,7 +110,7 @@ class TVShowsProvider {
                 num_seasons: 4,
                 rating: { percentage: 91 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BMWEzNTFlMTQtMzhjOS00MzQ1LWJjNjgtY2RhMjFhYjQwYjIzXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=TV+Show',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Sherlock'
                 },
                 genres: ['Crime', 'Drama', 'Mystery'],
@@ -125,7 +125,7 @@ class TVShowsProvider {
                 num_seasons: 9,
                 rating: { percentage: 83 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BNjg1MDQ5MjQ2N15BMl5BanBnXkFtZTYwNjI5NjA3._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=TV+Show',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=How+I+Met+Your+Mother'
                 },
                 genres: ['Comedy', 'Romance'],
@@ -140,7 +140,7 @@ class TVShowsProvider {
                 num_seasons: 7,
                 rating: { percentage: 91 },
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BZjRjOTFkOTktZWUzMi00YzMyLThkMmYtMjEwNmQyNzliYTNmXkEyXkFqcGdeQXVyNzQ1ODk3MTQ@._V1_SX300.jpg',
+                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=TV+Show',
                     fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Rick+and+Morty'
                 },
                 genres: ['Animation', 'Comedy', 'Sci-Fi'],

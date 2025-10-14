@@ -326,6 +326,7 @@ const componentStyles = `
 .detail-content {
     position: relative;
     padding: 2rem 1rem;
+    padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom) + 2rem);
     margin-top: -4rem;
     z-index: 1;
 }
@@ -660,6 +661,23 @@ export const UITemplates = {
                 <div class="content-loading">
                     <div class="loading-spinner-large"></div>
                     <div class="loading-text">Loading ${title.toLowerCase()}...</div>
+                </div>
+            </div>
+        </div>
+    `,
+
+    // Favorites/Watchlist Browser with Tabs
+    favoritesView: (activeTab = 'favorites') => `
+        ${componentStyles}
+        <div class="browser-container">
+            <div class="filter-tabs" style="padding-top: 1rem;">
+                <div class="filter-tab ${activeTab === 'favorites' ? 'active' : ''}" data-favorites-tab="favorites">❤️ Favorites</div>
+                <div class="filter-tab ${activeTab === 'watchlist' ? 'active' : ''}" data-favorites-tab="watchlist">⭐ Watchlist</div>
+            </div>
+            <div class="content-grid">
+                <div class="content-loading">
+                    <div class="loading-spinner-large"></div>
+                    <div class="loading-text">Loading...</div>
                 </div>
             </div>
         </div>
@@ -1401,12 +1419,28 @@ export class MobileUIController {
         }
     }
 
-    async showFavorites() {
+    async showFavorites(tab = 'favorites') {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.browserView('Favorites', 'favorites');
+        mainRegion.innerHTML = UITemplates.favoritesView(tab);
+
+        // Setup tab switching
+        document.querySelectorAll('[data-favorites-tab]').forEach(tabBtn => {
+            tabBtn.addEventListener('click', () => {
+                const selectedTab = tabBtn.dataset.favoritesTab;
+                this.showFavorites(selectedTab);
+            });
+        });
 
         const contentGrid = document.querySelector('.content-grid');
 
+        if (tab === 'favorites') {
+            await this.renderFavoritesTab(contentGrid);
+        } else {
+            await this.renderWatchlistTab(contentGrid);
+        }
+    }
+
+    async renderFavoritesTab(contentGrid) {
         try {
             const favoritesService = window.FavoritesService;
             if (!favoritesService) {
@@ -1454,6 +1488,54 @@ export class MobileUIController {
         }
     }
 
+    async renderWatchlistTab(contentGrid) {
+        try {
+            const watchlistService = window.WatchlistService;
+            if (!watchlistService) {
+                console.error('WatchlistService not loaded');
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⚠️',
+                    'Service Error',
+                    'Watchlist service failed to load'
+                );
+                return;
+            }
+
+            // Show loading state
+            contentGrid.innerHTML = UITemplates.loadingState('Loading watchlist...');
+
+            // Fetch watchlist items
+            const watchlistItems = await watchlistService.getWatchlist();
+
+            if (watchlistItems.length === 0) {
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⭐',
+                    'Your Watchlist is Empty',
+                    'Add movies and shows to keep track of what you want to watch'
+                );
+                return;
+            }
+
+            // Store items for detail view
+            watchlistItems.forEach(item => {
+                this.currentMovieData.set(item.imdb_id || item.id, item);
+            });
+
+            // Render watchlist items
+            contentGrid.innerHTML = UITemplates.contentGrid(watchlistItems);
+            this.attachCardHandlers();
+            await this.updateFavoriteButtonStates();
+
+        } catch (error) {
+            console.error('Failed to load watchlist:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load Watchlist',
+                error.message || 'Please try again'
+            );
+        }
+    }
+
     async showLibrary() {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Library', 'library');
@@ -1476,7 +1558,7 @@ export class MobileUIController {
             contentGrid.innerHTML = UITemplates.loadingState('Loading library...');
 
             // Fetch library items
-            const libraryItems = await libraryService.getAllMedia({ limit: 100 });
+            const libraryItems = await libraryService.getMedia({ limit: 100 });
 
             if (libraryItems.length === 0) {
                 // Show empty state with scan button
@@ -1599,56 +1681,8 @@ export class MobileUIController {
     }
 
     async showWatchlist() {
-        const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.browserView('Watchlist', 'watchlist');
-
-        const contentGrid = document.querySelector('.content-grid');
-
-        try {
-            const watchlistService = window.WatchlistService;
-            if (!watchlistService) {
-                console.error('WatchlistService not loaded');
-                contentGrid.innerHTML = UITemplates.emptyState(
-                    '⚠️',
-                    'Service Error',
-                    'Watchlist service failed to load'
-                );
-                return;
-            }
-
-            // Show loading state
-            contentGrid.innerHTML = UITemplates.loadingState('Loading watchlist...');
-
-            // Fetch watchlist items
-            const watchlistItems = await watchlistService.getWatchlist();
-
-            if (watchlistItems.length === 0) {
-                contentGrid.innerHTML = UITemplates.emptyState(
-                    '⭐',
-                    'Your Watchlist is Empty',
-                    'Add movies and shows to keep track of what you want to watch'
-                );
-                return;
-            }
-
-            // Store items for detail view
-            watchlistItems.forEach(item => {
-                this.currentMovieData.set(item.imdb_id || item.id, item);
-            });
-
-            // Render watchlist items
-            contentGrid.innerHTML = UITemplates.contentGrid(watchlistItems);
-            this.attachCardHandlers();
-            await this.updateFavoriteButtonStates();
-
-        } catch (error) {
-            console.error('Failed to load watchlist:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
-                '⚠️',
-                'Failed to Load Watchlist',
-                error.message || 'Please try again'
-            );
-        }
+        // Redirect to favorites with watchlist tab
+        await this.showFavorites('watchlist');
     }
 
     showSettings() {
