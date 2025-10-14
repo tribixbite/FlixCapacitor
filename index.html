@@ -241,6 +241,59 @@
             font-weight: 500;
         }
 
+        /* Browse Dropdown */
+        .nav-item-dropdown {
+            position: relative;
+        }
+
+        .browse-dropdown {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.5rem 0;
+            margin-bottom: 0.5rem;
+            min-width: 140px;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            z-index: 200;
+        }
+
+        .nav-item-dropdown.active .browse-dropdown {
+            display: block;
+            animation: dropdownFadeIn 0.2s ease;
+        }
+
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .browse-dropdown-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .browse-dropdown-item:hover,
+        .browse-dropdown-item.active {
+            background: rgba(229, 9, 20, 0.1);
+            color: var(--accent-primary);
+        }
+
         /* Utility Classes */
         .hidden {
             display: none !important;
@@ -295,10 +348,15 @@
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <a href="#movies" class="nav-item active" data-nav="movies">
+            <div class="nav-item nav-item-dropdown active" data-nav="browse">
                 <div class="nav-icon">🎬</div>
                 <div class="nav-label">Browse</div>
-            </a>
+                <div class="browse-dropdown">
+                    <a href="#movies" class="browse-dropdown-item active" data-nav="movies">Movies</a>
+                    <a href="#shows" class="browse-dropdown-item" data-nav="shows">TV Shows</a>
+                    <a href="#anime" class="browse-dropdown-item" data-nav="anime">Anime</a>
+                </div>
+            </div>
             <a href="#favorites" class="nav-item" data-nav="favorites">
                 <div class="nav-icon">❤️</div>
                 <div class="nav-label">Favorites</div>
@@ -310,6 +368,10 @@
             <a href="#learning" class="nav-item" data-nav="learning">
                 <div class="nav-icon">🎓</div>
                 <div class="nav-label">Learning</div>
+            </a>
+            <a href="#settings" class="nav-item" data-nav="settings">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Settings</div>
             </a>
         </nav>
     </div>

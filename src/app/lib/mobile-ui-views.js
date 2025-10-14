@@ -1088,13 +1088,47 @@ export class MobileUIController {
         // Handle bottom navigation
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', (e) => {
-                e.preventDefault();
                 const nav = item.dataset.nav;
+
+                // Special handling for Browse dropdown
+                if (nav === 'browse') {
+                    e.preventDefault();
+                    // Toggle dropdown
+                    const isActive = item.classList.contains('active');
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    item.classList.add('active');
+
+                    // If already open, close it; if closed, open it
+                    if (isActive && !e.target.closest('.browse-dropdown-item')) {
+                        item.classList.remove('active');
+                    }
+                    return;
+                }
+
+                e.preventDefault();
                 this.navigateTo(nav);
 
                 // Update active state
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
+            });
+        });
+
+        // Handle Browse dropdown items
+        document.querySelectorAll('.browse-dropdown-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const nav = item.dataset.nav;
+                this.navigateTo(nav);
+
+                // Update dropdown active state
+                document.querySelectorAll('.browse-dropdown-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+
+                // Keep Browse tab active
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.querySelector('.nav-item-dropdown').classList.add('active');
             });
         });
     }
