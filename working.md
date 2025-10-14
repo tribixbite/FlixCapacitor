@@ -2,30 +2,47 @@
 
 ### 🎯 Current Status
 
-**Multi-File Torrent Detection** (🔄 PARTIAL) (2025-10-14)
-- **Feature**: Detect and log multi-file torrents (courses, TV series)
-  - **Detection Implemented** (✅):
-    * Check `window.NativeTorrentClient.currentTorrentInfo` after stream ready
-    * Log warning when `numFiles > 1` with file count and selected file
-    * Store `currentPlaybackInfo` for future file selection support
-    * Currently auto-plays largest video file (plugin default behavior)
-  - **Pending Plugin Enhancement** (⏳):
-    * Plugin needs to expose full file list (not just count)
-    * Plugin needs method to select specific file index before streaming
-    * Requires modifying capacitor-plugin-torrent-streamer/android/TorrentSession.kt
-    * Need to add `getFileList()` method returning array of {index, name, size}
-    * Need to add `selectFile(index)` method to override default largest-file selection
-  - **Pending UI Implementation** (⏳):
-    * File picker modal with video file list
-    * Multi-select support for queueing multiple lectures
-    * Star/favorite individual lectures within course
-    * Resume support per-file
+**Multi-File Torrent Support with File Picker UI** (✅ COMPLETED) (2025-10-14)
+- **Feature**: Complete implementation for selecting videos in multi-file torrents
+  - **Native Plugin Enhancement** (✅):
+    * TorrentSession.kt: Added `getVideoFileList()` returning array of {index, name, size}
+    * TorrentSession.kt: Added `selectFile(fileIndex)` to override default file selection
+    * TorrentStreamingService.kt: Exposed methods through companion object
+    * TorrentStreamerPlugin.kt: Added @PluginMethod endpoints
+    * definitions.ts: Added TypeScript interfaces (VideoFile, VideoFileListResult, etc.)
+  - **JavaScript Integration** (✅):
+    * native-torrent-client.js: Wrapper methods for getVideoFileList() and selectFile()
+    * Graceful error handling with empty array fallback
+  - **File Picker Modal UI** (✅):
+    * Dark mode design with modern styling
+    * Header: Movie title, file count, close button
+    * Body: Scrollable list with checkboxes, file names/sizes, star icons
+    * Footer: Cancel and "Play Selected" buttons
+    * Features: Multi-select, star/favorite, selection highlighting
+    * Responsive mobile-friendly design
+  - **Integration Flow** (✅):
+    * Detects multi-file torrents after metadata received
+    * Shows modal when >1 video files found
+    * Returns selected file index or falls back to largest
+  - **Helper Methods** (✅):
+    * getFileName(path): Extract filename from path
+    * formatBytes(bytes): Human-readable size
   - **Use Case**: Stanford Machine Learning course (100+ lecture videos)
   - **Files Modified**:
-    * src/app/lib/mobile-ui-views.js - Multi-file detection and logging
-  - **Build Status**: ✅ Build successful (462.59 kB main bundle)
-  - **Commit**: c70866b - "feat: add multi-file torrent detection with TODO for file picker"
-  - **Status**: 🔄 DETECTION COMPLETE, FILE SELECTION PENDING PLUGIN WORK
+    * capacitor-plugin-torrent-streamer/android/.../TorrentSession.kt
+    * capacitor-plugin-torrent-streamer/android/.../TorrentStreamingService.kt
+    * capacitor-plugin-torrent-streamer/android/.../TorrentStreamerPlugin.kt
+    * capacitor-plugin-torrent-streamer/src/definitions.ts
+    * src/app/lib/native-torrent-client.js
+    * src/app/lib/mobile-ui-views.js (added 290 lines for file picker)
+  - **Build Status**: ✅ Build successful (472.47 kB main bundle, +10 kB for file picker)
+  - **Commit**: e6c2bcc - "feat: implement complete multi-file torrent support with file picker UI"
+  - **Status**: ✅ FULLY IMPLEMENTED
+  - **Future Enhancements**:
+    * Save starred files to database
+    * Sequential playback of multiple selected files
+    * Per-file resume support
+    * Search/filter for large libraries
 
 **Video Playback Buffer Threshold Fix** (✅ COMPLETED) (2025-10-14)
 - **Feature**: Fixed premature media element errors before download starts
