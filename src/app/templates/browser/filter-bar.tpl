@@ -1,8 +1,19 @@
 <ul class="nav nav-hor left">
-    <% _.each (App.Config.getTabTypes(), function (tab) { %>
-    <li class="source <%= tab.type %>TabShow providerinfo" data-toggle="tooltip" data-placement="top" title="<%= App.Config.getFiltredProviderNames(tab.type) %>"><%= i18n.__(tab.name) %></li>
-    <% }); %>
+    <!-- Browse dropdown for Movies/TV/Anime -->
+    <li class="dropdown source browse-dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <%= i18n.__("Browse") %>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <% _.each (App.Config.getTabTypes(), function (tab) { %>
+            <li><a href="#" class="<%= tab.type %>TabShow" data-type="<%= tab.type %>"><%= i18n.__(tab.name) %></a></li>
+            <% }); %>
+        </ul>
+    </li>
     <li id="filterbar-favorites" class="source providerinfo" data-toggle="tooltip" data-placement="top" title="<%= i18n.__("Favorites") %>"><%= i18n.__("Favorites") %></li>
+    <li id="filterbar-library" class="source providerinfo" data-toggle="tooltip" data-placement="top" title="<%= i18n.__("Library") %>"><%= i18n.__("Library") %></li>
+    <li id="filterbar-learning" class="source providerinfo" data-toggle="tooltip" data-placement="top" title="<%= i18n.__("Learning") %>"><%= i18n.__("Learning") %></li>
 </ul>
 <ul id="nav-filters" class="nav nav-hor filters">
     <% if(typeof type !== 'undefined'){ %>

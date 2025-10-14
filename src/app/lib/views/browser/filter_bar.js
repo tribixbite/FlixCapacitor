@@ -30,6 +30,8 @@
       'click .animeTabShow': 'animeTabShow',
       'click #filterbar-favorites': 'showFavorites',
       'click #filterbar-watchlist': 'showWatchlist',
+      'click #filterbar-library': 'showLibrary',
+      'click #filterbar-learning': 'showLearning',
       'click #filterbar-torrent-collection': 'showTorrentCollection',
       'click .triggerUpdate': 'updateDB',
       'click #filterbar-seedbox': 'showSeedbox'
@@ -113,6 +115,16 @@
         case 'Seedbox':
           rightSearch.hide();
           $('#filterbar-seedbox').addClass('active');
+          break;
+        case 'Library':
+        case 'library':
+          rightSearch.show();
+          $('#filterbar-library').addClass('active');
+          break;
+        case 'Learning':
+        case 'learning':
+          rightSearch.show();
+          $('#filterbar-learning').addClass('active');
           break;
       }
 
@@ -198,6 +210,14 @@
             break;
           case 'Seedbox':
             App.currentview = 'Seedbox';
+            App.previousview = 'movies';
+            break;
+          case 'Library':
+            App.currentview = 'Library';
+            App.previousview = 'movies';
+            break;
+          case 'Learning':
+            App.currentview = 'Learning';
             App.previousview = 'movies';
             break;
           default:
@@ -482,6 +502,66 @@
           App.vent.trigger('seedbox:close');
           App.vent.trigger('watchlist:list', []);
           this.setActive('Watchlist');
+        }
+      }
+      return false;
+    },
+
+    showLibrary: function(e) {
+      e.preventDefault();
+
+      if (App.currentview !== 'Library') {
+        App.previousview = App.currentview;
+        App.currentview = 'Library';
+        App.vent.trigger('about:close');
+        App.vent.trigger('torrentCollection:close');
+        App.vent.trigger('seedbox:close');
+        App.vent.trigger('library:list', []);
+        this.setActive('Library');
+      } else {
+        if (
+          $('#movie-detail').html().length === 0 &&
+          $('#about-container').html().length === 0
+        ) {
+          App.currentview = App.previousview;
+          App.vent.trigger(App.previousview.toLowerCase() + ':list', []);
+          this.setActive(App.currentview);
+        } else {
+          App.vent.trigger('about:close');
+          App.vent.trigger('torrentCollection:close');
+          App.vent.trigger('seedbox:close');
+          App.vent.trigger('library:list', []);
+          this.setActive('Library');
+        }
+      }
+      return false;
+    },
+
+    showLearning: function(e) {
+      e.preventDefault();
+
+      if (App.currentview !== 'Learning') {
+        App.previousview = App.currentview;
+        App.currentview = 'Learning';
+        App.vent.trigger('about:close');
+        App.vent.trigger('torrentCollection:close');
+        App.vent.trigger('seedbox:close');
+        App.vent.trigger('learning:list', []);
+        this.setActive('Learning');
+      } else {
+        if (
+          $('#movie-detail').html().length === 0 &&
+          $('#about-container').html().length === 0
+        ) {
+          App.currentview = App.previousview;
+          App.vent.trigger(App.previousview.toLowerCase() + ':list', []);
+          this.setActive(App.currentview);
+        } else {
+          App.vent.trigger('about:close');
+          App.vent.trigger('torrentCollection:close');
+          App.vent.trigger('seedbox:close');
+          App.vent.trigger('learning:list', []);
+          this.setActive('Learning');
         }
       }
       return false;

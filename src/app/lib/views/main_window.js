@@ -67,6 +67,8 @@
       App.vent.on('favorites:list', _.bind(this.showFavorites, this));
       App.vent.on('favorites:render', _.bind(this.renderFavorites, this));
       App.vent.on('watchlist:list', _.bind(this.showWatchlist, this));
+      App.vent.on('library:list', _.bind(this.libraryTabShow, this));
+      App.vent.on('learning:list', _.bind(this.learningTabShow, this));
       App.vent.on('shows:update', _.bind(this.updateShows, this));
       App.vent.on('shows:init', _.bind(this.initShows, this));
 
@@ -306,6 +308,12 @@
           case 'Seedbox':
             that.showSeedbox();
             break;
+          case 'Library':
+            that.libraryTabShow();
+            break;
+          case 'Learning':
+            that.learningTabShow();
+            break;
           default:
             that.movieTabShow();
         }
@@ -355,6 +363,24 @@
       this.getRegion('MovieDetail').empty();
 
       this.showChildView('Content', new App.View.AnimeBrowser());
+    },
+
+    libraryTabShow: function(e) {
+      this.getRegion('Settings').empty();
+      this.getRegion('MovieDetail').empty();
+
+      // # TODO: Implement LibraryBrowser view
+      console.log('Library tab clicked - view not yet implemented');
+      win.info('Library feature coming soon - local media scanning and management');
+    },
+
+    learningTabShow: function(e) {
+      this.getRegion('Settings').empty();
+      this.getRegion('MovieDetail').empty();
+
+      // # TODO: Implement LearningBrowser view
+      console.log('Learning tab clicked - view not yet implemented');
+      win.info('Learning feature coming soon - educational courses from Academic Torrents');
     },
 
     updateShows: function(e) {
