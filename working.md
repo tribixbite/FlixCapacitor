@@ -2,6 +2,23 @@
 
 ### 🎯 Current Status
 
+**Public Domain Torrents - Tracker URL Fix** (✅ COMPLETED) (2025-10-13)
+- **Critical Fix**: Torrents now work - replaced wrong UDP trackers with correct HTTP trackers
+  - **Root Cause**: Magnet links used generic UDP trackers that don't work with publicdomaintorrents.com
+  - **Solution**: Downloaded all .torrent files and extracted real tracker URLs using bencode parser
+  - **Result**: 37 working movies with correct HTTP trackers:
+    * `http://files.publicdomaintorrents.com/bt/announce.php`
+    * `http://files2.publicdomaintorrents.com/bt/announce.php`
+    * `http://publicdomaintorrents.com/bt/announce.php`
+  - **Technical Details**:
+    - Downloaded 54 .torrent files from full catalog
+    - 37 successfully parsed (17 failed - file not found)
+    - Used bencode npm package to extract info hashes and announce URLs
+    - Rebuilt magnet URIs with correct `&tr=` parameter
+  - **Testing**: Eliminated "Ignoring STATE_UPDATE - no metadata yet" errors in logcat
+
+### 🎯 Previous Status
+
 **App is now fully functional!**
 
 Console logs confirm successful initialization:
