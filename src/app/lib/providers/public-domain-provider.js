@@ -1202,7 +1202,7 @@ class PublicDomainProvider {
                 genres: ['Horror', 'Sci-Fi'],
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:6d35dda32e9ae6a857b32dfa0df8dbdcb16e4696&dn=The%20Brain%20That%20Wouldn't%20Die&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php',
+                        url: 'magnet:?xt=urn:btih:6d35dda32e9ae6a857b32dfa0df8dbdcb16e4696&dn=The%20Brain%20That%20Wouldn%27t%20Die&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php',
                         seed: 99,
                         peer: 15,
                         size: 733057024,
