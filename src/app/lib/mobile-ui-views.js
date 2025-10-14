@@ -2639,6 +2639,7 @@ export class MobileUIController {
             // Start the native torrent stream with timeout
             let streamInfo;
             let hasVideoError = false; // Track if video player has errored
+            let videoSourceSet = false; // Track if video.src has been set
 
             try {
                 streamInfo = await Promise.race([
@@ -2681,6 +2682,21 @@ export class MobileUIController {
                                 // Update download overlay during playback
                                 const dlProgress = document.getElementById('dl-progress');
                                 if (dlProgress) dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
+
+                                // CRITICAL FIX: Only set video.src when buffer threshold is reached (5%)
+                                // This prevents premature media element errors before stream is ready
+                                if (!videoSourceSet && status.progress >= 0.05 && streamInfo?.streamUrl) {
+                                    const videoElement = document.getElementById('torrent-video');
+                                    if (videoElement) {
+                                        console.log('Buffer threshold reached (5%), setting video source');
+                                        videoElement.src = streamInfo.streamUrl;
+                                        videoSourceSet = true;
+
+                                        // Update UI to show video is loading
+                                        if (loadingTitle) loadingTitle.textContent = 'Starting Playback...';
+                                        if (loadingSubtitle) loadingSubtitle.textContent = 'Video buffer ready';
+                                    }
+                                }
                             }
 
                             // Show download speed if available
@@ -2742,28 +2758,29 @@ export class MobileUIController {
                 return;
             }
 
-            // Stream is ready - update loading UI to show video is loading
+            // Stream is ready - update loading UI to show buffering in progress
             const loadingContent = document.querySelector('.player-content');
             const videoContainer = document.getElementById('video-container');
             const videoElement = document.getElementById('torrent-video');
 
-            // Update status to show stream is ready, video is loading
-            if (loadingTitle) loadingTitle.textContent = 'Loading Video...';
-            if (loadingSubtitle) loadingSubtitle.textContent = 'Preparing playback from stream...';
+            // Update status to show stream is buffering
+            if (loadingTitle) loadingTitle.textContent = 'Buffering Video...';
+            if (loadingSubtitle) loadingSubtitle.textContent = 'Waiting for 5% buffer before playback...';
             if (statusText) {
-                statusText.textContent = 'Buffered';
-                statusText.style.color = '#10b981';
+                statusText.textContent = 'Buffering';
+                statusText.style.color = '#f59e0b';
             }
 
             // Show video container (but keep loading UI visible until video loads)
             if (videoContainer) videoContainer.style.display = 'block';
 
-            // Set video source
-            if (videoElement && streamInfo.streamUrl) {
-                videoElement.src = streamInfo.streamUrl;
-                console.log('Video source set (HTTP streaming URL):', streamInfo.streamUrl);
+            // NOTE: video.src is now set in the progress callback when buffer threshold (5%) is reached
+            // This prevents premature media element errors before the stream has buffered enough data
+            console.log('Stream URL ready:', streamInfo.streamUrl);
+            console.log('Waiting for 5% buffer before setting video source...');
 
-                // Handle video errors
+            // Handle video errors
+            if (videoElement) {
                 videoElement.addEventListener('error', (e) => {
                     console.error('Video playback error:', e);
 
