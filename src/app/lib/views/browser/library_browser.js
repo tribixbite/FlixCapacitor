@@ -37,10 +37,9 @@
         },
 
         showScanPrompt: function () {
-            // # TODO: Show UI prompt for scanning folders
-            // For now, just show a notification
-            win.info('Your library is empty. Use Settings to configure and scan your media folders.');
-            console.log('Library is empty - scan prompt should be shown here');
+            // Show scan dialog
+            var scanView = new App.View.LibraryScan();
+            App.vent.trigger('system:openModal', scanView);
         }
     });
 

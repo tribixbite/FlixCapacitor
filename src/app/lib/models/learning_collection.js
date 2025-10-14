@@ -48,6 +48,10 @@
                 .then(function (courses) {
                     // Transform course items to movie-like format for display
                     var items = courses.map(function (course) {
+                        // Get provider logo info
+                        var providerInfo = window.ProviderLogos?.getProvider(course.provider);
+                        var posterUrl = course.thumbnail_url || providerInfo?.logo || course.provider_logo;
+
                         return {
                             imdb_id: `course_${course.id}`,
                             title: course.title,
@@ -61,9 +65,9 @@
                             synopsis: course.description || 'Educational course from Academic Torrents',
                             genres: course.subject_area ? [course.subject_area] : ['Education'],
                             images: {
-                                poster: course.thumbnail_url || course.provider_logo,
-                                fanart: course.thumbnail_url || course.provider_logo,
-                                banner: course.thumbnail_url || course.provider_logo
+                                poster: posterUrl,
+                                fanart: posterUrl,
+                                banner: posterUrl
                             },
                             type: 'course',
                             torrents: {

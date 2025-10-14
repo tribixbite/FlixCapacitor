@@ -5,6 +5,7 @@
 
 import sqliteService from './sqlite-service.js';
 import filenameParser from './filename-parser.js';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 
 class LibraryService {
     constructor() {
@@ -58,7 +59,7 @@ class LibraryService {
 
         try {
             // Scan each folder
-            for (const folder Path of folderPaths) {
+            for (const folderPath of folderPaths) {
                 if (this.scanCancelled) {
                     console.log('Scan cancelled by user');
                     break;
@@ -124,16 +125,65 @@ class LibraryService {
      * @returns {Promise<Array<Object>>} Array of file objects
      */
     async scanFolderRecursive(folderPath, progressCallback) {
-        // # TODO: Implement using Capacitor Filesystem API
-        // This is a placeholder - needs actual Capacitor implementation
-        console.warn('scanFolderRecursive not yet implemented - requires Capacitor Filesystem');
+        const files = [];
 
-        // For now, return empty array
-        // Real implementation will use:
-        // import { Filesystem, Directory } from '@capacitor/filesystem';
-        // const result = await Filesystem.readdir({ path: folderPath });
+        try {
+            console.log('Scanning folder:', folderPath);
 
-        return [];
+            // Read directory contents
+            const result = await Filesystem.readdir({
+                path: folderPath,
+                directory: Directory.ExternalStorage
+            });
+
+            for (const item of result.files) {
+                if (this.scanCancelled) {
+                    console.log('Scan cancelled by user');
+                    break;
+                }
+
+                const itemPath = `${folderPath}/${item.name}`;
+
+                // Check if it's a directory
+                if (item.type === 'directory') {
+                    // Recursively scan subdirectory
+                    const subFiles = await this.scanFolderRecursive(itemPath, progressCallback);
+                    files.push(...subFiles);
+                } else {
+                    // Check if it's a video file
+                    const ext = '.' + item.name.split('.').pop().toLowerCase();
+                    if (this.videoExtensions.includes(ext)) {
+                        const fileInfo = {
+                            path: itemPath,
+                            name: item.name,
+                            size: item.size || 0,
+                            modified: item.mtime || Math.floor(Date.now() / 1000)
+                        };
+
+                        files.push(fileInfo);
+
+                        // Call progress callback
+                        if (progressCallback) {
+                            progressCallback(files.length, null, item.name);
+                        }
+
+                        console.log('Found video file:', item.name);
+                    }
+                }
+            }
+
+            return files;
+        } catch (error) {
+            console.error('Error scanning folder:', folderPath, error);
+
+            // If permission denied, try alternative method
+            if (error.message && error.message.includes('permission')) {
+                console.warn('Permission denied for:', folderPath);
+                console.warn('User may need to grant storage permissions');
+            }
+
+            return files;
+        }
     }
 
     /**
