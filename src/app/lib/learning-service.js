@@ -25,31 +25,59 @@ class LearningService {
     }
 
     /**
-     * Fetch courses CSV from Academic Torrents
+     * Fetch courses CSV from Academic Torrents via streaming server proxy
      * @returns {Promise<string>} CSV data
      */
     async fetchCoursesCSV() {
         try {
-            console.log('Fetching courses from', this.csvUrl);
-            const response = await fetch(this.csvUrl, {
-                mode: 'cors',
+            // Get streaming server URL from settings
+            const settings = window.SettingsManager;
+            const streamingServerUrl = settings?.get('streamingServerUrl') || 'http://localhost:3001/api';
+
+            // Use streaming server as CORS proxy
+            const proxyUrl = `${streamingServerUrl}/proxy/academic-torrents`;
+            console.log('Fetching courses via streaming server proxy:', proxyUrl);
+
+            const response = await fetch(proxyUrl, {
+                method: 'GET',
                 headers: {
                     'Accept': 'text/csv'
                 }
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+                throw new Error(`Proxy request failed: ${response.status} ${response.statusText}`);
             }
 
             const csvData = await response.text();
-            console.log('CSV fetched successfully, size:', csvData.length, 'bytes');
+            console.log('CSV fetched successfully via proxy, size:', csvData.length, 'bytes');
             return csvData;
         } catch (error) {
-            console.error('Failed to fetch courses CSV (likely CORS):', error);
-            // Return demo data as fallback
-            console.log('Using demo data fallback');
-            return this.getDemoCSV();
+            console.error('Failed to fetch courses via proxy:', error);
+            console.log('Attempting direct fetch (will likely fail due to CORS)...');
+
+            // Try direct fetch as fallback
+            try {
+                const response = await fetch(this.csvUrl, {
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'text/csv'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+                }
+
+                const csvData = await response.text();
+                console.log('Direct CSV fetch succeeded, size:', csvData.length, 'bytes');
+                return csvData;
+            } catch (directError) {
+                console.error('Direct fetch also failed (CORS):', directError);
+                // Return demo data as final fallback
+                console.log('Using demo data fallback');
+                return this.getDemoCSV();
+            }
         }
     }
 
