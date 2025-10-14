@@ -1707,6 +1707,20 @@ export class MobileUIController {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Learning', 'learning');
 
+        // Replace filter tabs with provider-based filters
+        const filterTabs = document.querySelector('.filter-tabs');
+        if (filterTabs) {
+            filterTabs.innerHTML = `
+                <div class="filter-tab active" data-filter="all">All Providers</div>
+                <div class="filter-tab" data-filter="MIT">MIT</div>
+                <div class="filter-tab" data-filter="Stanford">Stanford</div>
+                <div class="filter-tab" data-filter="Harvard">Harvard</div>
+                <div class="filter-tab" data-filter="Khan Academy">Khan Academy</div>
+                <div class="filter-tab" data-filter="Coursera">Coursera</div>
+                <div class="filter-tab" data-filter="Udemy">Udemy</div>
+            `;
+        }
+
         // Load real courses from Academic Torrents
         await this.renderRealCourses();
     }
@@ -2083,25 +2097,56 @@ export class MobileUIController {
                 await learningService.syncCourses();
             }
 
-            // Fetch courses (limit to 50 for initial load)
-            const courses = await learningService.getCourses({ limit: 50 });
+            // Fetch courses (increased limit to show all available)
+            const courses = await learningService.getCourses({ limit: 200 });
             console.log(`Loaded ${courses.length} courses`);
 
+            // Provider logo mapping with colors
+            const providerLogos = {
+                'MIT': { color: '8a0000', text: 'MIT' },
+                'Stanford': { color: '8c1515', text: 'Stanford' },
+                'Harvard': { color: 'a51c30', text: 'Harvard' },
+                'Khan Academy': { color: '14bf96', text: 'Khan' },
+                'Coursera': { color: '0056d2', text: 'Coursera' },
+                'Udemy': { color: 'a435f0', text: 'Udemy' },
+                'Berkeley': { color: '003262', text: 'Berkeley' },
+                'Yale': { color: '00356b', text: 'Yale' },
+                'Princeton': { color: 'ff8f00', text: 'Princeton' },
+                'Oxford': { color: '002147', text: 'Oxford' },
+                'Cambridge': { color: 'a3c1ad', text: 'Cambridge' }
+            };
+
             // Transform courses to match content card format
-            const coursesFormatted = courses.map(course => ({
-                imdb_id: `course_${course.id}`,
-                title: course.title,
-                year: course.year || 'N/A',
-                rating: course.rating || 'N/A',
-                images: {
-                    poster: course.thumbnail_url || course.provider_logo || '/img/learning-default.png',
-                    fanart: course.thumbnail_url || '/img/learning-default.png'
-                },
-                genres: [course.subject_area || 'Education'],
-                synopsis: course.description || `Educational course from ${course.provider}`,
-                provider: course.provider,
-                subject_area: course.subject_area
-            }));
+            const coursesFormatted = courses.map(course => {
+                const providerInfo = providerLogos[course.provider] || { color: '1f1f1f', text: course.provider || 'Course' };
+                const logoUrl = `https://placehold.co/300x450/${providerInfo.color}/ffffff?text=${encodeURIComponent(providerInfo.text)}`;
+
+                return {
+                    imdb_id: `course_${course.infohash}`,
+                    title: course.title,
+                    year: '',
+                    rating: { percentage: 0 },
+                    images: {
+                        poster: logoUrl,
+                        fanart: logoUrl
+                    },
+                    genres: [course.subject_area || 'Education'],
+                    synopsis: `Educational course from ${course.provider}`,
+                    provider: course.provider,
+                    subject_area: course.subject_area,
+                    // Add torrent data for playback
+                    torrents: {
+                        '1080p': {
+                            url: course.magnet_link,
+                            size: this.formatBytes(course.size_bytes),
+                            seed: course.downloaders || 0,
+                            peer: 0
+                        }
+                    },
+                    magnet_link: course.magnet_link,
+                    infohash: course.infohash
+                };
+            });
 
             // Store courses for detail view
             coursesFormatted.forEach(course => {
@@ -3231,6 +3276,14 @@ export class MobileUIController {
             const spinner = document.querySelector('.loading-spinner-large');
             if (spinner) spinner.style.display = 'none';
         }
+    }
+
+    // Helper: Format bytes to human readable
+    formatBytes(bytes) {
+        if (!bytes || bytes === 0) return 'Unknown';
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
     }
 
     // Mock data generators
