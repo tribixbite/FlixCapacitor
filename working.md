@@ -939,17 +939,28 @@ Started implementation of consolidated navigation with Library and Learning sect
 - Singleton pattern for global access (window.LibraryService, window.LearningService)
 - SQLite schema auto-created on database initialization
 
-### In Progress: Navigation Consolidation
+### Completed: Navigation Consolidation ✅ (commit 02d8047)
 
-**Planned Changes:**
-- Filter-bar template: Consolidate Movies/TV/Anime into single "Browse" dropdown
-- Add "Library" and "Learning" tabs to bottom navigation
-- 5-tab layout: Browse | Favorites | Watchlist | Library | Learning
+**Navigation Changes:**
+- **Filter-bar template**: Consolidate Movies/TV/Anime into single "Browse" dropdown
+  - Dropdown menu dynamically populated from App.Config.getTabTypes()
+  - Movies, TV Shows, and Anime now appear as submenu items
+- **New tabs**: Library and Learning added to bottom navigation
+- **Layout**: Browse (dropdown) | Favorites | Library | Learning
+- **Event handlers**: library:list and learning:list registered in main_window.js
+- **Placeholder views**: libraryTabShow() and learningTabShow() with "coming soon" messages
+- **State management**: setActive() and startup logic support new tabs
+
+**Files Modified:**
+- src/app/templates/browser/filter-bar.tpl - Browse dropdown structure
+- src/app/lib/views/browser/filter_bar.js - Event handlers for library/learning
+- src/app/lib/views/main_window.js - Tab show methods with TODO placeholders
 
 ### Next Steps
-1. Modify filter-bar template for new navigation structure
-2. Update filter_bar.js event handlers
-3. Update main_window.js with library:list and learning:list handlers
-4. Create LibraryBrowser and LearningBrowser views
-5. Create media type selector dropdown component
-6. Test and commit navigation changes
+1. Create LibraryBrowser view extending GenericBrowser
+2. Create LearningBrowser view for courses display
+3. Create media type selector dropdown component
+4. Implement library scanning UI with progress indicators
+5. Implement learning course grid with provider logos
+6. Add Capacitor Filesystem integration for actual scanning
+7. Connect metadata fetching to TMDB/OMDb clients
