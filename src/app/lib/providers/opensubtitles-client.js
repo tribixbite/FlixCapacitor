@@ -29,7 +29,7 @@ class OpenSubtitlesClient {
      * Make authenticated request to OpenSubtitles API
      */
     async request(endpoint, options = {}) {
-        const url = `${this.config.baseUrl}${endpoint}`;
+        let url = `${this.config.baseUrl}${endpoint}`;
 
         // Check cache for GET requests
         if (!options.method || options.method === 'GET') {
@@ -100,11 +100,12 @@ class OpenSubtitlesClient {
      */
     async search(params) {
         // Clean IMDb ID (remove 'tt' prefix if present)
-        if (params.imdb_id && params.imdb_id.startsWith('tt')) {
-            params.imdb_id = params.imdb_id.substring(2);
+        const cleanParams = { ...params };
+        if (cleanParams.imdb_id && cleanParams.imdb_id.startsWith('tt')) {
+            cleanParams.imdb_id = cleanParams.imdb_id.substring(2);
         }
 
-        return this.request('/subtitles', { params });
+        return this.request('/subtitles', { params: cleanParams });
     }
 
     /**

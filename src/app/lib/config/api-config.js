@@ -4,7 +4,22 @@
  *
  * Environment variables are loaded from .env file during build time
  * and replaced by Vite with their actual values.
+ *
+ * Supports both Vite (import.meta.env) and Node.js (process.env) environments.
  */
+
+// Helper to get environment variable (supports both Vite and Node.js)
+const getEnv = (key) => {
+    // Try Vite first (browser/build)
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+        return import.meta.env[key];
+    }
+    // Fallback to Node.js (testing)
+    if (typeof process !== 'undefined' && process.env) {
+        return process.env[key];
+    }
+    return undefined;
+};
 
 export const ApiConfig = {
     /**
@@ -12,8 +27,8 @@ export const ApiConfig = {
      * https://www.themoviedb.org/settings/api
      */
     tmdb: {
-        apiKey: import.meta.env.VITE_TMDB_API_KEY || '',
-        readApiKey: import.meta.env.VITE_TMDB_READ_API_KEY || '',
+        apiKey: getEnv('VITE_TMDB_API_KEY') || '',
+        readApiKey: getEnv('VITE_TMDB_READ_API_KEY') || '',
         baseUrl: 'https://api.themoviedb.org/3',
         imageBaseUrl: 'https://image.tmdb.org/t/p',
         defaultLanguage: 'en-US',
@@ -38,7 +53,7 @@ export const ApiConfig = {
      * https://www.omdbapi.com/apikey.aspx
      */
     omdb: {
-        apiKey: import.meta.env.VITE_OMDB_API_KEY || '',
+        apiKey: getEnv('VITE_OMDB_API_KEY') || '',
         baseUrl: 'https://www.omdbapi.com',
         // Free tier: 1,000 requests/day
     },
@@ -48,7 +63,7 @@ export const ApiConfig = {
      * https://www.opensubtitles.com
      */
     opensubtitles: {
-        apiKey: import.meta.env.VITE_OPENSUB_API_KEY || '',
+        apiKey: getEnv('VITE_OPENSUB_API_KEY') || '',
         baseUrl: 'https://api.opensubtitles.com/api/v1',
         userAgent: 'FlixCapacitor v1.0',
         // Free tier: 200 downloads/day for registered users
@@ -97,7 +112,8 @@ export const ApiConfig = {
 };
 
 // Validate on module load (development only)
-if (import.meta.env.DEV) {
+const isDev = getEnv('DEV') || getEnv('NODE_ENV') === 'development';
+if (isDev) {
     ApiConfig.validate();
 }
 
