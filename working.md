@@ -2,6 +2,31 @@
 
 ### 🎯 Current Status
 
+**Multi-File Torrent Detection** (🔄 PARTIAL) (2025-10-14)
+- **Feature**: Detect and log multi-file torrents (courses, TV series)
+  - **Detection Implemented** (✅):
+    * Check `window.NativeTorrentClient.currentTorrentInfo` after stream ready
+    * Log warning when `numFiles > 1` with file count and selected file
+    * Store `currentPlaybackInfo` for future file selection support
+    * Currently auto-plays largest video file (plugin default behavior)
+  - **Pending Plugin Enhancement** (⏳):
+    * Plugin needs to expose full file list (not just count)
+    * Plugin needs method to select specific file index before streaming
+    * Requires modifying capacitor-plugin-torrent-streamer/android/TorrentSession.kt
+    * Need to add `getFileList()` method returning array of {index, name, size}
+    * Need to add `selectFile(index)` method to override default largest-file selection
+  - **Pending UI Implementation** (⏳):
+    * File picker modal with video file list
+    * Multi-select support for queueing multiple lectures
+    * Star/favorite individual lectures within course
+    * Resume support per-file
+  - **Use Case**: Stanford Machine Learning course (100+ lecture videos)
+  - **Files Modified**:
+    * src/app/lib/mobile-ui-views.js - Multi-file detection and logging
+  - **Build Status**: ✅ Build successful (462.59 kB main bundle)
+  - **Commit**: c70866b - "feat: add multi-file torrent detection with TODO for file picker"
+  - **Status**: 🔄 DETECTION COMPLETE, FILE SELECTION PENDING PLUGIN WORK
+
 **Video Playback Buffer Threshold Fix** (✅ COMPLETED) (2025-10-14)
 - **Feature**: Fixed premature media element errors before download starts
   - **Root Cause**: Video `src` set immediately when stream URL available, but HTTP server hasn't buffered enough data
@@ -19,7 +44,6 @@
   - **Build Status**: ✅ Build successful (462.20 kB main bundle)
   - **Commit**: 36dc066 - "fix: delay video.src until 5% buffered to prevent premature media errors"
   - **Status**: ✅ READY FOR TESTING
-  - **Next**: Implement file picker for multi-video torrents (Stanford ML course)
 
 **Full Academic Torrents Dataset Embedded** (✅ COMPLETED) (2025-10-14)
 - **Feature**: App now works standalone with 171 real courses and valid torrents
