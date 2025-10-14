@@ -525,6 +525,62 @@ const componentStyles = `
     transform: translateX(20px);
 }
 
+/* Mobile Bottom Navigation */
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem;
+    padding-bottom: calc(0.5rem + var(--safe-area-bottom));
+    z-index: 100;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.mobile-bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    max-width: 100px;
+}
+
+.mobile-bottom-nav .nav-item i {
+    font-size: 1.25rem;
+    transition: transform 0.2s;
+}
+
+.mobile-bottom-nav .nav-item.active {
+    color: var(--accent-primary);
+}
+
+.mobile-bottom-nav .nav-item.active i {
+    transform: scale(1.1);
+}
+
+.mobile-bottom-nav .nav-item:active {
+    transform: scale(0.95);
+}
+
+.mobile-bottom-nav .nav-item span {
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
 /* Responsive Adjustments */
 @media (min-width: 480px) {
     .grid {
@@ -540,6 +596,11 @@ const componentStyles = `
 
     .detail-content {
         padding: 2rem;
+    }
+
+    /* Hide bottom nav on larger screens */
+    .mobile-bottom-nav {
+        display: none;
     }
 }
 </style>

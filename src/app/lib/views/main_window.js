@@ -24,7 +24,8 @@
       TorrentCollection: '#torrent-collection-container',
       Issue: '#issue-container',
       Notification: '#notification',
-      Seedbox: '#seedbox-container'
+      Seedbox: '#seedbox-container',
+      MobileBottomNav: '#mobile-bottom-nav'
     },
 
     ui: {
@@ -216,6 +217,9 @@
       } else {
         this.showChildView('Header', new App.View.TitleBar());
       }
+
+      // Show mobile bottom navigation
+      this.showChildView('MobileBottomNav', new App.View.MobileBottomNav());
 
       // Set the app title (for Windows mostly)
       win.title = App.Config.title;
