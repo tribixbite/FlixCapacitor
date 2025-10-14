@@ -28,6 +28,36 @@ Navigation complete
 
 ### 🔧 Recent Fixes
 
+**Proxy/VPN Support** (✅ IMPLEMENTED) (2025-10-13)
+- **Feature**: Full proxy/VPN configuration for routing torrent traffic through SOCKS5/HTTP proxies
+  - **Settings UI**: New "Proxy/VPN" section in Settings page with:
+    - Enable/disable toggle
+    - Proxy type selection (SOCKS5, SOCKS4, HTTP)
+    - Host/port configuration
+    - Optional username/password authentication
+    - Save button with success feedback
+  - **Native Implementation**:
+    - TorrentSession accepts ProxySettings parameter
+    - Proxy configuration applied to jlibtorrent settings_pack
+    - All traffic routed through proxy (peers, DHT, trackers)
+    - Settings stored in Capacitor Preferences
+    - Loaded automatically when streaming starts
+  - **Files Changed**:
+    - Plugin: `TorrentSession.kt:12-36` - ProxySettings data class and enum
+    - Plugin: `TorrentSession.kt:101-140` - Proxy configuration logic
+    - Plugin: `TorrentStreamingService.kt:233,666-714` - Load proxy settings from preferences
+    - UI: `mobile-ui-views.js:853-925` - Settings UI section
+    - UI: `mobile-ui-views.js:1158-1235` - Event handlers and persistence
+  - **Supported Proxy Types**:
+    - SOCKS4 - SOCKS version 4
+    - SOCKS5 - SOCKS version 5 (with optional auth)
+    - HTTP - HTTP proxy (with optional auth)
+  - **Use Cases**:
+    - Bypass ISP torrent throttling
+    - Hide torrent traffic from network administrators
+    - Access torrents on restricted networks
+    - Route through VPN or proxy services
+
 **App Rebrand to FlixCapacitor** (✅ COMPLETED) (2025-10-13)
 - **Complete rebrand** from "Popcorn Time" to "FlixCapacitor" with ⚡ emoji - NO backward compatibility
   - **Display & UI**:
