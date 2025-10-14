@@ -2,6 +2,26 @@
 
 ### 🎯 Current Status
 
+**Learning Tab Course Data Fix** (✅ COMPLETED) (2025-10-14)
+- **Issue**: Only 6 courses showing instead of 171 - embedded CSV data was stripped during Vite minification
+- **Root Cause**: Large CSV string in getDemoCSV() method was being optimized away by Vite's minifier
+- **Solution**: Moved course data to separate static file
+  * Created public/data/academic-torrents-courses.csv (27KB, 171 courses)
+  * Modified fetchCoursesCSV() to try local file first before proxy fallback
+  * Local CSV is bundled with app in Android assets for offline use
+- **Fetch Priority**:
+  1. Local embedded CSV file (bundled with app) ✅
+  2. Streaming server proxy
+  3. Direct fetch from Academic Torrents
+  4. getDemoCSV() fallback (kept for compatibility)
+- **Files Modified**:
+  * public/data/academic-torrents-courses.csv (new)
+  * src/app/lib/learning-service.js (fetchCoursesCSV method)
+- **Build Status**: ✅ Build successful (472.89 kB main bundle, 74M APK)
+- **Verification**: CSV file present in dist/data/ and android/app/src/main/assets/public/data/
+- **Commit**: 705785e - "fix: resolve 171 courses not loading by moving CSV to separate file"
+- **Status**: ✅ FIXED - All 171 courses should now load on first launch
+
 **Plugin Web Stub Fix** (✅ COMPLETED) (2025-10-14)
 - **Issue**: TypeScript compilation error - web.ts missing getVideoFileList and selectFile
 - **Fix**: Added stub methods to web.ts that throw unimplemented errors
