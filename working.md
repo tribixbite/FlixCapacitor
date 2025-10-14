@@ -33,9 +33,12 @@ Navigation complete
   - **Settings UI**: New "Proxy/VPN" section in Settings page with:
     - Enable/disable toggle
     - Proxy type selection (SOCKS5, SOCKS4, HTTP)
-    - Host/port configuration
+    - Host/port configuration with validation
     - Optional username/password authentication
-    - Save button with success feedback
+    - Test Connection button with format/range validation
+    - Save Settings button with real-time feedback
+    - Status indicator showing current proxy state (Active/Disabled)
+    - Color-coded status messages (success/error/warning/info)
   - **Native Implementation**:
     - TorrentSession accepts ProxySettings parameter
     - Proxy configuration applied to jlibtorrent settings_pack
@@ -50,8 +53,14 @@ Navigation complete
     - Plugin: `TorrentStreamingService.kt:51-57` - Static reloadProxySettings() method
     - Plugin: `TorrentStreamingService.kt:233,666-714` - Load proxy settings from preferences
     - Plugin: `TorrentStreamerPlugin.kt:180-191` - reloadProxySettings() exposed to JS
-    - UI: `mobile-ui-views.js:853-925` - Settings UI section
-    - UI: `mobile-ui-views.js:1162-1242` - Event handlers with dynamic reload call
+    - UI: `mobile-ui-views.js:853-930` - Settings UI with Test/Save buttons and status area
+    - UI: `mobile-ui-views.js:1168-1339` - Event handlers: toggle, test, save, status feedback
+  - **Validation & Testing**:
+    - Port range validation (1-65535)
+    - Host format validation (IPv4, hostnames)
+    - Test Connection validates config before saving
+    - Real-time status feedback on save success/failure
+    - Shows if proxy successfully applied to active session
   - **Supported Proxy Types**:
     - SOCKS4 - SOCKS version 4
     - SOCKS5 - SOCKS version 5 (with optional auth)
@@ -61,6 +70,11 @@ Navigation complete
     - Hide torrent traffic from network administrators
     - Access torrents on restricted networks
     - Route through VPN or proxy services
+  - **User Experience**:
+    - Settings take effect immediately (no app restart needed)
+    - Visual feedback for all operations
+    - Clear error messages guide configuration
+    - Status indicator always shows current state
 
 **App Rebrand to FlixCapacitor** (✅ COMPLETED) (2025-10-13)
 - **Complete rebrand** from "Popcorn Time" to "FlixCapacitor" with ⚡ emoji - NO backward compatibility
