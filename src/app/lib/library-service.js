@@ -193,12 +193,90 @@ class LibraryService {
      * @returns {Promise<Object|null>} Metadata
      */
     async fetchMetadata(parsed) {
-        // # TODO: Implement using existing TMDB/OMDB clients
-        // For now, return null
-        // Real implementation will use:
-        // window.App.TMDBClient or window.App.OMDBClient
-        console.warn('Metadata fetching not yet implemented');
-        return null;
+        if (!parsed || !parsed.title) {
+            return null;
+        }
+
+        try {
+            const metadata = {
+                title: parsed.title,
+                year: parsed.year,
+                imdb_id: null,
+                tmdb_id: null,
+                poster_url: null,
+                backdrop_url: null,
+                genres: null,
+                rating: null,
+                synopsis: null
+            };
+
+            // Search TMDB by title and year
+            const tmdbClient = window.TMDBClient || window.App?.providers?.TMDB;
+            if (!tmdbClient) {
+                console.warn('TMDB client not available');
+                return metadata;
+            }
+
+            console.log(`Fetching metadata for: ${parsed.title} (${parsed.year || 'unknown year'})`);
+
+            // Search based on media type
+            let searchResults;
+            if (parsed.type === 'tvshow') {
+                searchResults = await tmdbClient.searchTVShow(parsed.title, parsed.year);
+            } else {
+                searchResults = await tmdbClient.searchMovie(parsed.title, parsed.year);
+            }
+
+            if (searchResults && searchResults.results && searchResults.results.length > 0) {
+                const result = searchResults.results[0];
+
+                // Get detailed information
+                let details;
+                if (parsed.type === 'tvshow') {
+                    details = await tmdbClient.getTVShowDetails(result.id);
+                } else {
+                    details = await tmdbClient.getMovieDetails(result.id);
+                }
+
+                if (details) {
+                    metadata.title = details.title || details.name || metadata.title;
+                    metadata.tmdb_id = details.id;
+                    metadata.year = metadata.year || (details.release_date ? parseInt(details.release_date.split('-')[0]) : null) ||
+                                   (details.first_air_date ? parseInt(details.first_air_date.split('-')[0]) : null);
+                    metadata.poster_url = tmdbClient.getBestPoster(details);
+                    metadata.backdrop_url = tmdbClient.getBestBackdrop(details);
+                    metadata.genres = details.genres?.map(g => g.name).join(',') || null;
+                    metadata.rating = details.vote_average || null;
+                    metadata.synopsis = details.overview || null;
+                    metadata.imdb_id = details.external_ids?.imdb_id || details.imdb_id || null;
+
+                    console.log(`✓ TMDB metadata found for ${metadata.title}`);
+
+                    // Optionally fetch OMDb ratings if we have IMDb ID
+                    if (metadata.imdb_id) {
+                        try {
+                            const omdbClient = window.OMDbClient || window.App?.providers?.OMDb;
+                            if (omdbClient) {
+                                const omdbData = await omdbClient.getByIMDbId(metadata.imdb_id);
+                                if (omdbData && omdbData.imdbRating && omdbData.imdbRating !== 'N/A') {
+                                    metadata.rating = parseFloat(omdbData.imdbRating);
+                                    console.log(`✓ OMDb rating: ${omdbData.imdbRating}`);
+                                }
+                            }
+                        } catch (omdbError) {
+                            console.warn('OMDb fetch failed:', omdbError.message);
+                        }
+                    }
+                }
+            } else {
+                console.log(`✗ No TMDB results for ${parsed.title}`);
+            }
+
+            return metadata;
+        } catch (error) {
+            console.error('Metadata fetch error:', error);
+            return null;
+        }
     }
 
     /**
