@@ -82,18 +82,183 @@ class LearningService {
     }
 
     /**
-     * Get demo CSV data as fallback when CORS blocks real API
-     * @returns {string} Demo CSV data with correct Academic Torrents format
+     * Get full Academic Torrents course data as embedded fallback
+     * @returns {string} Complete Academic Torrents CSV data with real infohashes
      */
     getDemoCSV() {
-        // Use same column format as Academic Torrents: TYPE,NAME,INFOHASH,SIZEBYTES,MIRRORS,DOWNLOADERS,TIMESCOMPLETED,DATEADDED,DATEMODIFIED
+        // Full Academic Torrents video lectures dataset embedded for offline/standalone use
         return `TYPE,NAME,INFOHASH,SIZEBYTES,MIRRORS,DOWNLOADERS,TIMESCOMPLETED,DATEADDED,DATEMODIFIED
-video,MIT - Introduction to Computer Science,abc123def456,5368709120,5,150,2500,1579046400,1579046400
-video,MIT - Linear Algebra,def456ghi789,4294967296,4,120,1800,1567296000,1567296000
-video,Stanford - Machine Learning,ghi789jkl012,8589934592,8,200,3200,1615334400,1615334400
-video,MIT - Physics I: Classical Mechanics,jkl012mno345,6442450944,6,95,1500,1534723200,1534723200
-video,Harvard - Introduction to Philosophy,mno345pqr678,3221225472,3,80,1200,1592179200,1592179200
-video,Khan Academy - Calculus,pqr678stu901,2147483648,4,110,2000,1573008000,1573008000`;
+Course,"Democratic Development by Larry Diamond",1452d6a906d5d164c1adfc4b81a74a6690a8ec4b,3691712674,9,1,5062,1391175900,1391175900
+Course,"MIT OCW 8.01 - Physics I - Classical Mechanics",f231c62635aadfb0e4d1f45ddc7b5b6c5592b275,2412434092,21,0,16758,1422047031,1599249619
+Course,"MIT OCW 8.03 - Physics III - Vibrations and Waves",724648552d517756117b47b3a7f5f62962f2629e,2636137989,18,0,10231,1422047391,1599249654
+Course,"MIT OCW 18.03 - Mathematics - Differential Equations",e7ef009c1929f074ea556bad005ddca0d99ac7aa,6319300522,17,0,12263,1422047977,1599249498
+Course,"MIT OCW 7.014 - Introductory Biology",a2b8a74967e5166ab55bf5f248af8d564c39f795,6021455122,17,1,5510,1422048238,1599249619
+Course,"Caltech CS156 - Machine Learning - Yaser",8190b5122515ab158cd29ccdb33ea946a3e529f4,3358232906,20,0,11331,1429908094,1599249260
+Course,"Stanford EE364A - Convex Optimization I - Boyd",393dc896234b96a1cd251c14cfc65d2ff594d6e9,4458038066,11,0,2481,1429930458,1599249592
+Course,"MIT OCW 6.451 Principles of Digital Communication II Spring 05",83259dc0c7dbd50073113cb1aa7a3e574faca70c,12641790915,14,0,5398,1444090938,1599249408
+Course,"MIT OCW 8.02 - Physics II - Electricity and Magnetism",7010163eae33fbac6c065095e908c2c49550b931,4085011949,24,0,15246,1444182143,1599249639
+Course,"2011 Harvard CS50 Introduction to Computer Science I",ee6f0ba62a717e7785abb5a98e45e2a08699f6c6,20910489048,12,2,14805,1446669407,1599249488
+Course,"Neural Networks Video Lectures - Hugo Larochelle",e046bca3bc837053d1609ef33d623ee5c5af7300,6600745142,13,1,4485,1457110937,1599249434
+Course,"CS231n: Convolutional Neural Networks for Visual Recognition 2016",46c5af9e2075d9af06f280b55b65cf9b44eb9fe7,10730933005,16,1,7617,1459114652,1599249437
+Course,"CS224d: Deep Learning for Natural Language Processing (Spring 2016)",dd9b74b50a1292b4b154094b7338ec1d66e8894d,3829345114,16,1,10613,1462352701,1599249559
+Course,"[Coursera] Web Intelligence and Big Data by Dr. Gautam Shroff",f871965e36ec21677d44375930d6cbb0dab7bfb3,1478650060,16,0,41593,1468459593,1599249663
+Course,"[Coursera] How to Succeed in College by Dr. Jonathan Golding, Dr. Phil Kraemer (University of Kentucky)",956ac58723e9f39e766741a6ea794006d20807c3,754196560,16,0,5486,1468459623,1599249630
+Course,"[Coursera] Mathematical Methods for Quantitative Finance by Dr. Kjell Konis (University of Washington)",dfc1ddde962101f00ef9764b91181bd6bb5c9e93,6421236690,17,0,13254,1468459668,1599249665
+Course,"[Coursera] Analysis of Algorithms by Robert Sedgewick (Princeton University)",ebdac281fb3e9ed0a5c7abadcda3575f54c73a8f,1882637828,12,1,6075,1468459691,1599249662
+Course,"[Coursera] Nanotechnology: The Basics by Professor Vicki Colvin, Daniel Mittleman (Rice University)",e54694787f54a7a0096d9b0f062d31a3a3925ae8,2392720056,11,0,1568,1468459752,1599249576
+Course,"[Coursera] - (Operating Systems) by Professor Chen Xiangqun (Peking University)",3fca7db35ba4773d416cc6a297a196cec41fa9f4,3066748519,11,0,2726,1468459809,1599249548
+Course,"[Coursera] Beginning Game Programming with C# (University of Colorado System)",0a7ba7e62821e488a0061751fdb81f4298733bea,2127977730,16,1,25993,1468459831,1599249658
+Course,"[Coursera] Greek and Roman Mythology (University of Pennsylvania)",01212a89f842f5ad1364c7fa3a8c4c514e2b26ab,2299704331,15,0,2518,1468459889,1599249583
+Course,"[Coursera] VLSI CAD: Logic to Layout by Rob A. Rutenbar (University of Illinois at Urbana-Champaign)",625ae5f99f1cfdc2b8eb42577ca5271ad78967e0,1436500392,11,0,6269,1468459925,1599249652
+Course,"[Coursera] Preventing Chronic Pain A Human Systems Approach (University of Minnesota)",271e22f67c7bda33158f2d83f443728cd749cd42,3847421323,13,0,943,1468460034,1599249635
+Course,"[Coursera] The Social Context of Mental Health and Illness (University of Toronto)",ab9ba816268fd74292d888cfb3f413803a178b90,1525882637,13,0,1955,1468460104,1599249262
+Course,"Large Scale Machine Learning - UToronto - STA 4273H Winter 2015",deb96e8d1f88d9b3a09098ce27c986507ae97b5e,3145762100,16,0,2701,1473351231,1599249453
+Course,"Regularization Methods for Machine Learning 2016",493251615310f9b6ae1f483126292378137074cd,4589105323,12,0,3484,1473353495,1599249488
+Course,"MIT Course 9.520 - Statistical Learning Theory and Applications, Fall 2015",8b47f45382645882a23e0f8d9d9fbb764b3eb378,41055413520,9,0,2722,1473393315,1599249375
+Course,"[Coursera] Algorithms Part I",a2934d859a14c07a80092ab03552310838f66590,1622615266,33,0,60442,1474904264,1599249656
+Course,"[Coursera] Algorithms Part II",7afeafb540f4ff63690f1a6517748341f6809516,1925417068,24,1,20840,1474904355,1599249547
+Course,"[Coursera] Introduction to Mathematical Thinking",2b5e5cc8c7414bc3b0f6974190065bc8c2f629dc,1902737188,37,0,26500,1474904882,1599249408
+Course,"[Coursera] Learn to Program: Crafting Quality Code",5d940b05a2097b5fcf2392916e6c4901743fb219,360725589,22,0,4789,1474904962,1599249490
+Course,"[Coursera] Computer Architecture",53bae6d22f3b6e692673f9335e0a0198c1618426,5558550001,22,1,25522,1474905299,1599249638
+Course,"[Coursera] The Hardware/Software Interface",f1384286c8581bffba11e378fdb37608e649d82a,1311351354,15,0,9598,1474905402,1599249661
+Course,"[Coursera] Coding the Matrix: Linear Algebra through Computer Science Applications",54cd86f3038dfd446b037891406ba4e0b1200d5a,2978388394,26,2,19527,1474905474,1599249510
+Course,"[Coursera] Designing and Executing Information Security Strategies",55284a002672598923af36bc55f3205b42c93b00,1007286635,15,0,6046,1474905602,1599249656
+Course,"[Coursera] Heterogeneous Parallel Programming",8903d0871c652b96c7b29db738cea76902d65888,4906095314,12,0,4459,1474905690,1599249502
+Course,"[Coursera] Exploring Quantum Physics",f24122f15283757aa8a9bf9cb638db266273442d,1644349572,12,0,5372,1474905828,1599249610
+Course,"[Coursera] Probabilistic Graphical Models",e74f08f0fc699e84a9eb046309727d07d80171c5,1503615787,15,0,16071,1474905879,1599249453
+Course,"[Coursera] Clinical Problem Solving",dae02888e2fb6484a7b471cb7977eb859aba4831,1203451655,16,0,4993,1474906038,1599249632
+Course,"Coursera - Economics of Money and Banking Part Two",62fe3cfdec4d19d1d3bf98184b12538a46b783f5,3439646754,23,1,26814,1474906518,1599249410
+Course,"MIT Foundations of Computational and Systems Biology 7.91J",90435db14989b415561ef53a3a12657a13d9d9fa,4088800731,14,0,2747,1477577509,1599249216
+Course,"MIT OCW Systems Biology 8.591J Fall 14",98961a881e8fd4139f4d1e09f0b7a4badfab7c9d,4478312051,17,1,1927,1477579615,1599249496
+Course,"MIT 7.012 Introduction to Biology - Fall 2004",7e1ba0f77f65f5e43e3147691da2ddc36330a361,10328146604,15,0,1655,1477720009,1599249324
+Course,"Biology-1A-Spring2013-UCBerkeley-Jennifer-Doudna",256d7b478f5c95275031e2d38a101091c0a9f5d1,4948302447,14,0,687,1477852907,1599249513
+Course,"Biology-1B-Spring2015-UCBerkeley",6858d4831e4b76752097772ca9850b2ae3174e25,14503555013,20,0,604,1477858786,1599249438
+Course,"[Coursera ] Text Mining and Analytics",e2c129491a3841bfac5d7b08b41ad79387132a23,1063576833,17,0,7275,1485074956,1599249646
+Course,"[Coursera] Artificial Intelligence Planning (The University of Edinburgh) (aiplan)",560d07faaf09f640fea96b3650874e2903cbc639,1038676774,17,0,13279,1488677041,1599249220
+Course,"[Coursera] Algorithms: Design and Analysis, Part 1 (Stanford University) (algo)",7bfcfbaf2c53588b23ba1ebccae47a2b9c5197b7,1948909326,23,1,20385,1488677043,1599249295
+Course,"[Coursera] Algorithms: Design and Analysis, Part 2 (Stanford University) (algo2)",e24c15ce89cac9c380284595d1d8a475cb485e28,1984809211,19,0,15624,1488677045,1599249488
+Course,"[Coursera] Algorithms, Part I (Princeton University) (algs4partI)",43534d22aea22778efce768c4304d6809fa58e6b,1205403640,14,1,6977,1488677046,1599249408
+Course,"[Coursera] Algorithms, Part II (Princeton University) (algs4partII)",5c22cd3a2f65f18e153faefda9730b51b21f6521,1656820952,14,1,6867,1488677047,1599249510
+Course,"[Coursera] Analysis of Algorithms (Princeton University) (aofa)",31939517fc774120c37160f93a9b5c73cf6c3271,2028617535,11,0,7202,1488677049,1599249491
+Course,"[Coursera] Astrobiology and the Search for Extraterrestrial Life (The University of Edinburgh) (astrobio)",47d9877fa4f33d109721c65d066a26c3c5e12e0d,827700128,13,0,2806,1488677050,1599249505
+Course,"[Coursera] Automata (Stanford University) (automata)",459e24d28a6abce04cc9fd6e9a148c86dcaac19c,876348234,10,1,4405,1488677051,1599249495
+Course,"[Coursera] Web Intelligence and Big Data (Indian Institute of Technology Delhi) (bigdata)",8921ec4d2076e8a6e56a2387d5157aa7c0ef7f10,1186092720,12,0,2958,1488677054,1599249522
+Course,"[Coursera] The Caltech-JPL Summer School on Big Data Analytics (Caltech) (bigdataschool)",71268d279bcfcd9d88c8989c72158d8d73a2e2fc,2179056887,10,0,5430,1488677056,1599249226
+Course,"[Coursera] Bioinformatics: Life Sciences on Your Computer (Johns Hopkins University) (bioinform)",b02188bbb764f7f5fdd499c5144add35f56ed3e7,498196877,13,1,2608,1488677057,1599249436
+Course,"[Coursera] Bitcoin and Cryptocurrency Technologies (Princeton University) (bitcointech)",412d52b0bfcf2a8bf3201a28c2ba04b6dff5b290,1898886107,18,0,13776,1488677058,1599249509
+Course,"[Coursera] Computer Architecture (Princeton University) (comparch)",10d1bf7161a1b3ea70697cd61834ceea6c3d1f87,3538349960,13,1,2768,1488677062,1599249519
+Course,"[Coursera] Introduction to Computational Finance and Financial Econometrics (University of Washington) (compfinance)",f07203f2eedb4792c351ba0e28406dab9ab54d7d,4153499620,17,1,10303,1488677067,1599249672
+Course,"[Coursera] Compilers (Stanford University) (compilers)",b7579be97c2f01e4efadb0b6b06f0d071afeaac9,1318156391,26,1,5715,1488677068,1599249661
+Course,"[Coursera] Computational Methods for Data Analysis (University of Washington) (compmethods)",4281ef52a65d26489e686a0540d86abd4161b88e,3749140620,13,1,9326,1488677072,1599249650
+Course,"[Coursera] Computational Neuroscience (University of Washington) (compneuro)",d180bcd510aeec3a20044a0946ac658b9ab30760,1000642215,18,0,5757,1488677074,1599249257
+Course,"[Coursera] Galaxies and Cosmology (Caltech) (cosmo)",b7d15931742718f330243dc0aeb110136c86359f,1841765433,10,0,2092,1488677075,1599249515
+Course,"[Coursera] Introduction to Data Science (University of Washington) (datasci)",1448261dd6932e549ba4a86b5d6750aae858d003,1463983891,30,0,42418,1488677080,1599249577
+Course,"[Coursera] Digital Signal Processing (École Polytechnique Fédérale de Lausanne) (dsp)",43d881e5128841876104742314ccd9851901f460,1467181461,9,0,4166,1488677081,1599249505
+Course,"[Coursera] Principles of Economics for Scientists (Caltech) (econ1scientists)",a0af8db9e7b924993ee017e492195b3eb1b0a78b,1719455950,12,0,1696,1488677083,1599249453
+Course,"[Coursera] Understanding Einstein: The Special Theory of Relativity (Stanford University) (einstein)",be19083019ae3954680733d394e5e5b5b3572a15,8608087384,12,2,1976,1488677085,1599249497
+Course,"[Coursera] Exploring Quantum Physics (University of Maryland, College Park) (eqp)",5261e17c70036651d1f83a6ca66c399da33bb46e,1740505128,14,1,1938,1488677090,1599249439
+Course,"[Coursera] Game Theory (Stanford University &amp; The University of British Columbia) (gametheory)",7b96f8f76c4af7752f35c4fc26607cf50b6bb195,2989983315,28,0,22510,1488677091,1599249295
+Course,"[Coursera] Game Theory II: Advanced Applications (Stanford University) (gametheory2)",fc641711af26384dbace511fa236a6e4dcb9f36c,2248464381,19,0,10791,1488677093,1599249524
+Course,"[Coursera] Genes and the Human Condition (From Behavior to Biotechnology) (University of Maryland, College Park) (genes)",5aecd4978d7be3568f454fa6384dcd5683564f63,1880356360,15,0,2252,1488677097,1599249435
+Course,"[Coursera] Genomic and Precision Medicine (University of California, San Francisco) (genomicmedicine)",c4b2f1ba8fb0ee0b8e49609d2b9c86efae36dc36,1053056853,13,0,3074,1488677099,1599249259
+Course,"[Coursera] Heterogeneous Parallel Programming (University of Illinois at Urbana-Champaign) (hetero)",de34574326abc4666c7ede41d0205a4a2129bf85,1476786727,12,0,1331,1488677100,1599249490
+Course,"[Coursera] The Hardware/Software Interface (University of Washington) (hwswinterface)",b63a566df824b39740eb9754e4fe4c0140306f4b,1435755062,10,0,3130,1488677101,1599249495
+Course,"[Coursera] Introduction to Logic (Stanford University) (intrologic)",0342ad0bd7ef06eb1500b5e7c8ef398060827c4e,258934094,19,0,16743,1488677106,1599249473
+Course,"[Coursera] Introduction to Philosophy (The University of Edinburgh) (introphil)",8dcd401c1b3db696fc2f04d3b49c850f0e5cc309,803543873,27,0,17458,1488677107,1599249440
+Course,"[Coursera] Logic: Language and Information 1 (The University of Melbourne) (logic1)",aa0902f96da833cc7f4ec70859a529276f5032d9,861916429,14,0,9175,1488677108,1599249546
+Course,"[Coursera] Mathematical Methods for Quantitative Finance (University of Washington) (mathematicalmethods)",de1360e53beb1ee13c3285af9bb232109fa168a1,1680043429,15,1,5880,1488677116,1599249410
+Course,"[Coursera] Machine Learning (Stanford University) (ml)",e8b1f9c5bf555fe58bc73addb83457dd6da69630,1590091788,112,1,360890,1488677121,1599249671
+Course,"[Coursera] Mining Massive Datasets (Stanford University) (mmds)",91bc48e6c8341de198c970acccdc87199391ab46,2566408195,12,1,3669,1488677122,1599249616
+Course,"[Coursera] Model Thinking (University of Michigan) (modelthinking)",05a8fe3f7e3420df6b83f40b0cbccd05e591d9f4,2342059816,18,0,26693,1488677124,1599249495
+Course,"[Coursera] MRI Fundamentals (Korea Advanced Institute of Science and Technology) (mrifundamentals)",77d3798548f7ea65943c4b08bf3167329c18fa49,640275891,14,0,4753,1488677127,1599249200
+Course,"[Coursera] Fundamentals of Music Theory (The University of Edinburgh) (musictheory)",8033015783d2df3e8b33a343edb8cea9a0b8319a,1815192017,33,3,22256,1488677132,1599249552
+Course,"[Coursera] Nanotechnology: The Basics (Rice University) (nanotech)",5d0746961dc72f9ec4a9cc4cd07b1a4e01349fb4,2392742204,10,0,11672,1488677133,1599249653
+Course,"[Coursera] Neural Networks for Machine Learning (University of Toronto) (neuralnets)",3e6f1876bbd46780602e72f4b122329fb668bd2c,1026708997,27,0,23785,1488677138,1599249500
+Course,"[Coursera] Natural Language Processing (Columbia University) (nlangp)",8a8f93e18dd6c46c48ee2936ed500b1ff4cc9175,1216163367,10,0,11965,1488677139,1599249524
+Course,"[Coursera] Natural Language Processing (Stanford University) (nlp)",d2c8f8f1651740520b7dfab23438d89bc8c0c0ab,1342036649,30,0,71032,1488677141,1599249431
+Course,"[Coursera] Introduction to Natural Language Processing (University of Michigan) (nlpintro)",78515f90de063ffc144be5e7e726c03849b4e0ed,1920305125,16,1,20717,1488677145,1599249511
+Course,"[Coursera] Discrete Optimization (The University of Melbourne) (optimization)",ed196d080a2208727a225ab5e7a5630e5bf53be4,3667745880,13,1,3680,1488677150,1599249496
+Course,"[Coursera] Recommender Systems (University of Minnesota) (recsys)",42c3b47bf15a2a1aaadf92156f19315ad2d22967,2126467983,20,1,16468,1488677152,1599249432
+Course,"[Coursera] High Performance Scientific Computing (University of Washington) (scicomp)",cb91a3d7a4c4c086be240b54e83ed8d587b31ff5,2909137911,15,1,2855,1488677157,1599249660
+Course,"[Coursera] Scientific Computing (University of Washington) (scientificcomp)",6f7e43052129b95f470d3043cfce2bf5c15ae380,3931061575,9,1,3881,1488677158,1599249505
+Course,"[Coursera] Social Network Analysis (University of Michigan) (sna)",066a55d231d3918ad3de994e6211bb99417bcdf0,1085932178,11,1,4921,1488677163,1599249638
+Course,"[Coursera] Sports and Building Aerodynamics (Eindhoven University of Technology) (spobuildaerodynamics)",3ba301f087680f41a88224c49c01218b24de868b,1442054298,10,0,1216,1488677164,1599249453
+Course,"[Coursera] VLSI CAD: Logic to Layout (University of Illinois at Urbana-Champaign) (vlsicad)",ec1c86afefda42f4b36c34ae7b235ef0bfd6b9d3,1573125465,11,0,2892,1488677168,1599249453
+Course,"Integrative Biology 131 - General Human Anatomy Online Course Videos - UCBerkeley",5a0d6b38ab0adb9e52182164ffa8db19822f73ef,8524375550,20,0,4583,1488992136,1599249413
+Course,"Electrical Engineering 123, 001 - Spring 2015 - UC Berkeley",530416f4f3a4b2cac90e61d5df72d1610dec68b4,6058044588,16,1,9160,1489015679,1599249664
+Course,"Public Health 150E, 001 - Spring 2015 - UC Berkeley",057e7009bdf9e3d09b1ef56ffbd82a1d1a5de23c,252003485,14,0,1470,1489030422,1599249664
+Course,"Bioengineering 200, 001 - Spring 2014 - UC Berkeley",c4cd3183550f9cc1cfdcb69f15b076ba439ee062,3801748047,12,0,2564,1489043753,1599249453
+Course,"Astronomy C12, 001 - Fall 2014 - UC Berkeley",1433dd89d4366df2b534c5e3b6b267776a67e7af,11353991797,12,0,2173,1489045227,1599249371
+Course,"Nuclear Engineering 101, 001 - Fall 2014 - UC Berkeley",92644e4132e893c70c3e0ad9ac1d58bef554bd14,4967134337,18,0,4686,1489046829,1599249664
+Course,"Environmental Economics and Policy 145 - Fall 2014 - UC Berkeley",c633df0181d560050d3f392501c6815135cfb60e,3926455147,12,0,2043,1489076046,1599249519
+Course,"Psychology 1 - General Psychology - Fall 2007 - UC Berkeley",687bfcdf88598c04edf98c56c3b5f838d43ec2a6,3362583340,16,0,12715,1489077507,1599249516
+Course,"Chemical &amp; Biomolecular Engineering 179 Process Technology of Solid-State Materials Devices - UC Berkeley",f1baa15065060f1830d74111c1ef7741a73c9e98,3641717107,13,0,3440,1489078608,1599249512
+Course,"Physics 10, 001 - Spring 2006 - UC Berkeley",5140da14dd72b2a6f19a5ca08d2e2d015754909a,4820005717,14,0,4304,1489078706,1599249495
+Course,"Chemistry 1A, 002 - Spring 2010 - UC Berkeley",ebe62de0d85ba9563c566cc5b082416792bc00ca,9283464842,13,0,3209,1489087005,1599249240
+Course,"Political Science 179 - Spring 2008 - UC Berkeley",e75a329db4adabdc45502c401a1c4b69712cbb98,1496266068,12,0,4787,1489094013,1599249423
+Course,"Multivariable Calculus - Math 53 - Fall 2009 - UC Berkeley",d90733721eb2a2ba839434decce91ce4803cbf1e,5840425737,15,0,5001,1489094285,1599249660
+Course,"International and Area Studies 107, 001 - Spring 2011 - UC Berkeley",97e704bba2ad3fb2dc5d932f4ed693fcb2f85b30,1643354598,9,0,3706,1489096669,1599249324
+Course,"Statistics 21 - Fall 2009 - UC Berkeley",4d505fe0b3cbcbeff32bfd7b75a783f900dc8c6d,4268779318,15,0,9104,1489096997,1599249372
+Course,"Statistics 21 - 001 - Spring 2010 - UC Berkeley",56b38a7013673c92cb951eb79bcd3a26e8158095,5575307389,14,0,6006,1489097108,1599249650
+Course,"Peace and Conflict Studies 164B - Spring 2007 - UC Berkeley",0ec86c151be43be4857e2da370fb5508ff418146,5065283796,11,0,2711,1489097374,1599249618
+Course,"Law 271, Environmental Law and Policy - Fall 2009 - UC Berkeley",c878ea12eff8c99cc6b1983a2d7724a18bb1a94d,4253328680,11,0,1757,1489104935,1599249431
+Course,"Public Health 241, 001 - Spring 2011 - UC Berkeley",8469a366bf4b71ff62d9e2327537771bdc145dfa,1874365386,15,0,6057,1489105012,1599249432
+Course,"Richard Feynman's Lectures on Physics (The Messenger Lectures)",c5af268ec55cf2d3b439e7311ad43101ba8322eb,1073900292,31,0,41483,1500582842,1599249511
+Course,"Introduction to Computer Science [CS50x] [Harvard] [2018]",52da574b6412862e199abeaea63e51bf8cea2140,9605502232,68,0,84824,1516791534,1599249665
+Course,"Internet History, Technology, and Security by Charles Severance",d666bf4b83066bcf7401e9c155fcd1b1c01cfb11,2349673820,11,0,20732,1521728797,1599249431
+Course,"Statistical Machine Learning CMU Spring 2016",07f1555918ed051809f0075fedc0cd469a194c93,28189820070,13,0,11976,1521729394,1599249490
+Course,"CS231n: Convolutional Neural Networks Spring 2017",ed8a16ebb346e14119a03371665306609e485f13,2625171165,20,0,30433,1537902798,1599249664
+Course,"University of Washington - Pedro Domingos - Machine Learning",0db676a6aaff8c33f9749d5f9c0fa22bf336bc76,9066763048,21,0,11432,1541763365,1599249594
+Course,"Tom Mitchell - Machine Learning - 2012",35b6b8bf0c2931ba7ecd8a1a8e65fa32f3e7473f,5866402365,24,0,6588,1542565512,1599249259
+Course,"02CIX 2018-2019 Sistemi Informativi Aziendali (ITA)",a5f1f19c2f6872cbc83c460e372f0ae7e15bf770,9894967027,7,0,1718,1547760725,1599249653
+Course,"The Analytics Edge [edX] Summer 2015",1d4ec1fc1aca061e71cc504f93a7f9fca9ef7311,3067319577,18,0,28372,1548602212,1599249657
+Course,"Semantic Web 2019 (ENG)",41c49b7b3ef5d6e2f02ba9b09525dd8d377b72ca,1776039829,9,1,10693,1549290828,1599249592
+Course,"CMU 11-785 Introduction to Deep Learning Spring 2019",9bd4c5afe4f80a0b0e519923ff1eb5c76e5c07a9,3273360608,21,1,22762,1550612337,1599249669
+Course,"03FYZ 2018-2019 Techiche di Programmazione (ITA)",829147695b59dfa6a63676493525c350e0968ae8,12199070376,6,0,513,1560425741,1599249656
+Course,"01QZP 2018-2019 Ambient Intelligence",9bbe28468af204ccefe75662cd184ce0abed0ad4,4378944634,8,0,6408,1560426761,1599249662
+Course,"Medical Handbook for Limited Resource Settings",08078e0894099530913e9335bdbc804f42f6e872,15022907366,16,0,8058,1583026177,1676964962
+Course,"03FYZ 2019-2020 Techiche di Programmazione (ITA)",be289c8dceaa7ef16eb2969431c7e8330285c7f4,14250286689,5,0,446,1591612919,1623063061
+Course,"01TXY 2019-2020 Web Applications I",ffdcaa1b2bca554612545c0394318d60e6b3796b,10017671556,9,0,2601,1591614696,1622492514
+Course,"[Coursera] Natural Language Processing (Dan Jurafsky and Chris Manning)",9ad3c282ff6c4137ed8b073d884ea3d72c2e4cd1,1176932543,19,0,26478,1591640666,1599249553
+Course,"[Coursera] What A Plant Knows (Daniel Chamovitz, Tel Aviv University)",81ff5fc1df7c1fb9300e9712368dfc479427004d,538937350,16,0,19529,1591709042,1599249562
+Course,"Medical Imaging with Deep Learning Tutorial 2020 - Joseph Paul Cohen",e0974c84449826e34d8cc96c943cba2af18ab514,76859393,22,0,9193,1595950639,1599249669
+Course,"Caltech CS124 Operating Systems",8835f0ca640ca9405f32c7d00c140cc16fcfa078,808020401,22,0,23593,1608879295,1608879295
+Course,"14BHD 2020-2021 Informatica (ITA)",2eab1a9c70d636b14c4f2118f3818875e75660a8,10146461903,6,0,1009,1610459557,1610459557
+Course,"Coursera - Applied Data Science with Python",c9ef88cfe0137f6a4292823f0765a5d4b93ff313,2114984419,46,0,91426,1619996769,1619997905
+Course,"Coursera - Data Science Fundamentals with Python and SQL",bdc0bb1499b1992a5488b4bbcfc9288c30793c08,807986536,49,0,105959,1619996837,1619997896
+Course,"Coursera - Python 3 Programming Specialization",83918ea4bb488cefd3d8b8b8762597d32aebb4fa,2101534921,51,0,110813,1619996902,1619997865
+Course,"Udemy - Machine Learning A-Z Become Kaggle Master",9e378efb6e2f67de46c6c3660d9675be50bfc21f,15004863898,48,0,34744,1682368720,1682369060
+Course,"Udemy - The Complete Android N Developer Course",d9b124bec55927b282f19dd143b367f0f3f79be1,7194560255,17,0,25365,1682368819,1682369055
+Course,"Udemy - NodeJS - The Complete Guide (incl. MVC, REST APIs, GraphQL)",d10602c009ef3b4794994976476399865c76956d,18592827396,30,0,48823,1682368839,1682369049
+Course,"Udemy - Learn Ethical Hacking From Scratch",dd0942e4a1782c0a662e9c16682ab977da156670,9144824964,23,0,41262,1682368859,1682369043
+Course,"Udemy - Docker and Kubernetes The Complete Guide",1f8c426ea3909c9b5b083f06bebcfee24fea03ae,12673349618,48,0,15443,1682368869,1682369035
+Course,"Udemy - Deep Learning and Computer Vision A-Z OpenCV, SSD &amp; GANs",d131e045c7fec5256025d72035a00e9fc69f24e7,4636240336,29,1,38629,1682368883,1682402811
+Course,"Udemy - Artificial Intelligence A-Z Learn How To Build An AI",750ab85e01a0d443bd0d19e49b250f8896e1e791,2601915325,71,0,61917,1682368893,1682436612
+Course,"Udemy - The Complete Flutter Development Bootcamp with Dart",99433c1797b219a1ec5dcec21fa4213881e5b194,13151613294,11,0,1840,1682368904,1682369012
+Course,"Udemy - Angular &amp; NodeJS - The MEAN Stack Guide",0aa8701e7ac69f17b3528876fbfb50d4ae0aa9a4,8108686573,12,0,5786,1682368915,1682369004
+Course,"Udemy - MongoDB - The Complete Developer's Guide",67511d8777c824dcde4ceba01cfc9c4931c4df6a,6044495488,13,0,10179,1682368927,1682369068
+Course,"ZeroToMastery - PyTorch for Deep Learning",b51e3cc0cc631bde4b1fe866a6d171046873b181,17130410419,59,0,43262,1683431367,1683829973
+Course,"Data Structure and Algorithms Courses by Algoexpert and Neetcode",524d780dce185b43cbe8315b161ea201460f32c0,29893144324,55,5,65520,1686572638,1686572638
+Course,"Open Osmosis Videos (2015-2018)",4f491f0e13d763408ab6ff87cf7a8ddc48228806,5214924068,18,0,5083,1697685174,1697685296
+Course,"React &amp; TypeScript Chrome Extension Development [2023]",bd13646530182a285ddca32f1ad61d0e04a63b2f,4520411136,15,0,2803,1699968297,1700591556
+Course,"NORD Osmosis Videos 2023",c5632854d1f5aa3740003cd4cf5b8b90d4851584,713425200,11,0,6194,1700257682,1700257892
+Course,"MIT OCW 14.310x Data Analysis for Social Scientists (Spring 2023)",2437f684caa1a06b0c3aad7dc184e3f89f897776,5899614012,9,0,716,1732823786,1732823786
+Course,"MIT OCW 14.13 Psychology and Economics (Spring 2020)",c4f6dbdff92ef7455976f38568969684e085aa1d,7081077225,12,1,665,1732874552,1732874552
+Course,"MIT OCW 18.S191 Introduction to Computational Thinking (Fall 2022)",d72ad3cf23be9be6df34240d3ea24b3071003d9e,4914198378,7,0,530,1732891517,1732891517
+Course,"[udemy] Laravel 11 - From Basics to Advance (2024)",da3b771fb498e367bc146806c4f192d590f24352,4926118354,4,0,187,1733899719,1733899719
+Course,"MIT The Missing Semester of Your CS Education (2020)",fe4cc754cddc2a14d3f25ce95e37f02fb051b8a4,1681026459,6,0,276,1734594724,1734594724
+Course,"MIT OCW 6.100L Introduction to CS and Programming using Python (Fall 2022)",fb014a1ffea0158f6104c3f51cd1e7724596bcc9,5974263133,10,1,2171,1734595195,1734595195
+Course,"[udemy] The Complete Hands-on Introduction to Airbyte",2171960ee66c07fd5f251eac81268ca0a40723b5,503805000,7,0,141,1734620847,1734621670
+Course,"[udemy] Learn Git Essentials [2024]",7fe8b6d871e0a43fd4312c6ef0fe7bf2b485f766,636380000,27,0,6308,1734621298,1734621351
+Course,"[udemy] SQL Masterclass for Financial Analysis &amp; Financial Reporting",161282939abe2462e37cd8a59664043716a1a529,735121934,32,0,3481,1735223549,1735223549
+Course,"[udemy] Master of Essential C++ Programming: Beginner to Advanced",8bd786e2ee84c05cd650e56f7f6232e73d66756a,660557244,23,0,3322,1735224079,1735224079
+Course,"[udemy] Complete Manual Software Testing + Agile + Scrum + Jira 2024",cbec20f4ade504701c1bd308913cc5df10eb4d6b,1193112913,15,0,3918,1735224828,1735224828
+Course,"[udemy] The Complete Adobe After Effects Bootcamp: Basic to Advanced",9bfd535befddfe73d2a4f548fddca042922dba22,7363260180,35,1,26437,1735225158,1735225158
+Course,"[udemy] Adobe Premiere Pro CC Masterclass: Video Editing in Premiere",1e6b74db6defaac37ef293d9c7ad667ea2ab87d9,6604648012,63,1,28492,1735420306,1735420306
+Course,"Coursera | Psychedelic Science And Medicine 2025",1322db11e9b442caac35a9cdfffa271d98819b39,6999739211,4,0,382,1744412362,1744412362
+Course,"Udemy - Go The Complete Developer's Guide (Golang)",773b405dc903c094b7fa2ce450adad066b277490,5825439715,22,1,1960,1744446189,1744446189
+Course,"Coursera | Programming For Designers Specialization",f58a74aad31ae9ac4c14f3e30414d93fe8c1ce8d,6125120437,25,0,897,1746306059,1746306059
+Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,1000642215,9,0,469,1752691095,1752691095`;
     }
 
     /**
