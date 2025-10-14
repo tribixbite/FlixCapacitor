@@ -2,6 +2,25 @@
 
 ### 🎯 Current Status
 
+**Video Playback Buffer Threshold Fix** (✅ COMPLETED) (2025-10-14)
+- **Feature**: Fixed premature media element errors before download starts
+  - **Root Cause**: Video `src` set immediately when stream URL available, but HTTP server hasn't buffered enough data
+  - **Solution**: Wait for 5% download progress before setting video.src
+    * Added `videoSourceSet` flag to track if video source has been set
+    * Modified progress callback to check threshold (lines 2686-2699)
+    * Only set `video.src` once threshold reached
+    * Update UI to show "Starting Playback..." when buffer ready
+  - **UI Updates**:
+    * Show "Buffering Video..." status while waiting
+    * Display "Waiting for 5% buffer before playback..." message
+    * Update to "Starting Playback..." when threshold reached
+  - **Files Modified**:
+    * src/app/lib/mobile-ui-views.js - Buffer threshold logic
+  - **Build Status**: ✅ Build successful (462.20 kB main bundle)
+  - **Commit**: 36dc066 - "fix: delay video.src until 5% buffered to prevent premature media errors"
+  - **Status**: ✅ READY FOR TESTING
+  - **Next**: Implement file picker for multi-video torrents (Stanford ML course)
+
 **Full Academic Torrents Dataset Embedded** (✅ COMPLETED) (2025-10-14)
 - **Feature**: App now works standalone with 171 real courses and valid torrents
   - **Data Source** (✅ COMPLETED):
