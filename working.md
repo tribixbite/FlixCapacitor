@@ -767,9 +767,33 @@ Completed comprehensive research of 5 major media streaming services to identify
     - All APIs configured and functional
     - 2,041 lines of production-ready code
 
-### Next Steps
-1. Integrate TMDB into movie/TV browse views
-2. Add OMDb ratings to detail pages
-3. Implement OpenSubtitles in video player
-4. Add persistent caching (SQLite)
-5. Create provider abstraction layer for fallbacks
+**API Integration Layer** (✅ COMPLETED) (2025-10-13)
+- **Feature**: API providers now fully integrated and functional in app
+  - **Bridge Module**: src/app/lib/api-bridge.js
+    - Exposes ES module clients to CommonJS code
+    - Global access: App.API.TMDB, App.API.OMDb, App.API.OpenSubtitles
+    - Also available: window.TMDBClient, window.OMDbClient, window.OpenSubtitlesClient
+    - Helper functions: getEnhancedMovieMetadata(), getSubtitlesForMovie()
+  - **Main.js Integration**:
+    - Auto-initialized on app startup
+    - Runs after SettingsManager
+    - Error handling with fallback
+  - **API Key Sync**:
+    - .env TMDB key updated to match Settings.tmdb.api_key
+    - Ensures consistency across app
+  - **Documentation**:
+    - docs/INTEGRATION_GUIDE.md - Complete usage guide
+    - Code examples for metadata, search, subtitles, ratings
+    - Quick integration tasks (3 examples)
+    - CSS for ratings display
+  - **Status**: 🎉 FULLY FUNCTIONAL!
+    - Test in console: App.API.TMDB.searchMovie('Inception')
+    - Available everywhere after app initialization
+    - No breaking changes to existing code
+
+### Next Steps (Optional Enhancements)
+1. Add TMDB images to movie cards (see INTEGRATION_GUIDE.md Task 1)
+2. Display IMDb/RT ratings on detail pages (see Task 2)
+3. Replace old OpenSubtitles XML-RPC with REST API (see Task 3)
+4. Add persistent caching with SQLite
+5. Implement progressive image loading
