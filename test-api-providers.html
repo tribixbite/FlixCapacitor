@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Providers Test - FlixCapacitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            color: #e50914;
+        }
+
+        .test-section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .test-section h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        button {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        button:hover {
+            background: #ff2a2a;
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #0a0a0a;
+            border-radius: 6px;
+            border-left: 3px solid #e50914;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .result pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .success {
+            border-left-color: #28a745;
+        }
+
+        .error {
+            border-left-color: #dc3545;
+        }
+
+        .loading {
+            border-left-color: #ffc107;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+        }
+
+        .status.configured {
+            background: #28a745;
+        }
+
+        .status.missing {
+            background: #dc3545;
+        }
+
+        .movie-card {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            background: #0a0a0a;
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .movie-card img {
+            width: 100px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .movie-info h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .movie-info p {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+
+        .rating.imdb { color: #f5c518; }
+        .rating.tmdb { color: #01d277; }
+        .rating.rt { color: #fa320a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 API Providers Test Suite</h1>
+
+        <!-- Configuration Status -->
+        <div class="test-section">
+            <h2>Configuration Status</h2>
+            <div id="config-status">Checking...</div>
+        </div>
+
+        <!-- TMDB Tests -->
+        <div class="test-section">
+            <h2>TMDB (The Movie Database)</h2>
+            <button onclick="testTMDBSearch()">Test Search</button>
+            <button onclick="testTMDBDetails()">Test Movie Details</button>
+            <button onclick="testTMDBImages()">Test Images</button>
+            <button onclick="testTMDBPopular()">Test Popular Movies</button>
+            <div id="tmdb-result"></div>
+        </div>
+
+        <!-- OMDb Tests -->
+        <div class="test-section">
+            <h2>OMDb (Open Movie Database)</h2>
+            <button onclick="testOMDbIMDb()">Test By IMDb ID</button>
+            <button onclick="testOMDbRatings()">Test Ratings</button>
+            <button onclick="testOMDbSearch()">Test Search</button>
+            <div id="omdb-result"></div>
+        </div>
+
+        <!-- OpenSubtitles Tests -->
+        <div class="test-section">
+            <h2>OpenSubtitles</h2>
+            <button onclick="testOpenSubSearch()">Test Search</button>
+            <button onclick="testOpenSubBest()">Test Best Subtitle</button>
+            <button onclick="testOpenSubLanguages()">Test Multi-Language</button>
+            <div id="opensub-result"></div>
+        </div>
+
+        <!-- Combined Test -->
+        <div class="test-section">
+            <h2>Complete Integration Test</h2>
+            <button onclick="testComplete()">Test All Providers (Inception)</button>
+            <div id="complete-result"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import ApiConfig from './src/app/lib/config/api-config.js';
+        import TMDBClient from './src/app/lib/providers/tmdb-client.js';
+        import OMDbClient from './src/app/lib/providers/omdb-client.js';
+        import OpenSubtitlesClient from './src/app/lib/providers/opensubtitles-client.js';
+
+        // Make available globally for onclick handlers
+        window.TMDBClient = TMDBClient;
+        window.OMDbClient = OMDbClient;
+        window.OpenSubtitlesClient = OpenSubtitlesClient;
+
+        // Check configuration
+        const config = ApiConfig.isConfigured();
+        const statusHtml = `
+            <p>TMDB: <span class="status ${config.tmdb ? 'configured' : 'missing'}">${config.tmdb ? 'Configured ✓' : 'Missing ✗'}</span></p>
+            <p>OMDb: <span class="status ${config.omdb ? 'configured' : 'missing'}">${config.omdb ? 'Configured ✓' : 'Missing ✗'}</span></p>
+            <p>OpenSubtitles: <span class="status ${config.opensubtitles ? 'configured' : 'missing'}">${config.opensubtitles ? 'Configured ✓' : 'Missing ✗'}</span></p>
+        `;
+        document.getElementById('config-status').innerHTML = statusHtml;
+
+        // Helper functions
+        function showLoading(elementId) {
+            const el = document.getElementById(elementId);
+            el.className = 'result loading';
+            el.innerHTML = '<p>Loading...</p>';
+        }
+
+        function showResult(elementId, data, isError = false) {
+            const el = document.getElementById(elementId);
+            el.className = isError ? 'result error' : 'result success';
+            el.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        // TMDB Tests
+        window.testTMDBSearch = async function() {
+            showLoading('tmdb-result');
+            try {
+                const results = await TMDBClient.searchMovie('Inception', 2010);
+                showResult('tmdb-result', {
+                    totalResults: results.total_results,
+                    firstResult: results.results[0]
+                });
+            } catch (error) {
+                showResult('tmdb-result', { error: error.message }, true);
+            }
+        };
+
+        window.testTMDBDetails = async function() {
+            showLoading('tmdb-result');
+            try {
+                const search = await TMDBClient.searchMovie('Inception', 2010);
+                const details = await TMDBClient.getMovieDetails(search.results[0].id);
+                showResult('tmdb-result', {
+                    title: details.title,
+                    year: TMDBClient.getReleaseYear(details),
+                    rating: TMDBClient.getRating(details),
+                    runtime: TMDBClient.formatRuntime(details.runtime),
+                    imdbId: TMDBClient.getIMDbId(details),
+                    genres: details.genres.map(g => g.name)
+                });
+            } catch (error) {
+                showResult('tmdb-result', { error: error.message }, true);
+            }
+        };
+
+        window.testTMDBImages = async function() {
+            showLoading('tmdb-result');
+            try {
+                const search = await TMDBClient.searchMovie('Inception', 2010);
+                const details = await TMDBClient.getMovieDetails(search.results[0].id);
+                const html = `
+                    <div class="movie-card">
+                        <img src="${TMDBClient.getBestPoster(details)}" alt="Poster">
+                        <div class="movie-info">
+                            <h3>${details.title} (${TMDBClient.getReleaseYear(details)})</h3>
+                            <p><strong>Rating:</strong> ${TMDBClient.getRating(details)}/10</p>
+                            <p><strong>Runtime:</strong> ${TMDBClient.formatRuntime(details.runtime)}</p>
+                            <p>${details.overview}</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('tmdb-result').innerHTML = html;
+                document.getElementById('tmdb-result').className = 'result success';
+            } catch (error) {
+                showResult('tmdb-result', { error: error.message }, true);
+            }
+        };
+
+        window.testTMDBPopular = async function() {
+            showLoading('tmdb-result');
+            try {
+                const popular = await TMDBClient.getPopularMovies();
+                showResult('tmdb-result', {
+                    totalPages: popular.total_pages,
+                    movies: popular.results.slice(0, 5).map(m => ({
+                        title: m.title,
+                        year: new Date(m.release_date).getFullYear(),
+                        rating: Math.round(m.vote_average * 10) / 10
+                    }))
+                });
+            } catch (error) {
+                showResult('tmdb-result', { error: error.message }, true);
+            }
+        };
+
+        // OMDb Tests
+        window.testOMDbIMDb = async function() {
+            showLoading('omdb-result');
+            try {
+                const movie = await OMDbClient.getByIMDbId('tt1375666');
+                showResult('omdb-result', {
+                    title: movie.Title,
+                    year: movie.Year,
+                    imdbRating: OMDbClient.getIMDbRating(movie),
+                    genres: OMDbClient.getGenres(movie),
+                    director: movie.Director
+                });
+            } catch (error) {
+                showResult('omdb-result', { error: error.message }, true);
+            }
+        };
+
+        window.testOMDbRatings = async function() {
+            showLoading('omdb-result');
+            try {
+                const movie = await OMDbClient.getByIMDbId('tt1375666');
+                const ratings = OMDbClient.getAllRatings(movie);
+                const html = `
+                    <div class="movie-card">
+                        <div style="flex: 1">
+                            <h3>${movie.Title} (${movie.Year})</h3>
+                            <p style="margin: 1rem 0">
+                                <span class="rating imdb">⭐ IMDb: ${ratings.imdb}/10</span>
+                                <span class="rating rt">🍅 RT: ${ratings.rottenTomatoes}%</span>
+                                <span class="rating">📊 Metacritic: ${ratings.metacritic}/100</span>
+                            </p>
+                            <p><strong>Plot:</strong> ${movie.Plot}</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('omdb-result').innerHTML = html;
+                document.getElementById('omdb-result').className = 'result success';
+            } catch (error) {
+                showResult('omdb-result', { error: error.message }, true);
+            }
+        };
+
+        window.testOMDbSearch = async function() {
+            showLoading('omdb-result');
+            try {
+                const results = await OMDbClient.search('Matrix', 'movie');
+                showResult('omdb-result', {
+                    totalResults: results.totalResults,
+                    results: results.Search.slice(0, 5)
+                });
+            } catch (error) {
+                showResult('omdb-result', { error: error.message }, true);
+            }
+        };
+
+        // OpenSubtitles Tests
+        window.testOpenSubSearch = async function() {
+            showLoading('opensub-result');
+            try {
+                const results = await OpenSubtitlesClient.searchByIMDb('tt1375666', 'en');
+                const formatted = OpenSubtitlesClient.formatResults(results, 'en');
+                showResult('opensub-result', {
+                    totalResults: formatted.length,
+                    first3: formatted.slice(0, 3).map(s => ({
+                        language: s.language,
+                        fileName: s.fileName,
+                        downloads: s.downloadCount,
+                        quality: s.quality
+                    }))
+                });
+            } catch (error) {
+                showResult('opensub-result', { error: error.message }, true);
+            }
+        };
+
+        window.testOpenSubBest = async function() {
+            showLoading('opensub-result');
+            try {
+                const results = await OpenSubtitlesClient.searchByIMDb('tt1375666', 'en');
+                const best = OpenSubtitlesClient.getBestSubtitle(results, 'en');
+                showResult('opensub-result', {
+                    fileName: best.fileName,
+                    language: best.language,
+                    downloads: best.downloadCount,
+                    rating: best.rating,
+                    hearingImpaired: best.hearingImpaired,
+                    quality: best.quality
+                });
+            } catch (error) {
+                showResult('opensub-result', { error: error.message }, true);
+            }
+        };
+
+        window.testOpenSubLanguages = async function() {
+            showLoading('opensub-result');
+            try {
+                const results = await OpenSubtitlesClient.searchByIMDb('tt1375666', 'en,es,fr');
+                const byLanguage = OpenSubtitlesClient.groupByLanguage(results);
+                const summary = {};
+                for (const lang in byLanguage) {
+                    summary[lang] = byLanguage[lang].length;
+                }
+                showResult('opensub-result', {
+                    languages: Object.keys(byLanguage),
+                    subtitleCounts: summary
+                });
+            } catch (error) {
+                showResult('opensub-result', { error: error.message }, true);
+            }
+        };
+
+        // Complete Integration Test
+        window.testComplete = async function() {
+            showLoading('complete-result');
+            try {
+                // 1. Search on TMDB
+                const tmdbSearch = await TMDBClient.searchMovie('Inception', 2010);
+                const tmdbDetails = await TMDBClient.getMovieDetails(tmdbSearch.results[0].id);
+                const imdbId = TMDBClient.getIMDbId(tmdbDetails);
+
+                // 2. Get OMDb ratings
+                const omdbMovie = await OMDbClient.getByIMDbId(imdbId);
+                const ratings = OMDbClient.getAllRatings(omdbMovie);
+
+                // 3. Get subtitles
+                const subResults = await OpenSubtitlesClient.searchByIMDb(imdbId, 'en');
+                const bestSub = OpenSubtitlesClient.getBestSubtitle(subResults, 'en');
+
+                // Display complete info
+                const html = `
+                    <div class="movie-card">
+                        <img src="${TMDBClient.getBestPoster(tmdbDetails)}" alt="Poster">
+                        <div class="movie-info">
+                            <h3>${tmdbDetails.title} (${TMDBClient.getReleaseYear(tmdbDetails)})</h3>
+                            <p style="margin: 0.5rem 0">
+                                <span class="rating tmdb">TMDB: ${TMDBClient.getRating(tmdbDetails)}/10</span>
+                                <span class="rating imdb">⭐ IMDb: ${ratings.imdb}/10</span>
+                                <span class="rating rt">🍅 RT: ${ratings.rottenTomatoes}%</span>
+                            </p>
+                            <p><strong>Runtime:</strong> ${TMDBClient.formatRuntime(tmdbDetails.runtime)}</p>
+                            <p><strong>Genres:</strong> ${tmdbDetails.genres.map(g => g.name).join(', ')}</p>
+                            <p><strong>Subtitles Available:</strong> ✓ (${subResults.data.length} found, best: ${bestSub.fileName})</p>
+                            <p style="margin-top: 1rem">${tmdbDetails.overview}</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('complete-result').innerHTML = html;
+                document.getElementById('complete-result').className = 'result success';
+
+            } catch (error) {
+                showResult('complete-result', { error: error.message, stack: error.stack }, true);
+            }
+        };
+    </script>
+</body>
+</html>
