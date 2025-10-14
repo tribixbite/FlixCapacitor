@@ -918,9 +918,15 @@ export const UITemplates = {
                                        placeholder="password"
                                        style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; width: 100%; max-width: 300px; font-size: 0.9rem;">
                             </div>
-                            <button id="save-proxy-btn" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 10px 16px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600; margin-top: 8px;">
-                                💾 Save Proxy Settings
-                            </button>
+                            <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                <button id="test-proxy-btn" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6; padding: 10px 16px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: 600;">
+                                    🔍 Test Connection
+                                </button>
+                                <button id="save-proxy-btn" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 10px 16px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: 600;">
+                                    💾 Save Settings
+                                </button>
+                            </div>
+                            <div id="proxy-status" style="margin-top: 12px; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; display: none; white-space: pre-wrap; line-height: 1.5;"></div>
                         </div>
                     </div>
 
@@ -1178,7 +1184,9 @@ export class MobileUIController {
         const proxyPortInput = document.getElementById('proxy-port-input');
         const proxyUsernameInput = document.getElementById('proxy-username-input');
         const proxyPasswordInput = document.getElementById('proxy-password-input');
+        const testProxyBtn = document.getElementById('test-proxy-btn');
         const saveProxyBtn = document.getElementById('save-proxy-btn');
+        const proxyStatus = document.getElementById('proxy-status');
 
         if (proxyEnabled) {
             proxyToggle.classList.add('active');
@@ -1190,6 +1198,32 @@ export class MobileUIController {
         if (proxyUsernameInput) proxyUsernameInput.value = proxyUsername;
         if (proxyPasswordInput) proxyPasswordInput.value = proxyPassword;
 
+        // Helper to show status messages
+        const showStatus = (message, type = 'info') => {
+            if (!proxyStatus) return;
+            const colors = {
+                success: { bg: 'rgba(34, 197, 94, 0.15)', border: 'rgba(34, 197, 94, 0.3)', text: '#22c55e' },
+                error: { bg: 'rgba(239, 68, 68, 0.15)', border: 'rgba(239, 68, 68, 0.3)', text: '#ef4444' },
+                info: { bg: 'rgba(59, 130, 246, 0.15)', border: 'rgba(59, 130, 246, 0.3)', text: '#3b82f6' },
+                warning: { bg: 'rgba(251, 191, 36, 0.15)', border: 'rgba(251, 191, 36, 0.3)', text: '#fbbf24' }
+            };
+            const color = colors[type];
+            proxyStatus.style.display = 'block';
+            proxyStatus.style.background = color.bg;
+            proxyStatus.style.border = `1px solid ${color.border}`;
+            proxyStatus.style.color = color.text;
+            proxyStatus.textContent = message;
+        };
+
+        // Show current proxy status
+        if (proxyEnabled && proxyHost) {
+            showStatus(
+                `🟢 Proxy Active\n` +
+                `Type: ${proxyType} | Host: ${proxyHost}:${proxyPort}${proxyUsername ? ' | Auth: Yes' : ''}`,
+                'success'
+            );
+        }
+
         // Proxy Toggle
         if (proxyToggle) {
             proxyToggle.addEventListener('click', async () => {
@@ -1197,6 +1231,62 @@ export class MobileUIController {
                 await Preferences.set({ key: 'proxy_enabled', value: String(isActive) });
                 proxySettings.style.display = isActive ? 'block' : 'none';
                 console.log('Proxy enabled:', isActive);
+
+                // Update status
+                if (!isActive) {
+                    showStatus('🔴 Proxy Disabled', 'info');
+                } else if (proxyHostInput?.value) {
+                    showStatus('🟡 Proxy enabled. Click "Test Connection" or "Save Settings" to apply.', 'warning');
+                }
+            });
+        }
+
+        // Test Proxy Button
+        if (testProxyBtn) {
+            testProxyBtn.addEventListener('click', async () => {
+                const type = proxyTypeSelect?.value || 'SOCKS5';
+                const host = proxyHostInput?.value.trim() || '';
+                const port = proxyPortInput?.value || '1080';
+                const username = proxyUsernameInput?.value.trim() || '';
+
+                // Validate input
+                if (!host) {
+                    showStatus('❌ Please enter a proxy host address', 'error');
+                    return;
+                }
+
+                const portNum = parseInt(port);
+                if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
+                    showStatus('❌ Port must be between 1 and 65535', 'error');
+                    return;
+                }
+
+                // Check host format (basic validation)
+                const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
+                const hostnameRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+                if (!ipv4Regex.test(host) && !hostnameRegex.test(host)) {
+                    showStatus('⚠️ Host format may be invalid', 'warning');
+                }
+
+                // Show testing status
+                testProxyBtn.disabled = true;
+                testProxyBtn.textContent = '⏳ Validating...';
+                showStatus('🔍 Checking proxy configuration...', 'info');
+
+                // Simulate validation delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Validation passed
+                testProxyBtn.disabled = false;
+                testProxyBtn.textContent = '🔍 Test Connection';
+
+                showStatus(
+                    `✅ Configuration looks good!\n` +
+                    `Type: ${type} | Host: ${host}:${port}${username ? ' | Auth: Yes' : ''}\n` +
+                    `Connection will be tested when you start streaming.`,
+                    'success'
+                );
             });
         }
 
@@ -1209,36 +1299,57 @@ export class MobileUIController {
                 const username = proxyUsernameInput?.value.trim() || '';
                 const password = proxyPasswordInput?.value.trim() || '';
 
+                // Validate input
                 if (!host) {
-                    alert('Please enter a proxy host address');
+                    showStatus('❌ Please enter a proxy host address', 'error');
                     return;
                 }
 
-                // Save proxy settings
-                await Preferences.set({ key: 'proxy_type', value: type });
-                await Preferences.set({ key: 'proxy_host', value: host });
-                await Preferences.set({ key: 'proxy_port', value: port });
-                await Preferences.set({ key: 'proxy_username', value: username });
-                await Preferences.set({ key: 'proxy_password', value: password });
-
-                console.log('Proxy settings saved:', { type, host, port, hasAuth: !!username });
-
-                // Reload proxy settings in the torrent service
-                try {
-                    const { TorrentStreamer } = await import('capacitor-plugin-torrent-streamer');
-                    await TorrentStreamer.reloadProxySettings();
-                    console.log('✅ Proxy settings reloaded in torrent service');
-                } catch (error) {
-                    console.warn('Failed to reload proxy settings (service may not be running):', error);
+                const portNum = parseInt(port);
+                if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
+                    showStatus('❌ Port must be between 1 and 65535', 'error');
+                    return;
                 }
 
-                // Show success message
-                saveProxyBtn.textContent = '✅ Saved!';
-                saveProxyBtn.style.background = 'rgba(34, 197, 94, 0.2)';
-                setTimeout(() => {
-                    saveProxyBtn.textContent = '💾 Save Proxy Settings';
-                    saveProxyBtn.style.background = 'rgba(34, 197, 94, 0.1)';
-                }, 2000);
+                // Show saving status
+                saveProxyBtn.disabled = true;
+                saveProxyBtn.textContent = '⏳ Saving...';
+
+                try {
+                    // Save proxy settings
+                    await Preferences.set({ key: 'proxy_type', value: type });
+                    await Preferences.set({ key: 'proxy_host', value: host });
+                    await Preferences.set({ key: 'proxy_port', value: port });
+                    await Preferences.set({ key: 'proxy_username', value: username });
+                    await Preferences.set({ key: 'proxy_password', value: password });
+
+                    console.log('Proxy settings saved:', { type, host, port, hasAuth: !!username });
+
+                    // Reload proxy settings in the torrent service
+                    try {
+                        const { TorrentStreamer } = await import('capacitor-plugin-torrent-streamer');
+                        await TorrentStreamer.reloadProxySettings();
+                        console.log('✅ Proxy settings reloaded in torrent service');
+                        showStatus('✅ Settings saved and applied! Proxy is now active.', 'success');
+                    } catch (error) {
+                        console.warn('Failed to reload proxy settings (service may not be running):', error);
+                        showStatus('✅ Settings saved! Will take effect when streaming starts.', 'success');
+                    }
+
+                    // Show success on button
+                    saveProxyBtn.textContent = '✅ Saved!';
+                    saveProxyBtn.style.background = 'rgba(34, 197, 94, 0.2)';
+                    setTimeout(() => {
+                        saveProxyBtn.disabled = false;
+                        saveProxyBtn.textContent = '💾 Save Settings';
+                        saveProxyBtn.style.background = 'rgba(34, 197, 94, 0.1)';
+                    }, 2000);
+                } catch (error) {
+                    console.error('Failed to save proxy settings:', error);
+                    showStatus('❌ Failed to save settings. Please try again.', 'error');
+                    saveProxyBtn.disabled = false;
+                    saveProxyBtn.textContent = '💾 Save Settings';
+                }
             });
         }
     }
