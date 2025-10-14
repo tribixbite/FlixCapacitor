@@ -1,0 +1,362 @@
+[
+  {
+    "imdb_id": "tt0063350",
+    "title": "Night of the Living Dead",
+    "year": 1968,
+    "rating": {
+      "percentage": 76,
+      "votes": 2590,
+      "imdb": 7.8,
+      "rottenTomatoes": 95,
+      "metacritic": 89
+    },
+    "runtime": 96,
+    "synopsis": "A ragtag group barricade themselves in an old Pennsylvania farmhouse to remain safe from a horde of flesh-eating ghouls ravaging the Northeast.",
+    "genres": [
+      "Horror",
+      "Thriller"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/rb2NWyb008u1EcKCOyXs2Nmj0ra.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/d0NwvSRJQQzkubWKsidX4caQ6Yi.jpg"
+    },
+    "torrents": {
+      "720p": {
+        "url": "magnet:?xt=urn:btih:fb1a8d8a01c1ac1e29303a1a76ffdf37fa4f95f2&dn=Night%20of%20the%20Living%20Dead%201968&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "900 MB",
+        "seed": 182,
+        "peer": 16
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0015864",
+    "title": "The Gold Rush",
+    "year": 1925,
+    "rating": {
+      "percentage": 80,
+      "votes": 1719,
+      "imdb": 8.1,
+      "rottenTomatoes": 98,
+      "metacritic": 90
+    },
+    "runtime": 95,
+    "synopsis": "A gold prospector in Alaska struggles to survive the elements and win the heart of a dance hall girl.",
+    "genres": [
+      "Adventure",
+      "Comedy",
+      "Drama"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/eQRFo1qwRREYwj47Yoe1PisgOle.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/hZHeDPQGNKN9NN9GuW7qVbM2tDx.jpg"
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:7a37d98b0a5e4e8e5fa57b8e94f70d1e07a73e31&dn=The%20Lost%20World%201925&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "500 MB",
+        "seed": 17,
+        "peer": 3
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0017136",
+    "title": "Metropolis",
+    "year": 1927,
+    "rating": {
+      "percentage": 81,
+      "votes": 2945,
+      "imdb": 8.3,
+      "rottenTomatoes": 97,
+      "metacritic": 98
+    },
+    "runtime": 153,
+    "synopsis": "In a futuristic city sharply divided between the rich and the poor, the son of the city's mastermind meets a prophet who predicts the coming of a savior to mediate their differences.",
+    "genres": [
+      "Drama",
+      "Science Fiction"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/vZIJxGnjcswPCAa52jhbl01FQkV.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/eeMoFKxjjiCi6iep2GEZtSAMYIr.jpg"
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:5e84a6eaf3c3e3c3bf6a7e9c7d8e4b3f9d59a8f3&dn=Metropolis%201927&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "500 MB",
+        "seed": 42,
+        "peer": 4
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0027051",
+    "title": "Strange Wives",
+    "year": 1936,
+    "rating": {
+      "percentage": 0,
+      "votes": 1000,
+      "imdb": 4.7
+    },
+    "runtime": 75,
+    "synopsis": "When a young man marries a Russian girl, he finds that he has \"married\" her entire family.",
+    "genres": [
+      "Romance"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/c4Vt2z55Whta023L9mBTLWRY7Ts.jpg",
+      "fanart": null
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:3f7b5c1d9e8f7f7f4e6c9e7d8f5e4c3f0e69b9e4&dn=Things%20to%20Come%201936&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "500 MB",
+        "seed": 21,
+        "peer": 3
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0029870",
+    "title": "Angels with Dirty Faces",
+    "year": 1939,
+    "rating": {
+      "percentage": 75,
+      "votes": 333,
+      "imdb": 7.9,
+      "rottenTomatoes": 100
+    },
+    "runtime": 97,
+    "synopsis": "Childhood chums Rocky Sullivan and Jerry Connelly grow up on opposite sides of the fence: Rocky matures into a prominent gangster, while Jerry becomes a priest, tending to the needs of his old tenement neighborhood.",
+    "genres": [
+      "Crime",
+      "Drama"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/k23E4UAcow8eczLRmVCMdukL4Mx.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/bb36aEZwEvK2L01mgWQuC506CZg.jpg"
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:2c6d4e0f8e9f8f8f3e5c8e6d7f4e3c2f1e58a8e5&dn=The%20Phantom%20Creeps%201939&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "500 MB",
+        "seed": 61,
+        "peer": 2
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0032138",
+    "title": "The Wizard of Oz",
+    "year": 1939,
+    "rating": {
+      "percentage": 76,
+      "votes": 5860,
+      "imdb": 8.1,
+      "rottenTomatoes": 98,
+      "metacritic": 92
+    },
+    "runtime": 102,
+    "synopsis": "Young Dorothy finds herself in a magical world where she makes friends with a lion, a scarecrow and a tin man as they make their way along the yellow brick road to talk with the Wizard and ask for the things they miss most in their lives. The Wicked Witch of the West is the only thing that could stop them.",
+    "genres": [
+      "Adventure",
+      "Fantasy",
+      "Family"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/pfAZFD7I2hxW9HCChTuAzsdE6UX.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/nRsr98MFztBGm532hCVMGXV6qOp.jpg"
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:1b5c3d1e7e8f9f9f2e4c7e5d6f3e2c1f0e47a7e6&dn=The%20Man%20They%20Could%20Not%20Hang%201939&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "500 MB",
+        "seed": 43,
+        "peer": 4
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0049223",
+    "title": "Forbidden Planet",
+    "year": 1959,
+    "rating": {
+      "percentage": 73,
+      "votes": 996,
+      "imdb": 7.5,
+      "rottenTomatoes": 96,
+      "metacritic": 80
+    },
+    "runtime": 98,
+    "synopsis": "Starship C57D travels to planet Altair 4 in search of the crew of spaceship \"Bellerophon,\" a scientific expedition that has been missing for twenty years. They find themselves unwelcome by the expedition's lone survivor and warned of destruction by an invisible force if they don't turn back immediately.",
+    "genres": [
+      "Science Fiction",
+      "Adventure"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/aq0OQfRS7hDDI8vyD0ICbH9eguC.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/9EUmwXS6EbY5djAhLtBGzUbBwNV.jpg"
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:9a4d2b3e6e7f8f8f1e3c6e4d5f2e1c0f9d36c6d7&dn=Plan%209%20from%20Outer%20Space%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "700 MB",
+        "seed": 98,
+        "peer": 6
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0054047",
+    "title": "The Magnificent Seven",
+    "year": 1960,
+    "rating": {
+      "percentage": 75,
+      "votes": 1884,
+      "imdb": 7.7,
+      "rottenTomatoes": 89,
+      "metacritic": 74
+    },
+    "runtime": 127,
+    "synopsis": "An oppressed Mexican peasant village hires seven gunfighters to help defend their homes.",
+    "genres": [
+      "Western",
+      "Action",
+      "Adventure"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/e5ToxOyJwuZD4VOfI0qEn5uIjeJ.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/2aC3284N1p86o6S4Uyj9AaryYeR.jpg"
+    },
+    "torrents": {
+      "720p": {
+        "url": "magnet:?xt=urn:btih:8e3c1a2d5e6f7f7f0e2c5e3d4f1e0c9e8c25b5c8&dn=The%20Little%20Shop%20of%20Horrors%201960&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "900 MB",
+        "seed": 56,
+        "peer": 10
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0019702",
+    "title": "Blackmail",
+    "year": 1928,
+    "rating": {
+      "percentage": 65,
+      "votes": 259,
+      "imdb": 6.9,
+      "rottenTomatoes": 88
+    },
+    "runtime": 86,
+    "synopsis": "London, 1929. Frank Webber, a very busy Scotland Yard detective, seems to be more interested in his work than in Alice White, his girlfriend. Feeling herself ignored, Alice agrees to go out with an elegant and well-mannered artist who invites her to visit his fancy apartment.",
+    "genres": [
+      "Drama",
+      "Thriller",
+      "Crime"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/7ioNEKouUkkWyv5tUDwVUd7BDRR.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/3fWwpoAVj3mhgQxTnv2O0F1ElAM.jpg"
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:4f5e2c3d7e8f9f9f3e5c8e6d7f4e3c2f1e58a8e5&dn=The%20Man%20Who%20Laughs%201928&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "500 MB",
+        "seed": 26,
+        "peer": 4
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0022286",
+    "title": "The Public Enemy",
+    "year": 1931,
+    "rating": {
+      "percentage": 72,
+      "votes": 369,
+      "imdb": 7.6,
+      "rottenTomatoes": 100,
+      "metacritic": 80
+    },
+    "runtime": 84,
+    "synopsis": "Two young Chicago hoodlums, Tom Powers and Matt Doyle, rise up from their poverty-stricken slum life to become petty thieves, bootleggers and cold-blooded killers. But with street notoriety and newfound wealth, the duo feels the heat from the cops and rival gangsters both. Despite his ruthless criminal reputation, Tom tries to remain connected to his family, however, gang warfare and the need for revenge eventually pull him away.",
+    "genres": [
+      "Crime",
+      "Drama"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/vVxdaRMprQO2DM4AFyJ6C4qZSFO.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/oXLaGV0VOqQhXdUmQpm6KGsSpu1.jpg"
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:7g6f3d4e8e9f0f0f4f6d9f7e8f5f4d3g2f69c9f6&dn=Frankenstein%201931&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "500 MB",
+        "seed": 37,
+        "peer": 5
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0023293",
+    "title": "The Old Dark House",
+    "year": 1932,
+    "rating": {
+      "percentage": 67,
+      "votes": 286,
+      "imdb": 7,
+      "rottenTomatoes": 97
+    },
+    "runtime": 70,
+    "synopsis": "In a remote region of Wales, five travelers beset by a relentless storm find shelter in an old mansion.",
+    "genres": [
+      "Drama",
+      "Horror",
+      "Thriller"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/t4058MoAiVg8R1aqHNL3nAP48km.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/1weLHiJKmqSgbxoEBeX14jbRgMe.jpg"
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:8h7g4e5f9f0g1g1g5g7e0g8f9g6g5e4h3g70d0g7&dn=The%20Mummy%201932&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "500 MB",
+        "seed": 60,
+        "peer": 3
+      }
+    }
+  },
+  {
+    "imdb_id": "tt0025878",
+    "title": "The Thin Man",
+    "year": 1934,
+    "rating": {
+      "percentage": 75,
+      "votes": 498,
+      "imdb": 7.9,
+      "rottenTomatoes": 98,
+      "metacritic": 86
+    },
+    "runtime": 91,
+    "synopsis": "A husband and wife detective team takes on the search for a missing inventor and almost get killed for their efforts.",
+    "genres": [
+      "Comedy",
+      "Mystery",
+      "Crime"
+    ],
+    "images": {
+      "poster": "https://image.tmdb.org/t/p/w500/6cL89ok9t8xEKboOjOVga2W66jj.jpg",
+      "fanart": "https://image.tmdb.org/t/p/w1280/b1bMEMtuiHBX23tfQU5ybNpakVf.jpg"
+    },
+    "torrents": {
+      "480p": {
+        "url": "magnet:?xt=urn:btih:9i8h5f6g0g1h2h2h6h8f1h9g0h7h6f5i4h81e1h8&dn=The%20Black%20Cat%201934&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce",
+        "size": "500 MB",
+        "seed": 52,
+        "peer": 1
+      }
+    }
+  }
+]

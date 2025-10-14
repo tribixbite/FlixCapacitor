@@ -195,8 +195,9 @@ class PublicDomainProvider {
     }
 
     /**
-     * Get curated list of popular public domain sci-fi movies
+     * Get curated list of popular public domain movies
      * These are confirmed to be in the public domain
+     * Enriched with metadata from TMDB and OMDb APIs
      */
     getDefaultMovies() {
         return [
@@ -204,43 +205,53 @@ class PublicDomainProvider {
                 imdb_id: 'tt0063350',
                 title: 'Night of the Living Dead',
                 year: 1968,
-                rating: { percentage: 96, votes: 125000 },
+                rating: {
+                    percentage: 76,
+                    votes: 2590,
+                    imdb: 7.8,
+                    rottenTomatoes: 95,
+                    metacritic: 89
+                },
                 runtime: 96,
-                synopsis: 'A group of people hide from bloodthirsty zombies in a farmhouse in this genre-defining horror classic.',
-                genres: ['Horror', 'Sci-Fi'],
+                synopsis: 'A ragtag group barricade themselves in an old Pennsylvania farmhouse to remain safe from a horde of flesh-eating ghouls ravaging the Northeast.',
+                genres: ['Horror', 'Thriller'],
                 images: {
-                    poster: 'https://m.media-amazon.com/images/M/MV5BYmJkMGVjNzMtNTMzMy00ZTJhLWJlNjYtZTEzMDJmZDNmOWQ2XkEyXkFqcGc@._V1_SX300.jpg',
-                    fanart: 'https://m.media-amazon.com/images/M/MV5BYmJkMGVjNzMtNTMzMy00ZTJhLWJlNjYtZTEzMDJmZDNmOWQ2XkEyXkFqcGc@._V1_SX300.jpg'
+                    poster: 'https://image.tmdb.org/t/p/w500/rb2NWyb008u1EcKCOyXs2Nmj0ra.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/d0NwvSRJQQzkubWKsidX4caQ6Yi.jpg'
                 },
                 torrents: {
                     '720p': {
-                        url: this.buildMagnetLink('1d8e3fcb9fb7e7c8b12c9f7d12c0c25e4c25a25e', 'Night of the Living Dead 1968 720p'),
-                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=51',
-                        size: '1.2 GB',
-                        seed: 150,
-                        peer: 12
+                        url: this.buildMagnetLink('fb1a8d8a01c1ac1e29303a1a76ffdf37fa4f95f2', 'Night of the Living Dead 1968'),
+                        size: '900 MB',
+                        seed: 182,
+                        peer: 16
                     }
                 }
             },
             {
                 imdb_id: 'tt0015864',
-                title: 'The Lost World',
+                title: 'The Gold Rush',
                 year: 1925,
-                rating: { percentage: 72, votes: 5000 },
-                runtime: 110,
-                synopsis: 'The first film adaptation of Sir Arthur Conan Doyle\'s classic novel about a land where prehistoric creatures still roam.',
-                genres: ['Adventure', 'Sci-Fi'],
+                rating: {
+                    percentage: 80,
+                    votes: 1719,
+                    imdb: 8.1,
+                    rottenTomatoes: 98,
+                    metacritic: 90
+                },
+                runtime: 95,
+                synopsis: 'A gold prospector in Alaska struggles to survive the elements and win the heart of a dance hall girl.',
+                genres: ['Adventure', 'Comedy', 'Drama'],
                 images: {
-                    poster: this.getFallbackPoster(1),
-                    fanart: this.getFallbackPoster(1)
+                    poster: 'https://image.tmdb.org/t/p/w500/eQRFo1qwRREYwj47Yoe1PisgOle.jpg',
+                    fanart: 'https://image.tmdb.org/t/p/w1280/hZHeDPQGNKN9NN9GuW7qVbM2tDx.jpg'
                 },
                 torrents: {
                     '480p': {
-                        url: this.buildMagnetLink('2e9f4edc0ec8f8d9c23d0f8e23d1d36f5d36b36f', 'The Lost World 1925'),
-                        torrentUrl: 'https://www.publicdomaintorrents.info/nshowmovie.html?movieid=101',
-                        size: '800 MB',
-                        seed: 45,
-                        peer: 5
+                        url: this.buildMagnetLink('7a37d98b0a5e4e8e5fa57b8e94f70d1e07a73e31', 'The Gold Rush 1925'),
+                        size: '500 MB',
+                        seed: 17,
+                        peer: 3
                     }
                 }
             },

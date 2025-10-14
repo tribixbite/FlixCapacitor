@@ -137,6 +137,66 @@ class SQLiteService {
             CREATE INDEX IF NOT EXISTS idx_watched_episodes_show ON watched_episodes(imdb_id);
             CREATE UNIQUE INDEX IF NOT EXISTS idx_watched_episodes_unique
                 ON watched_episodes(tvdb_id, season, episode);
+
+            -- Local media library table
+            CREATE TABLE IF NOT EXISTS local_media (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                file_path TEXT UNIQUE NOT NULL,
+                file_size INTEGER,
+                media_type TEXT CHECK(media_type IN ('movie', 'tvshow', 'other')),
+                title TEXT,
+                year INTEGER,
+                season INTEGER,
+                episode INTEGER,
+                imdb_id TEXT,
+                tmdb_id INTEGER,
+                poster_url TEXT,
+                backdrop_url TEXT,
+                genres TEXT,
+                rating REAL,
+                metadata_json TEXT,
+                last_modified INTEGER,
+                date_added INTEGER DEFAULT (strftime('%s','now')),
+                last_played INTEGER,
+                play_count INTEGER DEFAULT 0
+            );
+            CREATE INDEX IF NOT EXISTS idx_local_media_type ON local_media(media_type);
+            CREATE INDEX IF NOT EXISTS idx_local_media_title ON local_media(title);
+
+            -- Library scan history table
+            CREATE TABLE IF NOT EXISTS scan_history (
+                scan_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                scan_type TEXT,
+                folders_scanned TEXT,
+                items_found INTEGER,
+                items_matched INTEGER,
+                start_time INTEGER,
+                end_time INTEGER,
+                status TEXT CHECK(status IN ('running', 'completed', 'cancelled', 'error'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_scan_history_status ON scan_history(status);
+
+            -- Learning courses table
+            CREATE TABLE IF NOT EXISTS learning_courses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                provider TEXT,
+                subject_area TEXT,
+                description TEXT,
+                infohash TEXT,
+                magnet_link TEXT,
+                size_bytes INTEGER,
+                mirrors INTEGER,
+                downloaders INTEGER,
+                times_completed INTEGER,
+                date_added INTEGER,
+                date_modified INTEGER,
+                thumbnail_url TEXT,
+                provider_logo TEXT,
+                last_updated INTEGER DEFAULT (strftime('%s','now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_learning_provider ON learning_courses(provider);
+            CREATE INDEX IF NOT EXISTS idx_learning_subject ON learning_courses(subject_area);
         `;
 
         try {
