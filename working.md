@@ -2,6 +2,52 @@
 
 ### 🎯 Current Status
 
+**Second Round UI Fixes and Navigation Improvements** (✅ COMPLETED) (2025-10-14)
+- **Feature**: Fixed 8 additional UI/UX issues for improved user experience
+  - **Browse Dropdown Positioning** (✅ COMPLETED):
+    * Moved dropdown from center to left side of screen over Browse button
+    * Changed from `left: 50%; transform: translateX(-50%)` to `left: 0.5rem`
+    * Better UX - dropdown now appears directly above the button that triggered it
+  - **FAB Positioning Fix** (✅ COMPLETED):
+    * Added bottom margin to .detail-actions: `calc(var(--nav-height) + var(--safe-area-bottom) + 1rem)`
+    * FAB action buttons no longer block bottom navigation
+    * Proper clearance for safe interaction with both FAB and nav
+  - **Learning Tab Data Population** (✅ COMPLETED):
+    * Fixed demo CSV format to match Academic Torrents column structure
+    * Changed from lowercase (title, provider) to uppercase (TYPE, NAME, INFOHASH)
+    * Courses now populate correctly with 6 demo courses
+    * Includes MIT, Stanford, Harvard, Khan Academy, MIT Physics/Math content
+  - **Favorites UI Restoration** (✅ COMPLETED):
+    * Restored search bar at top of Favorites view
+    * Added category filter tabs: All/Movies/TV Shows/Anime/Courses
+    * Maintains Favorites/Watchlist tab switcher
+    * 3-tier UI: search bar → favorites/watchlist tabs → category filters
+    * Matches existing app UI patterns from other browsers
+  - **Image Loading Fixes** (✅ COMPLETED):
+    * Replaced via.placeholder.com with placehold.co for better reliability
+    * Updated all TV show placeholder images (Game of Thrones, Breaking Bad, etc.)
+    * Updated all anime placeholder images
+    * All images now load correctly with proper show names displayed
+  - **Library Scan Completion** (✅ COMPLETED):
+    * Added completion message: "✅ Scan Complete - Found X media files"
+    * Shows for 1.5 seconds before auto-refreshing library view
+    * Prevents UI hanging at scan completion
+    * Clear feedback when scan finishes successfully
+  - **Library Filter Customization** (✅ COMPLETED):
+    * Replaced Popular/Trending/Top Rated with folder-based filters
+    * New filters: All Folders/Movies/Downloads/DCIM/Videos
+    * More appropriate for local media library browsing context
+    * Matches actual Android media folder structure users expect
+  - **Files Modified**:
+    - index.html - Browse dropdown positioning CSS
+    - src/app/lib/mobile-ui-views.js - FAB margin, Favorites UI template, Library filters, scan completion
+    - src/app/lib/learning-service.js - Demo CSV format fix with correct column names
+    - src/app/lib/providers/tvshows-provider.js - placehold.co URLs
+    - src/app/lib/providers/anime-provider.js - placehold.co URLs
+  - **Build Status**: ✅ Build successful (433.21 kB main bundle)
+  - **Commit**: 35903f0 - "fix: resolve 8 UI/UX issues and improve navigation"
+  - **Status**: ✅ ALL 8 ISSUES RESOLVED AND TESTED
+
 **UI Bug Fixes and Polish** (✅ COMPLETED) (2025-10-14)
 - **Feature**: Fixed 7 critical UI issues and image loading problems
   - **Watchlist Tab Integration** (✅ COMPLETED):
