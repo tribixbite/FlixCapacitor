@@ -514,7 +514,7 @@ class PublicDomainProvider {
                         "Romance"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:0d1baad26e0099de2062c4252d53bb9e3d8ab128&dn=A%20Star%20is%20Born&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -546,7 +546,7 @@ class PublicDomainProvider {
                         "Action"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:6aa11ededb23c087968e7c1719c06998f3c7597b&dn=City%20Ninja&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -580,7 +580,7 @@ class PublicDomainProvider {
                         "Thriller"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:6ff9b1420a2a3e5c9f712b378453f02c8562ab3a&dn=Deep%20Red&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -614,7 +614,7 @@ class PublicDomainProvider {
                         "Family"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:ed1db2106b6391974656dfdf331191209d553448&dn=Escape%20from%20Sobibor&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -648,7 +648,7 @@ class PublicDomainProvider {
                         "History"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:d30cae2381daee43118a9ece07d17a93adc7dbbf&dn=Haxan&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -681,7 +681,7 @@ class PublicDomainProvider {
                         "Romance"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:23965a657ad0419b5032b26b64dfcb45176ec143&dn=Jane%20Eyre&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -714,7 +714,7 @@ class PublicDomainProvider {
                         "Crime"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:994b854bed53efa9c8e22551fbf396a44c9002cc&dn=My%20Boys%20are%20Good%20Boys&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -747,7 +747,7 @@ class PublicDomainProvider {
                         "Thriller"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:91998f231c9c3615b23d65fbf4eaef249f28576c&dn=Night%20of%20the%20Living%20Dead&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -780,7 +780,7 @@ class PublicDomainProvider {
                         "Romance"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:64450c9d407002913bad26c032522ea944f795a2&dn=Our%20Town&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -814,7 +814,7 @@ class PublicDomainProvider {
                         "Fantasy"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:e7cccb98f78d9cecdc28935e3e50355b6750de61&dn=Red%20Riding%20Hood&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -846,7 +846,7 @@ class PublicDomainProvider {
                         "Comedy"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:c8a691937492fb40a034b2898930b9ad403ee998&dn=Rock%20Rock%20Rock&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -879,7 +879,7 @@ class PublicDomainProvider {
                         "Crime"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:9cc6273db14e9bc9641906501cf31fe9b050e3ba&dn=Scarlet%20Street&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -911,7 +911,7 @@ class PublicDomainProvider {
                         "Action"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:6752a36af5fe40ebacb5cb743903921eef5e6a54&dn=Spirits%20of%20Bruce%20Lee&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -944,7 +944,7 @@ class PublicDomainProvider {
                         "Romance"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:d510a88e7672b1ab173c2154d84e02936d05b6ac&dn=Steamboat%20Bill&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -976,7 +976,7 @@ class PublicDomainProvider {
                         "Music"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:be4918b23d4f6c9fb85a1e6075f5cd20a266745e&dn=Sunny&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1010,7 +1010,7 @@ class PublicDomainProvider {
                         "Science Fiction"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:6d35dda32e9ae6a857b32dfa0df8dbdcb16e4696&dn=The%20Brain%20That%20Wouldnt%20Die&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1044,7 +1044,7 @@ class PublicDomainProvider {
                         "Comedy"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:f957b6da5de2d7ea9c02072baa64f2f2b14e6875&dn=The%20General&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1078,7 +1078,7 @@ class PublicDomainProvider {
                         "Science Fiction"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:6ddc4aa784ae517ecd3856e9c67732664502d758&dn=The%20Indestructible%20Man&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1112,7 +1112,7 @@ class PublicDomainProvider {
                         "Music"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:15e25d39acd293f402f79f16d77d7fa309c27f13&dn=The%20Kid&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1144,7 +1144,7 @@ class PublicDomainProvider {
                         "Documentary"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:c7939dcf99e58904fd584283f911917ba3ef7747&dn=The%20Master%20Max&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1178,7 +1178,7 @@ class PublicDomainProvider {
                         "Crime"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:0d82c8c8639021f75295497bfeab97ef61187f9c&dn=The%20Moonstone&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1211,7 +1211,7 @@ class PublicDomainProvider {
                         "Drama"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:6befa33fff8a64093599ab617d40ecb2c13e19d4&dn=The%20Naked%20Kiss&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1244,7 +1244,7 @@ class PublicDomainProvider {
                         "Adventure"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:a4d6c507996fe4aa3f8d60eb5386ef8debeb94ce&dn=The%20Phantom%20of%20the%20Opera&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1276,7 +1276,7 @@ class PublicDomainProvider {
                         "Animation"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:fff93830f8be121a663291adf299448990a16ec8&dn=The%20Snow%20Man&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1309,7 +1309,7 @@ class PublicDomainProvider {
                         "Thriller"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:b00b7db05db78ccade3863b0736c3fe6489a1508&dn=The%20Vampire%20Bat&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1342,7 +1342,7 @@ class PublicDomainProvider {
                         "Science Fiction"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:5eeb9b0b2235b31b8bddebb7ff6fa474d9205b62&dn=Things%20To%20Come&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1375,7 +1375,7 @@ class PublicDomainProvider {
                         "War"
                 ],
                 torrents: {
-                        720p: {
+                        "720p": {
                                 url: "magnet:?xt=urn:btih:79f73d67791a7668907ce17e90d536ecddc05348&dn=War%20Comes%20to%20America&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1386,7 +1386,6 @@ class PublicDomainProvider {
                 }
         }
 ];
-    }
     }
 
     async search(query) {
