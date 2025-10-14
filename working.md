@@ -42,12 +42,16 @@ Navigation complete
     - All traffic routed through proxy (peers, DHT, trackers)
     - Settings stored in Capacitor Preferences
     - Loaded automatically when streaming starts
+    - **Dynamic Reload**: Settings take effect immediately without app restart via `reloadProxySettings()` method
   - **Files Changed**:
     - Plugin: `TorrentSession.kt:12-36` - ProxySettings data class and enum
     - Plugin: `TorrentSession.kt:101-140` - Proxy configuration logic
+    - Plugin: `TorrentSession.kt:566-598` - Dynamic updateProxySettings() method
+    - Plugin: `TorrentStreamingService.kt:51-57` - Static reloadProxySettings() method
     - Plugin: `TorrentStreamingService.kt:233,666-714` - Load proxy settings from preferences
+    - Plugin: `TorrentStreamerPlugin.kt:180-191` - reloadProxySettings() exposed to JS
     - UI: `mobile-ui-views.js:853-925` - Settings UI section
-    - UI: `mobile-ui-views.js:1158-1235` - Event handlers and persistence
+    - UI: `mobile-ui-views.js:1162-1242` - Event handlers with dynamic reload call
   - **Supported Proxy Types**:
     - SOCKS4 - SOCKS version 4
     - SOCKS5 - SOCKS version 5 (with optional auth)
