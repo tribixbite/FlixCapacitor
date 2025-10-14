@@ -1244,16 +1244,12 @@ export class MobileUIController {
         );
     }
 
-    showLearning() {
+    async showLearning() {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Learning', 'learning');
 
-        const contentGrid = document.querySelector('.content-grid');
-        contentGrid.innerHTML = UITemplates.emptyState(
-            '🎓',
-            'Learning Content',
-            'Educational videos and courses from Academic Torrents'
-        );
+        // Load real courses from Academic Torrents
+        await this.renderRealCourses();
     }
 
     showWatchlist() {
@@ -1595,6 +1591,87 @@ export class MobileUIController {
                 '⚠️',
                 'Failed to Load Movies',
                 'Please check your connection and try again'
+            );
+        }
+    }
+
+    async renderRealCourses() {
+        const contentGrid = document.querySelector('.content-grid');
+
+        try {
+            // Get learning service
+            const learningService = window.LearningService;
+            if (!learningService) {
+                console.error('LearningService not loaded');
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⚠️',
+                    'Service Error',
+                    'Learning service failed to load'
+                );
+                return;
+            }
+
+            // Show loading state
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⏳',
+                'Loading Courses',
+                'Fetching educational content from Academic Torrents...'
+            );
+
+            // Check if we have courses, if not sync them
+            const courseCount = await learningService.getCachedCourseCount();
+            if (courseCount === 0) {
+                console.log('No courses in database, syncing from Academic Torrents...');
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⏳',
+                    'First Time Setup',
+                    'Downloading course catalog from Academic Torrents... This may take a minute.'
+                );
+                await learningService.syncCourses();
+            }
+
+            // Fetch courses (limit to 50 for initial load)
+            const courses = await learningService.getCourses({ limit: 50 });
+            console.log(`Loaded ${courses.length} courses`);
+
+            // Transform courses to match content card format
+            const coursesFormatted = courses.map(course => ({
+                imdb_id: `course_${course.id}`,
+                title: course.title,
+                year: course.year || 'N/A',
+                rating: course.rating || 'N/A',
+                images: {
+                    poster: course.thumbnail_url || course.provider_logo || '/img/learning-default.png',
+                    fanart: course.thumbnail_url || '/img/learning-default.png'
+                },
+                genres: [course.subject_area || 'Education'],
+                synopsis: course.description || `Educational course from ${course.provider}`,
+                provider: course.provider,
+                subject_area: course.subject_area
+            }));
+
+            // Store courses for detail view
+            coursesFormatted.forEach(course => {
+                this.currentMovieData.set(course.imdb_id, course);
+            });
+
+            // Render courses
+            if (coursesFormatted.length > 0) {
+                contentGrid.innerHTML = UITemplates.contentGrid(coursesFormatted);
+                this.attachCardHandlers();
+            } else {
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '📚',
+                    'No Courses Available',
+                    'Course database is being populated. Please try again later.'
+                );
+            }
+        } catch (error) {
+            console.error('Failed to load courses:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load Courses',
+                error.message || 'Please check your connection and try again'
             );
         }
     }
