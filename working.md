@@ -21,18 +21,36 @@
       * Implemented showLearning() - Empty state with graduation cap icon
     - Navigation uses existing .nav-item click handlers from setupNavigation()
     - Active state managed with CSS classes
-  - **Navigation Routes**:
-    - Browse (🎬) - Shows movies browser (existing showMovies())
-    - Favorites (❤️) - Shows favorites empty state
-    - Library (📁) - Shows library empty state with scan prompt
-    - Learning (🎓) - Shows learning empty state
-  - **CSS Styling** (already in root index.html):
-    - Fixed positioning with safe area insets
-    - Backdrop blur effect (backdrop-filter: blur(20px))
-    - Flexbox layout with space-around distribution
-    - Active state: accent color (#e50914)
-    - Height: calc(var(--nav-height) + var(--safe-area-bottom))
-    - z-index: 100
+  - **Navigation Structure** (5 tabs):
+    - Browse (🎬) with dropdown:
+      * Movies - Public domain movies
+      * TV Shows - TV show browser
+      * Anime - Anime browser
+    - Favorites (❤️) - Saved favorite content
+    - Library (📁) - Local media files (scan functionality)
+    - Learning (🎓) - Educational videos from Academic Torrents
+    - Settings (⚙️) - App configuration
+  - **Browse Dropdown Implementation**:
+    - Toggle on Browse tab click
+    - Absolute positioning above nav bar
+    - Animated fade-in with translateY
+    - Close on outside click or nav change
+    - Active state for selected browse type
+    - Elevated background (#2a2a2a) with shadow
+  - **CSS Styling**:
+    - Navigation bar:
+      * Fixed positioning with safe area insets
+      * Backdrop blur effect (backdrop-filter: blur(20px))
+      * Flexbox layout with space-around distribution
+      * Active state: accent color (#e50914)
+      * Height: calc(var(--nav-height) + var(--safe-area-bottom))
+      * z-index: 100
+    - Browse dropdown:
+      * .nav-item-dropdown for relative positioning
+      * .browse-dropdown with absolute bottom: 100%
+      * .browse-dropdown-item with hover effects
+      * dropdownFadeIn animation (0.2s ease)
+      * z-index: 200 (above navigation)
   - **Files Modified**:
     - index.html (root) - Updated navigation HTML structure
     - src/app/lib/mobile-ui-views.js - Added showFavorites(), showLibrary(), showLearning() methods
@@ -43,8 +61,15 @@
     - src/app/index.html edits - Not used by Vite build
   - **Status**: ✅ PRODUCTION READY - Properly integrated with MobileUIController!
   - **Commits**:
+    - f6243ef - "fix: restore Settings, add Browse dropdown with Movies/TV/Anime"
     - 822380e - "feat: implement mobile bottom navigation with Browse/Favorites/Library/Learning"
     - 28ed467 - "fix: update build script with FlixCapacitor branding and package name"
+  - **Lessons Learned**:
+    - ❌ Don't blindly implement without reviewing existing functionality
+    - ❌ Don't remove critical features (Settings button)
+    - ✅ Always review what's already there before making changes
+    - ✅ Extend and enhance existing patterns, don't replace them
+    - ✅ Mobile navigation should have 3-5 tabs max (we have 5)
 
 **Public Domain Movies - High-Rated Filter** (✅ COMPLETED) (2025-10-14)
 - **Quality Filter**: Reduced collection to only movies with IMDb rating ≥7.0/10
