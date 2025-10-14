@@ -175,6 +175,41 @@ const componentStyles = `
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
 }
 
+/* Favorite Button */
+.content-card-favorite {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 36px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s;
+}
+
+.content-card-favorite:active {
+    transform: scale(0.9);
+}
+
+.content-card-favorite .favorite-icon {
+    font-size: 1.2rem;
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition: all 0.2s;
+}
+
+.content-card-favorite.favorited .favorite-icon {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
 /* Loading State */
 .content-loading {
     display: flex;
@@ -662,6 +697,9 @@ export const UITemplates = {
                      src="${item.images?.poster || item.poster || 'https://via.placeholder.com/300x450/1f1f1f/808080?text=No+Poster'}"
                      alt="${item.title}"
                      loading="lazy">
+                <button class="content-card-favorite" data-id="${item.imdb_id || item.tvdb_id}" title="Add to Favorites">
+                    <span class="favorite-icon">❤️</span>
+                </button>
                 ${item.quality ? `<div class="content-card-badge hd">${item.quality}</div>` : ''}
                 ${torrentHealth ? `
                     <div class="content-card-health" style="position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; display: flex; align-items: center; gap: 6px; z-index: 2;">
@@ -748,6 +786,83 @@ export const UITemplates = {
             <div class="empty-title">${title}</div>
             <div class="empty-message">${message}</div>
         </div>
+    `,
+
+    // Library Empty State with Scan Button
+    libraryEmptyState: () => `
+        <div class="content-empty">
+            <div class="empty-icon">📁</div>
+            <div class="empty-title">Library is Empty</div>
+            <div class="empty-message">Scan your device for local media files to build your library</div>
+            <button class="library-scan-btn" id="library-scan-btn">
+                <span>🔍</span>
+                <span>Scan Library</span>
+            </button>
+        </div>
+        <style>
+        .library-scan-btn {
+            margin-top: 1.5rem;
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-md);
+        }
+        .library-scan-btn:active {
+            transform: scale(0.95);
+        }
+        </style>
+    `,
+
+    // Library Scanning State
+    libraryScanningState: (current, total) => `
+        <div class="content-empty">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-title">Scanning Library</div>
+            <div class="scan-progress-text">${current} / ${total} files</div>
+            <div class="scan-progress-bar">
+                <div class="scan-progress-bar-fill" style="width: 0%;"></div>
+            </div>
+            <div class="scan-current-file">Scanning...</div>
+        </div>
+        <style>
+        .scan-progress-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin: 1rem 0 0.5rem;
+        }
+        .scan-progress-bar {
+            width: 80%;
+            max-width: 400px;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .scan-progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.3s ease;
+        }
+        .scan-current-file {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            margin-top: 1rem;
+            max-width: 80%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        </style>
     `,
 
     // Detail View
@@ -1202,46 +1317,277 @@ export class MobileUIController {
         }
     }
 
-    showShows() {
+    async showShows() {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('TV Shows', 'shows');
 
-        setTimeout(() => {
-            this.renderMockShows();
-        }, 800);
+        const contentGrid = document.querySelector('.content-grid');
+
+        try {
+            const tvShowsProvider = window.TVShowsProvider;
+            if (!tvShowsProvider) {
+                console.error('TVShowsProvider not loaded');
+                setTimeout(() => {
+                    this.renderMockShows();
+                }, 800);
+                return;
+            }
+
+            // Show loading state
+            contentGrid.innerHTML = UITemplates.loadingState('Loading TV shows...');
+
+            // Fetch TV shows
+            const shows = await tvShowsProvider.getPopular();
+
+            // Store shows for detail view
+            shows.forEach(show => {
+                this.currentMovieData.set(show.tvdb_id || show.imdb_id, show);
+            });
+
+            // Render TV shows
+            contentGrid.innerHTML = UITemplates.contentGrid(shows);
+            this.attachCardHandlers();
+            await this.updateFavoriteButtonStates();
+
+        } catch (error) {
+            console.error('Failed to load TV shows:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load TV Shows',
+                error.message || 'Please try again'
+            );
+        }
     }
 
-    showAnime() {
+    async showAnime() {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Anime', 'anime');
 
-        setTimeout(() => {
-            this.renderMockAnime();
-        }, 800);
+        const contentGrid = document.querySelector('.content-grid');
+
+        try {
+            const animeProvider = window.AnimeProvider;
+            if (!animeProvider) {
+                console.error('AnimeProvider not loaded');
+                setTimeout(() => {
+                    this.renderMockAnime();
+                }, 800);
+                return;
+            }
+
+            // Show loading state
+            contentGrid.innerHTML = UITemplates.loadingState('Loading anime...');
+
+            // Fetch anime
+            const anime = await animeProvider.getPopular();
+
+            // Store anime for detail view
+            anime.forEach(item => {
+                this.currentMovieData.set(item.tvdb_id || item.imdb_id, item);
+            });
+
+            // Render anime
+            contentGrid.innerHTML = UITemplates.contentGrid(anime);
+            this.attachCardHandlers();
+            await this.updateFavoriteButtonStates();
+
+        } catch (error) {
+            console.error('Failed to load anime:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load Anime',
+                error.message || 'Please try again'
+            );
+        }
     }
 
-    showFavorites() {
+    async showFavorites() {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Favorites', 'favorites');
 
         const contentGrid = document.querySelector('.content-grid');
-        contentGrid.innerHTML = UITemplates.emptyState(
-            '❤️',
-            'No Favorites Yet',
-            'Mark movies and shows as favorites to see them here'
-        );
+
+        try {
+            const favoritesService = window.FavoritesService;
+            if (!favoritesService) {
+                console.error('FavoritesService not loaded');
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⚠️',
+                    'Service Error',
+                    'Favorites service failed to load'
+                );
+                return;
+            }
+
+            // Show loading state
+            contentGrid.innerHTML = UITemplates.loadingState('Loading favorites...');
+
+            // Fetch favorites
+            const favorites = await favoritesService.getFavorites();
+
+            if (favorites.length === 0) {
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '❤️',
+                    'No Favorites Yet',
+                    'Mark movies and shows as favorites to see them here'
+                );
+                return;
+            }
+
+            // Store favorites for detail view
+            favorites.forEach(item => {
+                this.currentMovieData.set(item.imdb_id || item.id, item);
+            });
+
+            // Render favorites grid
+            contentGrid.innerHTML = UITemplates.contentGrid(favorites);
+            this.attachCardHandlers();
+            await this.updateFavoriteButtonStates();
+
+        } catch (error) {
+            console.error('Failed to load favorites:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load Favorites',
+                error.message || 'Please try again'
+            );
+        }
     }
 
-    showLibrary() {
+    async showLibrary() {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Library', 'library');
 
         const contentGrid = document.querySelector('.content-grid');
-        contentGrid.innerHTML = UITemplates.emptyState(
-            '📁',
-            'Library is Empty',
-            'Scan your device for local media files to build your library'
-        );
+
+        try {
+            const libraryService = window.LibraryService;
+            if (!libraryService) {
+                console.error('LibraryService not loaded');
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⚠️',
+                    'Service Error',
+                    'Library service failed to load'
+                );
+                return;
+            }
+
+            // Show loading state
+            contentGrid.innerHTML = UITemplates.loadingState('Loading library...');
+
+            // Fetch library items
+            const libraryItems = await libraryService.getAllMedia({ limit: 100 });
+
+            if (libraryItems.length === 0) {
+                // Show empty state with scan button
+                contentGrid.innerHTML = UITemplates.libraryEmptyState();
+                this.attachLibraryScanHandler();
+                return;
+            }
+
+            // Transform library items to content card format
+            const itemsFormatted = libraryItems.map(item => ({
+                imdb_id: item.imdb_id || `local_${item.media_id}`,
+                title: item.title,
+                year: item.year || 'Unknown',
+                rating: item.rating || 'N/A',
+                images: {
+                    poster: item.poster_url || '/img/video-placeholder.png',
+                    fanart: item.backdrop_url || '/img/video-placeholder.png'
+                },
+                genres: item.genres ? JSON.parse(item.genres) : [],
+                synopsis: item.synopsis || `Local media file: ${item.original_filename}`,
+                file_path: item.file_path
+            }));
+
+            // Store items for detail view
+            itemsFormatted.forEach(item => {
+                this.currentMovieData.set(item.imdb_id, item);
+            });
+
+            // Render library items
+            contentGrid.innerHTML = UITemplates.contentGrid(itemsFormatted);
+            this.attachCardHandlers();
+            await this.updateFavoriteButtonStates();
+
+        } catch (error) {
+            console.error('Failed to load library:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load Library',
+                error.message || 'Please try again'
+            );
+        }
+    }
+
+    /**
+     * Attach handler for library scan button
+     */
+    attachLibraryScanHandler() {
+        const scanButton = document.querySelector('#library-scan-btn');
+        if (scanButton) {
+            scanButton.addEventListener('click', async () => {
+                await this.startLibraryScan();
+            });
+        }
+    }
+
+    /**
+     * Start library scan process
+     */
+    async startLibraryScan() {
+        const libraryService = window.LibraryService;
+        if (!libraryService) {
+            console.error('LibraryService not available');
+            return;
+        }
+
+        const contentGrid = document.querySelector('.content-grid');
+
+        // TODO: Add folder picker to select directories
+        // For now, scan common Android media directories
+        const commonPaths = [
+            'Movies',
+            'Download',
+            'DCIM',
+            'Videos'
+        ];
+
+        try {
+            // Show scanning UI
+            contentGrid.innerHTML = UITemplates.libraryScanningState(0, 0);
+
+            let totalFiles = 0;
+            let currentFile = 0;
+
+            const results = await libraryService.scanFolders(commonPaths, (current, total, filename) => {
+                currentFile = current;
+                totalFiles = total || currentFile;
+
+                // Update progress UI
+                const progress = totalFiles > 0 ? Math.round((currentFile / totalFiles) * 100) : 0;
+                const progressText = document.querySelector('.scan-progress-text');
+                const progressBar = document.querySelector('.scan-progress-bar-fill');
+                const currentFileText = document.querySelector('.scan-current-file');
+
+                if (progressText) progressText.textContent = `${currentFile} / ${totalFiles} files`;
+                if (progressBar) progressBar.style.width = `${progress}%`;
+                if (currentFileText) currentFileText.textContent = filename || 'Scanning...';
+            });
+
+            console.log('Scan complete:', results);
+
+            // Refresh library view
+            await this.showLibrary();
+
+        } catch (error) {
+            console.error('Library scan failed:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Scan Failed',
+                error.message || 'Failed to scan media folders. Please check storage permissions.'
+            );
+        }
     }
 
     async showLearning() {
@@ -1252,16 +1598,57 @@ export class MobileUIController {
         await this.renderRealCourses();
     }
 
-    showWatchlist() {
+    async showWatchlist() {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Watchlist', 'watchlist');
 
         const contentGrid = document.querySelector('.content-grid');
-        contentGrid.innerHTML = UITemplates.emptyState(
-            '⭐',
-            'Your Watchlist is Empty',
-            'Add movies and shows to keep track of what you want to watch'
-        );
+
+        try {
+            const watchlistService = window.WatchlistService;
+            if (!watchlistService) {
+                console.error('WatchlistService not loaded');
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⚠️',
+                    'Service Error',
+                    'Watchlist service failed to load'
+                );
+                return;
+            }
+
+            // Show loading state
+            contentGrid.innerHTML = UITemplates.loadingState('Loading watchlist...');
+
+            // Fetch watchlist items
+            const watchlistItems = await watchlistService.getWatchlist();
+
+            if (watchlistItems.length === 0) {
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⭐',
+                    'Your Watchlist is Empty',
+                    'Add movies and shows to keep track of what you want to watch'
+                );
+                return;
+            }
+
+            // Store items for detail view
+            watchlistItems.forEach(item => {
+                this.currentMovieData.set(item.imdb_id || item.id, item);
+            });
+
+            // Render watchlist items
+            contentGrid.innerHTML = UITemplates.contentGrid(watchlistItems);
+            this.attachCardHandlers();
+            await this.updateFavoriteButtonStates();
+
+        } catch (error) {
+            console.error('Failed to load watchlist:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load Watchlist',
+                error.message || 'Please try again'
+            );
+        }
     }
 
     showSettings() {
@@ -1585,6 +1972,7 @@ export class MobileUIController {
 
             // Add click handlers
             this.attachCardHandlers();
+            await this.updateFavoriteButtonStates();
         } catch (error) {
             console.error('Failed to load movies:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
@@ -1659,6 +2047,7 @@ export class MobileUIController {
             if (coursesFormatted.length > 0) {
                 contentGrid.innerHTML = UITemplates.contentGrid(coursesFormatted);
                 this.attachCardHandlers();
+                await this.updateFavoriteButtonStates();
             } else {
                 contentGrid.innerHTML = UITemplates.emptyState(
                     '📚',
@@ -1676,7 +2065,7 @@ export class MobileUIController {
         }
     }
 
-    renderMockMovies() {
+    async renderMockMovies() {
         // Fallback to mock data if needed
         const mockMovies = this.getMockMovies();
         const contentGrid = document.querySelector('.content-grid');
@@ -1684,31 +2073,110 @@ export class MobileUIController {
 
         // Add click handlers
         this.attachCardHandlers();
+        await this.updateFavoriteButtonStates();
     }
 
-    renderMockShows() {
+    async renderMockShows() {
         const mockShows = this.getMockShows();
         const contentGrid = document.querySelector('.content-grid');
         contentGrid.innerHTML = UITemplates.contentGrid(mockShows);
 
         this.attachCardHandlers();
+        await this.updateFavoriteButtonStates();
     }
 
-    renderMockAnime() {
+    async renderMockAnime() {
         const mockAnime = this.getMockAnime();
         const contentGrid = document.querySelector('.content-grid');
         contentGrid.innerHTML = UITemplates.contentGrid(mockAnime);
 
         this.attachCardHandlers();
+        await this.updateFavoriteButtonStates();
     }
 
     attachCardHandlers() {
+        // Handle content card clicks
         document.querySelectorAll('.content-card').forEach(card => {
-            card.addEventListener('click', () => {
+            card.addEventListener('click', (e) => {
+                // Don't open detail if clicking favorite button
+                if (e.target.closest('.content-card-favorite')) {
+                    return;
+                }
                 const id = card.dataset.id;
                 this.showDetail(id);
             });
         });
+
+        // Handle favorite button clicks
+        this.setupFavoriteHandlers();
+    }
+
+    /**
+     * Setup favorite button click handlers
+     */
+    setupFavoriteHandlers() {
+        document.querySelectorAll('.content-card-favorite').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+
+                const id = button.dataset.id;
+                const favoritesService = window.FavoritesService;
+
+                if (!favoritesService) {
+                    console.error('FavoritesService not available');
+                    return;
+                }
+
+                try {
+                    const isFavorited = await favoritesService.isFavorite(id);
+
+                    if (isFavorited) {
+                        // Remove from favorites
+                        await favoritesService.removeFavorite(id);
+                        button.classList.remove('favorited');
+                        button.title = 'Add to Favorites';
+
+                        // If we're on the favorites page, refresh the view
+                        if (window.location.hash === '#favorites') {
+                            this.showFavorites();
+                        }
+                    } else {
+                        // Add to favorites
+                        const item = this.currentMovieData.get(id);
+                        if (item) {
+                            await favoritesService.addFavorite(item);
+                            button.classList.add('favorited');
+                            button.title = 'Remove from Favorites';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to toggle favorite:', error);
+                }
+            });
+        });
+    }
+
+    /**
+     * Update favorite button states based on actual favorite status
+     */
+    async updateFavoriteButtonStates() {
+        const favoritesService = window.FavoritesService;
+        if (!favoritesService) return;
+
+        const buttons = document.querySelectorAll('.content-card-favorite');
+        for (const button of buttons) {
+            const id = button.dataset.id;
+            const isFavorited = await favoritesService.isFavorite(id);
+
+            if (isFavorited) {
+                button.classList.add('favorited');
+                button.title = 'Remove from Favorites';
+            } else {
+                button.classList.remove('favorited');
+                button.title = 'Add to Favorites';
+            }
+        }
     }
 
     showDetail(id) {

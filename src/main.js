@@ -100,7 +100,12 @@ import './app/lib/settings-manager.js';
 // Import native torrent client (replaces WebTorrent)
 import './app/lib/native-torrent-client.js';
 import './app/lib/providers/public-domain-provider.js';
+import './app/lib/providers/tvshows-provider.js';
+import './app/lib/providers/anime-provider.js';
 import './app/lib/learning-service.js';
+import './app/lib/favorites-service.js';
+import './app/lib/library-service.js';
+import './app/lib/watchlist-service.js';
 import MobileUIController from './app/lib/mobile-ui-views.js';
 
 // Import API bridge for TMDB, OMDb, OpenSubtitles

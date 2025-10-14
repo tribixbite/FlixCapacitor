@@ -210,6 +210,9 @@ class FilenameParser {
 // Export as singleton
 const filenameParser = new FilenameParser();
 
+// ES6 export
+export default filenameParser;
+
 // Node.js/CommonJS export for backend
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = filenameParser;
