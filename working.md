@@ -2,6 +2,37 @@
 
 ### 🎯 Current Status
 
+**Academic Torrents Proxy Integration** (✅ COMPLETED) (2025-10-14)
+- **Feature**: Route Academic Torrents through streaming server to bypass CORS
+  - **Proxy Routing Implementation** (✅ COMPLETED):
+    * Modified fetchCoursesCSV to use streaming server as proxy
+    * Endpoint: GET `${streamingServerUrl}/proxy/academic-torrents`
+    * Gets streaming server URL from SettingsManager (defaults to localhost:3001/api)
+    * Eliminates CORS issues by routing through backend server
+    * Server-to-server communication instead of browser-to-server
+  - **Fallback Strategy** (✅ COMPLETED):
+    * Primary: Fetch via streaming server proxy
+    * Secondary: Attempt direct fetch (will fail due to CORS)
+    * Tertiary: Use 6 demo courses with fake infohashes
+    * Graceful degradation ensures app always works
+  - **Real Course Support** (⏳ PENDING SERVER):
+    * App ready to fetch real Academic Torrents catalog
+    * Requires streaming server to implement `/proxy/academic-torrents` endpoint
+    * See STREAMING_SERVER_API.md for implementation details
+    * Once implemented, will display 100s of real courses with valid torrents
+  - **Documentation** (✅ COMPLETED):
+    * Created STREAMING_SERVER_API.md with endpoint specification
+    * Includes Node.js/Express example implementation
+    * Documents CSV format and expected behavior
+    * Explains fallback strategy and benefits
+  - **Files Modified**:
+    - src/app/lib/learning-service.js - Proxy routing logic
+  - **Files Created**:
+    - STREAMING_SERVER_API.md - Server endpoint documentation
+  - **Build Status**: ✅ Build successful (435.52 kB main bundle)
+  - **Commit**: d7f3b6c - "feat: route Academic Torrents through streaming server proxy"
+  - **Status**: ✅ CLIENT-SIDE COMPLETE, PENDING SERVER ENDPOINT
+
 **FAB Clearance and Playback UX Improvements** (✅ COMPLETED) (2025-10-14)
 - **Feature**: Final FAB positioning fix and improved demo course playback experience
   - **FAB Positioning - Ultimate Fix** (✅ COMPLETED):
