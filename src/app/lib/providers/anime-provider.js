@@ -65,8 +65,8 @@ class AnimeProvider {
                 num_seasons: 1,
                 rating: { percentage: 90 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Death+Note'
+                    poster: 'https://placehold.co/300x450/16213e/e50914?text=Anime',
+                    fanart: 'https://placehold.co/1280x720/1f1f1f/e50914?text=Death+Note'
                 },
                 genres: ['Anime', 'Mystery', 'Thriller'],
                 synopsis: 'An intelligent high school student goes on a secret crusade to eliminate criminals after discovering a supernatural notebook.'
@@ -80,8 +80,8 @@ class AnimeProvider {
                 num_seasons: 4,
                 rating: { percentage: 92 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Attack+on+Titan'
+                    poster: 'https://placehold.co/300x450/16213e/e50914?text=Anime',
+                    fanart: 'https://placehold.co/1280x720/1f1f1f/e50914?text=Attack+on+Titan'
                 },
                 genres: ['Anime', 'Action', 'Fantasy'],
                 synopsis: 'After his hometown is destroyed and his mother is killed, young Eren Jaeger vows to cleanse the earth of the giant humanoid Titans.'
@@ -95,8 +95,8 @@ class AnimeProvider {
                 num_seasons: 1,
                 rating: { percentage: 93 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Fullmetal+Alchemist'
+                    poster: 'https://placehold.co/300x450/16213e/e50914?text=Anime',
+                    fanart: 'https://placehold.co/1280x720/1f1f1f/e50914?text=Fullmetal+Alchemist'
                 },
                 genres: ['Anime', 'Adventure', 'Fantasy'],
                 synopsis: 'Two brothers search for a Philosopher\'s Stone after an attempt to revive their deceased mother goes awry and leaves them in damaged physical forms.'
@@ -110,8 +110,8 @@ class AnimeProvider {
                 num_seasons: 2,
                 rating: { percentage: 89 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=One+Punch+Man'
+                    poster: 'https://placehold.co/300x450/16213e/e50914?text=Anime',
+                    fanart: 'https://placehold.co/1280x720/1f1f1f/e50914?text=One+Punch+Man'
                 },
                 genres: ['Anime', 'Action', 'Comedy'],
                 synopsis: 'The story of Saitama, a hero who can defeat any opponent with a single punch, but seeks to find a worthy opponent after growing bored.'
@@ -125,8 +125,8 @@ class AnimeProvider {
                 num_seasons: 6,
                 rating: { percentage: 87 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=My+Hero+Academia'
+                    poster: 'https://placehold.co/300x450/16213e/e50914?text=Anime',
+                    fanart: 'https://placehold.co/1280x720/1f1f1f/e50914?text=My+Hero+Academia'
                 },
                 genres: ['Anime', 'Action', 'Adventure'],
                 synopsis: 'A superhero-admiring boy enrolls in a prestigious hero academy and learns what it really means to be a hero, despite being born without superpowers.'
@@ -140,8 +140,8 @@ class AnimeProvider {
                 num_seasons: 3,
                 rating: { percentage: 88 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/16213e/e50914?text=Anime',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Demon+Slayer'
+                    poster: 'https://placehold.co/300x450/16213e/e50914?text=Anime',
+                    fanart: 'https://placehold.co/1280x720/1f1f1f/e50914?text=Demon+Slayer'
                 },
                 genres: ['Anime', 'Action', 'Fantasy'],
                 synopsis: 'A family is attacked by demons and only two members survive - Tanjiro and his sister who is turning into a demon slowly.'

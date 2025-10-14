@@ -65,8 +65,8 @@ class TVShowsProvider {
                 num_seasons: 8,
                 rating: { percentage: 92 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=Game+of+Thrones',
-                    fanart: 'https://via.placeholder.com/1280x720/1a1a2e/e50914?text=Game+of+Thrones'
+                    poster: 'https://placehold.co/300x450/1a1a2e/e50914?text=Game+of+Thrones',
+                    fanart: 'https://placehold.co/1280x720/1a1a2e/e50914?text=Game+of+Thrones'
                 },
                 genres: ['Drama', 'Fantasy', 'Adventure'],
                 synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
@@ -80,8 +80,8 @@ class TVShowsProvider {
                 num_seasons: 5,
                 rating: { percentage: 96 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=Breaking+Bad',
-                    fanart: 'https://via.placeholder.com/1280x720/1a1a2e/e50914?text=Breaking+Bad'
+                    poster: 'https://placehold.co/300x450/1a1a2e/e50914?text=Breaking+Bad',
+                    fanart: 'https://placehold.co/1280x720/1a1a2e/e50914?text=Breaking+Bad'
                 },
                 genres: ['Crime', 'Drama', 'Thriller'],
                 synopsis: 'A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student.'
@@ -95,8 +95,8 @@ class TVShowsProvider {
                 num_seasons: 8,
                 rating: { percentage: 86 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=TV+Show',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Dexter'
+                    poster: 'https://placehold.co/300x450/1a1a2e/e50914?text=Dexter',
+                    fanart: 'https://placehold.co/1280x720/1a1a2e/e50914?text=Dexter'
                 },
                 genres: ['Crime', 'Drama', 'Mystery'],
                 synopsis: 'By day, mild-mannered Dexter is a blood-spatter analyst for the Miami police. But at night, he is a serial killer who only targets other murderers.'
@@ -110,8 +110,8 @@ class TVShowsProvider {
                 num_seasons: 4,
                 rating: { percentage: 91 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=TV+Show',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Sherlock'
+                    poster: 'https://placehold.co/300x450/1a1a2e/e50914?text=Sherlock',
+                    fanart: 'https://placehold.co/1280x720/1a1a2e/e50914?text=Sherlock'
                 },
                 genres: ['Crime', 'Drama', 'Mystery'],
                 synopsis: 'A modern update finds the famous sleuth and his doctor partner solving crime in 21st century London.'
@@ -125,8 +125,8 @@ class TVShowsProvider {
                 num_seasons: 9,
                 rating: { percentage: 83 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=TV+Show',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=How+I+Met+Your+Mother'
+                    poster: 'https://placehold.co/300x450/1a1a2e/e50914?text=HIMYM',
+                    fanart: 'https://placehold.co/1280x720/1a1a2e/e50914?text=HIMYM'
                 },
                 genres: ['Comedy', 'Romance'],
                 synopsis: 'A father recounts to his children - through a series of flashbacks - the journey he and his four best friends took leading up to him meeting their mother.'
@@ -140,8 +140,8 @@ class TVShowsProvider {
                 num_seasons: 7,
                 rating: { percentage: 91 },
                 images: {
-                    poster: 'https://via.placeholder.com/300x450/1a1a2e/e50914?text=TV+Show',
-                    fanart: 'https://via.placeholder.com/1280x720/1f1f1f/e50914?text=Rick+and+Morty'
+                    poster: 'https://placehold.co/300x450/1a1a2e/e50914?text=Rick+and+Morty',
+                    fanart: 'https://placehold.co/1280x720/1a1a2e/e50914?text=Rick+and+Morty'
                 },
                 genres: ['Animation', 'Comedy', 'Sci-Fi'],
                 synopsis: 'An animated series that follows the exploits of a super scientist and his not-so-bright grandson.'

@@ -1,0 +1,263 @@
+[
+  {
+    "title": "A Star is Born",
+    "currentYear": 2018,
+    "actualYear": 1937,
+    "actualTitle": "A Star Is Born",
+    "imdbId": "tt0029606",
+    "rating": 7.3,
+    "plot": "Young Esther Victoria Blodgett comes to Hollywood with dreams of stardom and achieves them only with the help of alcoholic leading man Norman Maine, whose best days are behind him.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "City Ninja",
+    "currentYear": 1988,
+    "actualYear": 1985,
+    "actualTitle": "Tou qing ke",
+    "imdbId": "tt0089690",
+    "rating": 4.2,
+    "plot": "A tournament fighter becomes involved in the search for a valuable pendant.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "Deep Red",
+    "currentYear": 1975,
+    "actualYear": 1975,
+    "actualTitle": "Deep Red",
+    "imdbId": "tt0073582",
+    "rating": 7.5,
+    "plot": "A jazz pianist and a wisecracking journalist are pulled into a complex web of mystery after the former witnesses the brutal murder of a psychic.",
+    "status": "correct"
+  },
+  {
+    "title": "Escape from Sobibor",
+    "currentYear": 1987,
+    "actualYear": 1976,
+    "actualTitle": "Escape from Angola",
+    "imdbId": "tt0074492",
+    "rating": 4.1,
+    "plot": "A farmer and his family must flee from Angolan rebels by escaping through hazardous unchartered territory. .",
+    "status": "wrong_year"
+  },
+  {
+    "title": "Haxan",
+    "currentYear": 1922,
+    "actualYear": 1922,
+    "actualTitle": "Häxan",
+    "imdbId": "tt0013257",
+    "rating": 7.6,
+    "plot": "Fictionalized documentary showing the evolution of witchcraft, from its pagan roots to its confusion with hysteria in Eastern Europe.",
+    "status": "correct"
+  },
+  {
+    "title": "Jane Eyre",
+    "currentYear": 1997,
+    "actualYear": 1943,
+    "actualTitle": "Jane Eyre",
+    "imdbId": "tt0036969",
+    "rating": 7.5,
+    "plot": "After a harsh childhood, orphan Jane Eyre is hired by Edward Rochester, the brooding lord of a mysterious manor house, to care for his young daughter.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "My Boys are Good Boys",
+    "currentYear": 1978,
+    "actualYear": 1979,
+    "actualTitle": "My Boys Are Good Boys",
+    "imdbId": "tt0077962",
+    "rating": 4.5,
+    "plot": "Teenagers plot the robbery of an armored car.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "Night of the Living Dead",
+    "currentYear": 1968,
+    "actualYear": 1968,
+    "actualTitle": "Night of the Living Dead",
+    "imdbId": "tt0063350",
+    "rating": 7.8,
+    "plot": "A ragtag group of Pennsylvanians barricade themselves in an old farmhouse to remain safe from a horde of flesh-eating ghouls that are ravaging the Northeast of the United States.",
+    "status": "correct"
+  },
+  {
+    "title": "Our Town",
+    "currentYear": 2003,
+    "actualYear": 1940,
+    "actualTitle": "Our Town",
+    "imdbId": "tt0032881",
+    "rating": 6.5,
+    "plot": "Change comes slowly to a small New Hampshire town in the early 20th century.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "Red Riding Hood",
+    "currentYear": 1959,
+    "actualYear": null,
+    "imdbId": null,
+    "status": "no_page_found"
+  },
+  {
+    "title": "Rock Rock Rock",
+    "currentYear": 2021,
+    "actualYear": 1956,
+    "actualTitle": "Rock Rock Rock!",
+    "imdbId": "tt0049684",
+    "rating": 5.1,
+    "plot": "Dori is trying to get together enough money to buy a strapless gown; Daddy has cut off Dori's allowance, but gee, she's gotta go to the prom.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "Scarlet Street",
+    "currentYear": 1945,
+    "actualYear": 1945,
+    "actualTitle": "Scarlet Street",
+    "imdbId": "tt0038057",
+    "rating": 7.7,
+    "plot": "A man in mid-life crisis befriends a young woman, though her fiancé persuades her to con him out of the fortune they mistakenly assume he possesses.",
+    "status": "correct"
+  },
+  {
+    "title": "Spirits of Bruce Lee",
+    "currentYear": 1973,
+    "actualYear": 1973,
+    "actualTitle": "The Spirit of Bruce Lee",
+    "imdbId": "tt0079941",
+    "rating": 4.2,
+    "plot": "Chang Chen-Wai, a martial arts expert who runs a jade-importing business, follows his missing brother to Thailand and learns he has been murdered. Chang vows revenge.",
+    "status": "correct"
+  },
+  {
+    "title": "Steamboat Bill",
+    "currentYear": 1928,
+    "actualYear": 1928,
+    "actualTitle": "Steamboat Bill, Jr.",
+    "imdbId": "tt0019421",
+    "rating": 7.8,
+    "plot": "The effete son of a cantankerous riverboat captain comes to join his father's crew.",
+    "status": "correct"
+  },
+  {
+    "title": "Sunny",
+    "currentYear": 2024,
+    "actualYear": 1941,
+    "actualTitle": "Sunny",
+    "imdbId": "tt0034243",
+    "rating": 5.4,
+    "plot": "The beautiful Anna Neagle stars as a circus performer who falls in love with a rich car dealer's son, against her family's wishes. Features some spirited dance numbers with Ray Bolger.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "The Brain That Wouldnt Die",
+    "currentYear": 2020,
+    "actualYear": 1972,
+    "actualTitle": "The Brain Machine",
+    "imdbId": "tt0075781",
+    "rating": 3.1,
+    "plot": "Several people volunteer for a scientific experiment about mind-reading and memory, but the experiment goes horribly wrong.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "The General",
+    "currentYear": 1926,
+    "actualYear": 1926,
+    "actualTitle": "The General",
+    "imdbId": "tt0017925",
+    "rating": 8.1,
+    "plot": "After being rejected by the Confederate military, not realizing it was due to his crucial civilian role, an engineer must single-handedly recapture his beloved locomotive after it is seized by Union spies and return it through ene...",
+    "status": "correct"
+  },
+  {
+    "title": "The Indestructible Man",
+    "currentYear": 1977,
+    "actualYear": 1956,
+    "actualTitle": "Indestructible Man",
+    "imdbId": "tt0049363",
+    "rating": 4.4,
+    "plot": "A brutal death row inmate double-crossed by his crooked lawyer gets his chance for revenge when, following his execution, a bizarre experiment brings him back to life and deadlier than ever.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "The Kid",
+    "currentYear": 1921,
+    "actualYear": 1938,
+    "actualTitle": "Billy the Kid Returns",
+    "imdbId": "tt0029915",
+    "rating": 5.8,
+    "plot": "Rogers plays a lookalike to the dead Billy The Kid and restores the tranquility of Lincoln County after subduing the criminal element.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "The Master Max",
+    "currentYear": 2015,
+    "actualYear": null,
+    "imdbId": null,
+    "status": "no_page_found"
+  },
+  {
+    "title": "The Moonstone",
+    "currentYear": 1996,
+    "actualYear": 1934,
+    "actualTitle": "The Moonstone",
+    "imdbId": "tt0025515",
+    "rating": 5,
+    "plot": "Typical Monogram whodunit from the 30's, with dialogue and sound effects based on the well known mystery book with same title. A valuable gem from India is stolen in an old dark mansion and it is up to Scotland Yard inspector Char...",
+    "status": "wrong_year"
+  },
+  {
+    "title": "The Naked Kiss",
+    "currentYear": 1964,
+    "actualYear": 1964,
+    "actualTitle": "The Naked Kiss",
+    "imdbId": "tt0058390",
+    "rating": 7.2,
+    "plot": "A former prostitute relocates to a buttoned-down suburb, determined to fit in with mainstream society. But perverse secrets simmer beneath the wholesome surface.",
+    "status": "correct"
+  },
+  {
+    "title": "The Phantom of the Opera",
+    "currentYear": 2004,
+    "actualYear": 1936,
+    "actualTitle": "The Amazing Exploits of the Clutching Hand",
+    "imdbId": "tt0027452",
+    "rating": 5.4,
+    "plot": "A scientist discovers a formula for making synthetic gold.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "The Snow Man",
+    "currentYear": 1940,
+    "actualYear": null,
+    "imdbId": null,
+    "status": "no_page_found"
+  },
+  {
+    "title": "The Vampire Bat",
+    "currentYear": 2014,
+    "actualYear": 1933,
+    "actualTitle": "The Vampire Bat",
+    "imdbId": "tt0024727",
+    "rating": 5.7,
+    "plot": "When corpses drained of blood begin to show up in a European village, vampirism is suspected to be responsible.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "Things To Come",
+    "currentYear": 2024,
+    "actualYear": 1936,
+    "actualTitle": "Things to Come",
+    "imdbId": "tt0028358",
+    "rating": 6.6,
+    "plot": "The story of a century: a decades-long second World War leaves plague and anarchy, then a rational state rebuilds civilization and attempts space travel.",
+    "status": "wrong_year"
+  },
+  {
+    "title": "War Comes to America",
+    "currentYear": 1945,
+    "actualYear": 1945,
+    "actualTitle": "War Comes to America",
+    "imdbId": "tt0183997",
+    "rating": 6.8,
+    "plot": "Part VII of the \"Why We Fight\" series of wartime documentaries. This entry attempts to describe the factors leading up to America's entry into the Second World War.",
+    "status": "correct"
+  }
+]

@@ -366,7 +366,7 @@ const componentStyles = `
 .detail-actions {
     display: flex;
     gap: 0.75rem;
-    margin-bottom: 2rem;
+    margin-bottom: calc(var(--nav-height) + var(--safe-area-bottom) + 1rem);
 }
 
 .btn-primary {
@@ -670,9 +670,19 @@ export const UITemplates = {
     favoritesView: (activeTab = 'favorites') => `
         ${componentStyles}
         <div class="browser-container">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search ${activeTab === 'favorites' ? 'favorites' : 'watchlist'}..." id="favorites-search-input">
+            </div>
             <div class="filter-tabs" style="padding-top: 1rem;">
                 <div class="filter-tab ${activeTab === 'favorites' ? 'active' : ''}" data-favorites-tab="favorites">❤️ Favorites</div>
                 <div class="filter-tab ${activeTab === 'watchlist' ? 'active' : ''}" data-favorites-tab="watchlist">⭐ Watchlist</div>
+            </div>
+            <div class="filter-tabs" style="padding-top: 0.5rem;">
+                <div class="filter-tab active" data-category="all">All</div>
+                <div class="filter-tab" data-category="movies">Movies</div>
+                <div class="filter-tab" data-category="shows">TV Shows</div>
+                <div class="filter-tab" data-category="anime">Anime</div>
+                <div class="filter-tab" data-category="courses">Courses</div>
             </div>
             <div class="content-grid">
                 <div class="content-loading">
@@ -1540,6 +1550,18 @@ export class MobileUIController {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Library', 'library');
 
+        // Replace filter tabs with folder-based filters
+        const filterTabs = document.querySelector('.filter-tabs');
+        if (filterTabs) {
+            filterTabs.innerHTML = `
+                <div class="filter-tab active" data-filter="all">All Folders</div>
+                <div class="filter-tab" data-filter="movies">Movies</div>
+                <div class="filter-tab" data-filter="downloads">Downloads</div>
+                <div class="filter-tab" data-filter="dcim">DCIM</div>
+                <div class="filter-tab" data-filter="videos">Videos</div>
+            `;
+        }
+
         const contentGrid = document.querySelector('.content-grid');
 
         try {
@@ -1659,8 +1681,17 @@ export class MobileUIController {
 
             console.log('Scan complete:', results);
 
-            // Refresh library view
-            await this.showLibrary();
+            // Show completion message briefly
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '✅',
+                'Scan Complete',
+                `Found ${results?.itemsMatched || 0} media files`
+            );
+
+            // Wait a moment then refresh library view
+            setTimeout(async () => {
+                await this.showLibrary();
+            }, 1500);
 
         } catch (error) {
             console.error('Library scan failed:', error);

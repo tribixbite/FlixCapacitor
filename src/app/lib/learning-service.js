@@ -55,16 +55,17 @@ class LearningService {
 
     /**
      * Get demo CSV data as fallback when CORS blocks real API
-     * @returns {string} Demo CSV data
+     * @returns {string} Demo CSV data with correct Academic Torrents format
      */
     getDemoCSV() {
-        return `title,provider,subject_area,description,thumbnail_url,infohash,magnet_link,size_bytes,num_seeders,times_completed,date_added
-Introduction to Computer Science,MIT,Computer Science,Learn fundamental concepts of computer science including algorithms and data structures,https://via.placeholder.com/300x200/1f1f1f/e50914?text=MIT+CS,abc123,magnet:?xt=urn:btih:abc123,5368709120,150,2500,2020-01-15
-Linear Algebra,MIT,Mathematics,Comprehensive course on linear algebra concepts and applications,https://via.placeholder.com/300x200/1f1f1f/e50914?text=MIT+Math,def456,magnet:?xt=urn:btih:def456,4294967296,120,1800,2019-09-01
-Machine Learning,Stanford,Artificial Intelligence,Learn the fundamentals of machine learning and neural networks,https://via.placeholder.com/300x200/1f1f1f/e50914?text=Stanford+ML,ghi789,magnet:?xt=urn:btih:ghi789,8589934592,200,3200,2021-03-10
-Physics I: Classical Mechanics,MIT,Physics,Introduction to Newtonian mechanics and conservation laws,https://via.placeholder.com/300x200/1f1f1f/e50914?text=MIT+Physics,jkl012,magnet:?xt=urn:btih:jkl012,6442450944,95,1500,2018-08-20
-Introduction to Philosophy,Harvard,Philosophy,Explore fundamental questions about knowledge reality and existence,https://via.placeholder.com/300x200/1f1f1f/e50914?text=Harvard+Phil,mno345,magnet:?xt=urn:btih:mno345,3221225472,80,1200,2020-06-15
-Calculus,Khan Academy,Mathematics,Complete calculus course from limits to integration,https://via.placeholder.com/300x200/1f1f1f/e50914?text=Khan+Calculus,pqr678,magnet:?xt=urn:btih:pqr678,2147483648,110,2000,2019-11-05`;
+        // Use same column format as Academic Torrents: TYPE,NAME,INFOHASH,SIZEBYTES,MIRRORS,DOWNLOADERS,TIMESCOMPLETED,DATEADDED,DATEMODIFIED
+        return `TYPE,NAME,INFOHASH,SIZEBYTES,MIRRORS,DOWNLOADERS,TIMESCOMPLETED,DATEADDED,DATEMODIFIED
+video,MIT - Introduction to Computer Science,abc123def456,5368709120,5,150,2500,1579046400,1579046400
+video,MIT - Linear Algebra,def456ghi789,4294967296,4,120,1800,1567296000,1567296000
+video,Stanford - Machine Learning,ghi789jkl012,8589934592,8,200,3200,1615334400,1615334400
+video,MIT - Physics I: Classical Mechanics,jkl012mno345,6442450944,6,95,1500,1534723200,1534723200
+video,Harvard - Introduction to Philosophy,mno345pqr678,3221225472,3,80,1200,1592179200,1592179200
+video,Khan Academy - Calculus,pqr678stu901,2147483648,4,110,2000,1573008000,1573008000`;
     }
 
     /**
