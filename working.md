@@ -667,3 +667,59 @@ Manual testing required to verify:
 - [ ] Error handling and retry mechanism
 - [ ] Toast notifications throughout streaming lifecycle
 - [ ] Resource cleanup on cancel/error
+
+---
+
+## 2025-10-13: Metadata & Subtitle Provider Research
+
+### Overview
+Completed comprehensive research of 5 major media streaming services to identify metadata and subtitle provider implementations, API patterns, and configuration approaches.
+
+### Research Completed ✅
+
+**Services Analyzed:**
+1. **Jellyfin** - Open-source media server (C#/.NET)
+2. **Kodi** - Media player/center (Python/C++)
+3. **Stremio** - Streaming platform (Rust)
+4. **Radarr** - Movie collection manager (C#/.NET)
+5. **Emby** - Analysis via Jellyfin architecture
+
+**Key Findings:**
+
+#### Metadata Providers
+- **TMDB (The Movie Database)** - Industry standard
+  - API: `https://api.themoviedb.org/3`
+  - Used by ALL analyzed services
+  - Free tier with API key
+  - Comprehensive movie/TV metadata
+
+- **OMDb (Open Movie Database)** - Supplementary
+  - API: `https://www.omdbapi.com`
+  - IMDb ratings & Rotten Tomatoes scores
+  - Free tier: 1,000 requests/day
+
+#### Subtitle Providers
+- **OpenSubtitles** - Industry standard
+  - API: `https://api.opensubtitles.com/api/v1`
+  - REST API with JWT authentication
+  - Multi-language support
+  - Hash-based matching
+  - Daily download limits (200 for registered users)
+
+#### Common Patterns
+1. **Caching:** In-memory (1h), disk (1d), images (7d)
+2. **Search:** Multi-tier (IMDb → TMDB → filename → fuzzy)
+3. **Error Handling:** Rate limits, fallbacks, cached data
+4. **Authentication:** API keys (TMDB), JWT tokens (OpenSubtitles)
+
+### Documentation
+- **Full Report:** `docs/research/metadata-research-report.md` (91KB)
+- **Code References:** ~2GB source code analyzed
+- **Recommendations:** TypeScript interfaces, implementation roadmap
+
+### Next Steps
+1. Implement TMDB API client
+2. Add OMDb integration for ratings
+3. Implement OpenSubtitles client
+4. Create provider abstraction layer
+5. Add caching and fallback mechanisms
