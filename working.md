@@ -65,6 +65,39 @@ Navigation complete
     - `src/app/lib/mobile-ui-views.js` - detailView template with torrent/rating display
   - **Status**: ✅ All movies display properly with correct metadata and playback options
 
+**PublicDomainTorrents.info Collection (50+ Movies)** (✅ COMPLETED) (2025-10-13)
+- **Feature**: Added hardcoded collection of 50+ public domain movies with full TMDB/OMDb enrichment
+  - **New getWebMovies() Method**:
+    - Replaced unreliable web scraping with hardcoded enriched data
+    - All 50 movies pre-enriched with TMDB and OMDb metadata
+    - Instant loading - no network requests needed
+    - Used when "PublicDomainTorrents.info (50+ movies)" enabled in settings
+  - **Metadata Quality**:
+    - TMDB: 50/50 movies with high-quality posters and backdrops
+    - IMDb ratings: 50/50 movies (range: 3.9-8.3)
+    - Rotten Tomatoes: 26/50 movies (range: 33%-100%)
+    - Metacritic: 5/50 movies (range: 56-98)
+  - **Torrent Distribution**:
+    - 720p: 17 movies (1960+, 800-1200 MB, 25-182 seeds)
+    - 480p: 33 movies (pre-1960, 400-700 MB, 15-100 seeds)
+    - All torrents include WebTorrent-compatible trackers
+    - Seed health: 7 excellent, 17 good, 17 fair, 6 poor
+  - **Collection Highlights**:
+    - Cult classics: Night of the Living Dead, Plan 9 from Outer Space
+    - Silent masterpieces: Metropolis, Nosferatu, Cabinet of Dr. Caligari
+    - B-movie treasures: Robot Monster, Santa Claus Conquers the Martians
+    - Horror: Carnival of Souls, House on Haunted Hill, The Terror
+    - Sci-fi: The Phantom Planet, Voyage to the Prehistoric Planet
+  - **Implementation**:
+    - Created scrape-public-domain-site.mjs to enrich 50 movies
+    - Generated getWebMovies() method with all metadata hardcoded
+    - Updated fetchMovies() to use getWebMovies() when web fetch enabled
+    - Fixed apostrophe escaping in magnet URLs (e.g., "The Brain That Wouldn't Die")
+    - Removed web scraping dependencies and CORS proxy usage
+  - **Files Modified**:
+    - `src/app/lib/providers/public-domain-provider.js` - Added getWebMovies() method (1300+ lines)
+  - **Status**: ✅ Settings option now provides 50+ movies instantly with full metadata
+
 **Proxy/VPN Support** (✅ IMPLEMENTED) (2025-10-13)
 - **Feature**: Full proxy/VPN configuration for routing torrent traffic through SOCKS5/HTTP proxies
   - **Settings UI**: New "Proxy/VPN" section in Settings page with:

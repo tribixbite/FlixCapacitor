@@ -369,18 +369,22 @@
       this.getRegion('Settings').empty();
       this.getRegion('MovieDetail').empty();
 
-      // # TODO: Implement LibraryBrowser view
-      console.log('Library tab clicked - view not yet implemented');
-      win.info('Library feature coming soon - local media scanning and management');
+      App.vent.trigger('about:close');
+      App.vent.trigger('torrentCollection:close');
+      App.vent.trigger('seedbox:close');
+
+      this.showChildView('Content', new App.View.LibraryBrowser());
     },
 
     learningTabShow: function(e) {
       this.getRegion('Settings').empty();
       this.getRegion('MovieDetail').empty();
 
-      // # TODO: Implement LearningBrowser view
-      console.log('Learning tab clicked - view not yet implemented');
-      win.info('Learning feature coming soon - educational courses from Academic Torrents');
+      App.vent.trigger('about:close');
+      App.vent.trigger('torrentCollection:close');
+      App.vent.trigger('seedbox:close');
+
+      this.showChildView('Content', new App.View.LearningBrowser());
     },
 
     updateShows: function(e) {

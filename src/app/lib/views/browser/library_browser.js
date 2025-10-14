@@ -1,0 +1,60 @@
+(function (App) {
+    'use strict';
+
+    /**
+     * LibraryBrowser - displays local media library
+     * Shows scanned media files with metadata
+     * Supports filtering by media type (movies, TV shows, other)
+     */
+    var LibraryBrowser = App.View.PCTBrowser.extend({
+        collectionModel: App.Model.LibraryCollection,
+        filters: {
+            types: [
+                { value: 'all', label: 'All Media' },
+                { value: 'movie', label: 'Movies' },
+                { value: 'tvshow', label: 'TV Shows' },
+                { value: 'other', label: 'Other' }
+            ],
+            genres: App.Config.genres,
+            sorters: [
+                'title',
+                'year',
+                'rating',
+                'last_played',
+                'play_count',
+                'date_added'
+            ]
+        },
+
+        onAttach: function () {
+            // Call parent onAttach
+            App.View.PCTBrowser.prototype.onAttach.apply(this, arguments);
+
+            // Check if library is empty and prompt for scan
+            this.checkLibraryStatus();
+        },
+
+        checkLibraryStatus: function () {
+            var self = this;
+
+            window.LibraryService.getMediaCount()
+                .then(function (count) {
+                    if (count === 0) {
+                        self.showScanPrompt();
+                    }
+                })
+                .catch(function (err) {
+                    win.error('Failed to check library status:', err);
+                });
+        },
+
+        showScanPrompt: function () {
+            // # TODO: Show UI prompt for scanning folders
+            // For now, just show a notification
+            win.info('Your library is empty. Use Settings to configure and scan your media folders.');
+            console.log('Library is empty - scan prompt should be shown here');
+        }
+    });
+
+    App.View.LibraryBrowser = LibraryBrowser;
+})(window.App);
