@@ -2,6 +2,26 @@
 
 ### 🎯 Current Status
 
+**Learning Tab Sync & Back Button Fixes** (✅ COMPLETED) (2025-10-14)
+- **Issue 1**: Only 6 courses showing instead of 171 after rebuild
+  * Root cause: checkCoursesSync() only synced when count === 0
+  * Users with previous installs (6 cached courses) never triggered resync
+- **Issue 2**: Erratic back button behavior
+  * Root cause: ViewStack initialized but never populated
+  * Back button had inconsistent behavior (sometimes exit, sometimes nothing)
+- **Solution**:
+  * Changed sync threshold: now syncs when count < 170 courses
+  * Implemented navigation history tracking (max 10 entries)
+  * Added goBack() method to properly navigate through history
+  * Updated back button handler to use navigation stack before exiting
+- **Files Modified**:
+  * src/app/lib/views/browser/learning_browser.js (sync threshold)
+  * src/app/lib/mobile-ui-views.js (navigation history)
+  * src/main.js (back button handler)
+- **Build Status**: ✅ Build successful (473.39 kB main bundle, 74M APK)
+- **Commit**: 3e8c0f8 - "fix: resolve Learning tab sync and erratic back button issues"
+- **Status**: ✅ FIXED - All 171 courses will resync on next launch, back button navigates properly
+
 **Learning Tab Course Data Fix** (✅ COMPLETED) (2025-10-14)
 - **Issue**: Only 6 courses showing instead of 171 - embedded CSV data was stripped during Vite minification
 - **Root Cause**: Large CSV string in getDemoCSV() method was being optimized away by Vite's minifier
