@@ -2381,6 +2381,13 @@ export class MobileUIController {
         console.log(`Starting playback: ${movie.title} (${selectedQuality})`);
         console.log('Magnet link:', selectedTorrent.url);
 
+        // Store movie and torrent info for multi-file detection
+        this.currentPlaybackInfo = {
+            movie,
+            torrent: selectedTorrent,
+            quality: selectedQuality
+        };
+
         // Create a basic video player view
         this.showVideoPlayer(movie, selectedTorrent, selectedQuality);
     }
@@ -2728,6 +2735,17 @@ export class MobileUIController {
                 // Validate stream info
                 if (!streamInfo || !streamInfo.streamUrl) {
                     throw new Error('Stream started but no URL was provided');
+                }
+
+                // TODO: Multi-file torrent support
+                // Check if torrent has multiple video files (e.g., course lectures, TV series)
+                // If numFiles > 1, should show file picker modal instead of auto-playing
+                // Requires plugin enhancement to expose file list and allow file selection
+                const torrentInfo = window.NativeTorrentClient?.currentTorrentInfo;
+                if (torrentInfo && torrentInfo.numFiles > 1) {
+                    console.log(`⚠️ Multi-file torrent detected: ${torrentInfo.numFiles} files`);
+                    console.log(`Currently auto-playing largest file: ${torrentInfo.selectedFile}`);
+                    console.log('TODO: Show file picker modal to let user select which file to play');
                 }
             } catch (error) {
                 console.error('Error starting stream:', error);
