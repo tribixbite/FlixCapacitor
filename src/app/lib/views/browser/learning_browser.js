@@ -8,36 +8,9 @@
     var LearningBrowser = App.View.PCTBrowser.extend({
         collectionModel: App.Model.LearningCollection,
         filters: {
-            providers: [
-                'all',
-                'MIT',
-                'Stanford',
-                'Udemy',
-                'UC Berkeley',
-                'Khan Academy',
-                'Coursera',
-                'edX'
-            ],
-            subjects: [
-                'all',
-                'Computer Science',
-                'Mathematics',
-                'Physics',
-                'Chemistry',
-                'Biology',
-                'Engineering',
-                'Business',
-                'Arts',
-                'Languages'
-            ],
-            sorters: [
-                'title',
-                'provider',
-                'subject_area',
-                'downloaders',
-                'size',
-                'date_added'
-            ]
+            types: ['All', 'MIT', 'Stanford', 'Udemy', 'UC Berkeley', 'Khan Academy', 'Coursera', 'edX'],
+            genres: ['All', 'Computer Science', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Engineering', 'Business', 'Arts', 'Languages'],
+            sorters: ['title', 'provider', 'subject', 'downloaders', 'size', 'date added']
         },
 
         onAttach: function () {

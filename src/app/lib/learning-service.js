@@ -363,6 +363,14 @@ class LearningService {
     async getCourseById(id) {
         return await this.db.findOne('learning_courses', 'id = ?', [id]);
     }
+
+    /**
+     * Get total courses count - wrapper for getCachedCourseCount for view compatibility
+     * @returns {Promise<number>} Total count of courses
+     */
+    async getCoursesCount() {
+        return this.getCachedCourseCount();
+    }
 }
 
 // Export as singleton

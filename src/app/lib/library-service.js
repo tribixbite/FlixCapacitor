@@ -394,6 +394,24 @@ class LibraryService {
         const filename = filePath.split('/').pop();
         return this.parser.classifyType(filename);
     }
+
+    /**
+     * Get media items - wrapper for getLibraryItems for collection compatibility
+     * @param {Object} filters - Filter options
+     * @returns {Promise<Array>} Media items
+     */
+    async getMedia(filters = {}) {
+        return this.getLibraryItems(filters);
+    }
+
+    /**
+     * Get total media count
+     * @returns {Promise<number>} Total count of media items
+     */
+    async getMediaCount() {
+        const result = await this.db.query('SELECT COUNT(*) as count FROM local_media');
+        return result[0]?.count || 0;
+    }
 }
 
 // Export as singleton

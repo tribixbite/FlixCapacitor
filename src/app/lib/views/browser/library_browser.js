@@ -9,21 +9,9 @@
     var LibraryBrowser = App.View.PCTBrowser.extend({
         collectionModel: App.Model.LibraryCollection,
         filters: {
-            types: [
-                { value: 'all', label: 'All Media' },
-                { value: 'movie', label: 'Movies' },
-                { value: 'tvshow', label: 'TV Shows' },
-                { value: 'other', label: 'Other' }
-            ],
+            types: ['All', 'Movies', 'TV Shows', 'Other'],
             genres: App.Config.genres,
-            sorters: [
-                'title',
-                'year',
-                'rating',
-                'last_played',
-                'play_count',
-                'date_added'
-            ]
+            sorters: ['title', 'year', 'rating', 'last played', 'play count', 'date added']
         },
 
         onAttach: function () {
