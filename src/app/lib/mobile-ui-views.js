@@ -326,7 +326,7 @@ const componentStyles = `
 .detail-content {
     position: relative;
     padding: 2rem 1rem;
-    padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom) + 6rem);
+    padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom) + 12rem);
     margin-top: -4rem;
     z-index: 1;
 }
@@ -2358,15 +2358,6 @@ export class MobileUIController {
 
     playMovie(movie) {
         console.log('Playing movie:', movie.title);
-
-        // Check if this is a demo course with fake magnet link
-        if (movie.imdb_id?.startsWith('course_') && movie.infohash) {
-            // Demo courses have short fake infohashes
-            if (movie.infohash.length < 20) {
-                alert('⚠️ Demo Course\n\nThis is demo data with a placeholder magnet link.\n\nReal courses from Academic Torrents will be available when the API is accessible (currently blocked by CORS).\n\nDemo courses are for UI testing purposes only.');
-                return;
-            }
-        }
 
         // Get the best available torrent
         const torrents = movie.torrents || {};
