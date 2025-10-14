@@ -851,6 +851,80 @@ export const UITemplates = {
                     </div>
 
                     <div class="settings-section">
+                        <div class="settings-section-title">Proxy/VPN</div>
+                        <div class="settings-item" id="setting-proxy-enabled">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Enable Proxy</div>
+                                <div class="settings-item-description">Route all traffic through proxy server</div>
+                            </div>
+                            <div class="toggle-switch" id="proxy-toggle">
+                                <div class="toggle-switch-thumb"></div>
+                            </div>
+                        </div>
+                        <div id="proxy-settings" style="display: none;">
+                            <div class="settings-item" id="setting-proxy-type">
+                                <div class="settings-item-content">
+                                    <div class="settings-item-label">Proxy Type</div>
+                                    <div class="settings-item-description">Select proxy protocol</div>
+                                </div>
+                                <select class="settings-select" id="proxy-type-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; font-size: 0.9rem;">
+                                    <option value="SOCKS5" selected>SOCKS5</option>
+                                    <option value="SOCKS4">SOCKS4</option>
+                                    <option value="HTTP">HTTP</option>
+                                </select>
+                            </div>
+                            <div class="settings-item" id="setting-proxy-host">
+                                <div class="settings-item-content">
+                                    <div class="settings-item-label">Proxy Host</div>
+                                    <div class="settings-item-description">Server address (IP or hostname)</div>
+                                </div>
+                                <input type="text"
+                                       id="proxy-host-input"
+                                       class="settings-input"
+                                       placeholder="127.0.0.1"
+                                       style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; width: 100%; max-width: 300px; font-size: 0.9rem;">
+                            </div>
+                            <div class="settings-item" id="setting-proxy-port">
+                                <div class="settings-item-content">
+                                    <div class="settings-item-label">Proxy Port</div>
+                                    <div class="settings-item-description">Server port number</div>
+                                </div>
+                                <input type="number"
+                                       id="proxy-port-input"
+                                       class="settings-input"
+                                       value="1080"
+                                       placeholder="1080"
+                                       style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; width: 120px; font-size: 0.9rem;">
+                            </div>
+                            <div class="settings-item" id="setting-proxy-username">
+                                <div class="settings-item-content">
+                                    <div class="settings-item-label">Username (Optional)</div>
+                                    <div class="settings-item-description">For authenticated proxies</div>
+                                </div>
+                                <input type="text"
+                                       id="proxy-username-input"
+                                       class="settings-input"
+                                       placeholder="username"
+                                       style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; width: 100%; max-width: 300px; font-size: 0.9rem;">
+                            </div>
+                            <div class="settings-item" id="setting-proxy-password">
+                                <div class="settings-item-content">
+                                    <div class="settings-item-label">Password (Optional)</div>
+                                    <div class="settings-item-description">For authenticated proxies</div>
+                                </div>
+                                <input type="password"
+                                       id="proxy-password-input"
+                                       class="settings-input"
+                                       placeholder="password"
+                                       style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; width: 100%; max-width: 300px; font-size: 0.9rem;">
+                            </div>
+                            <button id="save-proxy-btn" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 10px 16px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600; margin-top: 8px;">
+                                💾 Save Proxy Settings
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
                         <div class="settings-section-title">About</div>
                         <div class="settings-item">
                             <div class="settings-item-content">
@@ -1080,6 +1154,84 @@ export class MobileUIController {
                 }
             });
         });
+
+        // Proxy Settings
+        this.setupProxySettings();
+    }
+
+    async setupProxySettings() {
+        const { Preferences } = await import('@capacitor/preferences');
+
+        // Load saved proxy settings
+        const proxyEnabled = (await Preferences.get({ key: 'proxy_enabled' })).value === 'true';
+        const proxyType = (await Preferences.get({ key: 'proxy_type' })).value || 'SOCKS5';
+        const proxyHost = (await Preferences.get({ key: 'proxy_host' })).value || '';
+        const proxyPort = (await Preferences.get({ key: 'proxy_port' })).value || '1080';
+        const proxyUsername = (await Preferences.get({ key: 'proxy_username' })).value || '';
+        const proxyPassword = (await Preferences.get({ key: 'proxy_password' })).value || '';
+
+        // Apply saved values to UI
+        const proxyToggle = document.getElementById('proxy-toggle');
+        const proxySettings = document.getElementById('proxy-settings');
+        const proxyTypeSelect = document.getElementById('proxy-type-select');
+        const proxyHostInput = document.getElementById('proxy-host-input');
+        const proxyPortInput = document.getElementById('proxy-port-input');
+        const proxyUsernameInput = document.getElementById('proxy-username-input');
+        const proxyPasswordInput = document.getElementById('proxy-password-input');
+        const saveProxyBtn = document.getElementById('save-proxy-btn');
+
+        if (proxyEnabled) {
+            proxyToggle.classList.add('active');
+            proxySettings.style.display = 'block';
+        }
+        if (proxyTypeSelect) proxyTypeSelect.value = proxyType;
+        if (proxyHostInput) proxyHostInput.value = proxyHost;
+        if (proxyPortInput) proxyPortInput.value = proxyPort;
+        if (proxyUsernameInput) proxyUsernameInput.value = proxyUsername;
+        if (proxyPasswordInput) proxyPasswordInput.value = proxyPassword;
+
+        // Proxy Toggle
+        if (proxyToggle) {
+            proxyToggle.addEventListener('click', async () => {
+                const isActive = proxyToggle.classList.toggle('active');
+                await Preferences.set({ key: 'proxy_enabled', value: String(isActive) });
+                proxySettings.style.display = isActive ? 'block' : 'none';
+                console.log('Proxy enabled:', isActive);
+            });
+        }
+
+        // Save Proxy Button
+        if (saveProxyBtn) {
+            saveProxyBtn.addEventListener('click', async () => {
+                const type = proxyTypeSelect?.value || 'SOCKS5';
+                const host = proxyHostInput?.value.trim() || '';
+                const port = proxyPortInput?.value || '1080';
+                const username = proxyUsernameInput?.value.trim() || '';
+                const password = proxyPasswordInput?.value.trim() || '';
+
+                if (!host) {
+                    alert('Please enter a proxy host address');
+                    return;
+                }
+
+                // Save proxy settings
+                await Preferences.set({ key: 'proxy_type', value: type });
+                await Preferences.set({ key: 'proxy_host', value: host });
+                await Preferences.set({ key: 'proxy_port', value: port });
+                await Preferences.set({ key: 'proxy_username', value: username });
+                await Preferences.set({ key: 'proxy_password', value: password });
+
+                console.log('Proxy settings saved:', { type, host, port, hasAuth: !!username });
+
+                // Show success message
+                saveProxyBtn.textContent = '✅ Saved!';
+                saveProxyBtn.style.background = 'rgba(34, 197, 94, 0.2)';
+                setTimeout(() => {
+                    saveProxyBtn.textContent = '💾 Save Proxy Settings';
+                    saveProxyBtn.style.background = 'rgba(34, 197, 94, 0.1)';
+                }, 2000);
+            });
+        }
     }
 
     async renderRealMovies() {
