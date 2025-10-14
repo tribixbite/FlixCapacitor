@@ -1121,6 +1121,15 @@ export class MobileUIController {
             case 'anime':
                 this.showAnime();
                 break;
+            case 'favorites':
+                this.showFavorites();
+                break;
+            case 'library':
+                this.showLibrary();
+                break;
+            case 'learning':
+                this.showLearning();
+                break;
             case 'watchlist':
                 this.showWatchlist();
                 break;
@@ -1175,6 +1184,42 @@ export class MobileUIController {
         setTimeout(() => {
             this.renderMockAnime();
         }, 800);
+    }
+
+    showFavorites() {
+        const mainRegion = document.querySelector('.main-window-region');
+        mainRegion.innerHTML = UITemplates.browserView('Favorites', 'favorites');
+
+        const contentGrid = document.querySelector('.content-grid');
+        contentGrid.innerHTML = UITemplates.emptyState(
+            '❤️',
+            'No Favorites Yet',
+            'Mark movies and shows as favorites to see them here'
+        );
+    }
+
+    showLibrary() {
+        const mainRegion = document.querySelector('.main-window-region');
+        mainRegion.innerHTML = UITemplates.browserView('Library', 'library');
+
+        const contentGrid = document.querySelector('.content-grid');
+        contentGrid.innerHTML = UITemplates.emptyState(
+            '📁',
+            'Library is Empty',
+            'Scan your device for local media files to build your library'
+        );
+    }
+
+    showLearning() {
+        const mainRegion = document.querySelector('.main-window-region');
+        mainRegion.innerHTML = UITemplates.browserView('Learning', 'learning');
+
+        const contentGrid = document.querySelector('.content-grid');
+        contentGrid.innerHTML = UITemplates.emptyState(
+            '🎓',
+            'Learning Content',
+            'Educational videos and courses from Academic Torrents'
+        );
     }
 
     showWatchlist() {
