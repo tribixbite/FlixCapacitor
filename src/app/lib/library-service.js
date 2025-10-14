@@ -211,20 +211,32 @@ class LibraryService {
             type = null,
             genre = null,
             search = null,
-            sort = 'date_added',
+            sorter = null,
+            sort = null,
             limit = 50,
             offset = 0
         } = filters;
 
+        // Use sorter if provided, otherwise use sort, default to 'date_added'
+        const sortBy = sorter || sort || 'date_added';
+
         let sql = 'SELECT * FROM local_media WHERE 1=1';
         const params = [];
 
+        // Normalize type value (display name -> internal value)
         if (type && type !== 'All') {
+            const typeMap = {
+                'Movies': 'movie',
+                'TV Shows': 'tvshow',
+                'Other': 'other'
+            };
+            const normalizedType = typeMap[type] || type.toLowerCase();
             sql += ' AND media_type = ?';
-            params.push(type);
+            params.push(normalizedType);
         }
 
-        if (genre) {
+        // Normalize genre value
+        if (genre && genre !== 'All') {
             sql += ' AND genres LIKE ?';
             params.push(`%${genre}%`);
         }
@@ -234,14 +246,19 @@ class LibraryService {
             params.push(`%${search}%`);
         }
 
-        // Sorting
-        const sortColumn = {
+        // Sorting - handle both internal and display names
+        const sortMap = {
+            'date added': 'date_added DESC',
             'date_added': 'date_added DESC',
             'title': 'title ASC',
             'year': 'year DESC',
             'rating': 'rating DESC',
+            'last played': 'last_played DESC',
+            'last_played': 'last_played DESC',
+            'play count': 'play_count DESC',
             'play_count': 'play_count DESC'
-        }[sort] || 'date_added DESC';
+        };
+        const sortColumn = sortMap[sortBy] || sortMap[sortBy?.toLowerCase()] || 'date_added DESC';
 
         sql += ` ORDER BY ${sortColumn}`;
         sql += ' LIMIT ? OFFSET ?';

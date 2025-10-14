@@ -34,8 +34,17 @@
             this.state = 'loading';
             self.trigger('loading', self);
 
+            // Map filter values: type → provider, genre → subject
+            var serviceFilters = {
+                provider: this.filter.type || this.filter.provider || 'all',
+                subject: this.filter.genre || this.filter.subject || 'all',
+                search: this.filter.search,
+                limit: this.filter.limit || 50,
+                offset: ((this.filter.page || 1) - 1) * 50
+            };
+
             // Fetch courses from learning service
-            return this.learningService.getCourses(this.filter)
+            return this.learningService.getCourses(serviceFilters)
                 .then(function (courses) {
                     // Transform course items to movie-like format for display
                     var items = courses.map(function (course) {

@@ -296,9 +296,14 @@ class LearningService {
             provider = null,
             subject = null,
             search = null,
+            sorter = null,
+            sort = null,
             limit = 50,
             offset = 0
         } = filters;
+
+        // Use sorter if provided, otherwise use sort
+        const sortBy = sorter || sort;
 
         let sql = 'SELECT * FROM learning_courses WHERE 1=1';
         const params = [];
@@ -318,7 +323,21 @@ class LearningService {
             params.push(`%${search}%`);
         }
 
-        sql += ' ORDER BY times_completed DESC, title ASC';
+        // Sorting - handle both internal and display names
+        const sortMap = {
+            'title': 'title ASC',
+            'provider': 'provider ASC, title ASC',
+            'subject': 'subject_area ASC, title ASC',
+            'subject_area': 'subject_area ASC, title ASC',
+            'downloaders': 'downloaders DESC, title ASC',
+            'size': 'size_bytes DESC, title ASC',
+            'date added': 'last_updated DESC, title ASC',
+            'date_added': 'last_updated DESC, title ASC',
+            'last_updated': 'last_updated DESC, title ASC'
+        };
+        const sortColumn = sortMap[sortBy] || sortMap[sortBy?.toLowerCase()] || 'times_completed DESC, title ASC';
+
+        sql += ` ORDER BY ${sortColumn}`;
         sql += ' LIMIT ? OFFSET ?';
         params.push(limit, offset);
 
