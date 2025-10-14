@@ -2,6 +2,16 @@
 
 ### 🎯 Current Status
 
+**Plugin Web Stub Fix** (✅ COMPLETED) (2025-10-14)
+- **Issue**: TypeScript compilation error - web.ts missing getVideoFileList and selectFile
+- **Fix**: Added stub methods to web.ts that throw unimplemented errors
+  * Import VideoFileListResult, SelectFileOptions, SelectFileResult types
+  * Add getVideoFileList() stub
+  * Add selectFile() stub
+- **Files Modified**: capacitor-plugin-torrent-streamer/src/web.ts
+- **Commit**: 1d36e58 - "fix: add web stubs for getVideoFileList and selectFile methods"
+- **Status**: ✅ Plugin builds successfully
+
 **Multi-File Torrent Support with File Picker UI** (✅ COMPLETED) (2025-10-14)
 - **Feature**: Complete implementation for selecting videos in multi-file torrents
   - **Native Plugin Enhancement** (✅):
