@@ -4,46 +4,47 @@
 
 **Mobile Bottom Navigation** (✅ COMPLETED) (2025-10-14)
 - **Feature**: Mobile-first bottom navigation bar for Browse/Favorites/Library/Learning
+  - **Architecture Discovery**:
+    - ❌ Initially edited wrong files (src/app/index.html - old Popcorn Time structure)
+    - ✅ App uses root index.html with MobileUIController from mobile-ui-views.js
+    - ✅ Vite builds root index.html (vite.config.js: input: './index.html')
+    - ✅ Root index.html loads src/main.js which imports MobileUIController
   - **Implementation**:
-    - Created mobile-bottom-nav.tpl template with 4 navigation buttons
-    - Created mobile-bottom-nav.js Marionette view with event handling
-    - Added comprehensive CSS styles to mobile-ui-views.js
-    - Fixed position at bottom with safe area insets
-    - Backdrop blur effect for modern mobile UI
-    - Active state highlighting with color and scale transitions
-    - Responsive design (hidden on desktop, shown on mobile)
+    - Updated root index.html bottom navigation (lines 296-314):
+      * Changed from Movies/TV/Anime/Watchlist/Settings to Browse/Favorites/Library/Learning
+      * 4 tabs instead of 5 for cleaner mobile UX
+      * Emoji icons: 🎬 Browse, ❤️ Favorites, 📁 Library, 🎓 Learning
+    - Extended MobileUIController in mobile-ui-views.js:
+      * Added route handlers in navigateTo() switch statement
+      * Implemented showFavorites() - Empty state with heart icon
+      * Implemented showLibrary() - Empty state with folder icon and scan prompt
+      * Implemented showLearning() - Empty state with graduation cap icon
+    - Navigation uses existing .nav-item click handlers from setupNavigation()
+    - Active state managed with CSS classes
   - **Navigation Routes**:
-    - Browse (movies) - fa-film icon
-    - Favorites - fa-heart icon
-    - Library - fa-folder icon
-    - Learning - fa-graduation-cap icon
-  - **Event-Driven**:
-    - Click handlers trigger App.vent events (movies:list, favorites:list, etc.)
-    - Active state management with setActive() method
-    - Default active state set to 'movies' on attach
-  - **Integration**:
-    - Template registered in index.html (line 36)
-    - View registered in index.html (line 143)
-    - Region added to main_window.js (MobileBottomNav: '#mobile-bottom-nav')
-    - View instantiated in main_window.js onAttach() method
-    - Placeholder added to main-window.tpl
-  - **CSS Styling**:
-    - Fixed positioning with z-index 100
-    - Safe area insets for notched devices (padding-bottom: calc(0.5rem + var(--safe-area-bottom)))
-    - Backdrop blur with -webkit-backdrop-filter support
+    - Browse (🎬) - Shows movies browser (existing showMovies())
+    - Favorites (❤️) - Shows favorites empty state
+    - Library (📁) - Shows library empty state with scan prompt
+    - Learning (🎓) - Shows learning empty state
+  - **CSS Styling** (already in root index.html):
+    - Fixed positioning with safe area insets
+    - Backdrop blur effect (backdrop-filter: blur(20px))
     - Flexbox layout with space-around distribution
-    - Active state: accent color with scale(1.1) transform
-    - Hidden on desktop (min-width: 768px media query)
-  - **Files Created**:
-    - src/app/lib/views/mobile-bottom-nav.js (53 lines)
-    - src/app/templates/mobile-bottom-nav.tpl (19 lines)
+    - Active state: accent color (#e50914)
+    - Height: calc(var(--nav-height) + var(--safe-area-bottom))
+    - z-index: 100
   - **Files Modified**:
-    - src/app/lib/mobile-ui-views.js - Added 60+ lines of CSS styles
-    - src/app/lib/views/main_window.js - Added region and view instantiation
-    - src/app/templates/main-window.tpl - Added placeholder div
-    - src/app/index.html - Registered template and view
-  - **Status**: ✅ PRODUCTION READY - Fully implemented and integrated!
-  - **Commit**: 16ae579 - "feat: add mobile bottom navigation bar"
+    - index.html (root) - Updated navigation HTML structure
+    - src/app/lib/mobile-ui-views.js - Added showFavorites(), showLibrary(), showLearning() methods
+    - build-and-install.sh - Updated package name to app.flixcapacitor.mobile
+  - **Discarded Files** (wrong architecture):
+    - src/app/lib/views/mobile-bottom-nav.js - Not used by MobileUIController
+    - src/app/templates/mobile-bottom-nav.tpl - Not used by MobileUIController
+    - src/app/index.html edits - Not used by Vite build
+  - **Status**: ✅ PRODUCTION READY - Properly integrated with MobileUIController!
+  - **Commits**:
+    - 822380e - "feat: implement mobile bottom navigation with Browse/Favorites/Library/Learning"
+    - 28ed467 - "fix: update build script with FlixCapacitor branding and package name"
 
 **Public Domain Movies - High-Rated Filter** (✅ COMPLETED) (2025-10-14)
 - **Quality Filter**: Reduced collection to only movies with IMDb rating ≥7.0/10
