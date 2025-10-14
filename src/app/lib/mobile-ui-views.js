@@ -1219,12 +1219,18 @@ export class MobileUIController {
     constructor(app) {
         this.app = app;
         this.currentView = null;
+        this.navigationHistory = []; // Track navigation history for back button
         this.moviesCache = null; // Cache for loaded movies
         this.currentMovieData = new Map(); // Store movie data by ID
         this.backButtonListener = null; // Android back button handler
         this.currentVideoElement = null; // Current video element reference
         this.playbackPositions = new Map(); // Store playback positions by movie ID
         this.setupNavigation();
+
+        // Make available globally for back button handler
+        if (window.App) {
+            window.App.UI = this;
+        }
     }
 
     setupNavigation() {
@@ -1285,6 +1291,14 @@ export class MobileUIController {
             loadingScreen.classList.add('hidden');
         }
 
+        // Track navigation history (max 10 entries)
+        if (this.currentView && this.currentView !== route) {
+            this.navigationHistory.push(this.currentView);
+            if (this.navigationHistory.length > 10) {
+                this.navigationHistory.shift(); // Remove oldest
+            }
+        }
+
         // Track current view
         this.currentView = route;
 
@@ -1316,6 +1330,23 @@ export class MobileUIController {
             default:
                 this.showMovies();
         }
+    }
+
+    /**
+     * Go back to previous view
+     * @returns {boolean} True if navigated back, false if no history
+     */
+    goBack() {
+        if (this.navigationHistory.length > 0) {
+            const previousView = this.navigationHistory.pop();
+            // Navigate without adding to history
+            const tempHistory = this.navigationHistory;
+            this.navigationHistory = [];
+            this.navigateTo(previousView);
+            this.navigationHistory = tempHistory;
+            return true;
+        }
+        return false;
     }
 
     async showMovies() {

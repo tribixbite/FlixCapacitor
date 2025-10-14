@@ -162,16 +162,21 @@ async function initCapacitorPlugins() {
         App.addListener('backButton', async () => {
             console.log('Back button pressed');
 
-            // Check if we're in a nested view
-            if (window.App && window.App.ViewStack && window.App.ViewStack.length > 0) {
-                window.history.back();
-            } else {
-                // Exit app after cleanup
-                if (window.App && window.App.cleanup) {
-                    await window.App.cleanup();
+            // Try to go back in navigation history first
+            if (window.App && window.App.UI && window.App.UI.goBack) {
+                const didNavigateBack = window.App.UI.goBack();
+                if (didNavigateBack) {
+                    console.log('Navigated to previous view');
+                    return;
                 }
-                await App.exitApp();
             }
+
+            // No history, so exit app after cleanup
+            console.log('No navigation history, exiting app');
+            if (window.App && window.App.cleanup) {
+                await window.App.cleanup();
+            }
+            await App.exitApp();
         });
 
         // Handle deep links for magnet:// and file:// URIs

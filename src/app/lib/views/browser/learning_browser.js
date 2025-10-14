@@ -26,8 +26,13 @@
 
             window.LearningService.getCoursesCount()
                 .then(function (count) {
-                    if (count === 0) {
+                    // Sync if database is empty OR has fewer courses than expected
+                    // Expected minimum: 170 courses (from embedded CSV)
+                    if (count === 0 || count < 170) {
+                        console.log(`Course count (${count}) below expected, triggering sync...`);
                         self.showSyncPrompt();
+                    } else {
+                        console.log(`Course database already populated with ${count} courses`);
                     }
                 })
                 .catch(function (err) {
