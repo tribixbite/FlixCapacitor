@@ -1223,6 +1223,15 @@ export class MobileUIController {
 
                 console.log('Proxy settings saved:', { type, host, port, hasAuth: !!username });
 
+                // Reload proxy settings in the torrent service
+                try {
+                    const { TorrentStreamer } = await import('capacitor-plugin-torrent-streamer');
+                    await TorrentStreamer.reloadProxySettings();
+                    console.log('✅ Proxy settings reloaded in torrent service');
+                } catch (error) {
+                    console.warn('Failed to reload proxy settings (service may not be running):', error);
+                }
+
                 // Show success message
                 saveProxyBtn.textContent = '✅ Saved!';
                 saveProxyBtn.style.background = 'rgba(34, 197, 94, 0.2)';
