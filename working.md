@@ -1046,11 +1046,38 @@ Started implementation of consolidated navigation with Library and Learning sect
 - src/app/lib/views/main_window.js - View instantiation
 - src/app/index.html - Script registration
 
+### Completed: Service Method & Filter Fixes ✅ (commits 0798d03, 178d771)
+
+**Missing Service Methods Added:**
+- LibraryService.getMedia() - wrapper for getLibraryItems()
+- LibraryService.getMediaCount() - query total media count
+- LearningService.getCoursesCount() - wrapper for getCachedCourseCount()
+
+**Filter Format Corrections:**
+- LibraryBrowser filters corrected to string arrays
+  - types: ['All', 'Movies', 'TV Shows', 'Other']
+  - sorters: ['title', 'year', 'rating', 'last played', 'play count', 'date added']
+- LearningBrowser filters use standard names (types, genres, sorters)
+  - types: Provider names (MIT, Stanford, Udemy, etc.)
+  - genres: Subject areas (Computer Science, Mathematics, etc.)
+
+**Filter Normalization & Parameter Mapping:**
+- LibraryService: Normalize display names to internal values
+  - 'Movies' → 'movie', 'TV Shows' → 'tvshow', 'Other' → 'other'
+  - 'last played' → last_played, 'play count' → play_count
+  - Handle both 'sorter' and 'sort' parameters
+- LearningService: Add sorter support with display name mapping
+  - 'subject' → subject_area, 'date added' → last_updated
+- LearningCollection: Map Filter properties to service parameters
+  - type → provider, genre → subject (for FilterBar compatibility)
+
+All views now fully compatible with FilterBar and GenericBrowser expectations.
+
 ### Next Steps
-1. Create media type selector dropdown component for Library filtering
+1. Test Library and Learning views in the mobile app
 2. Implement library scanning UI with progress indicators
 3. Implement learning course grid with provider logo thumbnails
 4. Add Capacitor Filesystem integration for actual local scanning
 5. Connect metadata fetching to existing TMDB/OMDb clients
-6. Test Library and Learning views in the mobile app
-7. Add provider logo assets (MIT, Stanford, Udemy, etc.)
+6. Add provider logo assets (MIT, Stanford, Udemy, etc.)
+7. Test filtering, sorting, and search functionality
