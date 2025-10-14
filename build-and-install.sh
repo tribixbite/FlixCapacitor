@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-# Popcorn Time Mobile - Build and Install Script for Termux
+# FlixCapacitor - Build and Install Script for Termux
 # Builds the Capacitor.js app with custom aapt2 and multi-tier installation
 # Usage: ./build-and-install.sh [clean]
 
@@ -8,9 +8,9 @@ set -e
 
 BUILD_TYPE="debug"
 CLEAN_BUILD="${1:-}"
-PACKAGE_NAME="com.popcorntime.mobile"
+PACKAGE_NAME="app.flixcapacitor.mobile"
 
-echo "=== Popcorn Time Mobile Build and Install Tool ==="
+echo "=== ⚡ FlixCapacitor Build and Install Tool ==="
 echo "Building $BUILD_TYPE APK with multi-tier auto-install"
 echo
 
@@ -184,7 +184,7 @@ if command -v termux-open &>/dev/null; then
         echo "📱 Complete installation in Android UI:"
         echo "  1. Tap 'Install' button"
         echo "  2. Wait for installation"
-        echo "  3. Launch 'Popcorn Time' from app drawer"
+        echo "  3. Launch 'FlixCapacitor' from app drawer"
         INSTALLED=true
     else
         echo "  ⚠️  termux-open timed out or failed, trying next method..."
@@ -196,7 +196,7 @@ echo
 
 if [ "$INSTALLED" = true ]; then
     echo "📦 Creating backup copies..."
-    mkdir -p /sdcard/PopcornTime 2>/dev/null && cp "$APK_PATH" /sdcard/PopcornTime/latest-debug.apk 2>/dev/null && echo "  ✓ /sdcard/PopcornTime/latest-debug.apk"
+    mkdir -p /sdcard/FlixCapacitor 2>/dev/null && cp "$APK_PATH" /sdcard/FlixCapacitor/latest-debug.apk 2>/dev/null && echo "  ✓ /sdcard/FlixCapacitor/latest-debug.apk"
     exit 0
 fi
 
@@ -212,9 +212,9 @@ if command -v adb &>/dev/null; then
         if adb install -r "$APK_PATH"; then
             echo
             echo "✅ APK INSTALLED SUCCESSFULLY via ADB!"
-            echo "Popcorn Time Mobile is now on your device."
+            echo "FlixCapacitor is now on your device."
             echo
-            echo "📱 To launch: Find 'Popcorn Time' in your app drawer"
+            echo "📱 To launch: Find 'FlixCapacitor' in your app drawer"
             INSTALLED=true
         else
             echo "  ⚠️  ADB install failed"
@@ -235,9 +235,9 @@ if command -v adb &>/dev/null; then
             if adb install -r "$APK_PATH"; then
                 echo
                 echo "✅ APK INSTALLED SUCCESSFULLY via ADB Wireless!"
-                echo "Popcorn Time Mobile is now on your device."
+                echo "FlixCapacitor is now on your device."
                 echo
-                echo "📱 To launch: Find 'Popcorn Time' in your app drawer"
+                echo "📱 To launch: Find 'FlixCapacitor' in your app drawer"
                 INSTALLED=true
             else
                 echo "  ⚠️  ADB wireless install failed"
@@ -257,14 +257,14 @@ fi
 
 # Method 3: Copy to /sdcard/Download
 echo "Method 3: Copy to /sdcard/Download..."
-DOWNLOAD_PATH="/sdcard/Download/popcorntime-debug.apk"
+DOWNLOAD_PATH="/sdcard/Download/flixcapacitor-debug.apk"
 if cp "$APK_PATH" "$DOWNLOAD_PATH" 2>/dev/null; then
     echo "  ✅ APK copied to: $DOWNLOAD_PATH"
     echo
     echo "📱 Manual installation:"
     echo "  1. Open your file manager"
     echo "  2. Go to Downloads folder"
-    echo "  3. Tap 'popcorntime-debug.apk'"
+    echo "  3. Tap 'flixcapacitor-debug.apk'"
     echo "  4. Tap 'Install'"
 
     if command -v termux-open &>/dev/null; then
@@ -283,7 +283,7 @@ fi
 
 # Method 4: Copy to Termux storage
 echo "Method 4: Copy to Termux storage..."
-TERMUX_STORAGE="$HOME/storage/downloads/popcorntime-debug.apk"
+TERMUX_STORAGE="$HOME/storage/downloads/flixcapacitor-debug.apk"
 
 if [ ! -d "$HOME/storage" ]; then
     echo "  Setting up Termux storage access..."
@@ -297,7 +297,7 @@ if [ -d "$HOME/storage/downloads" ]; then
         echo
         echo "📱 Manual installation:"
         echo "  1. Open Downloads in file manager"
-        echo "  2. Tap 'popcorntime-debug.apk'"
+        echo "  2. Tap 'flixcapacitor-debug.apk'"
         echo "  3. Install the app"
 
         if command -v termux-open &>/dev/null; then
@@ -345,7 +345,7 @@ echo "Size: $(du -h "$APK_PATH" | cut -f1)"
 echo "Time: $(date)"
 echo
 echo "💡 Useful commands:"
-echo "   • View logs: adb logcat -d | grep popcorntime"
-echo "   • Uninstall: adb uninstall com.popcorntime.mobile"
+echo "   • View logs: adb logcat -d | grep flixcapacitor"
+echo "   • Uninstall: adb uninstall app.flixcapacitor.mobile"
 echo "   • Reinstall: $0"
 echo "   • Clean build: $0 clean"
