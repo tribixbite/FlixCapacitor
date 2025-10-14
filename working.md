@@ -2,6 +2,40 @@
 
 ### 🎯 Current Status
 
+**Full Academic Torrents Dataset Embedded** (✅ COMPLETED) (2025-10-14)
+- **Feature**: App now works standalone with 171 real courses and valid torrents
+  - **Data Source** (✅ COMPLETED):
+    * Fetched complete Academic Torrents CSV via streaming server
+    * Retrieved all 171 video lecture courses from dataset
+    * All courses have valid 40-character SHA-1 infohashes
+    * Real torrent data from academictorrents.com
+  - **Course Collection** (✅ COMPLETED):
+    * MIT courses: Physics, Math, Biology, Computer Science
+    * Stanford: Machine Learning, Algorithms, Convex Optimization
+    * Harvard: CS50, Philosophy
+    * Berkeley: Multiple engineering and science courses
+    * Coursera: 80+ courses from various universities
+    * Udemy: 20+ professional development courses
+    * Caltech, Princeton, Yale, Oxford, Cambridge courses
+  - **Production Ready** (✅ COMPLETED):
+    * No streaming server dependency for end users
+    * All data embedded in src/app/lib/learning-service.js
+    * App works completely offline for Learning tab
+    * Real infohashes mean courses actually stream
+    * 171 courses vs previous 6 fake demo courses
+  - **Documentation** (✅ COMPLETED):
+    * ANDROID_SETUP.md - Network configuration for developers
+    * Explains streaming server is optional for development
+    * Documents LAN IP workaround for testing with server
+    * Production apps use embedded data automatically
+  - **Files Modified**:
+    * src/app/lib/learning-service.js - Replaced getDemoCSV() with full dataset
+  - **Build Status**: ✅ Build successful (461.88 kB main bundle)
+    * Increased from 435 kB due to embedded course data
+    * Worth the size for 171 working courses
+  - **Commit**: 60ec9f6 - "feat: embed full Academic Torrents dataset for offline use"
+  - **Status**: 🚀 PRODUCTION READY FOR END USERS
+
 **Streaming Server Implementation** (✅ COMPLETED) (2025-10-14)
 - **Feature**: Full Academic Torrents proxy server with real course data
   - **Server Implementation** (✅ COMPLETED):
