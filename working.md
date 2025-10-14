@@ -2,6 +2,37 @@
 
 ### 🎯 Current Status
 
+**Learning Tab Polish and Detail View Fixes** (✅ COMPLETED) (2025-10-14)
+- **Feature**: Fixed FAB overlap, implemented provider filters, and improved demo course handling
+  - **FAB Positioning Final Fix** (✅ COMPLETED):
+    * Increased detail-content padding-bottom from 2rem to 6rem
+    * FAB action buttons now have sufficient clearance from bottom navigation
+    * Settings button no longer covered when viewing detail screens
+    * Proper spacing for safe interaction with all bottom UI elements
+  - **Provider Filter Functionality** (✅ COMPLETED):
+    * Wired up click handlers for all provider filter tabs
+    * Filters now actively filter courses by provider
+    * Active state visual feedback when filter selected
+    * Passes provider parameter to getCourses() method
+    * Each provider filter (MIT, Stanford, Harvard, etc.) works correctly
+  - **Demo Course Handling** (✅ COMPLETED):
+    * Added detection for demo courses with fake magnet links
+    * Check for short infohash (< 20 chars) indicates demo data
+    * Show informative alert instead of streaming error
+    * Explains CORS limitation blocking real Academic Torrents API
+    * Clarifies demo courses are for UI testing only
+    * Better UX when users click Play on demo content
+  - **Technical Improvements** (✅ COMPLETED):
+    * Modified renderRealCourses to accept providerFilter parameter
+    * Added event listeners to filter tabs in showLearning
+    * Provider filtering integrated with LearningService getCourses method
+    * Demo course detection in playMovie method
+  - **Files Modified**:
+    - src/app/lib/mobile-ui-views.js - FAB padding, filter handlers, demo detection
+  - **Build Status**: ✅ Build successful (435.30 kB main bundle)
+  - **Commit**: 06a305d - "fix: resolve FAB overlap, add filter functionality, and improve demo course handling"
+  - **Status**: ✅ ALL 3 ISSUES RESOLVED
+
 **Learning Tab Enhancement with Provider Branding** (✅ COMPLETED) (2025-10-14)
 - **Feature**: Enhanced Learning tab with provider logos, filters, and playback support
   - **Provider Logo System** (✅ COMPLETED):
