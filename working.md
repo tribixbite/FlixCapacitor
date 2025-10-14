@@ -2,6 +2,26 @@
 
 ### 🎯 Current Status
 
+**FAB Clearance and Playback UX Improvements** (✅ COMPLETED) (2025-10-14)
+- **Feature**: Final FAB positioning fix and improved demo course playback experience
+  - **FAB Positioning - Ultimate Fix** (✅ COMPLETED):
+    * Increased detail-content padding-bottom from 6rem to 12rem
+    * Provides extensive clearance for FAB action buttons
+    * Settings button now fully accessible on ALL detail views
+    * No more overlap between FAB and bottom navigation
+    * Tested and confirmed working across all content types
+  - **Demo Course Playback UX** (✅ COMPLETED):
+    * Removed blocking alert for demo courses
+    * Let native streaming error handling show appropriate messages
+    * Better user experience - attempts playback naturally
+    * Error messages from torrent streamer are more informative than generic alert
+    * Users can see actual streaming status instead of being blocked upfront
+  - **Files Modified**:
+    - src/app/lib/mobile-ui-views.js - Padding increase, alert removal
+  - **Build Status**: ✅ Build successful (434.96 kB main bundle)
+  - **Commit**: 7f5973a - "fix: increase FAB clearance and remove demo course alert"
+  - **Status**: ✅ BOTH ISSUES RESOLVED
+
 **Learning Tab Polish and Detail View Fixes** (✅ COMPLETED) (2025-10-14)
 - **Feature**: Fixed FAB overlap, implemented provider filters, and improved demo course handling
   - **FAB Positioning Final Fix** (✅ COMPLETED):
