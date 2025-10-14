@@ -13,6 +13,7 @@
     "sync:android": "cap sync android",
     "open:ios": "cap open ios",
     "open:android": "cap open android",
+    "server": "node streaming-server.js",
     "mock-server": "node mock-streaming-server.js",
     "test": "vitest",
     "test:ui": "vitest --ui",
