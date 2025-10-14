@@ -490,34 +490,31 @@ class PublicDomainProvider {
      */
 
     getWebMovies() {
-        // 27 high-rated public domain movies (≥7.0/10) with verified torrents
-        // Processed from publicdomaintorrents.com catalog with TMDB/OMDb metadata
         return [
         {
-                imdb_id: "tt0332562",
+                imdb_id: "tt0022692",
                 title: "A Star is Born",
-                year: 2018,
-                synopsis: "Seasoned musician Jackson Maine discovers — and falls in love with — struggling artist Ally. She has just about given up on her dream to make it big as a singer — until Jack coaxes her into the spotlight. But even as Ally's career takes off, the personal side of their relationship is breaking down, as Jack fights an ongoing battle with his own internal demons.",
+                year: 1937,
+                synopsis: "Young Esther Victoria Blodgett comes to Hollywood with dreams of stardom and achieves them only with the help of alcoholic leading man Norman Maine, whose best days are behind him.",
                 runtime: 90,
                 rating: {
-                        percentage: 75,
+                        percentage: 73,
                         watching: 0,
-                        votes: 11964,
+                        votes: 229,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/wrFpXMNBRj2PBiN4Z5kix51XaIZ.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/dDYpjrwh1wNVQk0rEpc9P81wQt4.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/dDYpjrwh1wNVQk0rEpc9P81wQt4.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/90EfCmXXWOs5dy7rHTNvGT9T8Kz.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/mBgYaGRKpZq4EPLkgq66kKJvp0d.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/mBgYaGRKpZq4EPLkgq66kKJvp0d.jpg"
                 },
                 genres: [
-                        "Music",
                         "Drama",
                         "Romance"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:0d1baad26e0099de2062c4252d53bb9e3d8ab128&dn=A%20Star%20is%20Born&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -528,28 +525,28 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt1264690",
+                imdb_id: "tt0214712",
                 title: "City Ninja",
-                year: 1988,
-                synopsis: "A group of men and women escape from a ninja training academy and get mixed up in organised crime. They are also hunted by the ninja organisation they left.",
+                year: 1985,
+                synopsis: "A tournament fighter becomes involved in the search for a valuable pendant.",
                 runtime: 90,
                 rating: {
-                        percentage: 100,
+                        percentage: 42,
                         watching: 0,
-                        votes: 1,
+                        votes: 5,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/vvjNmgZw8EzuucalLrUTGc0tJvv.jpg",
-                        fanart: "https://image.tmdb.org/t/p/w500/vvjNmgZw8EzuucalLrUTGc0tJvv.jpg",
-                        banner: "https://image.tmdb.org/t/p/w500/vvjNmgZw8EzuucalLrUTGc0tJvv.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/8zYhO1UDK3NMYXwI312hqJ7yAfx.jpg",
+                        fanart: "https://image.tmdb.org/t/p/w500/8zYhO1UDK3NMYXwI312hqJ7yAfx.jpg",
+                        banner: "https://image.tmdb.org/t/p/w500/8zYhO1UDK3NMYXwI312hqJ7yAfx.jpg"
                 },
                 genres: [
-                        "Drama"
+                        "Action"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:6aa11ededb23c087968e7c1719c06998f3c7597b&dn=City%20Ninja&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -583,7 +580,7 @@ class PublicDomainProvider {
                         "Thriller"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:6ff9b1420a2a3e5c9f712b378453f02c8562ab3a&dn=Deep%20Red&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -594,30 +591,30 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0025318",
+                imdb_id: "tt0272491",
                 title: "Escape from Sobibor",
-                year: 1987,
-                synopsis: "The true story of WWII's notorious Sobibor Nazi death camp, where a courageous inmate orchestrates and leads the escape of over 300 prisoners.",
+                year: 1976,
+                synopsis: "A farmer and his family must flee from Angolan rebels by escaping through hazardous unchartered territory. .",
                 runtime: 90,
                 rating: {
-                        percentage: 72,
+                        percentage: 41,
                         watching: 0,
-                        votes: 198,
+                        votes: 1,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/zxXeuxLgNdOWiT3zd8DrK98E6oj.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/sOhrxGvSJOaAJdBXHu1vQImfGuj.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/sOhrxGvSJOaAJdBXHu1vQImfGuj.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/vu5cXsHTl0G7vOEA6dkqbvj4gI.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/nc1OtsBENCDOXrjR6reWPdT6VG1.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/nc1OtsBENCDOXrjR6reWPdT6VG1.jpg"
                 },
                 genres: [
-                        "Drama",
-                        "Thriller",
-                        "War"
+                        "Adventure",
+                        "Action",
+                        "Family"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:ed1db2106b6391974656dfdf331191209d553448&dn=Escape%20from%20Sobibor&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -651,7 +648,7 @@ class PublicDomainProvider {
                         "History"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:d30cae2381daee43118a9ece07d17a93adc7dbbf&dn=Haxan&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -662,30 +659,29 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0046203",
+                imdb_id: "tt0022744",
                 title: "Jane Eyre",
-                year: 1997,
-                synopsis: "After a bleak childhood, Jane Eyre goes out into the world to become a governess. As she lives happily in her new position at Thornfield Hall, she meet the dark, cold, and abrupt master of the house, Mr. Rochester. Jane and her employer grow close in friendship and she soon finds herself falling in love with him. Happiness seems to have found Jane at last, but could Mr. Rochester's terrible secret be about to destroy it forever?",
+                year: 1943,
+                synopsis: "After a harsh childhood, orphan Jane Eyre is hired by Edward Rochester, the brooding lord of a mysterious manor house, to care for his young daughter.",
                 runtime: 90,
                 rating: {
-                        percentage: 71,
+                        percentage: 75,
                         watching: 0,
-                        votes: 46,
+                        votes: 143,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/1j3MacXlWOJg0nrzmBfmlqPoWZp.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/hsBu64kDdca8ghEStr8FJB1d2g3.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/hsBu64kDdca8ghEStr8FJB1d2g3.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/stD4BQiN4TLNf6P5ju95AVRPdto.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/sAk9UwRR9eeFkAT2vKK7k6vAOPQ.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/sAk9UwRR9eeFkAT2vKK7k6vAOPQ.jpg"
                 },
                 genres: [
                         "Drama",
-                        "Romance",
-                        "TV Movie"
+                        "Romance"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:23965a657ad0419b5032b26b64dfcb45176ec143&dn=Jane%20Eyre&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -698,11 +694,11 @@ class PublicDomainProvider {
         {
                 imdb_id: "tt0216445",
                 title: "My Boys are Good Boys",
-                year: 1978,
-                synopsis: "Teenagers at a correctional facility devise a plan to rob an armored van.",
+                year: 1979,
+                synopsis: "Teenagers plot the robbery of an armored car.",
                 runtime: 90,
                 rating: {
-                        percentage: 72,
+                        percentage: 45,
                         watching: 0,
                         votes: 4,
                         loved: 100,
@@ -718,7 +714,7 @@ class PublicDomainProvider {
                         "Crime"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:994b854bed53efa9c8e22551fbf396a44c9002cc&dn=My%20Boys%20are%20Good%20Boys&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -751,7 +747,7 @@ class PublicDomainProvider {
                         "Thriller"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:91998f231c9c3615b23d65fbf4eaef249f28576c&dn=Night%20of%20the%20Living%20Dead&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -762,29 +758,29 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0082781",
+                imdb_id: "tt0023283",
                 title: "Our Town",
-                year: 2003,
-                synopsis: "Our Town is a three-act play by American playwright Thornton Wilder. It is a character story about an average town's citizens in the early twentieth century as depicted through their everyday lives. Using metatheatrical devices, Wilder sets the play in a 1930s theater. He uses the actions of the Stage Manager to create the town of Grover's Corners for the audience. Scenes from its history between the years of 1901 and 1913 play out. Originally broadcast on the Showtime Network, then as part of the PBS series \"Masterpiece Theatre\" (season 33, episode 1).",
+                year: 1940,
+                synopsis: "Change comes slowly to a small New Hampshire town in the early 20th century.",
                 runtime: 90,
                 rating: {
-                        percentage: 80,
+                        percentage: 65,
                         watching: 0,
-                        votes: 5,
+                        votes: 33,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/shl1N27V5iA3ndXV99Vy3gwxEQv.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/uDGIbZZYDomiP7PgMoTDvUKsYEn.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/uDGIbZZYDomiP7PgMoTDvUKsYEn.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/tXYWSUIUfiG06XzgSSkd4sQFOru.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/a8J5yD3jXLAfMyF1OuxpXmDG1YT.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/a8J5yD3jXLAfMyF1OuxpXmDG1YT.jpg"
                 },
                 genres: [
                         "Drama",
-                        "TV Movie"
+                        "Romance"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:64450c9d407002913bad26c032522ea944f795a2&dn=Our%20Town&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -818,7 +814,7 @@ class PublicDomainProvider {
                         "Fantasy"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:e7cccb98f78d9cecdc28935e3e50355b6750de61&dn=Red%20Riding%20Hood&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -829,29 +825,28 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0812031",
+                imdb_id: "tt0023393",
                 title: "Rock Rock Rock",
-                year: 2021,
-                synopsis: "An exploration of the rise of Héroes del Silencio, the seminal 1980s Spanish rock band anchored by Enrique Bunbury.",
+                year: 1956,
+                synopsis: "Dori is trying to get together enough money to buy a strapless gown; Daddy has cut off Dori's allowance, but gee, she's gotta go to the prom.",
                 runtime: 90,
                 rating: {
-                        percentage: 84,
+                        percentage: 51,
                         watching: 0,
-                        votes: 84,
+                        votes: 13,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/zDUtJIr4lPeMnF7vXHyAqCXkR4s.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/hl02jzJ80MozdW71Naf5Ee2881n.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/hl02jzJ80MozdW71Naf5Ee2881n.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/gYTUVqqOA4HINuwKe46GEDMFnJh.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/jmTJyGbmRIYZcjyC3dylofcHVTA.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/jmTJyGbmRIYZcjyC3dylofcHVTA.jpg"
                 },
                 genres: [
-                        "Documentary",
-                        "Music"
+                        "Comedy"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:c8a691937492fb40a034b2898930b9ad403ee998&dn=Rock%20Rock%20Rock&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -884,7 +879,7 @@ class PublicDomainProvider {
                         "Crime"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:9cc6273db14e9bc9641906501cf31fe9b050e3ba&dn=Scarlet%20Street&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -916,7 +911,7 @@ class PublicDomainProvider {
                         "Action"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:6752a36af5fe40ebacb5cb743903921eef5e6a54&dn=Spirits%20of%20Bruce%20Lee&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -949,7 +944,7 @@ class PublicDomainProvider {
                         "Romance"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:d510a88e7672b1ab173c2154d84e02936d05b6ac&dn=Steamboat%20Bill&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -960,29 +955,28 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0667696",
+                imdb_id: "tt0117250",
                 title: "Sunny",
-                year: 2024,
-                synopsis: "A Philippine adaptation of the 2011 hit Korean movie, Sunny is the story of a middle-aged woman who dreams to fulfill her dying wish to reunite with high school friends.",
+                year: 1941,
+                synopsis: "The beautiful Anna Neagle stars as a circus performer who falls in love with a rich car dealer's son, against her family's wishes. Features some spirited dance numbers with Ray Bolger.",
                 runtime: 90,
                 rating: {
-                        percentage: 75,
+                        percentage: 54,
                         watching: 0,
-                        votes: 2,
+                        votes: 6,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/bblYx5GMKr9MnYguh13Yn8iURu6.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/yZzbpirkIPkSqCyP3GEI0LgjWrA.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/yZzbpirkIPkSqCyP3GEI0LgjWrA.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/rSrOMF6zb2J4u7V5y2sHwUg4r97.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/z9ecqYeBT2RwDTyTQ76uBxfnJ2c.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/z9ecqYeBT2RwDTyTQ76uBxfnJ2c.jpg"
                 },
                 genres: [
-                        "Comedy",
-                        "Drama"
+                        "Music"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:be4918b23d4f6c9fb85a1e6075f5cd20a266745e&dn=Sunny&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -993,28 +987,30 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0738648",
+                imdb_id: "tt0086939",
                 title: "The Brain That Wouldnt Die",
-                year: 2020,
-                synopsis: "After his fiancee in killed a car accident, a gifted surgeon revives her severed head in hopes of finding her a new body.",
+                year: 1972,
+                synopsis: "Several people volunteer for a scientific experiment about mind-reading and memory, but the experiment goes horribly wrong.",
                 runtime: 90,
                 rating: {
-                        percentage: 80,
+                        percentage: 31,
                         watching: 0,
-                        votes: 4,
+                        votes: 17,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/wNBUMlT05PswxqvRYUKiYwTZSOT.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/pc95Y0YrVASAQqhWVm9zAdHOJUA.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/pc95Y0YrVASAQqhWVm9zAdHOJUA.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/8AWgEDOiik9T2K7nzg9leObd7d7.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/tlgbBjMQNYWUlzcPjvN0xycNRcn.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/tlgbBjMQNYWUlzcPjvN0xycNRcn.jpg"
                 },
                 genres: [
+                        "Drama",
+                        "Thriller",
                         "Science Fiction"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:6d35dda32e9ae6a857b32dfa0df8dbdcb16e4696&dn=The%20Brain%20That%20Wouldnt%20Die&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1028,7 +1024,7 @@ class PublicDomainProvider {
                 imdb_id: "tt0000961",
                 title: "The General",
                 year: 1926,
-                synopsis: "During America's Civil War, Union spies steal engineer Johnny Gray's beloved locomotive, 'The General'—with Johnnie's lady love aboard an attached boxcar—and he single-handedly must do all in his power to both get The General back and to rescue Annabelle.",
+                synopsis: "During America’s Civil War, Union spies steal engineer Johnny Gray's beloved locomotive, 'The General'—with Johnnie's lady love aboard an attached boxcar—and he single-handedly must do all in his power to both get The General back and to rescue Annabelle.",
                 runtime: 90,
                 rating: {
                         percentage: 79,
@@ -1048,7 +1044,7 @@ class PublicDomainProvider {
                         "Comedy"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:f957b6da5de2d7ea9c02072baa64f2f2b14e6875&dn=The%20General&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1059,29 +1055,30 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0552081",
+                imdb_id: "tt0048385",
                 title: "The Indestructible Man",
-                year: 1977,
-                synopsis: "It tells the story of a child who lost his mother at a young age and struggled to get by with his father. When his father's enemies forced him into debt and caused them to be evicted from their home, little Çakır, seeing his father in distress, helped him with a knife he found on the table and stabbed his father's enemy to death. Çakır, who continued to commit crimes while in prison, became a powerful figure. Despite his relationship with the girl he loves being strained due to her father, Çakır earns the nickname \"The Indestructible Man\" thanks to his resilience and endurance against his enemies. The film centers on the story of a tough guy who always stands by the good people and the wealthy girl he is in love with.",
+                year: 1956,
+                synopsis: "A brutal death row inmate double-crossed by his crooked lawyer gets his chance for revenge when, following his execution, a bizarre experiment brings him back to life and deadlier than ever.",
                 runtime: 90,
                 rating: {
-                        percentage: 80,
+                        percentage: 44,
                         watching: 0,
-                        votes: 3,
+                        votes: 50,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/srhVFtBhjyBlhJJ5lnZEiHh9rAH.jpg",
-                        fanart: "https://image.tmdb.org/t/p/w500/srhVFtBhjyBlhJJ5lnZEiHh9rAH.jpg",
-                        banner: "https://image.tmdb.org/t/p/w500/srhVFtBhjyBlhJJ5lnZEiHh9rAH.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/kcD0kG86GK2mUHjNf6QoDfwtnxd.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/3bAoBfuCIVbIRLOBL8Nqerdycuz.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/3bAoBfuCIVbIRLOBL8Nqerdycuz.jpg"
                 },
                 genres: [
-                        "Action",
-                        "Crime"
+                        "Crime",
+                        "Horror",
+                        "Science Fiction"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:6ddc4aa784ae517ecd3856e9c67732664502d758&dn=The%20Indestructible%20Man&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1092,29 +1089,30 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0010098",
+                imdb_id: "tt0053111",
                 title: "The Kid",
-                year: 1921,
-                synopsis: "A tramp cares for a boy after he's abandoned as a newborn by his mother. Later the mother has a change of heart and aches to be reunited with her son.",
+                year: 1938,
+                synopsis: "Rogers plays a lookalike to the dead Billy The Kid and restores the tranquility of Lincoln County after subduing the criminal element.",
                 runtime: 90,
                 rating: {
-                        percentage: 81,
+                        percentage: 58,
                         watching: 0,
-                        votes: 2246,
+                        votes: 10,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/A9NWYyn7eX0H9XIjaOvfWJ9mCGA.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/mAhCW7QbpL5kwvCWGsfyY3ILoW6.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/mAhCW7QbpL5kwvCWGsfyY3ILoW6.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/wItHoVhFbwTuQg676RGS7Cx28iN.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/gfJqszt0udPM2kGIKLqkdzlJSwP.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/gfJqszt0udPM2kGIKLqkdzlJSwP.jpg"
                 },
                 genres: [
-                        "Comedy",
-                        "Drama"
+                        "Action",
+                        "Western",
+                        "Music"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:15e25d39acd293f402f79f16d77d7fa309c27f13&dn=The%20Kid&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1128,7 +1126,7 @@ class PublicDomainProvider {
                 imdb_id: "tt0387095",
                 title: "The Master Max",
                 year: 2015,
-                synopsis: "According to his friend Polo the \"Ober-Swiss,\" Max is a spineless character who lives strictly according to conventions and is never satisfied with himself or the world. In truth, Max is fictitious – born out of the fantasy of the filmmaker Clemens Klopfenstein, who created him as his alter ego. Max falls in love with the impassioned Christine, but she jilts him within a short time because of his reluctant disposition. He thus takes a decision: to call upon the \"master\" in the hopes that he can liberate him from the interminably same role. Based on works by Clemens Klopfenstein, the compilation film emerges as a new, self-contained story, while rendering palpable the very essence of the filmmaker.",
+                synopsis: "According to his friend Polo the “Ober-Swiss,” Max is a spineless character who lives strictly according to conventions and is never satisfied with himself or the world. In truth, Max is fictitious – born out of the fantasy of the filmmaker Clemens Klopfenstein, who created him as his alter ego. Max falls in love with the impassioned Christine, but she jilts him within a short time because of his reluctant disposition. He thus takes a decision: to call upon the “master” in the hopes that he can liberate him from the interminably same role. Based on works by Clemens Klopfenstein, the compilation film emerges as a new, self-contained story, while rendering palpable the very essence of the filmmaker.",
                 runtime: 90,
                 rating: {
                         percentage: 75,
@@ -1146,7 +1144,7 @@ class PublicDomainProvider {
                         "Documentary"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:c7939dcf99e58904fd584283f911917ba3ef7747&dn=The%20Master%20Max&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1157,30 +1155,30 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0129948",
+                imdb_id: "tt0182863",
                 title: "The Moonstone",
-                year: 1996,
-                synopsis: "Greg Wise (Sense and Sensibility) and Keeley Hawes (Karaoke) star in this sumptuous adaptation of Wilkie Collins' classic mystery, the first detective novel ever written.  The Moonstone, a sacred Hindu diamond was stolen from the head of the Moon God, in its shrine by John Herncastle in 1799. The stone is said to be cursed if it is removed from the shrine.  In 1848, a man named Franklin Blake announces to Rachel that the Moonstone has been bequeathed to her by Herncastle. Blake gives her the jewel on her birthday and offers to mount the jewel for her, in order that she might wear it. Inevitably, the jewel is found missing the next morning and Rachel believes Blake stole it. Determined to prove his innocence, Blake leaves in order to pursue the real truth behind the theft.",
+                year: 1934,
+                synopsis: "Typical Monogram whodunit from the 30's, with dialogue and sound effects based on the well known mystery book with same title. A valuable gem from India is stolen in an old dark mansion and it is up to Scotland Yard inspector Char...",
                 runtime: 90,
                 rating: {
-                        percentage: 70,
+                        percentage: 50,
                         watching: 0,
-                        votes: 4,
+                        votes: 6,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/3bfJoAryX1riHOKVqQXqpiP3Ck6.jpg",
-                        fanart: "https://image.tmdb.org/t/p/w500/3bfJoAryX1riHOKVqQXqpiP3Ck6.jpg",
-                        banner: "https://image.tmdb.org/t/p/w500/3bfJoAryX1riHOKVqQXqpiP3Ck6.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/t0UvfOgzdA3epb1YtgC1fOksw5U.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/qqRRNQgrpzEO7SgrJQlG2RTOVNt.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/qqRRNQgrpzEO7SgrJQlG2RTOVNt.jpg"
                 },
                 genres: [
-                        "TV Movie",
-                        "Crime",
-                        "Mystery"
+                        "Comedy",
+                        "Mystery",
+                        "Crime"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:0d82c8c8639021f75295497bfeab97ef61187f9c&dn=The%20Moonstone&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1213,7 +1211,7 @@ class PublicDomainProvider {
                         "Drama"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:6befa33fff8a64093599ab617d40ecb2c13e19d4&dn=The%20Naked%20Kiss&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1224,30 +1222,29 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0009833",
+                imdb_id: "tt0214389",
                 title: "The Phantom of the Opera",
-                year: 2004,
-                synopsis: "A young soprano becomes the obsession of a disfigured and murderous musical genius who lives beneath the Paris Opera House.",
+                year: 1936,
+                synopsis: "A scientist discovers a formula for making synthetic gold.",
                 runtime: 90,
                 rating: {
-                        percentage: 73,
+                        percentage: 54,
                         watching: 0,
-                        votes: 1702,
+                        votes: 4,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/pFf1Xxzgxo6ffxAJeSkAb5b0P4S.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/p3P0eTh8AnqauhRZg0wgoBFvcjF.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/p3P0eTh8AnqauhRZg0wgoBFvcjF.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/dVU27FX4a9mDRvWYMLuVo4QNOWf.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/4IzxDdl3D3L99j5P1NNNHvSY4bR.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/4IzxDdl3D3L99j5P1NNNHvSY4bR.jpg"
                 },
                 genres: [
-                        "Thriller",
-                        "Drama",
-                        "Romance"
+                        "Mystery",
+                        "Adventure"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:a4d6c507996fe4aa3f8d60eb5386ef8debeb94ce&dn=The%20Phantom%20of%20the%20Opera&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1279,7 +1276,7 @@ class PublicDomainProvider {
                         "Animation"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:fff93830f8be121a663291adf299448990a16ec8&dn=The%20Snow%20Man&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1290,30 +1287,29 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0298504",
+                imdb_id: "tt0043148",
                 title: "The Vampire Bat",
-                year: 2014,
-                synopsis: "Teen half vampire Dakaria falls in love with rock singer vampire Murdo. Dakaria, her friends and family have to face vampire Xantor who has dark plans.",
+                year: 1933,
+                synopsis: "When corpses drained of blood begin to show up in a European village, vampirism is suspected to be responsible.",
                 runtime: 90,
                 rating: {
-                        percentage: 71,
+                        percentage: 57,
                         watching: 0,
-                        votes: 114,
+                        votes: 74,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/3kNSlxcLQu2kMYKcDzmLUJ4DKNK.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/b7Qn6OmPo8BNrfEXMr2OO6wVGOF.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/b7Qn6OmPo8BNrfEXMr2OO6wVGOF.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/bGN3Ik3CatDC9wvfV55LLBrBGh8.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/ddtQrSe4AsMS2wq60ZbWfarmn9K.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/ddtQrSe4AsMS2wq60ZbWfarmn9K.jpg"
                 },
                 genres: [
-                        "Adventure",
-                        "Comedy",
-                        "Family"
+                        "Horror",
+                        "Thriller"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:b00b7db05db78ccade3863b0736c3fe6489a1508&dn=The%20Vampire%20Bat&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1324,29 +1320,29 @@ class PublicDomainProvider {
                 }
         },
         {
-                imdb_id: "tt0671290",
+                imdb_id: "tt0003596",
                 title: "Things To Come",
-                year: 2024,
-                synopsis: "Teo, an intrepid child, lives with his father Luis in Lima, an electrician devoted to the creation of a strange machine. Lured by a feeling of independence, Teo joins a gang of young criminals, bringing turmoil to the relationship with his father.",
+                year: 1936,
+                synopsis: "The story of a century: a decades-long second World War leaves plague and anarchy, then a rational state rebuilds civilization and attempts space travel.",
                 runtime: 90,
                 rating: {
-                        percentage: 80,
+                        percentage: 66,
                         watching: 0,
-                        votes: 3,
+                        votes: 203,
                         loved: 100,
                         hated: 100
                 },
                 images: {
-                        poster: "https://image.tmdb.org/t/p/w500/wcCEeMcp5mG3RyewSC4rdhG5kfq.jpg",
-                        fanart: "https://image.tmdb.org/t/p/original/b3Wc0izhQW32p7A5E2cJh3hth3i.jpg",
-                        banner: "https://image.tmdb.org/t/p/original/b3Wc0izhQW32p7A5E2cJh3hth3i.jpg"
+                        poster: "https://image.tmdb.org/t/p/w500/5mjLuKluuMzBiCKTA28Qa8TR1wc.jpg",
+                        fanart: "https://image.tmdb.org/t/p/original/wa6uAXC6ei0BwaDiShwLjbMCLfe.jpg",
+                        banner: "https://image.tmdb.org/t/p/original/wa6uAXC6ei0BwaDiShwLjbMCLfe.jpg"
                 },
                 genres: [
                         "Drama",
                         "Science Fiction"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:5eeb9b0b2235b31b8bddebb7ff6fa474d9205b62&dn=Things%20To%20Come&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1379,7 +1375,7 @@ class PublicDomainProvider {
                         "War"
                 ],
                 torrents: {
-                        "720p": {
+                        720p: {
                                 url: "magnet:?xt=urn:btih:79f73d67791a7668907ce17e90d536ecddc05348&dn=War%20Comes%20to%20America&tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php",
                                 seed: 99,
                                 peer: 15,
@@ -1390,6 +1386,7 @@ class PublicDomainProvider {
                 }
         }
 ];
+    }
     }
 
     async search(query) {
