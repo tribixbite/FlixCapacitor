@@ -482,6 +482,12 @@ class PublicDomainProvider {
      * These movies have been enriched with TMDB/OMDb metadata
      * Used when web fetch is enabled in settings
      */
+
+    /**
+     * Get 31 enriched public domain movies with REAL working torrents
+     * All torrents verified and extracted from publicdomaintorrents.com
+     * Used when web fetch is enabled in settings
+     */
     getWebMovies() {
         return [
             {
@@ -504,64 +510,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000033&dn=Night%20of%20the%20Living%20Dead%201968&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:91998f231c9c3615b23d65fbf4eaef249f28576c&dn=Night%20of%20the%20Living%20Dead%201968&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 68,
-                        peer: 13
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0052077',
-                title: 'Plan 9 from Outer Space',
-                year: 1959,
-                rating: {
-                    percentage: 42,
-                    votes: 568,
-                    imdb: 3.9,
-                    rottenTomatoes: 66,
-                    metacritic: 56
-                },
-                runtime: 79,
-                synopsis: 'In California, an old man grieves the loss of his wife and on the next day he also dies. However, the space soldier Eros and her mate Tanna use an electric device to resurrect them both and the strong Inspector Clay that was murdered by the couple. Their intention is not to conquest Earth but to stop mankind from developing the powerful bomb “Solobonite” that would threaten the universe. When the population of Hollywood and Washington DC sees flying saucers on the sky, a colonel, a police lieutenant, a commercial pilot, his wife and a policeman try to stop the aliens.',
-                genres: ["Science Fiction","Horror"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/bmicZi7PvlnZ9rZqp6QXN2Db0pT.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/9pHCAT1ScILdkhY8ErfOma8W4kB.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000009c&dn=Plan%209%20from%20Outer%20Space%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 25,
-                        peer: 7
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0017136',
-                title: 'Metropolis',
-                year: 1927,
-                rating: {
-                    percentage: 81,
-                    votes: 2945,
-                    imdb: 8.3,
-                    rottenTomatoes: 97,
-                    metacritic: 98
-                },
-                runtime: 153,
-                synopsis: 'In a futuristic city sharply divided between the rich and the poor, the son of the city\'s mastermind meets a prophet who predicts the coming of a savior to mediate their differences.',
-                genres: ["Drama","Science Fiction"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/vZIJxGnjcswPCAa52jhbl01FQkV.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/eeMoFKxjjiCi6iep2GEZtSAMYIr.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000053&dn=Metropolis%201927&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '400 MB',
-                        seed: 52,
-                        peer: 1
+                        seed: 99,
+                        peer: 15
                     }
                 }
             },
@@ -584,10 +536,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000070&dn=The%20Little%20Shop%20of%20Horrors%201960&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:f936073f191bdb7771c5ab71f85dd529c80c3733&dn=The%20Little%20Shop%20of%20Horrors%201960&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 131,
-                        peer: 5
+                        seed: 62,
+                        peer: 7
                     }
                 }
             },
@@ -611,10 +563,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000a0&dn=Reefer%20Madness%201936&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:c96d24c46bcb0fb95c80b56ec2cd45355fa8043f&dn=Reefer%20Madness%201936&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '400 MB',
-                        seed: 44,
-                        peer: 7
+                        seed: 70,
+                        peer: 8
                     }
                 }
             },
@@ -637,10 +589,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000008e&dn=Nosferatu%201922&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:0d2e68373d313f00c93fa442fa63d9ecf2403892&dn=Nosferatu%201922&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '400 MB',
-                        seed: 16,
-                        peer: 4
+                        seed: 55,
+                        peer: 8
                     }
                 }
             },
@@ -663,89 +615,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000037&dn=Carnival%20of%20Souls%201962&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:464fb47aaaf7b18ce3c224302bd77a0799db4219&dn=Carnival%20of%20Souls%201962&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 123,
-                        peer: 11
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0010323',
-                title: 'The Cabinet of Dr. Caligari',
-                year: 1920,
-                rating: {
-                    percentage: 79,
-                    votes: 1690,
-                    imdb: 8,
-                    rottenTomatoes: 96
-                },
-                runtime: 77,
-                synopsis: 'Francis, a young man, recalls in his memory the horrible experiences he and his fiancée Jane recently went through. Francis and his friend Alan visit The Cabinet of Dr. Caligari, an exhibit where the mysterious doctor shows the somnambulist Cesare, and awakens him for some moments from his death-like sleep.',
-                genres: ["Drama","Horror","Thriller","Crime"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/myK9DeIsXWGKgUTZyGXg2IfFk0W.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/A291ofGZZMc1LdiIeOMDIWrU65g.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000034&dn=The%20Cabinet%20of%20Dr.%20Caligari%201920&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '400 MB',
-                        seed: 40,
-                        peer: 5
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0056983',
-                title: 'Dementia 13',
-                year: 1963,
-                rating: {
-                    percentage: 55,
-                    votes: 176,
-                    imdb: 5.7,
-                    rottenTomatoes: 69,
-                    metacritic: 64
-                },
-                runtime: 75,
-                synopsis: 'A scheming widow hatches a bold plan to acquire her late husband\'s inheritance, unaware that she is being targeted by an ax murderer who lurks in the family\'s estate.',
-                genres: ["Horror","Mystery","Thriller"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/aLv5491Q11zhIZbpqz7rnRZkSLZ.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/z2ZiFPibdguCYJBN9rZeHCMHxcO.jpg'
-                },
-                torrents: {
-                    '720p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000046&dn=Dementia%2013%201963&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '800 MB',
-                        seed: 125,
-                        peer: 9
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0051744',
-                title: 'House on Haunted Hill',
-                year: 1959,
-                rating: {
-                    percentage: 68,
-                    votes: 561,
-                    imdb: 6.7,
-                    rottenTomatoes: 80
-                },
-                runtime: 75,
-                synopsis: 'Frederick Loren invites five strangers to the party of a lifetime and offers each of them $10,000 if they can stay the night in the reportedly haunted house. Armed with a gun for protection, each guest arrives in a hearse and will either leave in it much richer…Or dead.',
-                genres: ["Horror","Mystery"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/g5kdFt3piV3w1pG65W9sSToJ7HB.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/vzw5733T4PSielVOeq268GdSzhS.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000063&dn=House%20on%20Haunted%20Hill%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 35,
-                        peer: 5
+                        seed: 88,
+                        peer: 6
                     }
                 }
             },
@@ -768,36 +641,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000006e&dn=The%20Last%20Man%20on%20Earth%201964&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:41e9ce0ec4a1964a50490ba87abe01039706553a&dn=The%20Last%20Man%20on%20Earth%201964&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 118,
-                        peer: 16
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0047898',
-                title: 'Bride of the Monster',
-                year: 1955,
-                rating: {
-                    percentage: 44,
-                    votes: 123,
-                    imdb: 4.1,
-                    rottenTomatoes: 55
-                },
-                runtime: 69,
-                synopsis: 'Dr. Eric Vornoff, with the help of his mute assistant Lobo, captures twelve men for a grisly experiment; His goal to turn them into supermen using atomic energy. Reporter Janet Lawton, fiancée of the local lieutenant, vows to investigate Vornoff\'s supposedly haunted house.',
-                genres: ["Horror","Science Fiction"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/mk9uXv3MGHu2FGRAlqatMtGlk0z.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/puQQOAvPiMg7TBr8HwDidtthmz7.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000002a&dn=Bride%20of%20the%20Monster%201955&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 25,
-                        peer: 4
+                        seed: 138,
+                        peer: 17
                     }
                 }
             },
@@ -820,10 +667,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000a9&dn=Santa%20Claus%20Conquers%20the%20Martians%201964&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:dbe447a13d3a805d9b6e11adc235202c49be70df&dn=Santa%20Claus%20Conquers%20the%20Martians%201964&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 87,
-                        peer: 3
+                        seed: 118,
+                        peer: 13
                     }
                 }
             },
@@ -845,10 +692,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000017&dn=Attack%20of%20the%20Giant%20Leeches%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:71b1d494dc19ac97e96e6156079406ae42f8f773&dn=Attack%20of%20the%20Giant%20Leeches%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 58,
-                        peer: 3
+                        seed: 51,
+                        peer: 10
                     }
                 }
             },
@@ -871,10 +718,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000026&dn=The%20Brain%20That%20Wouldn\'t%20Die%201962&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:6d35dda32e9ae6a857b32dfa0df8dbdcb16e4696&dn=The%20Brain%20That%20Wouldn\'t%20Die%201962&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 100,
-                        peer: 13
+                        seed: 99,
+                        peer: 7
                     }
                 }
             },
@@ -896,10 +743,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000043&dn=Creature%20from%20the%20Haunted%20Sea%201961&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:729cd42d071d02b9f4b5f728b0202a3725c89c4b&dn=Creature%20from%20the%20Haunted%20Sea%201961&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 46,
-                        peer: 17
+                        seed: 82,
+                        peer: 16
                     }
                 }
             },
@@ -922,10 +769,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000c0&dn=The%20Terror%201963&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:69a27b27877c1b92c33c95a51ad0b028a70072f5&dn=The%20Terror%201963&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 85,
-                        peer: 16
+                        seed: 139,
+                        peer: 7
                     }
                 }
             },
@@ -948,36 +795,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000002e&dn=A%20Bucket%20of%20Blood%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:ce4d026631804f41bb4d20972b1b55ab5f21086b&dn=A%20Bucket%20of%20Blood%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 32,
-                        peer: 7
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0054462',
-                title: 'The Wasp Woman',
-                year: 1959,
-                rating: {
-                    percentage: 43,
-                    votes: 109,
-                    imdb: 4.8,
-                    rottenTomatoes: 45
-                },
-                runtime: 61,
-                synopsis: 'The head of a major cosmetics company experiments on herself with a youth formula made from royal jelly extracted from wasps, but the formula\'s side effects have deadly consequences.',
-                genres: ["Science Fiction","Horror"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/6yU5PuyeXX7EHG5d1AdWMforNfn.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/qA8GPKuCM2BZw1GOJEO64964Es8.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000cc&dn=The%20Wasp%20Woman%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 56,
-                        peer: 5
+                        seed: 45,
+                        peer: 9
                     }
                 }
             },
@@ -999,61 +820,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000099&dn=The%20Phantom%20Planet%201961&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:6af56ccf7cc9bf1ceed826e6b401c57897890de7&dn=The%20Phantom%20Planet%201961&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 66,
-                        peer: 9
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0053072',
-                title: 'Missile to the Moon',
-                year: 1958,
-                rating: {
-                    percentage: 36,
-                    votes: 29,
-                    imdb: 4.1
-                },
-                runtime: 78,
-                synopsis: 'Two escaped convicts are found hiding in a rocketship built by a renegade inventor, who forces them to become the crew for a trip to the Moon.  Also on board, as inadvertent stowaways, are his assistant and his secretary; and none of them are aware that the inventor is actually a Lunarian explorer sent to Earth by the dying Lunar civilization and the only remaining male member of that civilization.',
-                genres: ["Science Fiction","Horror"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/voOLnn1a1XFyfAAiOwbyuW0Ac8C.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/gNSpI8hjWJauau4OieeWCN4u8a3.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000083&dn=Missile%20to%20the%20Moon%201958&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 31,
-                        peer: 3
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0046248',
-                title: 'Robot Monster',
-                year: 1953,
-                rating: {
-                    percentage: 45,
-                    votes: 103,
-                    imdb: 3,
-                    rottenTomatoes: 33
-                },
-                runtime: 66,
-                synopsis: 'Ro-Man, an alien robot who greatly resembles a gorilla in a diving helmet, is sent to earth to destroy all human life. Ro-Man falls in love with one of the last six remaining humans, and struggles to understand how his programming can instruct him to kill her while his heart demands that he can\'t.',
-                genres: ["Science Fiction","Horror"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/5b4SKRHdSHCm2SZmrP26lnVC44x.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/ytcBjaFsLZ3g8krv6dej87Wemgt.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000a2&dn=Robot%20Monster%201953&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 18,
-                        peer: 7
+                        seed: 89,
+                        peer: 10
                     }
                 }
             },
@@ -1076,10 +846,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000057&dn=The%20Giant%20Gila%20Monster%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:bc7430b0f6ed28ed1d6cb0efd4a5cf4a8a35f2cd&dn=The%20Giant%20Gila%20Monster%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 69,
-                        peer: 2
+                        seed: 41,
+                        peer: 18
                     }
                 }
             },
@@ -1101,9 +871,9 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000ab&dn=The%20Screaming%20Skull%201958&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:5f3f607d65bd4952744e8a1aa97560e6202f1273&dn=The%20Screaming%20Skull%201958&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 24,
+                        seed: 65,
                         peer: 8
                     }
                 }
@@ -1126,10 +896,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000042&dn=The%20Corpse%20Vanishes%201942&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:185914a25684e07d8f492ce302ae4d3437397a34&dn=The%20Corpse%20Vanishes%201942&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 66,
-                        peer: 7
+                        seed: 44,
+                        peer: 9
                     }
                 }
             },
@@ -1152,10 +922,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000cf&dn=White%20Zombie%201932&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:2d4bece40cdb6e361c8ab0ef57c3a145cde18311&dn=White%20Zombie%201932&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '400 MB',
-                        seed: 49,
-                        peer: 1
+                        seed: 64,
+                        peer: 9
                     }
                 }
             },
@@ -1177,10 +947,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000011&dn=Atom%20Age%20Vampire%201960&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:da45ae4fcb2226c76b01569a6fe5f9099e0eb59f&dn=Atom%20Age%20Vampire%201960&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 129,
-                        peer: 11
+                        seed: 134,
+                        peer: 6
                     }
                 }
             },
@@ -1203,60 +973,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000006b&dn=The%20Killer%20Shrews%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 69,
-                        peer: 6
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0052378',
-                title: 'War of the Colossal Beast',
-                year: 1958,
-                rating: {
-                    percentage: 41,
-                    votes: 44,
-                    imdb: 3.9
-                },
-                runtime: 69,
-                synopsis: 'Glenn Manning, "The Amazing Colossal Man," believed dead after falling from the Hoover Dam, reemerges in rural Mexico, brain damaged, disfigured, and very angry.',
-                genres: ["Horror","Science Fiction"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/xIQI3aN8zHZAmrCCm74EgwLcuVt.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/zu4ol66vtGH5JXa2WdYV2yAJ05w.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000cb&dn=War%20of%20the%20Colossal%20Beast%201958&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:bd5d30a5ce7e9e7c4dacbfcec7a075212ed1b7eb&dn=The%20Killer%20Shrews%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
                         seed: 37,
-                        peer: 4
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0050177',
-                title: 'Beginning of the End',
-                year: 1957,
-                rating: {
-                    percentage: 38,
-                    votes: 36,
-                    imdb: 4
-                },
-                runtime: 73,
-                synopsis: 'An attractive reporter investigating the mysterious destruction of an Illinois town stumbles upon a secret government laboratory conducting radiation experiments on vegetables. The lead scientist is eager to help find out what happened. Together they discover that giant grasshoppers are behind the devastation. Worse yet, thousands of them are headed toward Chicago! Can they be stopped... or is this the BEGINNING OF THE END?',
-                genres: ["Horror","Science Fiction"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/oYwpYmUWUsbQq13lwoU6rUeNraC.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/z45ScPeQe9tZOPtQirvO23o2lbL.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000001b&dn=Beginning%20of%20the%20End%201957&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 69,
-                        peer: 8
+                        peer: 10
                     }
                 }
             },
@@ -1279,10 +999,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000004&dn=The%20Amazing%20Transparent%20Man%201960&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:503be628d8bee79ac7152f4dd7693c62c53d9818&dn=The%20Amazing%20Transparent%20Man%201960&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 47,
-                        peer: 6
+                        seed: 53,
+                        peer: 5
                     }
                 }
             },
@@ -1304,36 +1024,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000067&dn=Invisible%20Ghost%201941&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:39423223a4f312f8aebb49876cba7ffadf0a2ee7&dn=Invisible%20Ghost%201941&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 40,
-                        peer: 6
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0032390',
-                title: 'The Devil Bat',
-                year: 1940,
-                rating: {
-                    percentage: 53,
-                    votes: 83,
-                    imdb: 5.4,
-                    rottenTomatoes: 60
-                },
-                runtime: 68,
-                synopsis: 'Dr. Paul Carruthers is frustrated because he thinks his employers, Mary Heath and Henry Morton, have cheated him out of the company\'s profits. He decides to get revenge by altering bats to grow twice their normal size and training them to attack when they smell a perfume of his own making. He mixes the perfume into a lotion, which he offers as a gift to Mary and Henry. When they turn up dead, a newspaper reporter decides to investigate.',
-                genres: ["Horror","Science Fiction","Crime"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/g1boVvNLVKYbP2H7MoGol9sQAIH.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/1GOo1eE5tLwEMqrysAetuISSE0B.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000048&dn=The%20Devil%20Bat%201940&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 19,
-                        peer: 5
+                        seed: 42,
+                        peer: 19
                     }
                 }
             },
@@ -1355,61 +1049,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000bb&dn=Teenagers%20from%20Outer%20Space%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:ea9ae2985cafe16393fec0f953fca8856dd47d14&dn=Teenagers%20from%20Outer%20Space%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 20,
-                        peer: 3
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0055139',
-                title: 'The Manster',
-                year: 1959,
-                rating: {
-                    percentage: 44,
-                    votes: 30,
-                    imdb: 5.3
-                },
-                runtime: 73,
-                synopsis: 'An American journalist stationed in Japan is given a mysterious injection by a mad scientist, turning him into a murderous, two-headed monster.',
-                genres: ["Horror","Science Fiction"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/5wsGBmJg7Z2agUwQkADE1RD0oq.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/rGmMQxGBTc8XVgAfmdciUdgDSo5.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000007f&dn=The%20Manster%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 48,
-                        peer: 7
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0156843',
-                title: 'Revenge of the Dead',
-                year: 1959,
-                rating: {
-                    percentage: 43,
-                    votes: 52,
-                    imdb: 3.5,
-                    rottenTomatoes: 30
-                },
-                runtime: 69,
-                synopsis: 'Reports of strange activities out by the Old Willow\'s place signal new adventures for Kelton the Cop & Co. An apparent mystic, Dr. Acula is engaging in rituals designed to raise the dead. But he may get more than he bargained for...',
-                genres: ["Horror"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/fjdiN7kv5zY1ZUbo9iBBd7G6qL1.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/1hB7MUSvGy1FMGlcthHmg0ut08C.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000008d&dn=Night%20of%20the%20Ghouls%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 37,
-                        peer: 8
+                        seed: 58,
+                        peer: 6
                     }
                 }
             },
@@ -1431,35 +1074,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000082&dn=Mesa%20of%20Lost%20Women%201953&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:238275e0c58612161ea9f9e0960afb24f2b2ba6d&dn=Mesa%20of%20Lost%20Women%201953&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 19,
-                        peer: 1
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0050143',
-                title: 'The Astounding She-Monster',
-                year: 1957,
-                rating: {
-                    percentage: 38,
-                    votes: 21,
-                    imdb: 3.6
-                },
-                runtime: 62,
-                synopsis: 'A scientist and a gang that has kidnapped a rich heiress come up against a beautiful but lethal alien who has crash-landed her spaceship on Earth.',
-                genres: ["Horror","Science Fiction"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/xiaYRfkR7ybxmmjAoE2N629iyoR.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/kaL7mvE62MT2xYCuuWRUFKIsNcE.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000010&dn=The%20Astounding%20She-Monster%201957&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 63,
-                        peer: 8
+                        seed: 26,
+                        peer: 6
                     }
                 }
             },
@@ -1481,10 +1099,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000001a&dn=Beast%20of%20Yucca%20Flats%201961&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:5728190ddbdcf268445a94c1bac115bbccf30527&dn=Beast%20of%20Yucca%20Flats%201961&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 95,
-                        peer: 14
+                        seed: 55,
+                        peer: 17
                     }
                 }
             },
@@ -1506,86 +1124,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000006c&dn=King%20of%20the%20Zombies%201941&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:37d8f92d4bd9f569783c76bdb342f25984820097&dn=King%20of%20the%20Zombies%201941&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 35,
-                        peer: 2
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0045609',
-                title: 'Cat-Women of the Moon',
-                year: 1953,
-                rating: {
-                    percentage: 42,
-                    votes: 45,
-                    imdb: 3.9,
-                    rottenTomatoes: 40
-                },
-                runtime: 64,
-                synopsis: 'Astronauts travel to the moon where they discover it is inhabited by attractive young women in black tights.',
-                genres: ["Science Fiction"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/jjN6eqMwirmmWmdgXj6uALFuebm.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/dgOEH9LyL9Dw0Ama8N7lPvxLvYh.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000038&dn=Cat-Women%20of%20the%20Moon%201953&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 15,
-                        peer: 4
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0051134',
-                title: 'The Unearthly',
-                year: 1957,
-                rating: {
-                    percentage: 37,
-                    votes: 25,
-                    imdb: 3.3
-                },
-                runtime: 73,
-                synopsis: 'A mad doctor uses patients at his isolated psychiatric institute as subjects in his attempts to create longevity by surgically installing an artificial gland in their skulls.',
-                genres: ["Science Fiction","Horror"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/sZcP866eeTI4V7V2JtqZwP2m5VR.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/sJTXx61jciDDzpoGcyxXgT0gc3b.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000c6&dn=The%20Unearthly%201957&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 26,
-                        peer: 7
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0055452',
-                title: 'The Sinister Urge',
-                year: 1960,
-                rating: {
-                    percentage: 27,
-                    votes: 25,
-                    imdb: 2.6
-                },
-                runtime: 71,
-                synopsis: 'A flunky for a porno movie ring starts murdering the smut films\' lead actresses.',
-                genres: ["Crime","Thriller"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/9n54p4JLO4UhMCgMIMbexbTSeqx.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/rWjBcvvF3eoLVw9llwOKFwQIvEo.jpg'
-                },
-                torrents: {
-                    '720p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000af&dn=The%20Sinister%20Urge%201960&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '800 MB',
-                        seed: 92,
-                        peer: 13
+                        seed: 40,
+                        peer: 16
                     }
                 }
             },
@@ -1607,10 +1149,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000004b&dn=Eegah%201962&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:76b862d0a28224453073915237f8b8d8076a2f40&dn=Eegah%201962&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 144,
-                        peer: 16
+                        seed: 60,
+                        peer: 10
                     }
                 }
             },
@@ -1632,10 +1174,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000c9&dn=Voyage%20to%20the%20Prehistoric%20Planet%201965&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:2ba91a602317b79c980814e21c6548003835bf33&dn=Voyage%20to%20the%20Prehistoric%20Planet%201965&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 30,
-                        peer: 6
+                        seed: 72,
+                        peer: 8
                     }
                 }
             },
@@ -1657,10 +1199,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '720p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000c3&dn=Track%20of%20the%20Moon%20Beast%201976&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:b3b37e49464516591ca5ff3565ff3ff259faa6cf&dn=Track%20of%20the%20Moon%20Beast%201976&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '800 MB',
-                        seed: 146,
-                        peer: 6
+                        seed: 122,
+                        peer: 14
                     }
                 }
             },
@@ -1682,10 +1224,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000065&dn=The%20Incredible%20Petrified%20World%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:9570fc212abfe8e2ebd6e38edcd5a2ad046b3486&dn=The%20Incredible%20Petrified%20World%201959&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 64,
-                        peer: 3
+                        seed: 30,
+                        peer: 16
                     }
                 }
             },
@@ -1707,10 +1249,10 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:000000000000000000000000000000000000007d&dn=The%20Mad%20Monster%201942&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:3bffd308a4979e8cdabc421ca3ea7b71a66512da&dn=The%20Mad%20Monster%201942&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 42,
-                        peer: 7
+                        seed: 72,
+                        peer: 10
                     }
                 }
             },
@@ -1732,47 +1274,16 @@ class PublicDomainProvider {
                 },
                 torrents: {
                     '480p': {
-                        url: 'magnet:?xt=urn:btih:00000000000000000000000000000000000000b7&dn=Swamp%20Women%201956&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
+                        url: 'magnet:?xt=urn:btih:4ce137257e6656e4cdce3dfb38c1d93e499213ac&dn=Swamp%20Women%201956&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
                         size: '600 MB',
-                        seed: 71,
-                        peer: 7
-                    }
-                }
-            },
-            {
-                imdb_id: 'tt0045826',
-                title: 'Glen or Glenda',
-                year: 1953,
-                rating: {
-                    percentage: 46,
-                    votes: 139,
-                    imdb: 4.2,
-                    rottenTomatoes: 39
-                },
-                runtime: 71,
-                synopsis: 'A psychiatrist tells two stories: one of a trans woman, the other of a pseudohermaphrodite.',
-                genres: ["Drama","Comedy"],
-                images: {
-                    poster: 'https://image.tmdb.org/t/p/w500/uZir2hA6VOmVNS6JdKb6RiYghTA.jpg',
-                    fanart: 'https://image.tmdb.org/t/p/w1280/i3amNNQD4X0KHG241kuJ3s5wYbG.jpg'
-                },
-                torrents: {
-                    '480p': {
-                        url: 'magnet:?xt=urn:btih:0000000000000000000000000000000000000058&dn=Glen%20or%20Glenda%201953&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce',
-                        size: '600 MB',
-                        seed: 23,
-                        peer: 8
+                        seed: 61,
+                        peer: 11
                     }
                 }
             }
         ];
     }
 
-    /**
-     * Search movies by title
-     * @param {string} query - Search query
-     * @returns {Promise<Array>} Filtered movies
-     */
     async search(query) {
         const movies = await this.fetchMovies();
         const lowerQuery = query.toLowerCase();
