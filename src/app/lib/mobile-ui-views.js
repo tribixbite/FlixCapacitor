@@ -3629,14 +3629,36 @@ export class MobileUIController {
             // Handle video errors
             if (videoElement) {
                 const errorHandler = (e) => {
-                    console.error('Video playback error:', e);
+                    console.error('Video playback error event:', e.type, e);
 
                     // CRITICAL: Set error flag to prevent progress updates from overwriting this UI
                     hasVideoError = true;
 
-                    const errorMsg = videoElement.error ?
-                        `Error ${videoElement.error.code}: ${videoElement.error.message}` :
-                        'Unknown playback error';
+                    let errorMsg = 'An unexpected error occurred.';
+                    let errorCode = 'N/A';
+                    if (videoElement.error) {
+                        errorCode = videoElement.error.code;
+                        switch (videoElement.error.code) {
+                            case 1: errorMsg = 'Video loading was aborted.'; break;
+                            case 2: errorMsg = 'A network error caused the video download to fail part-way.'; break;
+                            case 3: errorMsg = 'Video playback aborted due to corruption or unsupported features (likely codec/format issue).'; break;
+                            case 4: errorMsg = 'The video could not be loaded, either due to a server/network issue or an unsupported format.'; break;
+                        }
+                        if (videoElement.error.message) {
+                            errorMsg += ` (${videoElement.error.message})`;
+                        }
+                    }
+
+                    // Log comprehensive debug information to the console
+                    console.error(`
+                        --- VIDEO PLAYBACK ERROR ---
+                        Error Code: ${errorCode}
+                        Error Message: ${errorMsg}
+                        Video Source: ${videoElement.currentSrc || (streamInfo ? streamInfo.streamUrl : 'N/A')}
+                        Network State: ${videoElement.networkState} (0:EMPTY, 1:IDLE, 2:LOADING, 3:NO_SOURCE)
+                        Ready State: ${videoElement.readyState} (0:HAVE_NOTHING, 1:HAVE_METADATA, 2:HAVE_CURRENT_DATA, 3:HAVE_FUTURE_DATA, 4:HAVE_ENOUGH_DATA)
+                        --------------------------
+                    `);
 
                     // Show error in loading UI with external player option
                     if (loadingTitle) loadingTitle.textContent = 'In-App Player Failed';
@@ -3658,6 +3680,7 @@ export class MobileUIController {
                                 📱 Open in External Player (VLC, MX Player, etc.)
                             </button>
                             <span style="font-size: 0.8rem; margin-top: 1rem; display: block; opacity: 0.7;">
+                                This may be due to an unsupported video format (codec) or a network issue.<br>
                                 Stream URL: ${streamInfo.streamUrl}
                             </span>
                         `;
