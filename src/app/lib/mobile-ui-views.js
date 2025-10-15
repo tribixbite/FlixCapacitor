@@ -1770,6 +1770,39 @@ export class MobileUIController {
 
         const contentGrid = document.querySelector('.content-grid');
 
+        // Request storage permissions first
+        try {
+            const { Filesystem } = await import('@capacitor/filesystem');
+
+            // Check current permission status
+            const permission = await Filesystem.checkPermissions();
+            console.log('Storage permission status:', permission);
+
+            // If not granted, request permissions
+            if (permission.publicStorage !== 'granted') {
+                console.log('Requesting storage permissions...');
+                const result = await Filesystem.requestPermissions();
+                console.log('Permission request result:', result);
+
+                if (result.publicStorage !== 'granted') {
+                    contentGrid.innerHTML = UITemplates.emptyState(
+                        '🔒',
+                        'Permission Denied',
+                        'Storage access is required to scan your media library. Please grant permission in app settings.'
+                    );
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('Failed to request permissions:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Permission Error',
+                'Failed to request storage permissions. Please check app settings.'
+            );
+            return;
+        }
+
         // TODO: Add folder picker to select directories
         // For now, scan common Android media directories
         const commonPaths = [
