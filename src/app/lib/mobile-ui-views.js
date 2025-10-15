@@ -1227,6 +1227,26 @@ export class MobileUIController {
         this.playbackPositions = new Map(); // Store playback positions by movie ID
         this.isLoadingStream = false; // Prevent duplicate concurrent stream loading
         this.videoPlayerCleanup = { listeners: [], intervals: [] }; // Track resources for cleanup
+        this.Haptics = null; // Conference Polish: Haptics module for tactile feedback
+        this.StatusBar = null; // Conference Polish: StatusBar module for dynamic colors
+
+        // Conference Polish: Initialize Haptics
+        import('@capacitor/haptics').then(module => {
+            this.Haptics = module.Haptics;
+        }).catch(() => {
+            // Haptics not available on this platform
+        });
+
+        // Conference Polish: Initialize StatusBar
+        import('@capacitor/status-bar').then(module => {
+            this.StatusBar = module.StatusBar;
+            // Set initial dark status bar
+            this.StatusBar.setStyle({ style: 'DARK' }).catch(() => {});
+            this.StatusBar.setBackgroundColor({ color: '#0a0a0a' }).catch(() => {});
+        }).catch(() => {
+            // StatusBar not available on this platform
+        });
+
         this.setupNavigation();
 
         // Make available globally for back button handler
@@ -1235,11 +1255,68 @@ export class MobileUIController {
         }
     }
 
+    /**
+     * Conference Polish: Trigger haptic feedback
+     * @param {string} style - 'light', 'medium', 'heavy'
+     */
+    async haptic(style = 'light') {
+        if (this.Haptics) {
+            try {
+                await this.Haptics.impact({ style });
+            } catch (err) {
+                // Silently ignore
+            }
+        }
+    }
+
+    /**
+     * Conference Polish: Update status bar color based on current view
+     * @param {string} view - Current view name
+     */
+    async updateStatusBarColor(view) {
+        if (!this.StatusBar) return;
+
+        const colors = {
+            'movies': '#0a0a0a',
+            'shows': '#0a0a0a',
+            'anime': '#0a0a0a',
+            'favorites': '#0a0a0a',
+            'library': '#0a0a0a',
+            'learning': '#0a0a0a',
+            'settings': '#141414'
+        };
+
+        const color = colors[view] || '#0a0a0a';
+
+        try {
+            await this.StatusBar.setBackgroundColor({ color });
+        } catch (err) {
+            // Silently ignore
+        }
+    }
+
     setupNavigation() {
+        // Conference Polish: Import Haptics for tactile feedback
+        let Haptics = null;
+        import('@capacitor/haptics').then(module => {
+            Haptics = module.Haptics;
+        }).catch(() => {
+            console.log('Haptics not available');
+        });
+
         // Handle bottom navigation
         document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', (e) => {
+            item.addEventListener('click', async (e) => {
                 const nav = item.dataset.nav;
+
+                // Conference Polish: Add haptic feedback on navigation
+                if (Haptics) {
+                    try {
+                        await Haptics.impact({ style: 'light' });
+                    } catch (err) {
+                        // Silently ignore haptic errors
+                    }
+                }
 
                 // Special handling for Browse dropdown
                 if (nav === 'browse') {
@@ -1267,9 +1344,19 @@ export class MobileUIController {
 
         // Handle Browse dropdown items
         document.querySelectorAll('.browse-dropdown-item').forEach(item => {
-            item.addEventListener('click', (e) => {
+            item.addEventListener('click', async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+
+                // Conference Polish: Add haptic feedback on dropdown selection
+                if (Haptics) {
+                    try {
+                        await Haptics.impact({ style: 'light' });
+                    } catch (err) {
+                        // Silently ignore haptic errors
+                    }
+                }
+
                 const nav = item.dataset.nav;
                 this.navigateTo(nav);
 
@@ -1303,6 +1390,9 @@ export class MobileUIController {
 
         // Track current view
         this.currentView = route;
+
+        // Conference Polish: Update status bar color for current view
+        this.updateStatusBarColor(route);
 
         switch (route) {
             case 'movies':
@@ -2378,7 +2468,9 @@ export class MobileUIController {
             this.navigateTo('movies');
         });
 
-        document.getElementById('play-btn')?.addEventListener('click', () => {
+        document.getElementById('play-btn')?.addEventListener('click', async () => {
+            // Conference Polish: Haptic feedback on play
+            await this.haptic('medium');
             this.playMovie(movie);
         });
 

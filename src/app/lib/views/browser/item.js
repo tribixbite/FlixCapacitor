@@ -136,23 +136,47 @@
                 }
             }.bind(this);
 
-            var posterCache = new Image();
-            posterCache.src = poster;
+            // Conference Polish: Lazy loading with IntersectionObserver
+            var loadPosterImage = function() {
+                var posterCache = new Image();
+                posterCache.src = poster;
 
-            posterCache.onload = function () {
-                if (poster.indexOf('.gif') !== -1) { // freeze gifs
-                    var c = document.createElement('canvas');
-                    var w  = c.width = posterCache.width;
-                    var h = c.height = posterCache.height;
+                posterCache.onload = function () {
+                    if (poster.indexOf('.gif') !== -1) { // freeze gifs
+                        var c = document.createElement('canvas');
+                        var w  = c.width = posterCache.width;
+                        var h = c.height = posterCache.height;
 
-                    c.getContext('2d').drawImage(posterCache, 0, 0, w, h);
-                    poster = c.toDataURL();
+                        c.getContext('2d').drawImage(posterCache, 0, 0, w, h);
+                        poster = c.toDataURL();
+                    }
+                    setImage(poster);
+                };
+                posterCache.onerror = function (e) {
+                    setImage(noimg);
+                };
+            }.bind(this);
+
+            // Use IntersectionObserver for performance
+            if ('IntersectionObserver' in window) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            loadPosterImage();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    rootMargin: '50px' // Load images 50px before they enter viewport
+                });
+
+                if (this.el) {
+                    observer.observe(this.el);
                 }
-                setImage(poster);
-            };
-            posterCache.onerror = function (e) {
-                setImage(noimg);
-            };
+            } else {
+                // Fallback for browsers without IntersectionObserver
+                loadPosterImage();
+            }
         },
 
         setTooltips: function () {
