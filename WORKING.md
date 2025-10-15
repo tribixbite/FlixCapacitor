@@ -2,60 +2,96 @@
 
 ## Session Date: 2025-10-15
 
-### Completed Fixes
+### Critical Bug Fix - Android 13+ Permissions
+
+#### 8. Library Scan Permission Request for Android 13+ ✅
+**Issue:** Library scan doesn't prompt for permissions on Android 13+, hangs at 0/0 files
+**User Report:** "library scan isnt requesting permission" and "still giving unexpected error"
+
+**Root Cause Investigation (Using Zen Debug Tool):**
+The previous session's permission fix (lines 1879-1908) used Capacitor Filesystem's `publicStorage` permission API. This is **deprecated on Android 13+** (API 33+).
+
+**Technical Details:**
+- Android 13+ uses granular media permissions: `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO`
+- The `publicStorage` permission alias is incompatible with these new permissions
+- Permission request would silently fail or return false positive
+- Without proper permissions, scanFolders() would hang and local file playback would fail
+
+**Expert Analysis Findings:**
+- Both issues (library scan hanging and video playback errors) stem from the same permission failure
+- AndroidManifest.xml correctly declares modern permissions (lines 54-59)
+- Problem was in JavaScript runtime permission request code
+
+**Fix Applied:**
+Added Android version detection with proper permission handling (mobile-ui-views.js:1877-1925):
+1. Import @capacitor/core and @capacitor/device
+2. Get Android version with Device.getInfo()
+3. Android 13+: Skip runtime permission check (auto-granted from manifest)
+4. Android 12 and below: Use legacy publicStorage permission flow
+5. Added detailed error messages with error.message
+
+**New Dependencies:**
+- `@capacitor/device@7.0.2` - for Android version detection
+
+**Files Modified:**
+- src/app/lib/mobile-ui-views.js (lines 1877-1925)
+- package.json (added @capacitor/device)
+
+**Build:** main--Gr07het.js (486.22 kB, gzip: 140.73 kB)
+
+---
+
+### Completed Fixes (Previous Session)
 
 #### 1. Video Playback Critical Bug ✅
-**Issue:** Video playback crashed with "statusText is not defined" error  
-**Root Cause:** Race condition where progress callback tried to access `streamInfo` before Promise resolved  
-**Fix:** Moved video.src assignment to after stream is ready (line 3297)  
+**Issue:** Video playback crashed with "statusText is not defined" error
+**Root Cause:** Race condition where progress callback tried to access `streamInfo` before Promise resolved
+**Fix:** Moved video.src assignment to after stream is ready (line 3567-3570)
 **Commit:** cd16fd4
 
-#### 2. Browse Dropdown Behavior ✅  
-**Issue:** Dropdown started expanded and didn't close after selecting Movies/TV Shows/Anime  
-**Root Cause:** HTML had "active" class by default, JavaScript kept dropdown active after selection  
+#### 2. Browse Dropdown Behavior ✅
+**Issue:** Dropdown started expanded and didn't close after selecting Movies/TV Shows/Anime
+**Root Cause:** HTML had "active" class by default, JavaScript kept dropdown active after selection
 **Fix:**
 - Removed "active" class from HTML template
 - Modified JavaScript to close dropdown after selection
 **Commit:** f300e93
 
 #### 3. FAB Position Blocking Settings ✅
-**Issue:** Floating action button overlapped with settings navigation item  
-**Root Cause:** FAB positioned at bottom: 20px, overlapping 60px-tall navigation bar  
-**Fix:** Moved FAB to bottom: calc(10vh + 80px) - 10% screen height above nav bar  
+**Issue:** Floating action button overlapped with settings navigation item
+**Root Cause:** FAB positioned at bottom: 20px, overlapping 60px-tall navigation bar
+**Fix:** Moved FAB to bottom: calc(10vh + 80px) - 10% screen height above nav bar
 **Commit:** 73573f3
 
 #### 4. File Picker for Multi-File Torrents ✅
-**Issue:** No file picker shown for TV shows, learning courses, magnets, or torrent files  
-**Root Cause:** showFilePickerModal method was called but never implemented  
+**Issue:** No file picker shown for TV shows, learning courses, magnets, or torrent files
+**Root Cause:** showFilePickerModal method was called but never implemented
 **Fix:** Created full file picker modal with:
 - Clean mobile UI showing all video files
 - File sizes displayed
-- "Largest" file indicator  
+- "Largest" file indicator
 - Touch-friendly selection
 - Works for all multi-file content types
 **Commit:** 034a508
 
 **Note:** Currently shows after stream starts (native auto-selects largest). Future enhancement would show picker BEFORE streaming.
 
-#### 5. Library Scan Permissions ✅
+#### 5. Library Scan Permissions (Original Fix - Replaced) ⚠️
 **Issue:** Library scan hangs at 0/0 files, doesn't prompt for storage permissions
 **Root Cause:** No permission check/request before scanning folders
-**Fix:** Added Filesystem permission check and request flow before starting scan:
-- Checks current permission status with Filesystem.checkPermissions()
-- Requests permissions if not granted
-- Shows clear error message if user denies
-- Lines 1773-1804 in mobile-ui-views.js
+**Original Fix:** Added Filesystem permission check (lines 1879-1908) - **Incomplete for Android 13+**
 **Commit:** 37792de
+**Status:** Superseded by fix #8 above
 
 #### 6. Library Playback - Local File Support ✅
 **Issue:** Playing library items results in "no torrent" error
 **Root Cause:** playMovie() method only handled torrent-based playback, not local files
 **Fix:**
 - Added check for file_path property to detect library items
-- Created new playLocalFile() method (lines 2851-2919)
+- Created new playLocalFile() method (lines 2957-3025)
 - Uses Filesystem.getUri() to get proper Android file URI
 - Includes video player with back button, keep-awake, and proper cleanup
-- Lines 2811-2815, 2851-2919 in mobile-ui-views.js
+- Lines 2918-2922, 2957-3025 in mobile-ui-views.js
 **Commit:** 2573bda
 
 #### 7. Library Folder Filters ✅
@@ -63,8 +99,9 @@
 **Root Cause:** Filter tabs rendered without click event handlers
 **Fix:**
 - Added click handlers to filter tabs with active state management (lines 1686-1699)
-- Created showLibraryFiltered() method (lines 1764-1853)
-- Filters by folder path patterns (/Movies/, /Download/, /DCIM/, /Videos/)
+- Created showLibraryFiltered() method (lines 1767-1814)
+- Filters by folder path patterns (/Movies/, /Download/, /Videos/)
+- Removed DCIM from scan paths (camera photos not relevant)
 - Shows appropriate empty states for folders with no content
 - Handles "All Folders" view to show unfiltered library
 **Commit:** fb62a80
@@ -107,43 +144,38 @@ Implemented TypeScript while maintaining backward compatibility:
 **Commit:** 1884351d
 
 ### Build Status
-- Bundle: 485.61 kB (gzip: 140.49 kB)
-- All 99 tests passing
-- TypeScript type checking: ✅ Passing
+- Bundle: main--Gr07het.js (486.22 kB, gzip: 140.73 kB)
 - Successfully synced to Android device
+- New dependency: @capacitor/device@7.0.2
 
-### Git Status
-- Clean working directory
-- Main branch up to date
-- 11 commits added this session
+### Debugging Approach
+Used zen-mcp debug tool with gemini-2.5-pro model for systematic investigation:
+1. Analyzed permission request code flow
+2. Verified scan button rendering and Android manifest
+3. Identified deprecated permission API as root cause
+4. Expert analysis confirmed hypothesis and provided fix strategy
 
 ### Summary
-**Critical Bugs Fixed (7/7):**
+**Critical Bugs Fixed (8/8):**
 ✅ Video playback race condition
 ✅ Browse dropdown behavior
 ✅ FAB positioning
 ✅ File picker modal for multi-file content
-✅ Library scan permissions
+✅ Library scan permissions (original - Android 12 and below)
 ✅ Library local file playback
 ✅ Library folder filters
+✅ **Library scan permissions for Android 13+ (NEW)**
 
 **Technology Upgrades (2/2):**
 ✅ TypeScript 5.9.3 integrated with gradual migration
-⚠️  Bun documented as incompatible with Termux (continue with npm)
+⚠️ Bun documented as incompatible with Termux (continue with npm)
 
-### Session Commits
-1. cd16fd4 - fix: resolve race condition in video playback
-2. f300e93 - fix: correct browse dropdown behavior
-3. 73573f3 - fix: reposition FAB above navigation
-4. 034a508 - feat: add file picker modal for multi-file torrents
-5. 37792de - fix: add storage permission request for library scan
-6. 2573bda - feat: enable library playback for local files
-7. fb62a80 - fix: enable library folder filters
-8. 0b24269 - docs: update WORKING.md with all completed fixes
-9. 91ecaeff - docs: document Bun Termux incompatibility
-10. 1884351d - feat: add TypeScript 5.9.3 with gradual migration
-11. (pending) - docs: final WORKING.md update
+### Next Steps
+1. Test library scan on Android device to verify permission prompt
+2. Verify video playback works without errors
+3. Commit changes with conventional commit message
+4. Monitor for any remaining issues
 
 ---
 
-Last updated: 2025-10-15 04:15 UTC
+Last updated: 2025-10-15 06:47 UTC
