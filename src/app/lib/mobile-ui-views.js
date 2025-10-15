@@ -2808,6 +2808,13 @@ export class MobileUIController {
     playMovie(movie) {
         console.log('Playing movie:', movie.title);
 
+        // Check if this is a library item with a local file path
+        if (movie.file_path) {
+            console.log('Playing local library file:', movie.file_path);
+            this.playLocalFile(movie);
+            return;
+        }
+
         // Get the best available torrent
         const torrents = movie.torrents || {};
         const qualities = ['1080p', '720p', '480p'];
@@ -2839,6 +2846,76 @@ export class MobileUIController {
 
         // Create a basic video player view
         this.showVideoPlayer(movie, selectedTorrent, selectedQuality);
+    }
+
+    async playLocalFile(movie) {
+        console.log('Playing local file from library:', movie.file_path);
+
+        const mainRegion = document.querySelector('.main-window-region');
+        const displayTitle = movie.title.length > 50 ? movie.title.substring(0, 50) + '...' : movie.title;
+
+        // Create simple video player for local files
+        mainRegion.innerHTML = `
+            <div class="video-player-container" style="background: #000; min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-top: env(safe-area-inset-top, 0); padding-bottom: env(safe-area-inset-bottom, 0);">
+                <div class="player-header" style="position: relative; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem; background: rgba(0,0,0,0.9); z-index: 100; min-height: 56px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <button id="player-back" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer; flex-shrink: 0;">←</button>
+                    <div style="flex: 1; min-width: 0; overflow: hidden;">
+                        <div style="font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${displayTitle}</div>
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px;">Local File${movie.year ? ' • ' + movie.year : ''}</div>
+                    </div>
+                </div>
+
+                <div id="video-container" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+                    <video id="local-video"
+                           controls
+                           autoplay
+                           playsinline
+                           style="width: 100%; height: 100%; background: #000;">
+                        Your browser doesn't support HTML5 video.
+                    </video>
+                </div>
+            </div>
+        `;
+
+        // Get video element
+        const videoElement = document.getElementById('local-video');
+
+        // Set video source to local file path
+        // Use Capacitor Filesystem to get file URI
+        try {
+            const { Filesystem } = await import('@capacitor/filesystem');
+            const fileUri = await Filesystem.getUri({
+                path: movie.file_path,
+                directory: 'EXTERNAL_STORAGE'
+            });
+
+            console.log('File URI:', fileUri.uri);
+            videoElement.src = fileUri.uri;
+        } catch (error) {
+            console.error('Failed to load local file:', error);
+            alert('Failed to load video file. File may have been moved or deleted.');
+            return;
+        }
+
+        // Back button handler
+        const playerBackBtn = document.getElementById('player-back');
+        playerBackBtn.addEventListener('click', () => {
+            this.showLibrary();
+        });
+
+        // Android back button handler
+        await this.setupBackButtonHandler(() => {
+            this.showLibrary();
+        });
+
+        // Keep screen awake during playback
+        try {
+            const { KeepAwake } = await import('@capacitor-community/keep-awake');
+            await KeepAwake.keepAwake();
+            console.log('Screen will stay awake during playback');
+        } catch (e) {
+            console.warn('KeepAwake failed:', e.message);
+        }
     }
 
     // Save playback position for resume
