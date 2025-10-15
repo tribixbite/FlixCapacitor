@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A modern, mobile-first streaming app with native torrent support",
   "main": "index.js",
+  "packageManager": "npm@10.9.2",
   "scripts": {
     "dev": "vite",
     "clean": "rm -rf dist android/app/src/main/assets/public",
