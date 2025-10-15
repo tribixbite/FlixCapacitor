@@ -1877,49 +1877,35 @@ export class MobileUIController {
         // Request storage permissions first
         try {
             const { Capacitor } = await import('@capacitor/core');
-            const { Device } = await import('@capacitor/device');
 
-            // Get Android version to determine permission approach
-            const deviceInfo = await Device.getInfo();
-            const androidVersion = parseInt(deviceInfo.osVersion || '0');
+            console.log('Checking media permissions...');
 
-            console.log('Device info:', deviceInfo);
-            console.log('Android version:', androidVersion);
+            // Use custom MediaPermissions plugin for Android 13+ support
+            const checkResult = await Capacitor.Plugins.MediaPermissions.checkPermissions();
+            console.log('Permission check result:', checkResult);
 
-            // Android 13+ (API 33+) uses granular media permissions (READ_MEDIA_VIDEO, READ_MEDIA_AUDIO)
-            // These are auto-granted if declared in manifest, so we can skip the runtime check
-            if (Capacitor.getPlatform() === 'android' && androidVersion >= 13) {
-                console.log('Android 13+ detected - using manifest-declared media permissions');
-                // Permissions are auto-granted from manifest on Android 13+
-                // No runtime permission request needed for READ_MEDIA_VIDEO/READ_MEDIA_AUDIO
-            } else {
-                // For Android 12 and below, use the legacy publicStorage permission
-                const { Filesystem } = await import('@capacitor/filesystem');
+            if (!checkResult.granted) {
+                console.log('Requesting media permissions...');
+                const requestResult = await Capacitor.Plugins.MediaPermissions.requestPermissions();
+                console.log('Permission request result:', requestResult);
 
-                const permission = await Filesystem.checkPermissions();
-                console.log('Storage permission status:', permission);
-
-                if (permission.publicStorage !== 'granted') {
-                    console.log('Requesting storage permissions...');
-                    const result = await Filesystem.requestPermissions();
-                    console.log('Permission request result:', result);
-
-                    if (result.publicStorage !== 'granted') {
-                        contentGrid.innerHTML = UITemplates.emptyState(
-                            '🔒',
-                            'Permission Denied',
-                            'Storage access is required to scan your media library. Please grant permission in app settings.'
-                        );
-                        return;
-                    }
+                if (!requestResult.granted) {
+                    contentGrid.innerHTML = UITemplates.emptyState(
+                        '🔒',
+                        'Permission Denied',
+                        'Media access is required to scan your library. Please grant permission to access videos and audio files.'
+                    );
+                    return;
                 }
             }
+
+            console.log('Media permissions granted, starting scan...');
         } catch (error) {
             console.error('Failed to request permissions:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Permission Error',
-                `Failed to request storage permissions: ${error.message}. Please check app settings.`
+                `Failed to request storage permissions: ${error}. Please check app settings.`
             );
             return;
         }
