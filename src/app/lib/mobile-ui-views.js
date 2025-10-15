@@ -3318,6 +3318,7 @@ export class MobileUIController {
                            controls
                            autoplay
                            playsinline
+                           crossorigin="anonymous"
                            style="width: 100%; height: 100%; background: #000;"
                            poster="${movie.images?.fanart || movie.images?.poster || ''}">
                         Your browser doesn't support HTML5 video.
