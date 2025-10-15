@@ -1901,13 +1901,54 @@ export class MobileUIController {
                     }
                 }
             } else {
-                // Fallback: Show manual instruction for Android 13+
-                console.warn('MediaPermissions plugin not available, showing manual instructions');
-                contentGrid.innerHTML = UITemplates.emptyState(
-                    '🔐',
-                    'Grant Media Permissions',
-                    'Please grant media permissions manually:\n\n1. Open Android Settings\n2. Go to Apps → FlixCapacitor\n3. Tap Permissions\n4. Enable "Photos and videos" and "Music and audio"\n5. Return here and try again'
-                );
+                // Fallback: Show button to open settings
+                console.warn('MediaPermissions plugin not available, showing settings button');
+                contentGrid.innerHTML = `
+                    <div class="content-empty">
+                        <div class="empty-icon">🔐</div>
+                        <div class="empty-title">Grant Media Permissions</div>
+                        <div class="empty-message">FlixCapacitor needs access to your media files to scan your library.</div>
+                        <button class="open-settings-btn" id="open-settings-btn" style="
+                            margin-top: 1.5rem;
+                            padding: 0.875rem 2rem;
+                            background: linear-gradient(135deg, #10b981, #059669);
+                            border: none;
+                            border-radius: 8px;
+                            color: white;
+                            font-size: 1rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                            transition: transform 0.2s;
+                        ">
+                            <span>⚙️</span>
+                            <span>Open Settings</span>
+                        </button>
+                        <div class="empty-message" style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.7;">
+                            Grant "Photos and videos" and "Music and audio" permissions
+                        </div>
+                    </div>
+                `;
+
+                // Add click handler for settings button
+                const settingsBtn = document.getElementById('open-settings-btn');
+                if (settingsBtn) {
+                    settingsBtn.addEventListener('click', async () => {
+                        try {
+                            // Try to open settings using Capacitor App plugin
+                            const { App } = await import('@capacitor/app');
+                            await App.openUrl({
+                                url: 'app-settings:'
+                            });
+                        } catch (error) {
+                            console.error('Failed to open settings:', error);
+                            alert('Please open Settings → Apps → FlixCapacitor → Permissions manually.');
+                        }
+                    });
+                }
                 return;
             }
 

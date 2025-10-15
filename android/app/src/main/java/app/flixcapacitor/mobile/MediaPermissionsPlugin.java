@@ -1,8 +1,11 @@
 package app.flixcapacitor.mobile;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -153,5 +156,25 @@ public class MediaPermissionsPlugin extends Plugin {
         }
 
         call.resolve(result);
+    }
+
+    /**
+     * Open app settings page where user can manually grant permissions
+     */
+    @PluginMethod
+    public void openSettings(PluginCall call) {
+        try {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+            intent.setData(uri);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+
+            JSObject result = new JSObject();
+            result.put("opened", true);
+            call.resolve(result);
+        } catch (Exception e) {
+            call.reject("Failed to open settings: " + e.getMessage());
+        }
     }
 }
