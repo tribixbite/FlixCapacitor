@@ -213,11 +213,6 @@ const filenameParser = new FilenameParser();
 // ES6 export
 export default filenameParser;
 
-// Node.js/CommonJS export for backend
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = filenameParser;
-}
-
 // Browser global export
 if (typeof window !== 'undefined') {
     window.FilenameParser = filenameParser;

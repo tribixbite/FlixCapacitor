@@ -1,0 +1,328 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for popcorn-mobile/generate-provider-code.mjs</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">popcorn-mobile</a> generate-provider-code.mjs</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/69</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/69</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >/**<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
+<span class="cstat-no" title="statement not covered" > * Generate provider code from high-rated-complete.json</span>
+<span class="cstat-no" title="statement not covered" > */</span>
+<span class="cstat-no" title="statement not covered" >import { readFileSync, writeFileSync } from 'fs';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >const movies = JSON.parse(readFileSync('high-rated-complete.json', 'utf8'));</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >console.log(`Generating code for ${movies.length} movies...\n`);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >const genreMap = {</span>
+<span class="cstat-no" title="statement not covered" >    28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy',</span>
+<span class="cstat-no" title="statement not covered" >    80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',</span>
+<span class="cstat-no" title="statement not covered" >    14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music',</span>
+<span class="cstat-no" title="statement not covered" >    9648: 'Mystery', 10749: 'Romance', 878: 'Science Fiction',</span>
+<span class="cstat-no" title="statement not covered" >    10770: 'TV Movie', 53: 'Thriller', 10752: 'War', 37: 'Western'</span>
+<span class="cstat-no" title="statement not covered" >};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >function mapGenres(genreIds) {</span>
+<span class="cstat-no" title="statement not covered" >    if (!genreIds || genreIds.length === 0) return ['Drama'];</span>
+<span class="cstat-no" title="statement not covered" >    return genreIds.map(id =&gt; genreMap[id] || 'Drama').slice(0, 3);</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >function formatFileSize(bytes) {</span>
+<span class="cstat-no" title="statement not covered" >    const mb = Math.round(bytes / 1024 / 1024);</span>
+<span class="cstat-no" title="statement not covered" >    return `${mb} MB`;</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >const movieObjects = movies.map(movie =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    const genres = mapGenres(movie.metadata.genres);</span>
+<span class="cstat-no" title="statement not covered" >    const year = movie.metadata.year || 1960;</span>
+<span class="cstat-no" title="statement not covered" >    const rating = Math.round(movie.metadata.rating * 10);</span>
+<span class="cstat-no" title="statement not covered" >    const votes = movie.metadata.votes || 100;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    // Generate a proper IMDb ID format (note: these are synthetic for public domain)</span>
+<span class="cstat-no" title="statement not covered" >    const imdbId = movie.metadata.tmdbId ? `tt${String(movie.metadata.tmdbId).padStart(7, '0')}` : `pd_${movie.title.replace(/[^a-z0-9]/gi, '_')}`;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return {</span>
+<span class="cstat-no" title="statement not covered" >        imdb_id: imdbId,</span>
+<span class="cstat-no" title="statement not covered" >        title: movie.title,</span>
+<span class="cstat-no" title="statement not covered" >        year: year,</span>
+<span class="cstat-no" title="statement not covered" >        synopsis: movie.metadata.plot || `A classic public domain film from ${year}.`,</span>
+<span class="cstat-no" title="statement not covered" >        runtime: 90,</span>
+<span class="cstat-no" title="statement not covered" >        rating: {</span>
+<span class="cstat-no" title="statement not covered" >            percentage: rating,</span>
+<span class="cstat-no" title="statement not covered" >            watching: 0,</span>
+<span class="cstat-no" title="statement not covered" >            votes: votes,</span>
+<span class="cstat-no" title="statement not covered" >            loved: 100,</span>
+<span class="cstat-no" title="statement not covered" >            hated: 100</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        images: {</span>
+<span class="cstat-no" title="statement not covered" >            poster: movie.metadata.poster || `https://placehold.co/300x450/1f1f1f/e50914/white?text=${encodeURIComponent(movie.title)}`,</span>
+<span class="cstat-no" title="statement not covered" >            fanart: movie.metadata.backdrop || movie.metadata.poster || `https://placehold.co/1920x1080/1f1f1f/e50914/white?text=${encodeURIComponent(movie.title)}`,</span>
+<span class="cstat-no" title="statement not covered" >            banner: movie.metadata.backdrop || movie.metadata.poster || `https://placehold.co/1920x500/1f1f1f/e50914/white?text=${encodeURIComponent(movie.title)}`</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        genres: genres,</span>
+<span class="cstat-no" title="statement not covered" >        torrents: {</span>
+<span class="cstat-no" title="statement not covered" >            '720p': {</span>
+<span class="cstat-no" title="statement not covered" >                url: `magnet:?xt=urn:btih:${movie.infoHash}&amp;dn=${encodeURIComponent(movie.title)}&amp;tr=http%3A%2F%2Ffiles.publicdomaintorrents.com%2Fbt%2Fannounce.php`,</span>
+<span class="cstat-no" title="statement not covered" >                seed: 99,</span>
+<span class="cstat-no" title="statement not covered" >                peer: 15,</span>
+<span class="cstat-no" title="statement not covered" >                size: movie.fileSize,</span>
+<span class="cstat-no" title="statement not covered" >                filesize: formatFileSize(movie.fileSize),</span>
+<span class="cstat-no" title="statement not covered" >                provider: 'PublicDomainTorrents'</span>
+<span class="cstat-no" title="statement not covered" >            }</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >    };</span>
+<span class="cstat-no" title="statement not covered" >});</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >// Generate the JavaScript code</span>
+<span class="cstat-no" title="statement not covered" >const code = `    getWebMovies() {</span>
+<span class="cstat-no" title="statement not covered" >        return ${JSON.stringify(movieObjects, null, 8).replace(/"([^"]+)":/g, '$1:')};</span>
+<span class="cstat-no" title="statement not covered" >    }`;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >writeFileSync('provider-code.js', code);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >console.log(`✅ Generated provider code for ${movieObjects.length} movies`);</span>
+<span class="cstat-no" title="statement not covered" >console.log(`📝 Written to: provider-code.js\n`);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >// Show sample</span>
+<span class="cstat-no" title="statement not covered" >console.log('Sample (first movie):');</span>
+<span class="cstat-no" title="statement not covered" >console.log(JSON.stringify(movieObjects[0], null, 2));</span>
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2025-10-15T04:18:03.156Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    

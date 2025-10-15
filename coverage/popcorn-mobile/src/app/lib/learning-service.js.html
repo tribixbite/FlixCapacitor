@@ -1,0 +1,1990 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for popcorn-mobile/src/app/lib/learning-service.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../../prettify.css" />
+    <link rel="stylesheet" href="../../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../../../index.html">All files</a> / <a href="index.html">popcorn-mobile/src/app/lib</a> learning-service.js</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/571</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/571</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a>
+<a name='L272'></a><a href='#L272'>272</a>
+<a name='L273'></a><a href='#L273'>273</a>
+<a name='L274'></a><a href='#L274'>274</a>
+<a name='L275'></a><a href='#L275'>275</a>
+<a name='L276'></a><a href='#L276'>276</a>
+<a name='L277'></a><a href='#L277'>277</a>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a>
+<a name='L321'></a><a href='#L321'>321</a>
+<a name='L322'></a><a href='#L322'>322</a>
+<a name='L323'></a><a href='#L323'>323</a>
+<a name='L324'></a><a href='#L324'>324</a>
+<a name='L325'></a><a href='#L325'>325</a>
+<a name='L326'></a><a href='#L326'>326</a>
+<a name='L327'></a><a href='#L327'>327</a>
+<a name='L328'></a><a href='#L328'>328</a>
+<a name='L329'></a><a href='#L329'>329</a>
+<a name='L330'></a><a href='#L330'>330</a>
+<a name='L331'></a><a href='#L331'>331</a>
+<a name='L332'></a><a href='#L332'>332</a>
+<a name='L333'></a><a href='#L333'>333</a>
+<a name='L334'></a><a href='#L334'>334</a>
+<a name='L335'></a><a href='#L335'>335</a>
+<a name='L336'></a><a href='#L336'>336</a>
+<a name='L337'></a><a href='#L337'>337</a>
+<a name='L338'></a><a href='#L338'>338</a>
+<a name='L339'></a><a href='#L339'>339</a>
+<a name='L340'></a><a href='#L340'>340</a>
+<a name='L341'></a><a href='#L341'>341</a>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a>
+<a name='L348'></a><a href='#L348'>348</a>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a>
+<a name='L355'></a><a href='#L355'>355</a>
+<a name='L356'></a><a href='#L356'>356</a>
+<a name='L357'></a><a href='#L357'>357</a>
+<a name='L358'></a><a href='#L358'>358</a>
+<a name='L359'></a><a href='#L359'>359</a>
+<a name='L360'></a><a href='#L360'>360</a>
+<a name='L361'></a><a href='#L361'>361</a>
+<a name='L362'></a><a href='#L362'>362</a>
+<a name='L363'></a><a href='#L363'>363</a>
+<a name='L364'></a><a href='#L364'>364</a>
+<a name='L365'></a><a href='#L365'>365</a>
+<a name='L366'></a><a href='#L366'>366</a>
+<a name='L367'></a><a href='#L367'>367</a>
+<a name='L368'></a><a href='#L368'>368</a>
+<a name='L369'></a><a href='#L369'>369</a>
+<a name='L370'></a><a href='#L370'>370</a>
+<a name='L371'></a><a href='#L371'>371</a>
+<a name='L372'></a><a href='#L372'>372</a>
+<a name='L373'></a><a href='#L373'>373</a>
+<a name='L374'></a><a href='#L374'>374</a>
+<a name='L375'></a><a href='#L375'>375</a>
+<a name='L376'></a><a href='#L376'>376</a>
+<a name='L377'></a><a href='#L377'>377</a>
+<a name='L378'></a><a href='#L378'>378</a>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a>
+<a name='L384'></a><a href='#L384'>384</a>
+<a name='L385'></a><a href='#L385'>385</a>
+<a name='L386'></a><a href='#L386'>386</a>
+<a name='L387'></a><a href='#L387'>387</a>
+<a name='L388'></a><a href='#L388'>388</a>
+<a name='L389'></a><a href='#L389'>389</a>
+<a name='L390'></a><a href='#L390'>390</a>
+<a name='L391'></a><a href='#L391'>391</a>
+<a name='L392'></a><a href='#L392'>392</a>
+<a name='L393'></a><a href='#L393'>393</a>
+<a name='L394'></a><a href='#L394'>394</a>
+<a name='L395'></a><a href='#L395'>395</a>
+<a name='L396'></a><a href='#L396'>396</a>
+<a name='L397'></a><a href='#L397'>397</a>
+<a name='L398'></a><a href='#L398'>398</a>
+<a name='L399'></a><a href='#L399'>399</a>
+<a name='L400'></a><a href='#L400'>400</a>
+<a name='L401'></a><a href='#L401'>401</a>
+<a name='L402'></a><a href='#L402'>402</a>
+<a name='L403'></a><a href='#L403'>403</a>
+<a name='L404'></a><a href='#L404'>404</a>
+<a name='L405'></a><a href='#L405'>405</a>
+<a name='L406'></a><a href='#L406'>406</a>
+<a name='L407'></a><a href='#L407'>407</a>
+<a name='L408'></a><a href='#L408'>408</a>
+<a name='L409'></a><a href='#L409'>409</a>
+<a name='L410'></a><a href='#L410'>410</a>
+<a name='L411'></a><a href='#L411'>411</a>
+<a name='L412'></a><a href='#L412'>412</a>
+<a name='L413'></a><a href='#L413'>413</a>
+<a name='L414'></a><a href='#L414'>414</a>
+<a name='L415'></a><a href='#L415'>415</a>
+<a name='L416'></a><a href='#L416'>416</a>
+<a name='L417'></a><a href='#L417'>417</a>
+<a name='L418'></a><a href='#L418'>418</a>
+<a name='L419'></a><a href='#L419'>419</a>
+<a name='L420'></a><a href='#L420'>420</a>
+<a name='L421'></a><a href='#L421'>421</a>
+<a name='L422'></a><a href='#L422'>422</a>
+<a name='L423'></a><a href='#L423'>423</a>
+<a name='L424'></a><a href='#L424'>424</a>
+<a name='L425'></a><a href='#L425'>425</a>
+<a name='L426'></a><a href='#L426'>426</a>
+<a name='L427'></a><a href='#L427'>427</a>
+<a name='L428'></a><a href='#L428'>428</a>
+<a name='L429'></a><a href='#L429'>429</a>
+<a name='L430'></a><a href='#L430'>430</a>
+<a name='L431'></a><a href='#L431'>431</a>
+<a name='L432'></a><a href='#L432'>432</a>
+<a name='L433'></a><a href='#L433'>433</a>
+<a name='L434'></a><a href='#L434'>434</a>
+<a name='L435'></a><a href='#L435'>435</a>
+<a name='L436'></a><a href='#L436'>436</a>
+<a name='L437'></a><a href='#L437'>437</a>
+<a name='L438'></a><a href='#L438'>438</a>
+<a name='L439'></a><a href='#L439'>439</a>
+<a name='L440'></a><a href='#L440'>440</a>
+<a name='L441'></a><a href='#L441'>441</a>
+<a name='L442'></a><a href='#L442'>442</a>
+<a name='L443'></a><a href='#L443'>443</a>
+<a name='L444'></a><a href='#L444'>444</a>
+<a name='L445'></a><a href='#L445'>445</a>
+<a name='L446'></a><a href='#L446'>446</a>
+<a name='L447'></a><a href='#L447'>447</a>
+<a name='L448'></a><a href='#L448'>448</a>
+<a name='L449'></a><a href='#L449'>449</a>
+<a name='L450'></a><a href='#L450'>450</a>
+<a name='L451'></a><a href='#L451'>451</a>
+<a name='L452'></a><a href='#L452'>452</a>
+<a name='L453'></a><a href='#L453'>453</a>
+<a name='L454'></a><a href='#L454'>454</a>
+<a name='L455'></a><a href='#L455'>455</a>
+<a name='L456'></a><a href='#L456'>456</a>
+<a name='L457'></a><a href='#L457'>457</a>
+<a name='L458'></a><a href='#L458'>458</a>
+<a name='L459'></a><a href='#L459'>459</a>
+<a name='L460'></a><a href='#L460'>460</a>
+<a name='L461'></a><a href='#L461'>461</a>
+<a name='L462'></a><a href='#L462'>462</a>
+<a name='L463'></a><a href='#L463'>463</a>
+<a name='L464'></a><a href='#L464'>464</a>
+<a name='L465'></a><a href='#L465'>465</a>
+<a name='L466'></a><a href='#L466'>466</a>
+<a name='L467'></a><a href='#L467'>467</a>
+<a name='L468'></a><a href='#L468'>468</a>
+<a name='L469'></a><a href='#L469'>469</a>
+<a name='L470'></a><a href='#L470'>470</a>
+<a name='L471'></a><a href='#L471'>471</a>
+<a name='L472'></a><a href='#L472'>472</a>
+<a name='L473'></a><a href='#L473'>473</a>
+<a name='L474'></a><a href='#L474'>474</a>
+<a name='L475'></a><a href='#L475'>475</a>
+<a name='L476'></a><a href='#L476'>476</a>
+<a name='L477'></a><a href='#L477'>477</a>
+<a name='L478'></a><a href='#L478'>478</a>
+<a name='L479'></a><a href='#L479'>479</a>
+<a name='L480'></a><a href='#L480'>480</a>
+<a name='L481'></a><a href='#L481'>481</a>
+<a name='L482'></a><a href='#L482'>482</a>
+<a name='L483'></a><a href='#L483'>483</a>
+<a name='L484'></a><a href='#L484'>484</a>
+<a name='L485'></a><a href='#L485'>485</a>
+<a name='L486'></a><a href='#L486'>486</a>
+<a name='L487'></a><a href='#L487'>487</a>
+<a name='L488'></a><a href='#L488'>488</a>
+<a name='L489'></a><a href='#L489'>489</a>
+<a name='L490'></a><a href='#L490'>490</a>
+<a name='L491'></a><a href='#L491'>491</a>
+<a name='L492'></a><a href='#L492'>492</a>
+<a name='L493'></a><a href='#L493'>493</a>
+<a name='L494'></a><a href='#L494'>494</a>
+<a name='L495'></a><a href='#L495'>495</a>
+<a name='L496'></a><a href='#L496'>496</a>
+<a name='L497'></a><a href='#L497'>497</a>
+<a name='L498'></a><a href='#L498'>498</a>
+<a name='L499'></a><a href='#L499'>499</a>
+<a name='L500'></a><a href='#L500'>500</a>
+<a name='L501'></a><a href='#L501'>501</a>
+<a name='L502'></a><a href='#L502'>502</a>
+<a name='L503'></a><a href='#L503'>503</a>
+<a name='L504'></a><a href='#L504'>504</a>
+<a name='L505'></a><a href='#L505'>505</a>
+<a name='L506'></a><a href='#L506'>506</a>
+<a name='L507'></a><a href='#L507'>507</a>
+<a name='L508'></a><a href='#L508'>508</a>
+<a name='L509'></a><a href='#L509'>509</a>
+<a name='L510'></a><a href='#L510'>510</a>
+<a name='L511'></a><a href='#L511'>511</a>
+<a name='L512'></a><a href='#L512'>512</a>
+<a name='L513'></a><a href='#L513'>513</a>
+<a name='L514'></a><a href='#L514'>514</a>
+<a name='L515'></a><a href='#L515'>515</a>
+<a name='L516'></a><a href='#L516'>516</a>
+<a name='L517'></a><a href='#L517'>517</a>
+<a name='L518'></a><a href='#L518'>518</a>
+<a name='L519'></a><a href='#L519'>519</a>
+<a name='L520'></a><a href='#L520'>520</a>
+<a name='L521'></a><a href='#L521'>521</a>
+<a name='L522'></a><a href='#L522'>522</a>
+<a name='L523'></a><a href='#L523'>523</a>
+<a name='L524'></a><a href='#L524'>524</a>
+<a name='L525'></a><a href='#L525'>525</a>
+<a name='L526'></a><a href='#L526'>526</a>
+<a name='L527'></a><a href='#L527'>527</a>
+<a name='L528'></a><a href='#L528'>528</a>
+<a name='L529'></a><a href='#L529'>529</a>
+<a name='L530'></a><a href='#L530'>530</a>
+<a name='L531'></a><a href='#L531'>531</a>
+<a name='L532'></a><a href='#L532'>532</a>
+<a name='L533'></a><a href='#L533'>533</a>
+<a name='L534'></a><a href='#L534'>534</a>
+<a name='L535'></a><a href='#L535'>535</a>
+<a name='L536'></a><a href='#L536'>536</a>
+<a name='L537'></a><a href='#L537'>537</a>
+<a name='L538'></a><a href='#L538'>538</a>
+<a name='L539'></a><a href='#L539'>539</a>
+<a name='L540'></a><a href='#L540'>540</a>
+<a name='L541'></a><a href='#L541'>541</a>
+<a name='L542'></a><a href='#L542'>542</a>
+<a name='L543'></a><a href='#L543'>543</a>
+<a name='L544'></a><a href='#L544'>544</a>
+<a name='L545'></a><a href='#L545'>545</a>
+<a name='L546'></a><a href='#L546'>546</a>
+<a name='L547'></a><a href='#L547'>547</a>
+<a name='L548'></a><a href='#L548'>548</a>
+<a name='L549'></a><a href='#L549'>549</a>
+<a name='L550'></a><a href='#L550'>550</a>
+<a name='L551'></a><a href='#L551'>551</a>
+<a name='L552'></a><a href='#L552'>552</a>
+<a name='L553'></a><a href='#L553'>553</a>
+<a name='L554'></a><a href='#L554'>554</a>
+<a name='L555'></a><a href='#L555'>555</a>
+<a name='L556'></a><a href='#L556'>556</a>
+<a name='L557'></a><a href='#L557'>557</a>
+<a name='L558'></a><a href='#L558'>558</a>
+<a name='L559'></a><a href='#L559'>559</a>
+<a name='L560'></a><a href='#L560'>560</a>
+<a name='L561'></a><a href='#L561'>561</a>
+<a name='L562'></a><a href='#L562'>562</a>
+<a name='L563'></a><a href='#L563'>563</a>
+<a name='L564'></a><a href='#L564'>564</a>
+<a name='L565'></a><a href='#L565'>565</a>
+<a name='L566'></a><a href='#L566'>566</a>
+<a name='L567'></a><a href='#L567'>567</a>
+<a name='L568'></a><a href='#L568'>568</a>
+<a name='L569'></a><a href='#L569'>569</a>
+<a name='L570'></a><a href='#L570'>570</a>
+<a name='L571'></a><a href='#L571'>571</a>
+<a name='L572'></a><a href='#L572'>572</a>
+<a name='L573'></a><a href='#L573'>573</a>
+<a name='L574'></a><a href='#L574'>574</a>
+<a name='L575'></a><a href='#L575'>575</a>
+<a name='L576'></a><a href='#L576'>576</a>
+<a name='L577'></a><a href='#L577'>577</a>
+<a name='L578'></a><a href='#L578'>578</a>
+<a name='L579'></a><a href='#L579'>579</a>
+<a name='L580'></a><a href='#L580'>580</a>
+<a name='L581'></a><a href='#L581'>581</a>
+<a name='L582'></a><a href='#L582'>582</a>
+<a name='L583'></a><a href='#L583'>583</a>
+<a name='L584'></a><a href='#L584'>584</a>
+<a name='L585'></a><a href='#L585'>585</a>
+<a name='L586'></a><a href='#L586'>586</a>
+<a name='L587'></a><a href='#L587'>587</a>
+<a name='L588'></a><a href='#L588'>588</a>
+<a name='L589'></a><a href='#L589'>589</a>
+<a name='L590'></a><a href='#L590'>590</a>
+<a name='L591'></a><a href='#L591'>591</a>
+<a name='L592'></a><a href='#L592'>592</a>
+<a name='L593'></a><a href='#L593'>593</a>
+<a name='L594'></a><a href='#L594'>594</a>
+<a name='L595'></a><a href='#L595'>595</a>
+<a name='L596'></a><a href='#L596'>596</a>
+<a name='L597'></a><a href='#L597'>597</a>
+<a name='L598'></a><a href='#L598'>598</a>
+<a name='L599'></a><a href='#L599'>599</a>
+<a name='L600'></a><a href='#L600'>600</a>
+<a name='L601'></a><a href='#L601'>601</a>
+<a name='L602'></a><a href='#L602'>602</a>
+<a name='L603'></a><a href='#L603'>603</a>
+<a name='L604'></a><a href='#L604'>604</a>
+<a name='L605'></a><a href='#L605'>605</a>
+<a name='L606'></a><a href='#L606'>606</a>
+<a name='L607'></a><a href='#L607'>607</a>
+<a name='L608'></a><a href='#L608'>608</a>
+<a name='L609'></a><a href='#L609'>609</a>
+<a name='L610'></a><a href='#L610'>610</a>
+<a name='L611'></a><a href='#L611'>611</a>
+<a name='L612'></a><a href='#L612'>612</a>
+<a name='L613'></a><a href='#L613'>613</a>
+<a name='L614'></a><a href='#L614'>614</a>
+<a name='L615'></a><a href='#L615'>615</a>
+<a name='L616'></a><a href='#L616'>616</a>
+<a name='L617'></a><a href='#L617'>617</a>
+<a name='L618'></a><a href='#L618'>618</a>
+<a name='L619'></a><a href='#L619'>619</a>
+<a name='L620'></a><a href='#L620'>620</a>
+<a name='L621'></a><a href='#L621'>621</a>
+<a name='L622'></a><a href='#L622'>622</a>
+<a name='L623'></a><a href='#L623'>623</a>
+<a name='L624'></a><a href='#L624'>624</a>
+<a name='L625'></a><a href='#L625'>625</a>
+<a name='L626'></a><a href='#L626'>626</a>
+<a name='L627'></a><a href='#L627'>627</a>
+<a name='L628'></a><a href='#L628'>628</a>
+<a name='L629'></a><a href='#L629'>629</a>
+<a name='L630'></a><a href='#L630'>630</a>
+<a name='L631'></a><a href='#L631'>631</a>
+<a name='L632'></a><a href='#L632'>632</a>
+<a name='L633'></a><a href='#L633'>633</a>
+<a name='L634'></a><a href='#L634'>634</a>
+<a name='L635'></a><a href='#L635'>635</a>
+<a name='L636'></a><a href='#L636'>636</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >/**<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
+<span class="cstat-no" title="statement not covered" > * Learning Service</span>
+<span class="cstat-no" title="statement not covered" > * Handles fetching, parsing, and managing educational courses from Academic Torrents</span>
+<span class="cstat-no" title="statement not covered" > */</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >import sqliteService from './sqlite-service.js';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >class LearningService {</span>
+<span class="cstat-no" title="statement not covered" >    constructor() {</span>
+<span class="cstat-no" title="statement not covered" >        this.db = sqliteService;</span>
+<span class="cstat-no" title="statement not covered" >        this.csvUrl = 'https://academictorrents.com/collection/video-lectures.csv';</span>
+<span class="cstat-no" title="statement not covered" >        this.providerLogos = {</span>
+<span class="cstat-no" title="statement not covered" >            'MIT': 'mit-logo.png',</span>
+<span class="cstat-no" title="statement not covered" >            'Stanford': 'stanford-logo.png',</span>
+<span class="cstat-no" title="statement not covered" >            'Udemy': 'udemy-logo.png',</span>
+<span class="cstat-no" title="statement not covered" >            'Coursera': 'coursera-logo.png',</span>
+<span class="cstat-no" title="statement not covered" >            'Harvard': 'harvard-logo.png',</span>
+<span class="cstat-no" title="statement not covered" >            'Yale': 'yale-logo.png',</span>
+<span class="cstat-no" title="statement not covered" >            'Berkeley': 'berkeley-logo.png',</span>
+<span class="cstat-no" title="statement not covered" >            'Princeton': 'princeton-logo.png',</span>
+<span class="cstat-no" title="statement not covered" >            'Oxford': 'oxford-logo.png',</span>
+<span class="cstat-no" title="statement not covered" >            'Cambridge': 'cambridge-logo.png'</span>
+<span class="cstat-no" title="statement not covered" >        };</span>
+<span class="cstat-no" title="statement not covered" >        this.defaultLogo = 'education-default.png';</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Fetch courses CSV - tries local embedded file first, then proxy, then falls back to demo data</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Promise&lt;string&gt;} CSV data</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    async fetchCoursesCSV() {</span>
+<span class="cstat-no" title="statement not covered" >        // Try local embedded CSV file first (bundled with app for offline use)</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >            console.log('Attempting to fetch local embedded courses CSV...');</span>
+<span class="cstat-no" title="statement not covered" >            const response = await fetch('/data/academic-torrents-courses.csv');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (response.ok) {</span>
+<span class="cstat-no" title="statement not covered" >                const csvData = await response.text();</span>
+<span class="cstat-no" title="statement not covered" >                console.log('✅ Local CSV loaded successfully, size:', csvData.length, 'bytes');</span>
+<span class="cstat-no" title="statement not covered" >                return csvData;</span>
+<span class="cstat-no" title="statement not covered" >            } else {</span>
+<span class="cstat-no" title="statement not covered" >                console.warn('Local CSV not found (status:', response.status, ')');</span>
+<span class="cstat-no" title="statement not covered" >            }</span>
+<span class="cstat-no" title="statement not covered" >        } catch (localError) {</span>
+<span class="cstat-no" title="statement not covered" >            console.warn('Failed to fetch local CSV:', localError.message);</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Try streaming server proxy as fallback</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >            const settings = window.SettingsManager;</span>
+<span class="cstat-no" title="statement not covered" >            const streamingServerUrl = settings?.get('streamingServerUrl') || 'http://localhost:3001/api';</span>
+<span class="cstat-no" title="statement not covered" >            const proxyUrl = `${streamingServerUrl}/proxy/academic-torrents`;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            console.log('Attempting to fetch via streaming server proxy:', proxyUrl);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const response = await fetch(proxyUrl, {</span>
+<span class="cstat-no" title="statement not covered" >                method: 'GET',</span>
+<span class="cstat-no" title="statement not covered" >                headers: {</span>
+<span class="cstat-no" title="statement not covered" >                    'Accept': 'text/csv'</span>
+<span class="cstat-no" title="statement not covered" >                }</span>
+<span class="cstat-no" title="statement not covered" >            });</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (!response.ok) {</span>
+<span class="cstat-no" title="statement not covered" >                throw new Error(`Proxy request failed: ${response.status} ${response.statusText}`);</span>
+<span class="cstat-no" title="statement not covered" >            }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const csvData = await response.text();</span>
+<span class="cstat-no" title="statement not covered" >            console.log('✅ CSV fetched successfully via proxy, size:', csvData.length, 'bytes');</span>
+<span class="cstat-no" title="statement not covered" >            return csvData;</span>
+<span class="cstat-no" title="statement not covered" >        } catch (proxyError) {</span>
+<span class="cstat-no" title="statement not covered" >            console.warn('Failed to fetch courses via proxy:', proxyError.message);</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Try direct fetch as fallback (will likely fail due to CORS)</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >            console.log('Attempting direct fetch from Academic Torrents...');</span>
+<span class="cstat-no" title="statement not covered" >            const response = await fetch(this.csvUrl, {</span>
+<span class="cstat-no" title="statement not covered" >                mode: 'cors',</span>
+<span class="cstat-no" title="statement not covered" >                headers: {</span>
+<span class="cstat-no" title="statement not covered" >                    'Accept': 'text/csv'</span>
+<span class="cstat-no" title="statement not covered" >                }</span>
+<span class="cstat-no" title="statement not covered" >            });</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (!response.ok) {</span>
+<span class="cstat-no" title="statement not covered" >                throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);</span>
+<span class="cstat-no" title="statement not covered" >            }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const csvData = await response.text();</span>
+<span class="cstat-no" title="statement not covered" >            console.log('✅ Direct CSV fetch succeeded, size:', csvData.length, 'bytes');</span>
+<span class="cstat-no" title="statement not covered" >            return csvData;</span>
+<span class="cstat-no" title="statement not covered" >        } catch (directError) {</span>
+<span class="cstat-no" title="statement not covered" >            console.warn('Direct fetch also failed:', directError.message);</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Return demo data as final fallback</span>
+<span class="cstat-no" title="statement not covered" >        console.log('⚠️ All fetch methods failed, using embedded demo data fallback');</span>
+<span class="cstat-no" title="statement not covered" >        return this.getDemoCSV();</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Get full Academic Torrents course data as embedded fallback</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {string} Complete Academic Torrents CSV data with real infohashes</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    getDemoCSV() {</span>
+<span class="cstat-no" title="statement not covered" >        // Full Academic Torrents video lectures dataset embedded for offline/standalone use</span>
+<span class="cstat-no" title="statement not covered" >        return `TYPE,NAME,INFOHASH,SIZEBYTES,MIRRORS,DOWNLOADERS,TIMESCOMPLETED,DATEADDED,DATEMODIFIED</span>
+<span class="cstat-no" title="statement not covered" >Course,"Democratic Development by Larry Diamond",1452d6a906d5d164c1adfc4b81a74a6690a8ec4b,3691712674,9,1,5062,1391175900,1391175900</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 8.01 - Physics I - Classical Mechanics",f231c62635aadfb0e4d1f45ddc7b5b6c5592b275,2412434092,21,0,16758,1422047031,1599249619</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 8.03 - Physics III - Vibrations and Waves",724648552d517756117b47b3a7f5f62962f2629e,2636137989,18,0,10231,1422047391,1599249654</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 18.03 - Mathematics - Differential Equations",e7ef009c1929f074ea556bad005ddca0d99ac7aa,6319300522,17,0,12263,1422047977,1599249498</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 7.014 - Introductory Biology",a2b8a74967e5166ab55bf5f248af8d564c39f795,6021455122,17,1,5510,1422048238,1599249619</span>
+<span class="cstat-no" title="statement not covered" >Course,"Caltech CS156 - Machine Learning - Yaser",8190b5122515ab158cd29ccdb33ea946a3e529f4,3358232906,20,0,11331,1429908094,1599249260</span>
+<span class="cstat-no" title="statement not covered" >Course,"Stanford EE364A - Convex Optimization I - Boyd",393dc896234b96a1cd251c14cfc65d2ff594d6e9,4458038066,11,0,2481,1429930458,1599249592</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 6.451 Principles of Digital Communication II Spring 05",83259dc0c7dbd50073113cb1aa7a3e574faca70c,12641790915,14,0,5398,1444090938,1599249408</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 8.02 - Physics II - Electricity and Magnetism",7010163eae33fbac6c065095e908c2c49550b931,4085011949,24,0,15246,1444182143,1599249639</span>
+<span class="cstat-no" title="statement not covered" >Course,"2011 Harvard CS50 Introduction to Computer Science I",ee6f0ba62a717e7785abb5a98e45e2a08699f6c6,20910489048,12,2,14805,1446669407,1599249488</span>
+<span class="cstat-no" title="statement not covered" >Course,"Neural Networks Video Lectures - Hugo Larochelle",e046bca3bc837053d1609ef33d623ee5c5af7300,6600745142,13,1,4485,1457110937,1599249434</span>
+<span class="cstat-no" title="statement not covered" >Course,"CS231n: Convolutional Neural Networks for Visual Recognition 2016",46c5af9e2075d9af06f280b55b65cf9b44eb9fe7,10730933005,16,1,7617,1459114652,1599249437</span>
+<span class="cstat-no" title="statement not covered" >Course,"CS224d: Deep Learning for Natural Language Processing (Spring 2016)",dd9b74b50a1292b4b154094b7338ec1d66e8894d,3829345114,16,1,10613,1462352701,1599249559</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Web Intelligence and Big Data by Dr. Gautam Shroff",f871965e36ec21677d44375930d6cbb0dab7bfb3,1478650060,16,0,41593,1468459593,1599249663</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] How to Succeed in College by Dr. Jonathan Golding, Dr. Phil Kraemer (University of Kentucky)",956ac58723e9f39e766741a6ea794006d20807c3,754196560,16,0,5486,1468459623,1599249630</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Mathematical Methods for Quantitative Finance by Dr. Kjell Konis (University of Washington)",dfc1ddde962101f00ef9764b91181bd6bb5c9e93,6421236690,17,0,13254,1468459668,1599249665</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Analysis of Algorithms by Robert Sedgewick (Princeton University)",ebdac281fb3e9ed0a5c7abadcda3575f54c73a8f,1882637828,12,1,6075,1468459691,1599249662</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Nanotechnology: The Basics by Professor Vicki Colvin, Daniel Mittleman (Rice University)",e54694787f54a7a0096d9b0f062d31a3a3925ae8,2392720056,11,0,1568,1468459752,1599249576</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] - (Operating Systems) by Professor Chen Xiangqun (Peking University)",3fca7db35ba4773d416cc6a297a196cec41fa9f4,3066748519,11,0,2726,1468459809,1599249548</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Beginning Game Programming with C# (University of Colorado System)",0a7ba7e62821e488a0061751fdb81f4298733bea,2127977730,16,1,25993,1468459831,1599249658</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Greek and Roman Mythology (University of Pennsylvania)",01212a89f842f5ad1364c7fa3a8c4c514e2b26ab,2299704331,15,0,2518,1468459889,1599249583</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] VLSI CAD: Logic to Layout by Rob A. Rutenbar (University of Illinois at Urbana-Champaign)",625ae5f99f1cfdc2b8eb42577ca5271ad78967e0,1436500392,11,0,6269,1468459925,1599249652</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Preventing Chronic Pain A Human Systems Approach (University of Minnesota)",271e22f67c7bda33158f2d83f443728cd749cd42,3847421323,13,0,943,1468460034,1599249635</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] The Social Context of Mental Health and Illness (University of Toronto)",ab9ba816268fd74292d888cfb3f413803a178b90,1525882637,13,0,1955,1468460104,1599249262</span>
+<span class="cstat-no" title="statement not covered" >Course,"Large Scale Machine Learning - UToronto - STA 4273H Winter 2015",deb96e8d1f88d9b3a09098ce27c986507ae97b5e,3145762100,16,0,2701,1473351231,1599249453</span>
+<span class="cstat-no" title="statement not covered" >Course,"Regularization Methods for Machine Learning 2016",493251615310f9b6ae1f483126292378137074cd,4589105323,12,0,3484,1473353495,1599249488</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT Course 9.520 - Statistical Learning Theory and Applications, Fall 2015",8b47f45382645882a23e0f8d9d9fbb764b3eb378,41055413520,9,0,2722,1473393315,1599249375</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Algorithms Part I",a2934d859a14c07a80092ab03552310838f66590,1622615266,33,0,60442,1474904264,1599249656</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Algorithms Part II",7afeafb540f4ff63690f1a6517748341f6809516,1925417068,24,1,20840,1474904355,1599249547</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Introduction to Mathematical Thinking",2b5e5cc8c7414bc3b0f6974190065bc8c2f629dc,1902737188,37,0,26500,1474904882,1599249408</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Learn to Program: Crafting Quality Code",5d940b05a2097b5fcf2392916e6c4901743fb219,360725589,22,0,4789,1474904962,1599249490</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Computer Architecture",53bae6d22f3b6e692673f9335e0a0198c1618426,5558550001,22,1,25522,1474905299,1599249638</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] The Hardware/Software Interface",f1384286c8581bffba11e378fdb37608e649d82a,1311351354,15,0,9598,1474905402,1599249661</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Coding the Matrix: Linear Algebra through Computer Science Applications",54cd86f3038dfd446b037891406ba4e0b1200d5a,2978388394,26,2,19527,1474905474,1599249510</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Designing and Executing Information Security Strategies",55284a002672598923af36bc55f3205b42c93b00,1007286635,15,0,6046,1474905602,1599249656</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Heterogeneous Parallel Programming",8903d0871c652b96c7b29db738cea76902d65888,4906095314,12,0,4459,1474905690,1599249502</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Exploring Quantum Physics",f24122f15283757aa8a9bf9cb638db266273442d,1644349572,12,0,5372,1474905828,1599249610</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Probabilistic Graphical Models",e74f08f0fc699e84a9eb046309727d07d80171c5,1503615787,15,0,16071,1474905879,1599249453</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Clinical Problem Solving",dae02888e2fb6484a7b471cb7977eb859aba4831,1203451655,16,0,4993,1474906038,1599249632</span>
+<span class="cstat-no" title="statement not covered" >Course,"Coursera - Economics of Money and Banking Part Two",62fe3cfdec4d19d1d3bf98184b12538a46b783f5,3439646754,23,1,26814,1474906518,1599249410</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT Foundations of Computational and Systems Biology 7.91J",90435db14989b415561ef53a3a12657a13d9d9fa,4088800731,14,0,2747,1477577509,1599249216</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW Systems Biology 8.591J Fall 14",98961a881e8fd4139f4d1e09f0b7a4badfab7c9d,4478312051,17,1,1927,1477579615,1599249496</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT 7.012 Introduction to Biology - Fall 2004",7e1ba0f77f65f5e43e3147691da2ddc36330a361,10328146604,15,0,1655,1477720009,1599249324</span>
+<span class="cstat-no" title="statement not covered" >Course,"Biology-1A-Spring2013-UCBerkeley-Jennifer-Doudna",256d7b478f5c95275031e2d38a101091c0a9f5d1,4948302447,14,0,687,1477852907,1599249513</span>
+<span class="cstat-no" title="statement not covered" >Course,"Biology-1B-Spring2015-UCBerkeley",6858d4831e4b76752097772ca9850b2ae3174e25,14503555013,20,0,604,1477858786,1599249438</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera ] Text Mining and Analytics",e2c129491a3841bfac5d7b08b41ad79387132a23,1063576833,17,0,7275,1485074956,1599249646</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Artificial Intelligence Planning (The University of Edinburgh) (aiplan)",560d07faaf09f640fea96b3650874e2903cbc639,1038676774,17,0,13279,1488677041,1599249220</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Algorithms: Design and Analysis, Part 1 (Stanford University) (algo)",7bfcfbaf2c53588b23ba1ebccae47a2b9c5197b7,1948909326,23,1,20385,1488677043,1599249295</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Algorithms: Design and Analysis, Part 2 (Stanford University) (algo2)",e24c15ce89cac9c380284595d1d8a475cb485e28,1984809211,19,0,15624,1488677045,1599249488</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Algorithms, Part I (Princeton University) (algs4partI)",43534d22aea22778efce768c4304d6809fa58e6b,1205403640,14,1,6977,1488677046,1599249408</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Algorithms, Part II (Princeton University) (algs4partII)",5c22cd3a2f65f18e153faefda9730b51b21f6521,1656820952,14,1,6867,1488677047,1599249510</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Analysis of Algorithms (Princeton University) (aofa)",31939517fc774120c37160f93a9b5c73cf6c3271,2028617535,11,0,7202,1488677049,1599249491</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Astrobiology and the Search for Extraterrestrial Life (The University of Edinburgh) (astrobio)",47d9877fa4f33d109721c65d066a26c3c5e12e0d,827700128,13,0,2806,1488677050,1599249505</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Automata (Stanford University) (automata)",459e24d28a6abce04cc9fd6e9a148c86dcaac19c,876348234,10,1,4405,1488677051,1599249495</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Web Intelligence and Big Data (Indian Institute of Technology Delhi) (bigdata)",8921ec4d2076e8a6e56a2387d5157aa7c0ef7f10,1186092720,12,0,2958,1488677054,1599249522</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] The Caltech-JPL Summer School on Big Data Analytics (Caltech) (bigdataschool)",71268d279bcfcd9d88c8989c72158d8d73a2e2fc,2179056887,10,0,5430,1488677056,1599249226</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Bioinformatics: Life Sciences on Your Computer (Johns Hopkins University) (bioinform)",b02188bbb764f7f5fdd499c5144add35f56ed3e7,498196877,13,1,2608,1488677057,1599249436</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Bitcoin and Cryptocurrency Technologies (Princeton University) (bitcointech)",412d52b0bfcf2a8bf3201a28c2ba04b6dff5b290,1898886107,18,0,13776,1488677058,1599249509</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Computer Architecture (Princeton University) (comparch)",10d1bf7161a1b3ea70697cd61834ceea6c3d1f87,3538349960,13,1,2768,1488677062,1599249519</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Introduction to Computational Finance and Financial Econometrics (University of Washington) (compfinance)",f07203f2eedb4792c351ba0e28406dab9ab54d7d,4153499620,17,1,10303,1488677067,1599249672</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Compilers (Stanford University) (compilers)",b7579be97c2f01e4efadb0b6b06f0d071afeaac9,1318156391,26,1,5715,1488677068,1599249661</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Computational Methods for Data Analysis (University of Washington) (compmethods)",4281ef52a65d26489e686a0540d86abd4161b88e,3749140620,13,1,9326,1488677072,1599249650</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Computational Neuroscience (University of Washington) (compneuro)",d180bcd510aeec3a20044a0946ac658b9ab30760,1000642215,18,0,5757,1488677074,1599249257</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Galaxies and Cosmology (Caltech) (cosmo)",b7d15931742718f330243dc0aeb110136c86359f,1841765433,10,0,2092,1488677075,1599249515</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Introduction to Data Science (University of Washington) (datasci)",1448261dd6932e549ba4a86b5d6750aae858d003,1463983891,30,0,42418,1488677080,1599249577</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Digital Signal Processing (École Polytechnique Fédérale de Lausanne) (dsp)",43d881e5128841876104742314ccd9851901f460,1467181461,9,0,4166,1488677081,1599249505</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Principles of Economics for Scientists (Caltech) (econ1scientists)",a0af8db9e7b924993ee017e492195b3eb1b0a78b,1719455950,12,0,1696,1488677083,1599249453</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Understanding Einstein: The Special Theory of Relativity (Stanford University) (einstein)",be19083019ae3954680733d394e5e5b5b3572a15,8608087384,12,2,1976,1488677085,1599249497</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Exploring Quantum Physics (University of Maryland, College Park) (eqp)",5261e17c70036651d1f83a6ca66c399da33bb46e,1740505128,14,1,1938,1488677090,1599249439</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Game Theory (Stanford University &amp;amp; The University of British Columbia) (gametheory)",7b96f8f76c4af7752f35c4fc26607cf50b6bb195,2989983315,28,0,22510,1488677091,1599249295</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Game Theory II: Advanced Applications (Stanford University) (gametheory2)",fc641711af26384dbace511fa236a6e4dcb9f36c,2248464381,19,0,10791,1488677093,1599249524</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Genes and the Human Condition (From Behavior to Biotechnology) (University of Maryland, College Park) (genes)",5aecd4978d7be3568f454fa6384dcd5683564f63,1880356360,15,0,2252,1488677097,1599249435</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Genomic and Precision Medicine (University of California, San Francisco) (genomicmedicine)",c4b2f1ba8fb0ee0b8e49609d2b9c86efae36dc36,1053056853,13,0,3074,1488677099,1599249259</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Heterogeneous Parallel Programming (University of Illinois at Urbana-Champaign) (hetero)",de34574326abc4666c7ede41d0205a4a2129bf85,1476786727,12,0,1331,1488677100,1599249490</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] The Hardware/Software Interface (University of Washington) (hwswinterface)",b63a566df824b39740eb9754e4fe4c0140306f4b,1435755062,10,0,3130,1488677101,1599249495</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Introduction to Logic (Stanford University) (intrologic)",0342ad0bd7ef06eb1500b5e7c8ef398060827c4e,258934094,19,0,16743,1488677106,1599249473</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Introduction to Philosophy (The University of Edinburgh) (introphil)",8dcd401c1b3db696fc2f04d3b49c850f0e5cc309,803543873,27,0,17458,1488677107,1599249440</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Logic: Language and Information 1 (The University of Melbourne) (logic1)",aa0902f96da833cc7f4ec70859a529276f5032d9,861916429,14,0,9175,1488677108,1599249546</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Mathematical Methods for Quantitative Finance (University of Washington) (mathematicalmethods)",de1360e53beb1ee13c3285af9bb232109fa168a1,1680043429,15,1,5880,1488677116,1599249410</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Machine Learning (Stanford University) (ml)",e8b1f9c5bf555fe58bc73addb83457dd6da69630,1590091788,112,1,360890,1488677121,1599249671</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Mining Massive Datasets (Stanford University) (mmds)",91bc48e6c8341de198c970acccdc87199391ab46,2566408195,12,1,3669,1488677122,1599249616</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Model Thinking (University of Michigan) (modelthinking)",05a8fe3f7e3420df6b83f40b0cbccd05e591d9f4,2342059816,18,0,26693,1488677124,1599249495</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] MRI Fundamentals (Korea Advanced Institute of Science and Technology) (mrifundamentals)",77d3798548f7ea65943c4b08bf3167329c18fa49,640275891,14,0,4753,1488677127,1599249200</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Fundamentals of Music Theory (The University of Edinburgh) (musictheory)",8033015783d2df3e8b33a343edb8cea9a0b8319a,1815192017,33,3,22256,1488677132,1599249552</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Nanotechnology: The Basics (Rice University) (nanotech)",5d0746961dc72f9ec4a9cc4cd07b1a4e01349fb4,2392742204,10,0,11672,1488677133,1599249653</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Neural Networks for Machine Learning (University of Toronto) (neuralnets)",3e6f1876bbd46780602e72f4b122329fb668bd2c,1026708997,27,0,23785,1488677138,1599249500</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Natural Language Processing (Columbia University) (nlangp)",8a8f93e18dd6c46c48ee2936ed500b1ff4cc9175,1216163367,10,0,11965,1488677139,1599249524</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Natural Language Processing (Stanford University) (nlp)",d2c8f8f1651740520b7dfab23438d89bc8c0c0ab,1342036649,30,0,71032,1488677141,1599249431</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Introduction to Natural Language Processing (University of Michigan) (nlpintro)",78515f90de063ffc144be5e7e726c03849b4e0ed,1920305125,16,1,20717,1488677145,1599249511</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Discrete Optimization (The University of Melbourne) (optimization)",ed196d080a2208727a225ab5e7a5630e5bf53be4,3667745880,13,1,3680,1488677150,1599249496</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Recommender Systems (University of Minnesota) (recsys)",42c3b47bf15a2a1aaadf92156f19315ad2d22967,2126467983,20,1,16468,1488677152,1599249432</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] High Performance Scientific Computing (University of Washington) (scicomp)",cb91a3d7a4c4c086be240b54e83ed8d587b31ff5,2909137911,15,1,2855,1488677157,1599249660</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Scientific Computing (University of Washington) (scientificcomp)",6f7e43052129b95f470d3043cfce2bf5c15ae380,3931061575,9,1,3881,1488677158,1599249505</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Social Network Analysis (University of Michigan) (sna)",066a55d231d3918ad3de994e6211bb99417bcdf0,1085932178,11,1,4921,1488677163,1599249638</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Sports and Building Aerodynamics (Eindhoven University of Technology) (spobuildaerodynamics)",3ba301f087680f41a88224c49c01218b24de868b,1442054298,10,0,1216,1488677164,1599249453</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] VLSI CAD: Logic to Layout (University of Illinois at Urbana-Champaign) (vlsicad)",ec1c86afefda42f4b36c34ae7b235ef0bfd6b9d3,1573125465,11,0,2892,1488677168,1599249453</span>
+<span class="cstat-no" title="statement not covered" >Course,"Integrative Biology 131 - General Human Anatomy Online Course Videos - UCBerkeley",5a0d6b38ab0adb9e52182164ffa8db19822f73ef,8524375550,20,0,4583,1488992136,1599249413</span>
+<span class="cstat-no" title="statement not covered" >Course,"Electrical Engineering 123, 001 - Spring 2015 - UC Berkeley",530416f4f3a4b2cac90e61d5df72d1610dec68b4,6058044588,16,1,9160,1489015679,1599249664</span>
+<span class="cstat-no" title="statement not covered" >Course,"Public Health 150E, 001 - Spring 2015 - UC Berkeley",057e7009bdf9e3d09b1ef56ffbd82a1d1a5de23c,252003485,14,0,1470,1489030422,1599249664</span>
+<span class="cstat-no" title="statement not covered" >Course,"Bioengineering 200, 001 - Spring 2014 - UC Berkeley",c4cd3183550f9cc1cfdcb69f15b076ba439ee062,3801748047,12,0,2564,1489043753,1599249453</span>
+<span class="cstat-no" title="statement not covered" >Course,"Astronomy C12, 001 - Fall 2014 - UC Berkeley",1433dd89d4366df2b534c5e3b6b267776a67e7af,11353991797,12,0,2173,1489045227,1599249371</span>
+<span class="cstat-no" title="statement not covered" >Course,"Nuclear Engineering 101, 001 - Fall 2014 - UC Berkeley",92644e4132e893c70c3e0ad9ac1d58bef554bd14,4967134337,18,0,4686,1489046829,1599249664</span>
+<span class="cstat-no" title="statement not covered" >Course,"Environmental Economics and Policy 145 - Fall 2014 - UC Berkeley",c633df0181d560050d3f392501c6815135cfb60e,3926455147,12,0,2043,1489076046,1599249519</span>
+<span class="cstat-no" title="statement not covered" >Course,"Psychology 1 - General Psychology - Fall 2007 - UC Berkeley",687bfcdf88598c04edf98c56c3b5f838d43ec2a6,3362583340,16,0,12715,1489077507,1599249516</span>
+<span class="cstat-no" title="statement not covered" >Course,"Chemical &amp;amp; Biomolecular Engineering 179 Process Technology of Solid-State Materials Devices - UC Berkeley",f1baa15065060f1830d74111c1ef7741a73c9e98,3641717107,13,0,3440,1489078608,1599249512</span>
+<span class="cstat-no" title="statement not covered" >Course,"Physics 10, 001 - Spring 2006 - UC Berkeley",5140da14dd72b2a6f19a5ca08d2e2d015754909a,4820005717,14,0,4304,1489078706,1599249495</span>
+<span class="cstat-no" title="statement not covered" >Course,"Chemistry 1A, 002 - Spring 2010 - UC Berkeley",ebe62de0d85ba9563c566cc5b082416792bc00ca,9283464842,13,0,3209,1489087005,1599249240</span>
+<span class="cstat-no" title="statement not covered" >Course,"Political Science 179 - Spring 2008 - UC Berkeley",e75a329db4adabdc45502c401a1c4b69712cbb98,1496266068,12,0,4787,1489094013,1599249423</span>
+<span class="cstat-no" title="statement not covered" >Course,"Multivariable Calculus - Math 53 - Fall 2009 - UC Berkeley",d90733721eb2a2ba839434decce91ce4803cbf1e,5840425737,15,0,5001,1489094285,1599249660</span>
+<span class="cstat-no" title="statement not covered" >Course,"International and Area Studies 107, 001 - Spring 2011 - UC Berkeley",97e704bba2ad3fb2dc5d932f4ed693fcb2f85b30,1643354598,9,0,3706,1489096669,1599249324</span>
+<span class="cstat-no" title="statement not covered" >Course,"Statistics 21 - Fall 2009 - UC Berkeley",4d505fe0b3cbcbeff32bfd7b75a783f900dc8c6d,4268779318,15,0,9104,1489096997,1599249372</span>
+<span class="cstat-no" title="statement not covered" >Course,"Statistics 21 - 001 - Spring 2010 - UC Berkeley",56b38a7013673c92cb951eb79bcd3a26e8158095,5575307389,14,0,6006,1489097108,1599249650</span>
+<span class="cstat-no" title="statement not covered" >Course,"Peace and Conflict Studies 164B - Spring 2007 - UC Berkeley",0ec86c151be43be4857e2da370fb5508ff418146,5065283796,11,0,2711,1489097374,1599249618</span>
+<span class="cstat-no" title="statement not covered" >Course,"Law 271, Environmental Law and Policy - Fall 2009 - UC Berkeley",c878ea12eff8c99cc6b1983a2d7724a18bb1a94d,4253328680,11,0,1757,1489104935,1599249431</span>
+<span class="cstat-no" title="statement not covered" >Course,"Public Health 241, 001 - Spring 2011 - UC Berkeley",8469a366bf4b71ff62d9e2327537771bdc145dfa,1874365386,15,0,6057,1489105012,1599249432</span>
+<span class="cstat-no" title="statement not covered" >Course,"Richard Feynman's Lectures on Physics (The Messenger Lectures)",c5af268ec55cf2d3b439e7311ad43101ba8322eb,1073900292,31,0,41483,1500582842,1599249511</span>
+<span class="cstat-no" title="statement not covered" >Course,"Introduction to Computer Science [CS50x] [Harvard] [2018]",52da574b6412862e199abeaea63e51bf8cea2140,9605502232,68,0,84824,1516791534,1599249665</span>
+<span class="cstat-no" title="statement not covered" >Course,"Internet History, Technology, and Security by Charles Severance",d666bf4b83066bcf7401e9c155fcd1b1c01cfb11,2349673820,11,0,20732,1521728797,1599249431</span>
+<span class="cstat-no" title="statement not covered" >Course,"Statistical Machine Learning CMU Spring 2016",07f1555918ed051809f0075fedc0cd469a194c93,28189820070,13,0,11976,1521729394,1599249490</span>
+<span class="cstat-no" title="statement not covered" >Course,"CS231n: Convolutional Neural Networks Spring 2017",ed8a16ebb346e14119a03371665306609e485f13,2625171165,20,0,30433,1537902798,1599249664</span>
+<span class="cstat-no" title="statement not covered" >Course,"University of Washington - Pedro Domingos - Machine Learning",0db676a6aaff8c33f9749d5f9c0fa22bf336bc76,9066763048,21,0,11432,1541763365,1599249594</span>
+<span class="cstat-no" title="statement not covered" >Course,"Tom Mitchell - Machine Learning - 2012",35b6b8bf0c2931ba7ecd8a1a8e65fa32f3e7473f,5866402365,24,0,6588,1542565512,1599249259</span>
+<span class="cstat-no" title="statement not covered" >Course,"02CIX 2018-2019 Sistemi Informativi Aziendali (ITA)",a5f1f19c2f6872cbc83c460e372f0ae7e15bf770,9894967027,7,0,1718,1547760725,1599249653</span>
+<span class="cstat-no" title="statement not covered" >Course,"The Analytics Edge [edX] Summer 2015",1d4ec1fc1aca061e71cc504f93a7f9fca9ef7311,3067319577,18,0,28372,1548602212,1599249657</span>
+<span class="cstat-no" title="statement not covered" >Course,"Semantic Web 2019 (ENG)",41c49b7b3ef5d6e2f02ba9b09525dd8d377b72ca,1776039829,9,1,10693,1549290828,1599249592</span>
+<span class="cstat-no" title="statement not covered" >Course,"CMU 11-785 Introduction to Deep Learning Spring 2019",9bd4c5afe4f80a0b0e519923ff1eb5c76e5c07a9,3273360608,21,1,22762,1550612337,1599249669</span>
+<span class="cstat-no" title="statement not covered" >Course,"03FYZ 2018-2019 Techiche di Programmazione (ITA)",829147695b59dfa6a63676493525c350e0968ae8,12199070376,6,0,513,1560425741,1599249656</span>
+<span class="cstat-no" title="statement not covered" >Course,"01QZP 2018-2019 Ambient Intelligence",9bbe28468af204ccefe75662cd184ce0abed0ad4,4378944634,8,0,6408,1560426761,1599249662</span>
+<span class="cstat-no" title="statement not covered" >Course,"Medical Handbook for Limited Resource Settings",08078e0894099530913e9335bdbc804f42f6e872,15022907366,16,0,8058,1583026177,1676964962</span>
+<span class="cstat-no" title="statement not covered" >Course,"03FYZ 2019-2020 Techiche di Programmazione (ITA)",be289c8dceaa7ef16eb2969431c7e8330285c7f4,14250286689,5,0,446,1591612919,1623063061</span>
+<span class="cstat-no" title="statement not covered" >Course,"01TXY 2019-2020 Web Applications I",ffdcaa1b2bca554612545c0394318d60e6b3796b,10017671556,9,0,2601,1591614696,1622492514</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] Natural Language Processing (Dan Jurafsky and Chris Manning)",9ad3c282ff6c4137ed8b073d884ea3d72c2e4cd1,1176932543,19,0,26478,1591640666,1599249553</span>
+<span class="cstat-no" title="statement not covered" >Course,"[Coursera] What A Plant Knows (Daniel Chamovitz, Tel Aviv University)",81ff5fc1df7c1fb9300e9712368dfc479427004d,538937350,16,0,19529,1591709042,1599249562</span>
+<span class="cstat-no" title="statement not covered" >Course,"Medical Imaging with Deep Learning Tutorial 2020 - Joseph Paul Cohen",e0974c84449826e34d8cc96c943cba2af18ab514,76859393,22,0,9193,1595950639,1599249669</span>
+<span class="cstat-no" title="statement not covered" >Course,"Caltech CS124 Operating Systems",8835f0ca640ca9405f32c7d00c140cc16fcfa078,808020401,22,0,23593,1608879295,1608879295</span>
+<span class="cstat-no" title="statement not covered" >Course,"14BHD 2020-2021 Informatica (ITA)",2eab1a9c70d636b14c4f2118f3818875e75660a8,10146461903,6,0,1009,1610459557,1610459557</span>
+<span class="cstat-no" title="statement not covered" >Course,"Coursera - Applied Data Science with Python",c9ef88cfe0137f6a4292823f0765a5d4b93ff313,2114984419,46,0,91426,1619996769,1619997905</span>
+<span class="cstat-no" title="statement not covered" >Course,"Coursera - Data Science Fundamentals with Python and SQL",bdc0bb1499b1992a5488b4bbcfc9288c30793c08,807986536,49,0,105959,1619996837,1619997896</span>
+<span class="cstat-no" title="statement not covered" >Course,"Coursera - Python 3 Programming Specialization",83918ea4bb488cefd3d8b8b8762597d32aebb4fa,2101534921,51,0,110813,1619996902,1619997865</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - Machine Learning A-Z Become Kaggle Master",9e378efb6e2f67de46c6c3660d9675be50bfc21f,15004863898,48,0,34744,1682368720,1682369060</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - The Complete Android N Developer Course",d9b124bec55927b282f19dd143b367f0f3f79be1,7194560255,17,0,25365,1682368819,1682369055</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - NodeJS - The Complete Guide (incl. MVC, REST APIs, GraphQL)",d10602c009ef3b4794994976476399865c76956d,18592827396,30,0,48823,1682368839,1682369049</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - Learn Ethical Hacking From Scratch",dd0942e4a1782c0a662e9c16682ab977da156670,9144824964,23,0,41262,1682368859,1682369043</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - Docker and Kubernetes The Complete Guide",1f8c426ea3909c9b5b083f06bebcfee24fea03ae,12673349618,48,0,15443,1682368869,1682369035</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - Deep Learning and Computer Vision A-Z OpenCV, SSD &amp;amp; GANs",d131e045c7fec5256025d72035a00e9fc69f24e7,4636240336,29,1,38629,1682368883,1682402811</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - Artificial Intelligence A-Z Learn How To Build An AI",750ab85e01a0d443bd0d19e49b250f8896e1e791,2601915325,71,0,61917,1682368893,1682436612</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - The Complete Flutter Development Bootcamp with Dart",99433c1797b219a1ec5dcec21fa4213881e5b194,13151613294,11,0,1840,1682368904,1682369012</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - Angular &amp;amp; NodeJS - The MEAN Stack Guide",0aa8701e7ac69f17b3528876fbfb50d4ae0aa9a4,8108686573,12,0,5786,1682368915,1682369004</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - MongoDB - The Complete Developer's Guide",67511d8777c824dcde4ceba01cfc9c4931c4df6a,6044495488,13,0,10179,1682368927,1682369068</span>
+<span class="cstat-no" title="statement not covered" >Course,"ZeroToMastery - PyTorch for Deep Learning",b51e3cc0cc631bde4b1fe866a6d171046873b181,17130410419,59,0,43262,1683431367,1683829973</span>
+<span class="cstat-no" title="statement not covered" >Course,"Data Structure and Algorithms Courses by Algoexpert and Neetcode",524d780dce185b43cbe8315b161ea201460f32c0,29893144324,55,5,65520,1686572638,1686572638</span>
+<span class="cstat-no" title="statement not covered" >Course,"Open Osmosis Videos (2015-2018)",4f491f0e13d763408ab6ff87cf7a8ddc48228806,5214924068,18,0,5083,1697685174,1697685296</span>
+<span class="cstat-no" title="statement not covered" >Course,"React &amp;amp; TypeScript Chrome Extension Development [2023]",bd13646530182a285ddca32f1ad61d0e04a63b2f,4520411136,15,0,2803,1699968297,1700591556</span>
+<span class="cstat-no" title="statement not covered" >Course,"NORD Osmosis Videos 2023",c5632854d1f5aa3740003cd4cf5b8b90d4851584,713425200,11,0,6194,1700257682,1700257892</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 14.310x Data Analysis for Social Scientists (Spring 2023)",2437f684caa1a06b0c3aad7dc184e3f89f897776,5899614012,9,0,716,1732823786,1732823786</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 14.13 Psychology and Economics (Spring 2020)",c4f6dbdff92ef7455976f38568969684e085aa1d,7081077225,12,1,665,1732874552,1732874552</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 18.S191 Introduction to Computational Thinking (Fall 2022)",d72ad3cf23be9be6df34240d3ea24b3071003d9e,4914198378,7,0,530,1732891517,1732891517</span>
+<span class="cstat-no" title="statement not covered" >Course,"[udemy] Laravel 11 - From Basics to Advance (2024)",da3b771fb498e367bc146806c4f192d590f24352,4926118354,4,0,187,1733899719,1733899719</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT The Missing Semester of Your CS Education (2020)",fe4cc754cddc2a14d3f25ce95e37f02fb051b8a4,1681026459,6,0,276,1734594724,1734594724</span>
+<span class="cstat-no" title="statement not covered" >Course,"MIT OCW 6.100L Introduction to CS and Programming using Python (Fall 2022)",fb014a1ffea0158f6104c3f51cd1e7724596bcc9,5974263133,10,1,2171,1734595195,1734595195</span>
+<span class="cstat-no" title="statement not covered" >Course,"[udemy] The Complete Hands-on Introduction to Airbyte",2171960ee66c07fd5f251eac81268ca0a40723b5,503805000,7,0,141,1734620847,1734621670</span>
+<span class="cstat-no" title="statement not covered" >Course,"[udemy] Learn Git Essentials [2024]",7fe8b6d871e0a43fd4312c6ef0fe7bf2b485f766,636380000,27,0,6308,1734621298,1734621351</span>
+<span class="cstat-no" title="statement not covered" >Course,"[udemy] SQL Masterclass for Financial Analysis &amp;amp; Financial Reporting",161282939abe2462e37cd8a59664043716a1a529,735121934,32,0,3481,1735223549,1735223549</span>
+<span class="cstat-no" title="statement not covered" >Course,"[udemy] Master of Essential C++ Programming: Beginner to Advanced",8bd786e2ee84c05cd650e56f7f6232e73d66756a,660557244,23,0,3322,1735224079,1735224079</span>
+<span class="cstat-no" title="statement not covered" >Course,"[udemy] Complete Manual Software Testing + Agile + Scrum + Jira 2024",cbec20f4ade504701c1bd308913cc5df10eb4d6b,1193112913,15,0,3918,1735224828,1735224828</span>
+<span class="cstat-no" title="statement not covered" >Course,"[udemy] The Complete Adobe After Effects Bootcamp: Basic to Advanced",9bfd535befddfe73d2a4f548fddca042922dba22,7363260180,35,1,26437,1735225158,1735225158</span>
+<span class="cstat-no" title="statement not covered" >Course,"[udemy] Adobe Premiere Pro CC Masterclass: Video Editing in Premiere",1e6b74db6defaac37ef293d9c7ad667ea2ab87d9,6604648012,63,1,28492,1735420306,1735420306</span>
+<span class="cstat-no" title="statement not covered" >Course,"Coursera | Psychedelic Science And Medicine 2025",1322db11e9b442caac35a9cdfffa271d98819b39,6999739211,4,0,382,1744412362,1744412362</span>
+<span class="cstat-no" title="statement not covered" >Course,"Udemy - Go The Complete Developer's Guide (Golang)",773b405dc903c094b7fa2ce450adad066b277490,5825439715,22,1,1960,1744446189,1744446189</span>
+<span class="cstat-no" title="statement not covered" >Course,"Coursera | Programming For Designers Specialization",f58a74aad31ae9ac4c14f3e30414d93fe8c1ce8d,6125120437,25,0,897,1746306059,1746306059</span>
+<span class="cstat-no" title="statement not covered" >Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,1000642215,9,0,469,1752691095,1752691095`;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Parse CSV data</span>
+<span class="cstat-no" title="statement not covered" >     * @param {string} csvData - Raw CSV string</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Array&lt;Object&gt;} Parsed course objects</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    parseCSV(csvData) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!csvData) return [];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        const lines = csvData.split('\n');</span>
+<span class="cstat-no" title="statement not covered" >        const headers = lines[0].split(',');</span>
+<span class="cstat-no" title="statement not covered" >        const courses = [];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Parse each line (skip header)</span>
+<span class="cstat-no" title="statement not covered" >        for (let i = 1; i &lt; lines.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >            const line = lines[i].trim();</span>
+<span class="cstat-no" title="statement not covered" >            if (!line) continue;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            // Simple CSV parsing (handles basic cases)</span>
+<span class="cstat-no" title="statement not covered" >            const values = this.parseCSVLine(line);</span>
+<span class="cstat-no" title="statement not covered" >            if (values.length === headers.length) {</span>
+<span class="cstat-no" title="statement not covered" >                const course = {};</span>
+<span class="cstat-no" title="statement not covered" >                headers.forEach((header, index) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                    course[header] = values[index];</span>
+<span class="cstat-no" title="statement not covered" >                });</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                // Extract provider from title</span>
+<span class="cstat-no" title="statement not covered" >                const provider = this.extractProvider(course.NAME);</span>
+<span class="cstat-no" title="statement not covered" >                const subject = this.extractSubject(course.NAME);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                courses.push({</span>
+<span class="cstat-no" title="statement not covered" >                    title: course.NAME,</span>
+<span class="cstat-no" title="statement not covered" >                    provider: provider,</span>
+<span class="cstat-no" title="statement not covered" >                    subject_area: subject,</span>
+<span class="cstat-no" title="statement not covered" >                    infohash: course.INFOHASH,</span>
+<span class="cstat-no" title="statement not covered" >                    size_bytes: parseInt(course.SIZEBYTES) || 0,</span>
+<span class="cstat-no" title="statement not covered" >                    mirrors: parseInt(course.MIRRORS) || 0,</span>
+<span class="cstat-no" title="statement not covered" >                    downloaders: parseInt(course.DOWNLOADERS) || 0,</span>
+<span class="cstat-no" title="statement not covered" >                    times_completed: parseInt(course.TIMESCOMPLETED) || 0,</span>
+<span class="cstat-no" title="statement not covered" >                    date_added: parseInt(course.DATEADDED) || 0,</span>
+<span class="cstat-no" title="statement not covered" >                    date_modified: parseInt(course.DATEMODIFIED) || 0,</span>
+<span class="cstat-no" title="statement not covered" >                    magnet_link: this.createMagnetLink(course.INFOHASH, course.NAME),</span>
+<span class="cstat-no" title="statement not covered" >                    provider_logo: this.getProviderLogo(provider)</span>
+<span class="cstat-no" title="statement not covered" >                });</span>
+<span class="cstat-no" title="statement not covered" >            }</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        console.log('Parsed', courses.length, 'courses from CSV');</span>
+<span class="cstat-no" title="statement not covered" >        return courses;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Parse a single CSV line handling quoted values</span>
+<span class="cstat-no" title="statement not covered" >     * @param {string} line - CSV line</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Array&lt;string&gt;} Parsed values</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    parseCSVLine(line) {</span>
+<span class="cstat-no" title="statement not covered" >        const values = [];</span>
+<span class="cstat-no" title="statement not covered" >        let current = '';</span>
+<span class="cstat-no" title="statement not covered" >        let inQuotes = false;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        for (let i = 0; i &lt; line.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >            const char = line[i];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (char === '"') {</span>
+<span class="cstat-no" title="statement not covered" >                inQuotes = !inQuotes;</span>
+<span class="cstat-no" title="statement not covered" >            } else if (char === ',' &amp;&amp; !inQuotes) {</span>
+<span class="cstat-no" title="statement not covered" >                values.push(current.trim());</span>
+<span class="cstat-no" title="statement not covered" >                current = '';</span>
+<span class="cstat-no" title="statement not covered" >            } else {</span>
+<span class="cstat-no" title="statement not covered" >                current += char;</span>
+<span class="cstat-no" title="statement not covered" >            }</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        values.push(current.trim());</span>
+<span class="cstat-no" title="statement not covered" >        return values;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Extract provider name from course title</span>
+<span class="cstat-no" title="statement not covered" >     * @param {string} title - Course title</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {string} Provider name</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    extractProvider(title) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!title) return 'Unknown';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Check for known providers</span>
+<span class="cstat-no" title="statement not covered" >        const upperTitle = title.toUpperCase();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('MIT OCW') || upperTitle.includes('MIT ')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'MIT';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('STANFORD')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Stanford';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('HARVARD')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Harvard';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('YALE')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Yale';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('BERKELEY')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Berkeley';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('UDEMY')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Udemy';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('COURSERA')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Coursera';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('PRINCETON')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Princeton';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('OXFORD')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Oxford';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('CAMBRIDGE')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Cambridge';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return 'Other';</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Extract subject area from course title</span>
+<span class="cstat-no" title="statement not covered" >     * @param {string} title - Course title</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {string} Subject area</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    extractSubject(title) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!title) return 'General';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        const upperTitle = title.toUpperCase();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Science subjects</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('PHYSICS')) return 'Physics';</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('CHEMISTRY')) return 'Chemistry';</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('BIOLOGY')) return 'Biology';</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('ASTRONOMY')) return 'Astronomy';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Math and CS</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('MATHEMATICS') || upperTitle.includes('CALCULUS') || upperTitle.includes('ALGEBRA')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Mathematics';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('COMPUTER SCIENCE') || upperTitle.includes('PROGRAMMING') || upperTitle.includes('CS ')) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'Computer Science';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Engineering</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('ENGINEERING')) return 'Engineering';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Social Sciences</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('ECONOMICS')) return 'Economics';</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('PSYCHOLOGY')) return 'Psychology';</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('SOCIOLOGY')) return 'Sociology';</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('HISTORY')) return 'History';</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('PHILOSOPHY')) return 'Philosophy';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Arts and Humanities</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('LITERATURE')) return 'Literature';</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('ART') || upperTitle.includes('MUSIC')) return 'Arts';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Business</span>
+<span class="cstat-no" title="statement not covered" >        if (upperTitle.includes('BUSINESS') || upperTitle.includes('MANAGEMENT')) return 'Business';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return 'General';</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Create magnet link from infohash and name</span>
+<span class="cstat-no" title="statement not covered" >     * @param {string} infohash - Torrent infohash</span>
+<span class="cstat-no" title="statement not covered" >     * @param {string} name - Torrent name</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {string} Magnet link</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    createMagnetLink(infohash, name) {</span>
+<span class="cstat-no" title="statement not covered" >        const encodedName = encodeURIComponent(name || 'Course');</span>
+<span class="cstat-no" title="statement not covered" >        return `magnet:?xt=urn:btih:${infohash}&amp;dn=${encodedName}&amp;tr=udp://tracker.openbittorrent.com:80`;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Get provider logo path</span>
+<span class="cstat-no" title="statement not covered" >     * @param {string} provider - Provider name</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {string} Logo filename</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    getProviderLogo(provider) {</span>
+<span class="cstat-no" title="statement not covered" >        return this.providerLogos[provider] || this.defaultLogo;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Sync courses from CSV to database</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Promise&lt;number&gt;} Number of courses synced</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    async syncCourses() {</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >            console.log('Starting course sync...');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            // Fetch CSV</span>
+<span class="cstat-no" title="statement not covered" >            const csvData = await this.fetchCoursesCSV();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            // Parse CSV</span>
+<span class="cstat-no" title="statement not covered" >            const courses = this.parseCSV(csvData);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (courses.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >                console.warn('No courses parsed from CSV');</span>
+<span class="cstat-no" title="statement not covered" >                return 0;</span>
+<span class="cstat-no" title="statement not covered" >            }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            // Clear existing courses</span>
+<span class="cstat-no" title="statement not covered" >            await this.db.run('DELETE FROM learning_courses');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            // Insert courses in batches</span>
+<span class="cstat-no" title="statement not covered" >            let inserted = 0;</span>
+<span class="cstat-no" title="statement not covered" >            for (const course of courses) {</span>
+<span class="cstat-no" title="statement not covered" >                try {</span>
+<span class="cstat-no" title="statement not covered" >                    await this.db.insert('learning_courses', {</span>
+<span class="cstat-no" title="statement not covered" >                        title: course.title,</span>
+<span class="cstat-no" title="statement not covered" >                        provider: course.provider,</span>
+<span class="cstat-no" title="statement not covered" >                        subject_area: course.subject_area,</span>
+<span class="cstat-no" title="statement not covered" >                        infohash: course.infohash,</span>
+<span class="cstat-no" title="statement not covered" >                        magnet_link: course.magnet_link,</span>
+<span class="cstat-no" title="statement not covered" >                        size_bytes: course.size_bytes,</span>
+<span class="cstat-no" title="statement not covered" >                        mirrors: course.mirrors,</span>
+<span class="cstat-no" title="statement not covered" >                        downloaders: course.downloaders,</span>
+<span class="cstat-no" title="statement not covered" >                        times_completed: course.times_completed,</span>
+<span class="cstat-no" title="statement not covered" >                        date_added: course.date_added,</span>
+<span class="cstat-no" title="statement not covered" >                        date_modified: course.date_modified,</span>
+<span class="cstat-no" title="statement not covered" >                        provider_logo: course.provider_logo</span>
+<span class="cstat-no" title="statement not covered" >                    });</span>
+<span class="cstat-no" title="statement not covered" >                    inserted++;</span>
+<span class="cstat-no" title="statement not covered" >                } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >                    console.error('Failed to insert course:', course.title, error);</span>
+<span class="cstat-no" title="statement not covered" >                }</span>
+<span class="cstat-no" title="statement not covered" >            }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            console.log('Course sync complete:', inserted, 'courses inserted');</span>
+<span class="cstat-no" title="statement not covered" >            return inserted;</span>
+<span class="cstat-no" title="statement not covered" >        } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >            console.error('Course sync failed:', error);</span>
+<span class="cstat-no" title="statement not covered" >            throw error;</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Get courses with optional filters</span>
+<span class="cstat-no" title="statement not covered" >     * @param {Object} filters - {provider, subject, search, limit, offset}</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Promise&lt;Array&lt;Object&gt;&gt;} Courses</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    async getCourses(filters = {}) {</span>
+<span class="cstat-no" title="statement not covered" >        const {</span>
+<span class="cstat-no" title="statement not covered" >            provider = null,</span>
+<span class="cstat-no" title="statement not covered" >            subject = null,</span>
+<span class="cstat-no" title="statement not covered" >            search = null,</span>
+<span class="cstat-no" title="statement not covered" >            sorter = null,</span>
+<span class="cstat-no" title="statement not covered" >            sort = null,</span>
+<span class="cstat-no" title="statement not covered" >            limit = 50,</span>
+<span class="cstat-no" title="statement not covered" >            offset = 0</span>
+<span class="cstat-no" title="statement not covered" >        } = filters;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Use sorter if provided, otherwise use sort</span>
+<span class="cstat-no" title="statement not covered" >        const sortBy = sorter || sort;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        let sql = 'SELECT * FROM learning_courses WHERE 1=1';</span>
+<span class="cstat-no" title="statement not covered" >        const params = [];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (provider &amp;&amp; provider !== 'All') {</span>
+<span class="cstat-no" title="statement not covered" >            sql += ' AND provider = ?';</span>
+<span class="cstat-no" title="statement not covered" >            params.push(provider);</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (subject &amp;&amp; subject !== 'All') {</span>
+<span class="cstat-no" title="statement not covered" >            sql += ' AND subject_area = ?';</span>
+<span class="cstat-no" title="statement not covered" >            params.push(subject);</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (search) {</span>
+<span class="cstat-no" title="statement not covered" >            sql += ' AND title LIKE ?';</span>
+<span class="cstat-no" title="statement not covered" >            params.push(`%${search}%`);</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        // Sorting - handle both internal and display names</span>
+<span class="cstat-no" title="statement not covered" >        const sortMap = {</span>
+<span class="cstat-no" title="statement not covered" >            'title': 'title ASC',</span>
+<span class="cstat-no" title="statement not covered" >            'provider': 'provider ASC, title ASC',</span>
+<span class="cstat-no" title="statement not covered" >            'subject': 'subject_area ASC, title ASC',</span>
+<span class="cstat-no" title="statement not covered" >            'subject_area': 'subject_area ASC, title ASC',</span>
+<span class="cstat-no" title="statement not covered" >            'downloaders': 'downloaders DESC, title ASC',</span>
+<span class="cstat-no" title="statement not covered" >            'size': 'size_bytes DESC, title ASC',</span>
+<span class="cstat-no" title="statement not covered" >            'date added': 'last_updated DESC, title ASC',</span>
+<span class="cstat-no" title="statement not covered" >            'date_added': 'last_updated DESC, title ASC',</span>
+<span class="cstat-no" title="statement not covered" >            'last_updated': 'last_updated DESC, title ASC'</span>
+<span class="cstat-no" title="statement not covered" >        };</span>
+<span class="cstat-no" title="statement not covered" >        const sortColumn = sortMap[sortBy] || sortMap[sortBy?.toLowerCase()] || 'times_completed DESC, title ASC';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        sql += ` ORDER BY ${sortColumn}`;</span>
+<span class="cstat-no" title="statement not covered" >        sql += ' LIMIT ? OFFSET ?';</span>
+<span class="cstat-no" title="statement not covered" >        params.push(limit, offset);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return await this.db.query(sql, params);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Get list of providers</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Promise&lt;Array&lt;string&gt;&gt;} Provider names</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    async getProviders() {</span>
+<span class="cstat-no" title="statement not covered" >        const sql = 'SELECT DISTINCT provider FROM learning_courses ORDER BY provider';</span>
+<span class="cstat-no" title="statement not covered" >        const rows = await this.db.query(sql);</span>
+<span class="cstat-no" title="statement not covered" >        return rows.map(row =&gt; row.provider);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Get list of subjects</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Promise&lt;Array&lt;string&gt;&gt;} Subject names</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    async getSubjects() {</span>
+<span class="cstat-no" title="statement not covered" >        const sql = 'SELECT DISTINCT subject_area FROM learning_courses ORDER BY subject_area';</span>
+<span class="cstat-no" title="statement not covered" >        const rows = await this.db.query(sql);</span>
+<span class="cstat-no" title="statement not covered" >        return rows.map(row =&gt; row.subject_area);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Get course count from cache</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Promise&lt;number&gt;} Number of courses</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    async getCachedCourseCount() {</span>
+<span class="cstat-no" title="statement not covered" >        const sql = 'SELECT COUNT(*) as count FROM learning_courses';</span>
+<span class="cstat-no" title="statement not covered" >        const rows = await this.db.query(sql);</span>
+<span class="cstat-no" title="statement not covered" >        return rows[0]?.count || 0;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Get course by ID</span>
+<span class="cstat-no" title="statement not covered" >     * @param {number} id - Course ID</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Promise&lt;Object|null&gt;} Course data</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    async getCourseById(id) {</span>
+<span class="cstat-no" title="statement not covered" >        return await this.db.findOne('learning_courses', 'id = ?', [id]);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    /**</span>
+<span class="cstat-no" title="statement not covered" >     * Get total courses count - wrapper for getCachedCourseCount for view compatibility</span>
+<span class="cstat-no" title="statement not covered" >     * @returns {Promise&lt;number&gt;} Total count of courses</span>
+<span class="cstat-no" title="statement not covered" >     */</span>
+<span class="cstat-no" title="statement not covered" >    async getCoursesCount() {</span>
+<span class="cstat-no" title="statement not covered" >        return this.getCachedCourseCount();</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >// Export as singleton</span>
+<span class="cstat-no" title="statement not covered" >const learningService = new LearningService();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >if (typeof module !== 'undefined' &amp;&amp; module.exports) {</span>
+<span class="cstat-no" title="statement not covered" >    module.exports = learningService;</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >if (typeof window !== 'undefined') {</span>
+<span class="cstat-no" title="statement not covered" >    window.LearningService = learningService;</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2025-10-15T04:18:03.156Z
+            </div>
+        <script src="../../../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../../../sorter.js"></script>
+        <script src="../../../../block-navigation.js"></script>
+    </body>
+</html>
+    
