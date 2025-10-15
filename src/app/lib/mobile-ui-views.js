@@ -1364,9 +1364,8 @@ export class MobileUIController {
                 document.querySelectorAll('.browse-dropdown-item').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
 
-                // Keep Browse tab active
+                // Close the dropdown by removing active class from parent
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                document.querySelector('.nav-item-dropdown').classList.add('active');
             });
         });
     }
