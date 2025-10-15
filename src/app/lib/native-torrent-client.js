@@ -310,6 +310,12 @@ class NativeTorrentClient {
      * @returns {Promise<void>}
      */
     async pauseStream() {
+        // BUG-009 FIX: Check if stream is active before pausing
+        if (!this.currentStreamUrl) {
+            console.warn('No active stream to pause');
+            return;
+        }
+
         try {
             await TorrentStreamer.pause();
             console.log('Native torrent stream paused');
@@ -324,6 +330,12 @@ class NativeTorrentClient {
      * @returns {Promise<void>}
      */
     async resumeStream() {
+        // BUG-009 FIX: Check if stream is active before resuming
+        if (!this.currentStreamUrl) {
+            console.warn('No active stream to resume');
+            return;
+        }
+
         try {
             await TorrentStreamer.resume();
             console.log('Native torrent stream resumed');

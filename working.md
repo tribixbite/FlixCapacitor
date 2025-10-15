@@ -2,6 +2,29 @@
 
 ### 🎯 Current Status
 
+**Round 2: Async & State Management Fixes** (✅ COMPLETED) (2025-10-14)
+- **Issue**: Additional memory leaks and unhandled async errors
+  * Resume dialog listeners not tracked (2 buttons + timeout)
+  * pause/resumeStream not awaited, errors swallowed
+  * No state check before calling pause/resume
+  * Auto-resume timeout runs after player closed
+- **Bugs Fixed**:
+  * **BUG-006 (HIGH)**: Resume dialog button listeners never tracked or removed
+  * **BUG-007 (HIGH)**: pauseStream/resumeStream not awaited, silent failures
+  * **BUG-009 (MEDIUM)**: pause/resume methods don't check if stream is active
+  * **BUG-010 (MEDIUM)**: Auto-resume 10s timeout not tracked for cleanup
+- **Solution**: Track all resources and handle async properly
+  * Tracked resume dialog listeners via `addTrackedListener()`
+  * Tracked auto-resume timeout (stored in intervals array)
+  * Made pause/play handlers async with try-catch error handling
+  * Added state checks in pauseStream/resumeStream methods
+- **Files Modified**:
+  * src/app/lib/mobile-ui-views.js (resume dialog, pause/play handlers)
+  * src/app/lib/native-torrent-client.js (pauseStream, resumeStream)
+- **Build Status**: ✅ Build successful (476.29 kB main bundle)
+- **Impact**: All async errors handled, no orphaned timeouts or listeners
+- **Status**: ✅ FIXED - All 4 bugs resolved, detailed report in BUGS-ROUND2.md
+
 **Memory Leak Fixes - All 5 Bugs** (✅ COMPLETED) (2025-10-14)
 - **Issue**: Critical memory leaks causing app slowdown over time
   * Event listeners never removed when video player exits (15+ per video)

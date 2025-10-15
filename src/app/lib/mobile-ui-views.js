@@ -3346,22 +3346,28 @@ export class MobileUIController {
                         // Pause video until user decides
                         videoElement.pause();
 
-                        document.getElementById('resume-continue').addEventListener('click', () => {
+                        // BUG-006 FIX: Track resume dialog button listeners
+                        const resumeContinueBtn = document.getElementById('resume-continue');
+                        const resumeStartOverBtn = document.getElementById('resume-start-over');
+
+                        const resumeContinueHandler = () => {
                             videoElement.currentTime = savedPosition;
                             videoElement.play();
                             resumeDialog.remove();
                             console.log(`Resuming from ${Math.floor(savedPosition)}s`);
-                        });
+                        };
+                        addTrackedListener(resumeContinueBtn, 'click', resumeContinueHandler);
 
-                        document.getElementById('resume-start-over').addEventListener('click', () => {
+                        const resumeStartOverHandler = () => {
                             videoElement.currentTime = 0;
                             videoElement.play();
                             resumeDialog.remove();
                             console.log('Starting from beginning');
-                        });
+                        };
+                        addTrackedListener(resumeStartOverBtn, 'click', resumeStartOverHandler);
 
-                        // Auto-select resume after 10 seconds
-                        setTimeout(() => {
+                        // BUG-010 FIX: Track auto-resume timeout
+                        const autoResumeTimeout = setTimeout(() => {
                             if (document.getElementById('resume-dialog')) {
                                 videoElement.currentTime = savedPosition;
                                 videoElement.play();
@@ -3369,6 +3375,7 @@ export class MobileUIController {
                                 console.log('Auto-resumed after timeout');
                             }
                         }, 10000);
+                        this.videoPlayerCleanup.intervals.push(autoResumeTimeout);
                     }
 
                     // Show fullscreen button
@@ -3429,16 +3436,27 @@ export class MobileUIController {
                 };
                 addTrackedListener(videoElement, 'timeupdate', timeupdateHandler);
 
-                const pauseHandler = () => {
+                // BUG-007 FIX: Properly await and handle async pause/resume
+                const pauseHandler = async () => {
                     if (window.NativeTorrentClient) {
-                        window.NativeTorrentClient.pauseStream();
+                        try {
+                            await window.NativeTorrentClient.pauseStream();
+                        } catch (e) {
+                            console.warn('Failed to pause torrent stream:', e);
+                            // Non-critical - video pause still works
+                        }
                     }
                 };
                 addTrackedListener(videoElement, 'pause', pauseHandler);
 
-                const playHandler = () => {
+                const playHandler = async () => {
                     if (window.NativeTorrentClient) {
-                        window.NativeTorrentClient.resumeStream();
+                        try {
+                            await window.NativeTorrentClient.resumeStream();
+                        } catch (e) {
+                            console.warn('Failed to resume torrent stream:', e);
+                            // Non-critical - video play still works
+                        }
                     }
                 };
                 addTrackedListener(videoElement, 'play', playHandler);
