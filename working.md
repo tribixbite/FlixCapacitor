@@ -2,6 +2,44 @@
 
 ### 🎯 Current Status
 
+**Video Player UI Refactor** (✅ COMPLETED) (2025-10-14)
+- **Issue**: Overlapping and off-screen UI elements during video loading
+  * Header elements (title, back button, speed, CC) overlapping
+  * Full magnet link displayed and wrapping across screen
+  * Too much technical info (Quality, Size, Progress, Speed, Seeds, Peers) flooding UI
+  * Poor text truncation causing title to overflow
+  * Controls visible during loading causing visual clutter
+- **Root Cause**: Too many elements competing for space in header, no text overflow handling
+- **Solution**: Comprehensive UI overhaul for clean, non-overlapping layout
+  * **Simplified Header**:
+    - Only back button (36px) + truncated title (50 char limit)
+    - Text-overflow ellipsis for long course names
+    - Fixed height (56px) with clean bottom border
+    - Proper flex layout with min-width: 0 to enable ellipsis
+  * **Hidden Technical Details**:
+    - Removed magnet link display entirely
+    - Stats box hidden by default, only shown when downloading starts
+    - Clean two-column layout for Progress/Speed/Peers (no monospace)
+  * **Playback Controls Overlay**:
+    - Speed and CC buttons moved to separate floating div
+    - Hidden during loading, shown only when video plays
+    - Positioned top-right as compact pills with hover effects
+  * **Loading State Cleanup**:
+    - Poster image shown if available (120x180px with shadow)
+    - Simple spinner (48px) with clean status messages
+    - Title progression: "Preparing Stream" → "Downloading" → "Buffering Video"
+    - Subtitle shows peer count: "5 peers connected"
+  * **Visual Polish**:
+    - env(safe-area-inset-*) for notch/edge handling
+    - Backdrop-filter blur on overlays
+    - Smooth fade transitions (300ms opacity)
+    - Mobile-friendly touch targets
+- **Files Modified**:
+  * src/app/lib/mobile-ui-views.js (showVideoPlayer method, 195 lines changed)
+- **Build Status**: ✅ Build successful (474.43 kB main bundle, 74M APK)
+- **Commit**: f1499eb - "refactor: comprehensive video player UI overhaul to fix overlapping elements"
+- **Status**: ✅ FIXED - Clean, professional loading UI with no overlaps
+
 **Learning Tab Sync & Back Button Fixes** (✅ COMPLETED) (2025-10-14)
 - **Issue 1**: Only 6 courses showing instead of 171 after rebuild
   * Root cause: checkCoursesSync() only synced when count === 0
