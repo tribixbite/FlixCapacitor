@@ -1,0 +1,42 @@
+{
+  "name": "capacitor-plugin-torrent-streamer",
+  "version": "1.0.0",
+  "description": "Native torrent streaming for Capacitor apps using jlibtorrent",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "android",
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "torrent",
+    "streaming",
+    "jlibtorrent",
+    "android"
+  ],
+  "author": "Popcorn Time",
+  "license": "GPL-3.0",
+  "capacitor": {
+    "android": {
+      "src": "android"
+    }
+  },
+  "peerDependencies": {
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/cli": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
+    "typescript": "^5.9.3"
+  }
+}

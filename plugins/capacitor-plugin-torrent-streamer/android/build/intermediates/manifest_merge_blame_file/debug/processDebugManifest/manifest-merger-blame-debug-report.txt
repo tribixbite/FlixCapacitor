@@ -1,0 +1,40 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.flixcapacitor.torrent" >
+4
+5    <uses-sdk android:minSdkVersion="23" />
+6
+7    <!-- Required permissions for torrent streaming -->
+8    <uses-permission android:name="android.permission.INTERNET" />
+8-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:5:5-67
+8-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:5:22-64
+9    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+9-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:6:5-79
+9-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:6:22-76
+10    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+10-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:7:5-77
+10-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:7:22-74
+11    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+11-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:8:5-92
+11-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:8:22-89
+12    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+12-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:9:5-77
+12-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:9:22-74
+13
+14    <application>
+14-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:11:5-18:19
+15
+16        <!-- Torrent Streaming Foreground Service -->
+17        <service
+17-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:13:9-17:61
+18            android:name="com.flixcapacitor.torrent.TorrentStreamingService"
+18-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:14:13-77
+19            android:enabled="true"
+19-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:15:13-35
+20            android:exported="false"
+20-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:16:13-37
+21            android:foregroundServiceType="mediaPlayback" />
+21-->/data/data/com.termux/files/home/git/pop/capacitor-plugin-torrent-streamer/android/src/main/AndroidManifest.xml:17:13-58
+22    </application>
+23
+24</manifest>
