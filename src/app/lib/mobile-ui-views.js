@@ -3173,21 +3173,6 @@ export class MobileUIController {
                                 // Update download overlay during playback
                                 const dlProgress = document.getElementById('dl-progress');
                                 if (dlProgress) dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
-
-                                // CRITICAL FIX: Only set video.src when buffer threshold is reached (5%)
-                                // This prevents premature media element errors before stream is ready
-                                if (!videoSourceSet && status.progress >= 0.05 && streamInfo?.streamUrl) {
-                                    const videoElement = document.getElementById('torrent-video');
-                                    if (videoElement) {
-                                        console.log('Buffer threshold reached (5%), setting video source');
-                                        videoElement.src = streamInfo.streamUrl;
-                                        videoSourceSet = true;
-
-                                        // Update UI to show video is loading
-                                        if (loadingTitle) loadingTitle.textContent = 'Buffering Video';
-                                        if (loadingSubtitle) loadingSubtitle.textContent = 'Preparing playback...';
-                                    }
-                                }
                             }
 
                             // Update download speed
@@ -3285,15 +3270,19 @@ export class MobileUIController {
 
             // Update status to show stream is buffering
             if (loadingTitle) loadingTitle.textContent = 'Buffering Video';
-            if (loadingSubtitle) loadingSubtitle.textContent = 'Waiting for initial buffer...';
+            if (loadingSubtitle) loadingSubtitle.textContent = 'Stream ready, loading video...';
 
             // Show video container (but keep loading UI visible until video loads)
             if (videoContainer) videoContainer.style.display = 'block';
 
-            // NOTE: video.src is now set in the progress callback when buffer threshold (5%) is reached
-            // This prevents premature media element errors before the stream has buffered enough data
+            // CRITICAL FIX: Set video source immediately now that stream is ready
+            // The progress callback can't access streamInfo because it runs before Promise resolves
             console.log('Stream URL ready:', streamInfo.streamUrl);
-            console.log('Waiting for 5% buffer before setting video source...');
+            console.log('Setting video source...');
+            if (videoElement && streamInfo.streamUrl) {
+                videoElement.src = streamInfo.streamUrl;
+                videoSourceSet = true;
+            }
 
             // Handle video errors
             if (videoElement) {
