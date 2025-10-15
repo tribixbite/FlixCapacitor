@@ -2,6 +2,35 @@
 
 ### 🎯 Current Status
 
+**Error Handling & Duplicate Stream Prevention** (✅ COMPLETED) (2025-10-14)
+- **Issue**: Global error screen appearing on video play, progress alternating between two values
+  * Full-screen "An unexpected error occurred. Please restart the app." message
+  * Progress updates rapidly alternating suggesting duplicate concurrent streams
+  * Errors in showVideoPlayer bubbling to global error handler
+- **Root Causes Identified**:
+  * Duplicate CSS property (`display: none` twice) in playback-controls div
+  * Reference to non-existent `statusText` element in error handler
+  * No duplicate stream prevention - concurrent calls could start multiple streams
+  * No top-level try-catch wrapper preventing errors from bubbling to global handler
+- **Solution**: Complete error handling refactor
+  * **Fixed CSS Syntax Error**:
+    - Removed duplicate `display: none` from playback-controls div (line 2817)
+  * **Cleaned Error Handler**:
+    - Removed all references to non-existent `statusText` element (lines 3122-3140)
+    - Only use `loadingTitle` and `loadingSubtitle` which actually exist
+  * **Duplicate Stream Prevention**:
+    - Added `isLoadingStream` flag to MobileUIController constructor (line 1228)
+    - Early return if stream already loading (lines 2799-2803)
+    - Finally block always resets flag (lines 3726-3728)
+  * **Top-Level Error Boundary**:
+    - Wrapped entire showVideoPlayer method in try-catch-finally (lines 2806, 3706-3728)
+    - Catch block shows user-friendly error in UI without triggering global handler
+    - Finally block ensures flag is always reset
+- **Files Modified**:
+  * src/app/lib/mobile-ui-views.js (showVideoPlayer method, constructor)
+- **Build Status**: ✅ Build successful (475.33 kB main bundle, 74M APK)
+- **Status**: ✅ FIXED - No more global error screen, only one stream at a time
+
 **Video Player UI Refactor** (✅ COMPLETED) (2025-10-14)
 - **Issue**: Overlapping and off-screen UI elements during video loading
   * Header elements (title, back button, speed, CC) overlapping

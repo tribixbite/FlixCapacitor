@@ -1225,6 +1225,7 @@ export class MobileUIController {
         this.backButtonListener = null; // Android back button handler
         this.currentVideoElement = null; // Current video element reference
         this.playbackPositions = new Map(); // Store playback positions by movie ID
+        this.isLoadingStream = false; // Prevent duplicate concurrent stream loading
         this.setupNavigation();
 
         // Make available globally for back button handler
@@ -2796,10 +2797,19 @@ export class MobileUIController {
     }
 
     async showVideoPlayer(movie, torrent, quality) {
-        const mainRegion = document.querySelector('.main-window-region');
+        // Prevent concurrent calls - if already loading a stream, ignore
+        if (this.isLoadingStream) {
+            console.warn('Stream already loading, ignoring duplicate call');
+            return;
+        }
 
-        // Truncate title if too long for mobile
-        const displayTitle = movie.title.length > 50 ? movie.title.substring(0, 50) + '...' : movie.title;
+        try {
+            this.isLoadingStream = true; // Set flag to prevent concurrent calls
+
+            const mainRegion = document.querySelector('.main-window-region');
+
+            // Truncate title if too long for mobile
+            const displayTitle = movie.title.length > 50 ? movie.title.substring(0, 50) + '...' : movie.title;
 
         // Create initial loading UI with clean, non-overlapping layout
         mainRegion.innerHTML = `
@@ -2814,7 +2824,7 @@ export class MobileUIController {
                 </div>
 
                 <!-- Video playback controls (hidden until video starts) -->
-                <div id="playback-controls" style="display: none; position: absolute; top: 0.75rem; right: 1rem; z-index: 101; display: none; gap: 0.5rem;">
+                <div id="playback-controls" style="display: none; position: absolute; top: 0.75rem; right: 1rem; z-index: 101; gap: 0.5rem;">
                     <button id="speed-btn" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.4rem 0.75rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: all 0.2s;">1x</button>
                     <button id="subtitle-btn" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">CC</button>
                 </div>
@@ -3119,17 +3129,13 @@ export class MobileUIController {
                 console.error('Error starting stream:', error);
 
                 // Show error in UI
-                if (statusText) {
-                    statusText.textContent = 'Error';
-                    statusText.style.color = '#ef4444';
-                }
                 if (loadingTitle) {
                     loadingTitle.textContent = 'Streaming Failed';
                 }
                 if (loadingSubtitle) {
                     loadingSubtitle.innerHTML = `
-                        <strong>Error:</strong> ${error.message}<br>
-                        <span style="font-size: 0.8rem; margin-top: 1rem; display: block;">
+                        <strong style="color: #ef4444;">Error:</strong> ${error.message}<br>
+                        <span style="font-size: 0.8rem; margin-top: 1rem; display: block; color: rgba(255,255,255,0.7);">
                             • Check if torrent has seeds/peers<br>
                             • Try WiFi instead of mobile data<br>
                             • Some networks block torrents
@@ -3139,6 +3145,9 @@ export class MobileUIController {
                 // Hide spinner
                 const spinner = document.querySelector('.loading-spinner-large');
                 if (spinner) spinner.style.display = 'none';
+
+                // Hide progress stats box if shown
+                if (torrentStatus) torrentStatus.style.display = 'none';
 
                 // Stop here - don't continue to video player
                 return;
@@ -3694,7 +3703,30 @@ export class MobileUIController {
             const spinner = document.querySelector('.loading-spinner-large');
             if (spinner) spinner.style.display = 'none';
         }
+    } catch (error) {
+        console.error('Video player error:', error);
+
+        // Show error in UI without triggering global handler
+        const loadingTitle = document.getElementById('loading-title');
+        const loadingSubtitle = document.getElementById('loading-subtitle');
+        const spinner = document.querySelector('.loading-spinner-large');
+
+        if (loadingTitle) loadingTitle.textContent = 'Playback Error';
+        if (loadingSubtitle) {
+            loadingSubtitle.innerHTML = `
+                <strong style="color: #ef4444;">Error:</strong> ${error.message}<br>
+                <span style="font-size: 0.8rem; margin-top: 1rem; display: block; color: rgba(255,255,255,0.7);">
+                    • Try selecting a different quality or torrent<br>
+                    • Check torrent health (seeds/peers)<br>
+                    • Ensure your internet connection is stable
+                </span>
+            `;
+        }
+        if (spinner) spinner.style.display = 'none';
+    } finally {
+        this.isLoadingStream = false; // Always reset flag
     }
+}
 
     // Helper: Format bytes to human readable
     formatBytes(bytes) {
