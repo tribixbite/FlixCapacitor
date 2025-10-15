@@ -50,7 +50,7 @@
         style.textContent = `
             .mobile-fab {
                 position: fixed;
-                bottom: 20px;
+                bottom: calc(10vh + 80px);
                 right: 20px;
                 width: 56px;
                 height: 56px;
