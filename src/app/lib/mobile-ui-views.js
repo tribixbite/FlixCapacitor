@@ -1682,6 +1682,21 @@ export class MobileUIController {
                 <div class="filter-tab" data-filter="dcim">DCIM</div>
                 <div class="filter-tab" data-filter="videos">Videos</div>
             `;
+
+            // Add click handlers for folder filters
+            filterTabs.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', async () => {
+                    // Update active state
+                    filterTabs.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    // Get filter value
+                    const folder = tab.dataset.filter;
+
+                    // Reload library with folder filter
+                    await this.showLibraryFiltered(folder);
+                });
+            });
         }
 
         const contentGrid = document.querySelector('.content-grid');
@@ -1738,6 +1753,97 @@ export class MobileUIController {
 
         } catch (error) {
             console.error('Failed to load library:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load Library',
+                error.message || 'Please try again'
+            );
+        }
+    }
+
+    /**
+     * Show library with folder filter applied
+     * @param {string} folder - Folder to filter by ('all', 'movies', 'downloads', 'dcim', 'videos')
+     */
+    async showLibraryFiltered(folder) {
+        const contentGrid = document.querySelector('.content-grid');
+
+        try {
+            const libraryService = window.LibraryService;
+            if (!libraryService) {
+                console.error('LibraryService not loaded');
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '⚠️',
+                    'Service Error',
+                    'Library service failed to load'
+                );
+                return;
+            }
+
+            // Show loading state
+            contentGrid.innerHTML = UITemplates.loadingState('Loading library...');
+
+            // Fetch all library items
+            const allItems = await libraryService.getMedia({ limit: 1000 });
+
+            // Filter by folder path if not 'all'
+            let filteredItems = allItems;
+            if (folder !== 'all') {
+                // Map folder names to path patterns
+                const folderPaths = {
+                    'movies': '/Movies/',
+                    'downloads': '/Download/',
+                    'dcim': '/DCIM/',
+                    'videos': '/Videos/'
+                };
+
+                const pathPattern = folderPaths[folder];
+                if (pathPattern) {
+                    filteredItems = allItems.filter(item =>
+                        item.file_path && item.file_path.includes(pathPattern)
+                    );
+                }
+            }
+
+            if (filteredItems.length === 0) {
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '📁',
+                    folder === 'all' ? 'No Library Items' : `No Items in ${folder.charAt(0).toUpperCase() + folder.slice(1)}`,
+                    folder === 'all' ? 'Scan your device to add media to your library' : 'No media files found in this folder'
+                );
+                if (folder === 'all') {
+                    this.attachLibraryScanHandler();
+                }
+                return;
+            }
+
+            // Transform library items to content card format
+            const itemsFormatted = filteredItems.map(item => ({
+                imdb_id: item.imdb_id || `local_${item.media_id}`,
+                title: item.title,
+                year: item.year || 'Unknown',
+                rating: item.rating || 'N/A',
+                images: {
+                    poster: item.poster_url || '/img/video-placeholder.png',
+                    fanart: item.backdrop_url || '/img/video-placeholder.png'
+                },
+                genres: item.genres ? JSON.parse(item.genres) : [],
+                synopsis: item.synopsis || `Local media file: ${item.original_filename}`,
+                file_path: item.file_path
+            }));
+
+            // Store items for detail view
+            itemsFormatted.forEach(item => {
+                this.currentMovieData.set(item.imdb_id, item);
+            });
+
+            // Render filtered library items
+            contentGrid.innerHTML = UITemplates.contentGrid(itemsFormatted);
+            this.attachCardHandlers();
+            await this.updateFavoriteButtonStates();
+
+        } catch (error) {
+            console.error('Failed to filter library:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Failed to Load Library',
