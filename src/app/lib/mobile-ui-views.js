@@ -2798,53 +2798,77 @@ export class MobileUIController {
     async showVideoPlayer(movie, torrent, quality) {
         const mainRegion = document.querySelector('.main-window-region');
 
-        // Create initial loading UI
+        // Truncate title if too long for mobile
+        const displayTitle = movie.title.length > 50 ? movie.title.substring(0, 50) + '...' : movie.title;
+
+        // Create initial loading UI with clean, non-overlapping layout
         mainRegion.innerHTML = `
-            <div class="video-player-container" style="background: #000; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left); position: relative;">
-                <div class="player-header" style="position: absolute; top: var(--safe-area-top); left: 0; right: 0; padding: 1rem; display: flex; align-items: center; gap: 1rem; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%); z-index: 100;">
-                    <button id="player-back" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer;">←</button>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${movie.title}</div>
-                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">${quality} • ${movie.year}</div>
+            <div class="video-player-container" style="background: #000; min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-top: env(safe-area-inset-top, 0); padding-bottom: env(safe-area-inset-bottom, 0);">
+                <!-- Compact header - only back button and truncated title -->
+                <div class="player-header" style="position: relative; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem; background: rgba(0,0,0,0.9); z-index: 100; min-height: 56px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <button id="player-back" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer; flex-shrink: 0;">←</button>
+                    <div style="flex: 1; min-width: 0; overflow: hidden;">
+                        <div style="font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${displayTitle}</div>
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px;">${quality}${movie.year ? ' • ' + movie.year : ''}</div>
                     </div>
-                    <button id="speed-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; cursor: pointer;">1x</button>
-                    <button id="pip-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer;">⧉</button>
-                    <button id="fullscreen-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer;">⛶</button>
-                    <button id="subtitle-btn" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer;">CC</button>
+                </div>
+
+                <!-- Video playback controls (hidden until video starts) -->
+                <div id="playback-controls" style="display: none; position: absolute; top: 0.75rem; right: 1rem; z-index: 101; display: none; gap: 0.5rem;">
+                    <button id="speed-btn" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.4rem 0.75rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: all 0.2s;">1x</button>
+                    <button id="subtitle-btn" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">CC</button>
                 </div>
 
                 <!-- Subtitle selector overlay -->
-                <div id="subtitle-selector" style="display: none; position: absolute; top: calc(var(--safe-area-top) + 60px); right: 140px; background: rgba(20,20,20,0.95); border-radius: var(--radius-md); padding: 0.5rem; z-index: 150; backdrop-filter: blur(10px);"></div>
-                <div id="speed-selector" style="display: none; position: absolute; top: calc(var(--safe-area-top) + 60px); right: 90px; background: rgba(20,20,20,0.95); border-radius: var(--radius-md); padding: 0.5rem; z-index: 150; backdrop-filter: blur(10px);">
-                    <div class="speed-option" data-speed="0.5" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">0.5x</div>
-                    <div class="speed-option" data-speed="0.75" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">0.75x</div>
-                    <div class="speed-option active" data-speed="1" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s; background: var(--accent-primary);">1x</div>
-                    <div class="speed-option" data-speed="1.25" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">1.25x</div>
-                    <div class="speed-option" data-speed="1.5" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">1.5x</div>
-                    <div class="speed-option" data-speed="2" style="padding: 0.75rem 1.5rem; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.2s;">2x</div>
+                <div id="subtitle-selector" style="display: none; position: absolute; top: 3rem; right: 1rem; background: rgba(20,20,20,0.95); border-radius: 8px; padding: 0.5rem; z-index: 150; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); max-height: 300px; overflow-y: auto;"></div>
+
+                <!-- Speed selector overlay -->
+                <div id="speed-selector" style="display: none; position: absolute; top: 3rem; right: 3.5rem; background: rgba(20,20,20,0.95); border-radius: 8px; padding: 0.5rem; z-index: 150; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="speed-option" data-speed="0.5" style="padding: 0.6rem 1.25rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; font-size: 0.85rem;">0.5x</div>
+                    <div class="speed-option" data-speed="0.75" style="padding: 0.6rem 1.25rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; font-size: 0.85rem;">0.75x</div>
+                    <div class="speed-option active" data-speed="1" style="padding: 0.6rem 1.25rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; background: var(--accent-primary); font-size: 0.85rem;">1x</div>
+                    <div class="speed-option" data-speed="1.25" style="padding: 0.6rem 1.25rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; font-size: 0.85rem;">1.25x</div>
+                    <div class="speed-option" data-speed="1.5" style="padding: 0.6rem 1.25rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; font-size: 0.85rem;">1.5x</div>
+                    <div class="speed-option" data-speed="2" style="padding: 0.6rem 1.25rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; font-size: 0.85rem;">2x</div>
                 </div>
 
-                <div class="player-content" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 800px; padding: 2rem;">
-                    <div class="loading-spinner-large" style="width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 2rem;"></div>
+                <!-- Clean loading state with minimal info -->
+                <div class="player-content" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem;">
+                    <!-- Poster/logo if available -->
+                    ${movie.images?.poster ? `
+                        <div style="width: 120px; height: 180px; border-radius: 8px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+                            <img src="${movie.images.poster}" alt="${movie.title}" style="width: 100%; height: 100%; object-fit: cover;" />
+                        </div>
+                    ` : ''}
 
-                    <div style="text-align: center; color: rgba(255,255,255,0.9);">
-                        <h3 id="loading-title" style="font-size: 1.25rem; margin-bottom: 1rem;">Starting Stream...</h3>
-                        <p id="loading-subtitle" style="font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 1.5rem;">Connecting to streaming server...</p>
+                    <!-- Loading spinner -->
+                    <div class="loading-spinner-large" style="width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1.5rem;"></div>
 
-                        <div id="torrent-status" style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; text-align: left; font-family: monospace; font-size: 0.85rem; line-height: 1.8;">
-                            <div>Status: <span id="status-text" style="color: #fbbf24;">Initializing...</span></div>
-                            <div>Magnet: <span style="color: rgba(255,255,255,0.5); word-break: break-all;">${torrent.url.substring(0, 60)}...</span></div>
-                            <div>Quality: <span style="color: #10b981;">${quality}</span></div>
-                            <div>Size: <span>${torrent.size || 'Unknown'}</span></div>
-                            <div id="progress-row" style="display: none;">Progress: <span id="progress-text" style="color: #3b82f6;">0%</span></div>
-                            <div id="speed-row" style="display: none;">Speed: <span id="speed-text">0 MB/s</span></div>
-                            <div>Seeds: <span style="color: #10b981;">${torrent.seed || 0}</span></div>
-                            <div>Peers: <span>${torrent.peer || 0}</span></div>
+                    <!-- Simple status messages -->
+                    <div style="text-align: center; color: rgba(255,255,255,0.9); max-width: 400px;">
+                        <h3 id="loading-title" style="font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: 500;">Preparing Stream</h3>
+                        <p id="loading-subtitle" style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem;">Connecting to peers...</p>
+
+                        <!-- Compact progress info (hidden until downloading) -->
+                        <div id="torrent-status" style="display: none; background: rgba(255,255,255,0.05); padding: 1rem 1.25rem; border-radius: 8px; font-size: 0.8rem; line-height: 1.6; border: 1px solid rgba(255,255,255,0.05);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: rgba(255,255,255,0.6);">Progress</span>
+                                <span id="progress-text" style="color: #3b82f6; font-weight: 600;">0%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: rgba(255,255,255,0.6);">Speed</span>
+                                <span id="speed-text" style="color: #10b981;">0 MB/s</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: rgba(255,255,255,0.6);">Peers</span>
+                                <span id="peers-text" style="color: rgba(255,255,255,0.8);">${torrent.peer || 0}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="video-container" style="display: none; width: 100%; height: 100%; position: relative;">
+                <!-- Video container (hidden until ready) -->
+                <div id="video-container" style="display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
                     <video id="torrent-video"
                            controls
                            autoplay
@@ -2854,16 +2878,15 @@ export class MobileUIController {
                         Your browser doesn't support HTML5 video.
                     </video>
 
-                    <!-- Download progress overlay -->
-                    <div id="download-overlay" style="display: none; position: absolute; bottom: calc(var(--safe-area-bottom) + 80px); right: 1rem; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-radius: var(--radius-md); padding: 0.75rem 1rem; font-size: 0.75rem; z-index: 90; min-width: 120px; border: 1px solid rgba(255,255,255,0.1);">
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                            <div class="download-spinner" style="width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.2); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                            <span style="color: rgba(255,255,255,0.9); font-weight: 600;">Buffering</span>
-                        </div>
-                        <div style="color: rgba(255,255,255,0.6);">
-                            <div id="dl-progress">0%</div>
-                            <div id="dl-speed">0 MB/s</div>
-                            <div id="dl-peers">0 peers</div>
+                    <!-- Compact download progress indicator -->
+                    <div id="download-overlay" style="display: none; position: absolute; bottom: 5rem; right: 1rem; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-radius: 6px; padding: 0.5rem 0.75rem; font-size: 0.7rem; z-index: 90; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="download-spinner" style="width: 10px; height: 10px; border: 2px solid rgba(255,255,255,0.2); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                            <div style="color: rgba(255,255,255,0.9);">
+                                <span id="dl-progress" style="font-weight: 600;">0%</span>
+                                <span style="color: rgba(255,255,255,0.5);"> • </span>
+                                <span id="dl-speed" style="color: rgba(255,255,255,0.7);">0 MB/s</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2872,6 +2895,13 @@ export class MobileUIController {
             <style>
                 @keyframes spin {
                     to { transform: rotate(360deg); }
+                }
+                .speed-option:hover {
+                    background: rgba(255,255,255,0.1);
+                }
+                #speed-btn:hover, #subtitle-btn:hover {
+                    background: rgba(0,0,0,0.9);
+                    transform: scale(1.05);
                 }
             </style>
         `;
@@ -2950,21 +2980,16 @@ export class MobileUIController {
 
             console.log('Starting native torrent stream...');
 
-            const statusText = document.getElementById('status-text');
             const loadingTitle = document.getElementById('loading-title');
             const loadingSubtitle = document.getElementById('loading-subtitle');
-            const progressRow = document.getElementById('progress-row');
+            const torrentStatus = document.getElementById('torrent-status');
             const progressText = document.getElementById('progress-text');
-            const speedRow = document.getElementById('speed-row');
             const speedText = document.getElementById('speed-text');
+            const peersText = document.getElementById('peers-text');
 
             // Update initial status
-            if (loadingTitle) loadingTitle.textContent = 'Connecting to Torrent...';
-            if (loadingSubtitle) loadingSubtitle.textContent = 'Finding peers and downloading...';
-            if (statusText) {
-                statusText.textContent = 'Connecting';
-                statusText.style.color = '#3b82f6';
-            }
+            if (loadingTitle) loadingTitle.textContent = 'Connecting to Torrent';
+            if (loadingSubtitle) loadingSubtitle.textContent = 'Finding peers...';
 
             // Start the native torrent stream with timeout
             let streamInfo;
@@ -2987,27 +3012,28 @@ export class MobileUIController {
                                 return;
                             }
 
-                            if (statusText) {
-                                statusText.textContent = status.status || 'Downloading';
-                                statusText.style.color = status.status === 'complete' ? '#10b981' :
-                                                         status.status === 'downloading' ? '#3b82f6' :
-                                                         status.status === 'warning' ? '#f59e0b' : '#fbbf24';
-                            }
-
+                            // Update title based on status
                             if (loadingTitle && status.status === 'downloading') {
-                                loadingTitle.textContent = 'Downloading Torrent...';
+                                loadingTitle.textContent = 'Downloading';
+                            } else if (loadingTitle && status.status === 'buffering') {
+                                loadingTitle.textContent = 'Buffering';
                             }
 
+                            // Update subtitle with peer count or message
                             if (loadingSubtitle && status.message) {
                                 loadingSubtitle.textContent = status.message;
                             } else if (loadingSubtitle && status.numPeers !== undefined) {
-                                loadingSubtitle.textContent = `Connected to ${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
+                                loadingSubtitle.textContent = `${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''} connected`;
                             }
 
-                            // Show progress if available
-                            if (status.progress !== undefined) {
-                                if (progressRow) progressRow.style.display = 'block';
-                                if (progressText) progressText.textContent = `${Math.round(status.progress * 100)}%`;
+                            // Show progress stats box once downloading starts
+                            if (status.progress !== undefined && torrentStatus) {
+                                torrentStatus.style.display = 'block';
+
+                                // Update progress percentage
+                                if (progressText) {
+                                    progressText.textContent = `${Math.round(status.progress * 100)}%`;
+                                }
 
                                 // Update download overlay during playback
                                 const dlProgress = document.getElementById('dl-progress');
@@ -3023,25 +3049,27 @@ export class MobileUIController {
                                         videoSourceSet = true;
 
                                         // Update UI to show video is loading
-                                        if (loadingTitle) loadingTitle.textContent = 'Starting Playback...';
-                                        if (loadingSubtitle) loadingSubtitle.textContent = 'Video buffer ready';
+                                        if (loadingTitle) loadingTitle.textContent = 'Buffering Video';
+                                        if (loadingSubtitle) loadingSubtitle.textContent = 'Preparing playback...';
                                     }
                                 }
                             }
 
-                            // Show download speed if available
-                            if (status.downloadSpeed !== undefined) {
-                                if (speedRow) speedRow.style.display = 'block';
+                            // Update download speed
+                            if (status.downloadSpeed !== undefined && speedText) {
                                 const speedMB = (status.downloadSpeed / 1024 / 1024).toFixed(2);
-                                if (speedText) speedText.textContent = `↓ ${speedMB} MB/s`;
+                                speedText.textContent = `${speedMB} MB/s`;
 
                                 // Update download overlay during playback
                                 const dlSpeed = document.getElementById('dl-speed');
-                                if (dlSpeed) dlSpeed.textContent = `↓ ${speedMB} MB/s`;
+                                if (dlSpeed) dlSpeed.textContent = `${speedMB} MB/s`;
                             }
 
-                            // Update peer count in overlay
+                            // Update peer count
                             if (status.numPeers !== undefined) {
+                                if (peersText) peersText.textContent = status.numPeers.toString();
+
+                                // Update download overlay during playback
                                 const dlPeers = document.getElementById('dl-peers');
                                 if (dlPeers) dlPeers.textContent = `${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
                             }
@@ -3122,12 +3150,8 @@ export class MobileUIController {
             const videoElement = document.getElementById('torrent-video');
 
             // Update status to show stream is buffering
-            if (loadingTitle) loadingTitle.textContent = 'Buffering Video...';
-            if (loadingSubtitle) loadingSubtitle.textContent = 'Waiting for 5% buffer before playback...';
-            if (statusText) {
-                statusText.textContent = 'Buffering';
-                statusText.style.color = '#f59e0b';
-            }
+            if (loadingTitle) loadingTitle.textContent = 'Buffering Video';
+            if (loadingSubtitle) loadingSubtitle.textContent = 'Waiting for initial buffer...';
 
             // Show video container (but keep loading UI visible until video loads)
             if (videoContainer) videoContainer.style.display = 'block';
@@ -3324,9 +3348,10 @@ export class MobileUIController {
                         }, 300);
                     }
 
-                    if (statusText) {
-                        statusText.textContent = 'Playing';
-                        statusText.style.color = '#10b981';
+                    // Show playback controls (speed and subtitle buttons)
+                    const playbackControls = document.getElementById('playback-controls');
+                    if (playbackControls) {
+                        playbackControls.style.display = 'flex';
                     }
 
                     // Show download overlay during playback (hide when download complete)
