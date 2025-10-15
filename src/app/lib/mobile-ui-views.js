@@ -2888,6 +2888,80 @@ export class MobileUIController {
         }
     }
 
+    // Show file picker modal for multi-file torrents
+    async showFilePickerModal(videoFiles, movie) {
+        return new Promise((resolve) => {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1rem;';
+
+            const modal = document.createElement('div');
+            modal.style.cssText = 'background: #1a1a1a; border-radius: 12px; max-width: 600px; width: 100%; max-height: 80vh; display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.1);';
+
+            const title = `${movie.title || 'Select Video File'}`;
+            modal.innerHTML = `
+                <div style="padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <h2 style="margin: 0; font-size: 1.25rem; color: #fff;">Select Video File</h2>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #888;">${videoFiles.length} files found in "${title}"</p>
+                </div>
+                <div style="flex: 1; overflow-y: auto; padding: 1rem;">
+                    ${videoFiles.map((file, index) => `
+                        <div class="file-option" data-index="${index}" style="
+                            padding: 1rem;
+                            margin-bottom: 0.5rem;
+                            background: #2a2a2a;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            transition: background 0.2s, transform 0.1s;
+                            border: 2px solid transparent;
+                        ">
+                            <div style="font-weight: 600; color: #fff; margin-bottom: 0.25rem;">${file.name}</div>
+                            <div style="font-size: 0.8rem; color: #888;">
+                                ${(file.size / 1024 / 1024).toFixed(1)} MB
+                                ${index === 0 ? '<span style="color: #10b981; margin-left: 0.5rem;">• Largest</span>' : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 0.75rem; justify-content: flex-end;">
+                    <button id="file-picker-cancel" style="padding: 0.75rem 1.5rem; background: #333; color: #fff; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">Cancel</button>
+                </div>
+            `;
+
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+            // File option click handlers
+            modal.querySelectorAll('.file-option').forEach((option, index) => {
+                option.addEventListener('click', () => {
+                    overlay.remove();
+                    resolve(index);
+                });
+                option.addEventListener('mouseenter', () => {
+                    option.style.background = '#3a3a3a';
+                    option.style.borderColor = 'var(--accent-primary)';
+                });
+                option.addEventListener('mouseleave', () => {
+                    option.style.background = '#2a2a2a';
+                    option.style.borderColor = 'transparent';
+                });
+            });
+
+            // Cancel button
+            modal.querySelector('#file-picker-cancel').addEventListener('click', () => {
+                overlay.remove();
+                resolve(null);
+            });
+
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.remove();
+                    resolve(null);
+                }
+            });
+        });
+    }
+
     async showVideoPlayer(movie, torrent, quality) {
         // Prevent concurrent calls - if already loading a stream, ignore
         if (this.isLoadingStream) {
