@@ -1679,7 +1679,6 @@ export class MobileUIController {
                 <div class="filter-tab active" data-filter="all">All Folders</div>
                 <div class="filter-tab" data-filter="movies">Movies</div>
                 <div class="filter-tab" data-filter="downloads">Downloads</div>
-                <div class="filter-tab" data-filter="dcim">DCIM</div>
                 <div class="filter-tab" data-filter="videos">Videos</div>
             `;
 
@@ -1789,11 +1788,10 @@ export class MobileUIController {
             // Filter by folder path if not 'all'
             let filteredItems = allItems;
             if (folder !== 'all') {
-                // Map folder names to path patterns
+                // Map folder names to path patterns (DCIM skipped - camera photos)
                 const folderPaths = {
                     'movies': '/Movies/',
                     'downloads': '/Download/',
-                    'dcim': '/DCIM/',
                     'videos': '/Videos/'
                 };
 
@@ -1910,11 +1908,10 @@ export class MobileUIController {
         }
 
         // TODO: Add folder picker to select directories
-        // For now, scan common Android media directories
+        // For now, scan common Android media directories (skip DCIM - camera photos)
         const commonPaths = [
             'Movies',
             'Download',
-            'DCIM',
             'Videos'
         ];
 
