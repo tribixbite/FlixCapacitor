@@ -177,6 +177,27 @@ class NativeTorrentClient {
     }
 
     /**
+     * Clean up all event listeners - BUG-003 FIX
+     * Prevents listener accumulation across app lifecycle
+     */
+    async cleanup() {
+        console.log(`Cleaning up ${this.listeners.length} native torrent client listeners`);
+        for (const listener of this.listeners) {
+            try {
+                await listener.remove();
+            } catch (e) {
+                console.warn('Failed to remove listener:', e);
+            }
+        }
+        this.listeners = [];
+        this.initialized = false;
+        this.currentStreamUrl = null;
+        this.currentTorrentInfo = null;
+        this.progressCallback = null;
+        console.log('Native torrent client cleanup complete');
+    }
+
+    /**
      * Start streaming a torrent
      * @param {string} magnetURI - Magnet link
      * @param {Object} options - Streaming options
@@ -202,16 +223,19 @@ class NativeTorrentClient {
 
             try {
                 // Set up one-time ready listener for this stream
+                let readyHandler, errorHandler; // BUG-004 FIX: Store handlers to remove both
                 const readyPromise = new Promise((resolveReady) => {
-                    const readyHandler = TorrentStreamer.addListener('ready', async (data) => {
+                    readyHandler = TorrentStreamer.addListener('ready', async (data) => {
                         await readyHandler.remove();
+                        await errorHandler.remove(); // BUG-004 FIX: Remove error handler too
                         resolveReady(data);
                     });
                 });
 
                 // Set up one-time error listener
                 const errorPromise = new Promise((_, rejectError) => {
-                    const errorHandler = TorrentStreamer.addListener('error', async (error) => {
+                    errorHandler = TorrentStreamer.addListener('error', async (error) => {
+                        await readyHandler.remove(); // BUG-004 FIX: Remove ready handler too
                         await errorHandler.remove();
                         rejectError(new Error(error.message));
                     });

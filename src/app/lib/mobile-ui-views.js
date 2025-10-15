@@ -1226,6 +1226,7 @@ export class MobileUIController {
         this.currentVideoElement = null; // Current video element reference
         this.playbackPositions = new Map(); // Store playback positions by movie ID
         this.isLoadingStream = false; // Prevent duplicate concurrent stream loading
+        this.videoPlayerCleanup = { listeners: [], intervals: [] }; // Track resources for cleanup
         this.setupNavigation();
 
         // Make available globally for back button handler
@@ -2923,6 +2924,22 @@ export class MobileUIController {
                 this.savePlaybackPosition(movie.imdb_id, this.currentVideoElement.currentTime);
             }
 
+            // CRITICAL: Clean up all event listeners to prevent memory leaks
+            console.log(`Cleaning up ${this.videoPlayerCleanup.listeners.length} event listeners`);
+            for (const { element, event, handler } of this.videoPlayerCleanup.listeners) {
+                if (element && handler) {
+                    element.removeEventListener(event, handler);
+                }
+            }
+            this.videoPlayerCleanup.listeners = [];
+
+            // CRITICAL: Clear all intervals to prevent infinite loops
+            console.log(`Clearing ${this.videoPlayerCleanup.intervals.length} intervals`);
+            for (const intervalId of this.videoPlayerCleanup.intervals) {
+                clearInterval(intervalId);
+            }
+            this.videoPlayerCleanup.intervals = [];
+
             // Stop native torrent stream if active
             if (window.NativeTorrentClient) {
                 try {
@@ -2952,8 +2969,24 @@ export class MobileUIController {
             this.showDetail(movie.imdb_id);
         };
 
+        // Helper to track event listeners for cleanup
+        const addTrackedListener = (element, event, handler) => {
+            if (element) {
+                element.addEventListener(event, handler);
+                this.videoPlayerCleanup.listeners.push({ element, event, handler });
+            }
+        };
+
+        // Helper to track intervals for cleanup
+        const addTrackedInterval = (callback, delay) => {
+            const intervalId = setInterval(callback, delay);
+            this.videoPlayerCleanup.intervals.push(intervalId);
+            return intervalId;
+        };
+
         // Back button handler (stops stream on exit)
-        document.getElementById('player-back')?.addEventListener('click', exitVideoPlayer);
+        const playerBackBtn = document.getElementById('player-back');
+        addTrackedListener(playerBackBtn, 'click', exitVideoPlayer);
 
         // Android back button handler (same as UI back button)
         await this.setupBackButtonHandler(exitVideoPlayer);
@@ -3172,7 +3205,7 @@ export class MobileUIController {
 
             // Handle video errors
             if (videoElement) {
-                videoElement.addEventListener('error', (e) => {
+                const errorHandler = (e) => {
                     console.error('Video playback error:', e);
 
                     // CRITICAL: Set error flag to prevent progress updates from overwriting this UI
@@ -3261,13 +3294,14 @@ export class MobileUIController {
                     // Hide spinner
                     const spinner = document.querySelector('.loading-spinner-large');
                     if (spinner) spinner.style.display = 'none';
-                });
+                };
+                addTrackedListener(videoElement, 'error', errorHandler);
 
                 // Store video element reference
                 this.currentVideoElement = videoElement;
 
                 // Handle video metadata
-                videoElement.addEventListener('loadedmetadata', () => {
+                const metadataHandler = () => {
                     console.log('Video metadata loaded - Duration:', videoElement.duration);
                     if (loadingSubtitle) {
                         loadingSubtitle.textContent = `Duration: ${Math.floor(videoElement.duration / 60)}:${String(Math.floor(videoElement.duration % 60)).padStart(2, '0')}`;
@@ -3342,10 +3376,11 @@ export class MobileUIController {
                     if (fullscreenBtn && document.fullscreenEnabled) {
                         fullscreenBtn.style.display = 'flex';
                     }
-                }, { once: true });
+                };
+                addTrackedListener(videoElement, 'loadedmetadata', metadataHandler);
 
                 // Handle video loaded - ONLY NOW hide loading UI
-                videoElement.addEventListener('loadeddata', () => {
+                const loadeddataHandler = () => {
                     console.log('Video loaded and ready to play');
 
                     // Fade out loading UI
@@ -3368,8 +3403,8 @@ export class MobileUIController {
                     if (downloadOverlay) {
                         downloadOverlay.style.display = 'block';
 
-                        // Hide overlay when download is complete (100%)
-                        const checkProgress = setInterval(() => {
+                        // Hide overlay when download is complete (100%) - BUG-002 FIX: Track interval
+                        addTrackedInterval(() => {
                             const dlProgress = document.getElementById('dl-progress');
                             if (dlProgress && dlProgress.textContent.includes('100%')) {
                                 setTimeout(() => {
@@ -3379,30 +3414,34 @@ export class MobileUIController {
                                         downloadOverlay.style.display = 'none';
                                     }, 300);
                                 }, 2000); // Keep visible for 2s after completion
-                                clearInterval(checkProgress);
+                                // Note: Interval will be cleared when player exits via cleanup
                             }
                         }, 500);
                     }
-                }, { once: true });
+                };
+                addTrackedListener(videoElement, 'loadeddata', loadeddataHandler);
 
                 // Save playback position periodically
-                videoElement.addEventListener('timeupdate', () => {
+                const timeupdateHandler = () => {
                     if (!videoElement.paused && videoElement.currentTime > 10) {
                         this.savePlaybackPosition(movie.imdb_id, videoElement.currentTime);
                     }
-                });
+                };
+                addTrackedListener(videoElement, 'timeupdate', timeupdateHandler);
 
-                videoElement.addEventListener('pause', () => {
+                const pauseHandler = () => {
                     if (window.NativeTorrentClient) {
                         window.NativeTorrentClient.pauseStream();
                     }
-                });
+                };
+                addTrackedListener(videoElement, 'pause', pauseHandler);
 
-                videoElement.addEventListener('play', () => {
+                const playHandler = () => {
                     if (window.NativeTorrentClient) {
                         window.NativeTorrentClient.resumeStream();
                     }
-                });
+                };
+                addTrackedListener(videoElement, 'play', playHandler);
 
                 // Subtitle selection
                 const subtitleBtn = document.getElementById('subtitle-btn');
@@ -3411,7 +3450,7 @@ export class MobileUIController {
                 if (subtitleBtn && subtitleSelector) {
                     subtitleBtn.style.display = 'flex';
 
-                    subtitleBtn.addEventListener('click', async () => {
+                    const subtitleBtnHandler = async () => {
                         if (subtitleSelector.style.display === 'none') {
                             subtitleSelector.innerHTML = '<div class="loading-spinner-large"></div>';
                             subtitleSelector.style.display = 'block';
@@ -3426,7 +3465,7 @@ export class MobileUIController {
                                     option.classList.add('subtitle-option');
                                     option.textContent = lang;
                                     option.dataset.url = subtitles[lang].url;
-                                    option.addEventListener('click', () => {
+                                    const optionClickHandler = () => {
                                         const track = document.createElement('track');
                                         track.kind = 'subtitles';
                                         track.label = lang;
@@ -3439,9 +3478,13 @@ export class MobileUIController {
                                         existingTracks.forEach(t => t.remove());
 
                                         videoElement.appendChild(track);
-                                        videoElement.textTracks[0].mode = 'showing';
+                                        // BUG-005 FIX: Add safety check for textTracks
+                                        if (videoElement.textTracks && videoElement.textTracks.length > 0) {
+                                            videoElement.textTracks[0].mode = 'showing';
+                                        }
                                         subtitleSelector.style.display = 'none';
-                                    });
+                                    };
+                                    addTrackedListener(option, 'click', optionClickHandler);
                                     subtitleSelector.appendChild(option);
                                 }
                             } else {
@@ -3450,19 +3493,21 @@ export class MobileUIController {
                         } else {
                             subtitleSelector.style.display = 'none';
                         }
-                    });
+                    };
+                    addTrackedListener(subtitleBtn, 'click', subtitleBtnHandler);
                 }
                 const speedBtn = document.getElementById('speed-btn');
                 const speedSelector = document.getElementById('speed-selector');
                 if (speedBtn && speedSelector) {
                     speedBtn.style.display = 'flex';
 
-                    speedBtn.addEventListener('click', () => {
+                    const speedBtnHandler = () => {
                         speedSelector.style.display = speedSelector.style.display === 'none' ? 'block' : 'none';
-                    });
+                    };
+                    addTrackedListener(speedBtn, 'click', speedBtnHandler);
 
                     document.querySelectorAll('.speed-option').forEach(option => {
-                        option.addEventListener('click', () => {
+                        const speedClickHandler = () => {
                             const speed = parseFloat(option.dataset.speed);
                             videoElement.playbackRate = speed;
                             speedBtn.textContent = `${speed}x`;
@@ -3476,27 +3521,32 @@ export class MobileUIController {
                             option.classList.add('active');
 
                             speedSelector.style.display = 'none';
-                        });
+                        };
+                        addTrackedListener(option, 'click', speedClickHandler);
 
                         // Hover effect
-                        option.addEventListener('mouseenter', () => {
+                        const mouseenterHandler = () => {
                             if (!option.classList.contains('active')) {
                                 option.style.background = 'rgba(255,255,255,0.1)';
                             }
-                        });
-                        option.addEventListener('mouseleave', () => {
+                        };
+                        addTrackedListener(option, 'mouseenter', mouseenterHandler);
+
+                        const mouseleaveHandler = () => {
                             if (!option.classList.contains('active')) {
                                 option.style.background = 'transparent';
                             }
-                        });
+                        };
+                        addTrackedListener(option, 'mouseleave', mouseleaveHandler);
                     });
 
-                    // Close selector when clicking outside
-                    document.addEventListener('click', (e) => {
+                    // Close selector when clicking outside - CRITICAL: Document-level listener
+                    const documentClickHandler = (e) => {
                         if (!speedBtn.contains(e.target) && !speedSelector.contains(e.target)) {
                             speedSelector.style.display = 'none';
                         }
-                    });
+                    };
+                    addTrackedListener(document, 'click', documentClickHandler);
                 }
 
                 // Picture-in-Picture toggle
@@ -3504,7 +3554,7 @@ export class MobileUIController {
                 if (pipBtn && document.pictureInPictureEnabled) {
                     pipBtn.style.display = 'flex';
 
-                    pipBtn.addEventListener('click', async () => {
+                    const pipClickHandler = async () => {
                         try {
                             if (document.pictureInPictureElement) {
                                 await document.exitPictureInPicture();
@@ -3514,21 +3564,25 @@ export class MobileUIController {
                         } catch (e) {
                             console.warn('PiP not available:', e);
                         }
-                    });
+                    };
+                    addTrackedListener(pipBtn, 'click', pipClickHandler);
 
                     // Update button when PiP state changes
-                    videoElement.addEventListener('enterpictureinpicture', () => {
+                    const pipEnterHandler = () => {
                         pipBtn.style.background = 'var(--accent-primary)';
-                    });
-                    videoElement.addEventListener('leavepictureinpicture', () => {
+                    };
+                    addTrackedListener(videoElement, 'enterpictureinpicture', pipEnterHandler);
+
+                    const pipLeaveHandler = () => {
                         pipBtn.style.background = 'rgba(255,255,255,0.1)';
-                    });
+                    };
+                    addTrackedListener(videoElement, 'leavepictureinpicture', pipLeaveHandler);
                 }
 
                 // Fullscreen toggle handler
                 const fullscreenBtn = document.getElementById('fullscreen-btn');
                 if (fullscreenBtn) {
-                    fullscreenBtn.addEventListener('click', async () => {
+                    const fullscreenClickHandler = async () => {
                         const container = document.querySelector('.video-player-container');
                         if (!document.fullscreenElement) {
                             try {
@@ -3541,7 +3595,8 @@ export class MobileUIController {
                             await document.exitFullscreen();
                             fullscreenBtn.textContent = '⛶';
                         }
-                    });
+                    };
+                    addTrackedListener(fullscreenBtn, 'click', fullscreenClickHandler);
                 }
 
                 // Touch gesture controls for volume and brightness
@@ -3550,16 +3605,17 @@ export class MobileUIController {
                 let isVerticalGesture = false;
                 let isLeftSide = false;
 
-                videoElement.addEventListener('touchstart', (e) => {
+                const touchstartHandler = (e) => {
                     if (e.touches.length === 1) {
                         const touch = e.touches[0];
                         startY = touch.clientY;
                         startX = touch.clientX;
                         isLeftSide = touch.clientX < window.innerWidth / 2;
                     }
-                }, { passive: true });
+                };
+                addTrackedListener(videoElement, 'touchstart', touchstartHandler);
 
-                videoElement.addEventListener('touchmove', (e) => {
+                const touchmoveHandler = (e) => {
                     if (e.touches.length === 1) {
                         const touch = e.touches[0];
                         const deltaY = startY - touch.clientY;
@@ -3585,11 +3641,13 @@ export class MobileUIController {
                             startY = touch.clientY;
                         }
                     }
-                }, { passive: false });
+                };
+                addTrackedListener(videoElement, 'touchmove', touchmoveHandler);
 
-                videoElement.addEventListener('touchend', () => {
+                const touchendHandler = () => {
                     isVerticalGesture = false;
-                }, { passive: true });
+                };
+                addTrackedListener(videoElement, 'touchend', touchendHandler);
 
                 // Double-tap to skip (10s forward/backward)
                 let lastTapTime = 0;
@@ -3631,7 +3689,7 @@ export class MobileUIController {
                     setTimeout(() => indicator.remove(), 600);
                 };
 
-                videoElement.addEventListener('click', (e) => {
+                const videoClickHandler = (e) => {
                     const now = Date.now();
                     const tapDelay = now - lastTapTime;
                     const clickX = e.clientX || (e.touches && e.touches[0].clientX);
@@ -3668,7 +3726,8 @@ export class MobileUIController {
                         lastTapTime = now;
                         lastTapSide = tapSide;
                     }
-                });
+                };
+                addTrackedListener(videoElement, 'click', videoClickHandler);
             }
 
         } catch (error) {
