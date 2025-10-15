@@ -1880,23 +1880,35 @@ export class MobileUIController {
 
             console.log('Checking media permissions...');
 
-            // Use custom MediaPermissions plugin for Android 13+ support
-            const checkResult = await Capacitor.Plugins.MediaPermissions.checkPermissions();
-            console.log('Permission check result:', checkResult);
+            // Try custom MediaPermissions plugin first (Android 13+ support)
+            if (Capacitor.Plugins.MediaPermissions) {
+                console.log('Using native MediaPermissions plugin');
+                const checkResult = await Capacitor.Plugins.MediaPermissions.checkPermissions();
+                console.log('Permission check result:', checkResult);
 
-            if (!checkResult.granted) {
-                console.log('Requesting media permissions...');
-                const requestResult = await Capacitor.Plugins.MediaPermissions.requestPermissions();
-                console.log('Permission request result:', requestResult);
+                if (!checkResult.granted) {
+                    console.log('Requesting media permissions...');
+                    const requestResult = await Capacitor.Plugins.MediaPermissions.requestPermissions();
+                    console.log('Permission request result:', requestResult);
 
-                if (!requestResult.granted) {
-                    contentGrid.innerHTML = UITemplates.emptyState(
-                        '🔒',
-                        'Permission Denied',
-                        'Media access is required to scan your library. Please grant permission to access videos and audio files.'
-                    );
-                    return;
+                    if (!requestResult.granted) {
+                        contentGrid.innerHTML = UITemplates.emptyState(
+                            '🔒',
+                            'Permission Denied',
+                            'Media access is required to scan your library. Please grant permission to access videos and audio files.'
+                        );
+                        return;
+                    }
                 }
+            } else {
+                // Fallback: Show manual instruction for Android 13+
+                console.warn('MediaPermissions plugin not available, showing manual instructions');
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '🔐',
+                    'Grant Media Permissions',
+                    'Please grant media permissions manually:\n\n1. Open Android Settings\n2. Go to Apps → FlixCapacitor\n3. Tap Permissions\n4. Enable "Photos and videos" and "Music and audio"\n5. Return here and try again'
+                );
+                return;
             }
 
             console.log('Media permissions granted, starting scan...');
@@ -1905,7 +1917,7 @@ export class MobileUIController {
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Permission Error',
-                `Failed to request storage permissions: ${error}. Please check app settings.`
+                `Failed to request storage permissions: ${error}. Please grant permissions manually in Android Settings → Apps → FlixCapacitor → Permissions.`
             );
             return;
         }
