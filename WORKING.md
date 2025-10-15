@@ -69,23 +69,56 @@
 - Handles "All Folders" view to show unfiltered library
 **Commit:** fb62a80
 
-### Remaining Tasks
+### Technology Upgrades
 
-1. **Upgrade to Bun** - Replace npm with Bun package manager
-2. **Upgrade to TypeScript** - Add TypeScript support to codebase
+#### Bun Migration ⚠️ (Documented Limitations)
+**Status:** Incompatible with Termux Android ARM64 environment
+
+Attempted to migrate from npm to Bun but encountered fundamental compatibility issues:
+- `bun install` fails with 566 EACCES permission denied errors
+- `bun run` commands fail with "CouldntReadCurrentDirectory" error
+- bun-on-termux tools (buno, grun) exist but non-functional
+
+**Root Cause:** Bun v1.2.20 syscalls incompatible with Termux filesystem restrictions
+
+**Decision:** Continue using npm@10.9.2, which works perfectly in Termux
+
+**Documentation:** BUN-TERMUX-NOTES.md
+
+**Commit:** 91ecaeff
+
+#### TypeScript 5.9.3 ✅ (Successfully Integrated)
+**Status:** Fully functional with gradual migration strategy
+
+Implemented TypeScript while maintaining backward compatibility:
+- Installed TypeScript 5.9.3 and all type definitions
+- Created tsconfig.json with ES2022 target and gradual migration settings
+- Added custom type definitions (global.d.ts, library.d.ts)
+- Configured npm scripts: `npm run typecheck`, `npm run typecheck:watch`
+- Path aliases: `@/*`, `@app/*`, `@lib/*`
+
+**Configuration:**
+- `strict: false` - allows gradual migration
+- `allowJs: true` - existing JS works alongside TS
+- `noEmit: true` - Vite handles compilation
+
+**Documentation:** TYPESCRIPT-MIGRATION.md
+
+**Commit:** 1884351d
 
 ### Build Status
 - Bundle: 485.61 kB (gzip: 140.49 kB)
 - All 99 tests passing
+- TypeScript type checking: ✅ Passing
 - Successfully synced to Android device
 
 ### Git Status
 - Clean working directory
 - Main branch up to date
-- 8 commits added this session
+- 11 commits added this session
 
 ### Summary
-All 7 critical bugs fixed:
+**Critical Bugs Fixed (7/7):**
 ✅ Video playback race condition
 ✅ Browse dropdown behavior
 ✅ FAB positioning
@@ -94,6 +127,23 @@ All 7 critical bugs fixed:
 ✅ Library local file playback
 ✅ Library folder filters
 
+**Technology Upgrades (2/2):**
+✅ TypeScript 5.9.3 integrated with gradual migration
+⚠️  Bun documented as incompatible with Termux (continue with npm)
+
+### Session Commits
+1. cd16fd4 - fix: resolve race condition in video playback
+2. f300e93 - fix: correct browse dropdown behavior
+3. 73573f3 - fix: reposition FAB above navigation
+4. 034a508 - feat: add file picker modal for multi-file torrents
+5. 37792de - fix: add storage permission request for library scan
+6. 2573bda - feat: enable library playback for local files
+7. fb62a80 - fix: enable library folder filters
+8. 0b24269 - docs: update WORKING.md with all completed fixes
+9. 91ecaeff - docs: document Bun Termux incompatibility
+10. 1884351d - feat: add TypeScript 5.9.3 with gradual migration
+11. (pending) - docs: final WORKING.md update
+
 ---
 
-Last updated: 2025-10-15 02:30 UTC
+Last updated: 2025-10-15 04:15 UTC
