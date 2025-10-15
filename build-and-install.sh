@@ -140,8 +140,19 @@ fi
 echo "Step 5: Building $BUILD_TYPE APK with custom aapt2..."
 echo "This may take a few minutes on first run..."
 
+# Use custom AAPT2 for local Termux builds (not committed to gradle.properties for CI compatibility)
+AAPT2_PATH="/data/data/com.termux/files/home/git/pop/popcorn-mobile/tools/aapt2-arm64/aapt2"
+GRADLE_OPTS=""
+
+if [ -f "$AAPT2_PATH" ]; then
+    echo "✅ Using custom AAPT2 for Termux: $AAPT2_PATH"
+    GRADLE_OPTS="-Pandroid.aapt2FromMavenOverride=$AAPT2_PATH"
+else
+    echo "ℹ️  Custom AAPT2 not found, using default from Maven"
+fi
+
 cd android
-if ./gradlew assembleDebug; then
+if ./gradlew assembleDebug $GRADLE_OPTS; then
     echo "✅ Build successful!"
 else
     echo "❌ Build failed!"
