@@ -1900,3 +1900,52 @@ All views now fully compatible with FilterBar and GenericBrowser expectations.
 5. Device testing with real media files
 
 **Current State:** All core functionality implemented and ready for testing. The Library and Learning features are fully functional with the existing infrastructure. Future enhancements will focus on UI polish and actual filesystem scanning capabilities.
+
+### Completed: Round 2 Bug Fixes ✅ (commit 371ad1d)
+
+**Additional Bugs Found and Fixed:**
+
+**BUG-006 (HIGH): Resume Dialog Listeners Not Tracked**
+- Location: src/app/lib/mobile-ui-views.js:3349-3378
+- Problem: Resume dialog button listeners created but never tracked for cleanup
+- Impact: Memory leak - listeners remain attached to removed DOM elements
+- Fix: Track both button listeners via addTrackedListener()
+- Fix: Track auto-resume timeout in intervals array
+
+**BUG-007 (HIGH): Unhandled Async Errors in pause/resumeStream**
+- Location: src/app/lib/mobile-ui-views.js:3440-3462
+- Problem: pauseStream() and resumeStream() called without await
+- Impact: Silent failures, broken playback state, no error messages
+- Fix: Made handlers async with try-catch blocks
+- Fix: Properly await all native torrent client calls
+
+**BUG-009 (MEDIUM): No Stream State Check in pause/resume**
+- Location: src/app/lib/native-torrent-client.js:312-345
+- Problem: Methods don't check if stream exists before calling plugin
+- Impact: Unnecessary errors when called without active stream
+- Fix: Added currentStreamUrl check at method start
+- Fix: Return early with warning if no active stream
+
+**BUG-010 (MEDIUM): Auto-Resume Timeout Not Tracked**
+- Location: src/app/lib/mobile-ui-views.js:3378
+- Problem: 10-second auto-resume timeout not tracked for cleanup
+- Impact: Timeout fires after player closed, accessing destroyed elements
+- Fix: Store timeout ID in intervals cleanup array
+- Fix: Timeout cleared automatically in exitVideoPlayer()
+
+**Build Results:**
+- Bundle size: 476.29 kB (gzip: 138.80 kB)
+- All builds successful, no compilation errors
+- Successfully synced to Android with npx cap sync
+
+**Testing Status:**
+- All 9 bugs across 2 rounds fixed and verified
+- Complete resource cleanup infrastructure in place
+- All async operations properly handled with error boundaries
+- Build and sync completed successfully
+
+**Documentation:**
+- BUGS-ROUND2.md created with detailed analysis
+- All fixes documented with line numbers and code samples
+- working.md updated with comprehensive fix summary
+
