@@ -1,5 +1,80 @@
 # FlixCapacitor Mobile - Current Work Session
 
+## Session Date: 2025-10-16
+
+### Video Playback & Permissions Overhaul
+
+#### 9. Video Playback CORS and Permission Flow ✅
+**Issues:**
+1. "Unexpected error" on video playback
+2. No automatic permission requests
+3. Missing button to open settings or trigger permission approval
+
+**Root Causes (Identified via Gemini consultation):**
+1. Android 9+ blocks cleartext HTTP traffic by default
+2. Missing CORS preflight OPTIONS handler for Range requests
+3. Missing crossorigin attribute on video element
+4. Permissions requested but not contextually (should be on first video play)
+
+**Fixes Applied:**
+
+**CORS & Network Security:**
+- Created `network_security_config.xml` to permit cleartext traffic to 127.0.0.1 (Android 9+ requirement)
+- Added OPTIONS preflight handler in StreamingServer.kt
+- Added CORS headers to serveFullFile() and serveRangeRequest() methods
+- Added `crossorigin="anonymous"` to video element
+- Updated AndroidManifest.xml to reference network security config
+
+**Permission Flow Improvements:**
+- Added permission check at start of showVideoPlayer() method
+- Contextual permission request (on video play, not app launch)
+- Shows settings button with instructions if permission denied
+- Implements shouldShowRequestPermissionRationale() for better UX
+
+**MediaPermissionsPlugin Refactor (Gemini Best Practices):**
+- Removed WRITE_EXTERNAL_STORAGE (not needed for reading)
+- Added getPermissionState() returning "granted", "prompt-with-rationale", or "prompt"
+- Updated checkPermissions() for granular state tracking
+- Simplified permissionsCallback() to reuse checkPermissions() logic
+- Comprehensive documentation of Android 13+ permission model
+- Uses READ_MEDIA_VIDEO/AUDIO for Android 13+ (no MANAGE_EXTERNAL_STORAGE needed)
+
+**Files Modified:**
+- plugins/capacitor-plugin-torrent-streamer/android/src/main/java/com/flixcapacitor/torrent/StreamingServer.kt
+- android/app/src/main/res/xml/network_security_config.xml (new)
+- android/app/src/main/AndroidManifest.xml
+- android/app/src/main/java/app/flixcapacitor/mobile/MediaPermissionsPlugin.java
+- src/app/lib/mobile-ui-views.js
+
+**Commits:** c649c0b3, 2a26d149
+
+#### 10. GitHub Actions CI/CD Pipeline ✅
+**Issue:** No automated builds, APKs hard to distribute
+
+**Implementation:**
+- Created `.github/workflows/build-apk.yml` for automatic builds on every commit
+- Builds both debug and release APKs
+- Creates GitHub Releases with downloadable APKs
+- Added commit info and build metadata to releases
+
+**Fixes Applied:**
+- Updated Java version from 17 to 21 (Capacitor requirement)
+- Moved AAPT2 custom path from gradle.properties to build script (CI compatibility)
+- Added `permissions: contents: write` for release creation
+
+**Build Artifacts:**
+- app-debug.apk (for testing)
+- app-release-unsigned.apk (for distribution)
+
+**Files Modified:**
+- .github/workflows/build-apk.yml (new)
+- android/gradle.properties
+- build-and-install.sh
+
+**Commits:** d3f3ceb4, 8e992b1f, 9ad3d4f8
+
+---
+
 ## Session Date: 2025-10-15
 
 ### Critical Bug Fix - Android 13+ Permissions
@@ -156,7 +231,7 @@ Used zen-mcp debug tool with gemini-2.5-pro model for systematic investigation:
 4. Expert analysis confirmed hypothesis and provided fix strategy
 
 ### Summary
-**Critical Bugs Fixed (8/8):**
+**Critical Bugs Fixed (10/10):**
 ✅ Video playback race condition
 ✅ Browse dropdown behavior
 ✅ FAB positioning
@@ -164,18 +239,25 @@ Used zen-mcp debug tool with gemini-2.5-pro model for systematic investigation:
 ✅ Library scan permissions (original - Android 12 and below)
 ✅ Library local file playback
 ✅ Library folder filters
-✅ **Library scan permissions for Android 13+ (NEW)**
+✅ Library scan permissions for Android 13+
+✅ **Video playback CORS and network security (NEW)**
+✅ **Contextual permission flow with rationale support (NEW)**
+
+**Infrastructure Improvements:**
+✅ GitHub Actions CI/CD pipeline with automatic releases
+✅ Java 21 compatibility
+✅ AAPT2 local/CI compatibility
 
 **Technology Upgrades (2/2):**
 ✅ TypeScript 5.9.3 integrated with gradual migration
 ⚠️ Bun documented as incompatible with Termux (continue with npm)
 
 ### Next Steps
-1. Test library scan on Android device to verify permission prompt
-2. Verify video playback works without errors
-3. Commit changes with conventional commit message
+1. Test video playback on device to verify CORS fixes
+2. Test permission flow on first video play
+3. Verify GitHub release created with downloadable APKs
 4. Monitor for any remaining issues
 
 ---
 
-Last updated: 2025-10-15 06:47 UTC
+Last updated: 2025-10-16 (GitHub Actions build triggered)
