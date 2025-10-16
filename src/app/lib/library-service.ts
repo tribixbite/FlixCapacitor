@@ -3,11 +3,100 @@
  * Handles local media library scanning, metadata fetching, and management
  */
 
-import sqliteService from './sqlite-service.js';
-import filenameParser from './filename-parser.js';
+import sqliteService from './sqlite-service';
+import filenameParser from './filename-parser';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+import type { SQLiteService } from './sqlite-service';
+import type { FilenameParser } from './filename-parser';
+
+export interface FileInfo {
+    path: string;
+    name: string;
+    size: number;
+    modified: number;
+}
+
+export interface ScanResults {
+    found: number;
+    matched: number;
+    errors: Array<{ file?: string; folder?: string; error: string }>;
+}
+
+export interface MediaMetadata {
+    title: string;
+    year?: number | null;
+    imdb_id?: string | null;
+    tmdb_id?: number | null;
+    poster_url?: string | null;
+    backdrop_url?: string | null;
+    genres?: string | null;
+    rating?: number | null;
+    synopsis?: string | null;
+    poster?: string | null;
+    backdrop?: string | null;
+}
+
+export interface LibraryFilters {
+    type?: string | null;
+    genre?: string | null;
+    search?: string | null;
+    sorter?: string | null;
+    sort?: string | null;
+    limit?: number;
+    offset?: number;
+}
+
+export interface LibraryStats {
+    total: number;
+    movies: number;
+    tvshows: number;
+    other: number;
+}
+
+export interface ScanHistory {
+    scan_id: number;
+    scan_type: string;
+    folders_scanned: string;
+    items_found: number;
+    items_matched: number;
+    start_time: number;
+    end_time?: number;
+    status: 'running' | 'completed' | 'cancelled' | 'error';
+}
+
+export interface MediaItem {
+    id: number;
+    file_path: string;
+    file_size: number;
+    media_type: 'movie' | 'tvshow' | 'other';
+    title: string;
+    year?: number | null;
+    season?: number | null;
+    episode?: number | null;
+    imdb_id?: string | null;
+    tmdb_id?: number | null;
+    poster_url?: string | null;
+    backdrop_url?: string | null;
+    genres?: string | null;
+    rating?: number | null;
+    metadata_json?: string | null;
+    last_modified: number;
+    date_added: number;
+    last_played?: number | null;
+    play_count: number;
+}
+
+type ProgressCallback = (current: number, total: number | null, filename: string) => void;
 
 class LibraryService {
+    private db: SQLiteService;
+    private parser: FilenameParser;
+    private currentScan: { id: number } | null;
+    private scanCancelled: boolean;
+    private videoExtensions: string[];
+    private tmdbApiKey: string | null;
+    private omdbApiKey: string | null;
+
     constructor() {
         this.db = sqliteService;
         this.parser = filenameParser;
@@ -27,11 +116,8 @@ class LibraryService {
 
     /**
      * Scan folders for media files
-     * @param {Array<string>} folderPaths - Array of folder paths to scan
-     * @param {Function} progressCallback - Progress callback (current, total, filename)
-     * @returns {Promise<Object>} Scan results {found, matched, errors}
      */
-    async scanFolders(folderPaths, progressCallback = null) {
+    async scanFolders(folderPaths: string[], progressCallback: ProgressCallback | null = null): Promise<ScanResults> {
         if (!folderPaths || folderPaths.length === 0) {
             throw new Error('No folders specified for scanning');
         }
@@ -51,7 +137,7 @@ class LibraryService {
         this.currentScan = { id: scanId };
         this.scanCancelled = false;
 
-        const results = {
+        const results: ScanResults = {
             found: 0,
             matched: 0,
             errors: []
@@ -83,12 +169,12 @@ class LibraryService {
                             if (added) {
                                 results.matched++;
                             }
-                        } catch (error) {
+                        } catch (error: any) {
                             console.error('Failed to add media file:', file.path, error);
                             results.errors.push({ file: file.path, error: error.message });
                         }
                     }
-                } catch (error) {
+                } catch (error: any) {
                     console.error('Failed to scan folder:', folderPath, error);
                     results.errors.push({ folder: folderPath, error: error.message });
                 }
@@ -120,12 +206,9 @@ class LibraryService {
 
     /**
      * Scan a folder recursively for video files
-     * @param {string} folderPath - Folder path to scan
-     * @param {Function} progressCallback - Progress callback
-     * @returns {Promise<Array<Object>>} Array of file objects
      */
-    async scanFolderRecursive(folderPath, progressCallback) {
-        const files = [];
+    private async scanFolderRecursive(folderPath: string, progressCallback: ProgressCallback | null): Promise<FileInfo[]> {
+        const files: FileInfo[] = [];
 
         try {
             console.log('Scanning folder:', folderPath);
@@ -151,9 +234,9 @@ class LibraryService {
                     files.push(...subFiles);
                 } else {
                     // Check if it's a video file
-                    const ext = '.' + item.name.split('.').pop().toLowerCase();
+                    const ext = '.' + item.name.split('.').pop()!.toLowerCase();
                     if (this.videoExtensions.includes(ext)) {
-                        const fileInfo = {
+                        const fileInfo: FileInfo = {
                             path: itemPath,
                             name: item.name,
                             size: item.size || 0,
@@ -173,7 +256,7 @@ class LibraryService {
             }
 
             return files;
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error scanning folder:', folderPath, error);
 
             // If permission denied, try alternative method
@@ -188,11 +271,9 @@ class LibraryService {
 
     /**
      * Add a media file to the library
-     * @param {Object} file - File object {path, size, modified}
-     * @returns {Promise<boolean>} True if added successfully
      */
-    async addMediaFile(file) {
-        const filename = file.path.split('/').pop();
+    private async addMediaFile(file: FileInfo): Promise<boolean> {
+        const filename = file.path.split('/').pop()!;
 
         // Parse filename
         const parsed = this.parser.parse(filename);
@@ -205,7 +286,7 @@ class LibraryService {
         }
 
         // Fetch metadata if possible
-        let metadata = null;
+        let metadata: MediaMetadata | null = null;
         if (parsed.type !== 'other') {
             try {
                 metadata = await this.fetchMetadata(parsed);
@@ -239,16 +320,14 @@ class LibraryService {
 
     /**
      * Fetch metadata from TMDB/OMDB
-     * @param {Object} parsed - Parsed filename data
-     * @returns {Promise<Object|null>} Metadata
      */
-    async fetchMetadata(parsed) {
+    private async fetchMetadata(parsed: any): Promise<MediaMetadata | null> {
         if (!parsed || !parsed.title) {
             return null;
         }
 
         try {
-            const metadata = {
+            const metadata: MediaMetadata = {
                 title: parsed.title,
                 year: parsed.year,
                 imdb_id: null,
@@ -261,7 +340,7 @@ class LibraryService {
             };
 
             // Search TMDB by title and year
-            const tmdbClient = window.TMDBClient || window.App?.providers?.TMDB;
+            const tmdbClient = (window as any).TMDBClient || (window as any).App?.providers?.TMDB;
             if (!tmdbClient) {
                 console.warn('TMDB client not available');
                 return metadata;
@@ -270,7 +349,7 @@ class LibraryService {
             console.log(`Fetching metadata for: ${parsed.title} (${parsed.year || 'unknown year'})`);
 
             // Search based on media type
-            let searchResults;
+            let searchResults: any;
             if (parsed.type === 'tvshow') {
                 searchResults = await tmdbClient.searchTVShow(parsed.title, parsed.year);
             } else {
@@ -281,7 +360,7 @@ class LibraryService {
                 const result = searchResults.results[0];
 
                 // Get detailed information
-                let details;
+                let details: any;
                 if (parsed.type === 'tvshow') {
                     details = await tmdbClient.getTVShowDetails(result.id);
                 } else {
@@ -295,7 +374,7 @@ class LibraryService {
                                    (details.first_air_date ? parseInt(details.first_air_date.split('-')[0]) : null);
                     metadata.poster_url = tmdbClient.getBestPoster(details);
                     metadata.backdrop_url = tmdbClient.getBestBackdrop(details);
-                    metadata.genres = details.genres?.map(g => g.name).join(',') || null;
+                    metadata.genres = details.genres?.map((g: any) => g.name).join(',') || null;
                     metadata.rating = details.vote_average || null;
                     metadata.synopsis = details.overview || null;
                     metadata.imdb_id = details.external_ids?.imdb_id || details.imdb_id || null;
@@ -305,7 +384,7 @@ class LibraryService {
                     // Optionally fetch OMDb ratings if we have IMDb ID
                     if (metadata.imdb_id) {
                         try {
-                            const omdbClient = window.OMDbClient || window.App?.providers?.OMDb;
+                            const omdbClient = (window as any).OMDbClient || (window as any).App?.providers?.OMDb;
                             if (omdbClient) {
                                 const omdbData = await omdbClient.getByIMDbId(metadata.imdb_id);
                                 if (omdbData && omdbData.imdbRating && omdbData.imdbRating !== 'N/A') {
@@ -314,7 +393,7 @@ class LibraryService {
                                 }
                             }
                         } catch (omdbError) {
-                            console.warn('OMDb fetch failed:', omdbError.message);
+                            console.warn('OMDb fetch failed:', (omdbError as any).message);
                         }
                     }
                 }
@@ -331,10 +410,8 @@ class LibraryService {
 
     /**
      * Get library items with filters
-     * @param {Object} filters - {type, genre, search, sort, limit, offset}
-     * @returns {Promise<Array<Object>>} Library items
      */
-    async getLibraryItems(filters = {}) {
+    async getLibraryItems(filters: LibraryFilters = {}): Promise<MediaItem[]> {
         const {
             type = null,
             genre = null,
@@ -349,11 +426,11 @@ class LibraryService {
         const sortBy = sorter || sort || 'date_added';
 
         let sql = 'SELECT * FROM local_media WHERE 1=1';
-        const params = [];
+        const params: any[] = [];
 
         // Normalize type value (display name -> internal value)
         if (type && type !== 'All') {
-            const typeMap = {
+            const typeMap: Record<string, string> = {
                 'Movies': 'movie',
                 'TV Shows': 'tvshow',
                 'Other': 'other'
@@ -375,7 +452,7 @@ class LibraryService {
         }
 
         // Sorting - handle both internal and display names
-        const sortMap = {
+        const sortMap: Record<string, string> = {
             'date added': 'date_added DESC',
             'date_added': 'date_added DESC',
             'title': 'title ASC',
@@ -397,12 +474,10 @@ class LibraryService {
 
     /**
      * Get genres for a media type
-     * @param {string} mediaType - 'movie' or 'tvshow'
-     * @returns {Promise<Array<string>>} Genre list
      */
-    async getGenres(mediaType = null) {
+    async getGenres(mediaType: string | null = null): Promise<string[]> {
         let sql = 'SELECT DISTINCT genres FROM local_media WHERE genres IS NOT NULL';
-        const params = [];
+        const params: any[] = [];
 
         if (mediaType) {
             sql += ' AND media_type = ?';
@@ -412,11 +487,11 @@ class LibraryService {
         const rows = await this.db.query(sql, params);
 
         // Extract unique genres from JSON arrays
-        const genreSet = new Set();
-        rows.forEach(row => {
+        const genreSet = new Set<string>();
+        rows.forEach((row: any) => {
             try {
                 const genres = JSON.parse(row.genres);
-                genres.forEach(genre => genreSet.add(genre));
+                genres.forEach((genre: string) => genreSet.add(genre));
             } catch (e) {
                 // Ignore parse errors
             }
@@ -427,9 +502,8 @@ class LibraryService {
 
     /**
      * Get library statistics
-     * @returns {Promise<Object>} Stats {total, movies, tvshows, other}
      */
-    async getStats() {
+    async getStats(): Promise<LibraryStats> {
         const sql = `
             SELECT
                 COUNT(*) as total,
@@ -445,45 +519,36 @@ class LibraryService {
 
     /**
      * Get scan history
-     * @param {number} limit - Number of scans to retrieve
-     * @returns {Promise<Array<Object>>} Scan history
      */
-    async getScanHistory(limit = 10) {
+    async getScanHistory(limit: number = 10): Promise<ScanHistory[]> {
         const sql = 'SELECT * FROM scan_history ORDER BY start_time DESC LIMIT ?';
         return await this.db.query(sql, [limit]);
     }
 
     /**
      * Remove an item from library
-     * @param {number} id - Media ID
-     * @returns {Promise<boolean>} True if removed
      */
-    async removeItem(id) {
+    async removeItem(id: number): Promise<boolean> {
         const result = await this.db.delete('local_media', 'id = ?', [id]);
         return result > 0;
     }
 
     /**
      * Update metadata for an item
-     * @param {number} id - Media ID
-     * @param {Object} metadata - Metadata to update
-     * @returns {Promise<boolean>} True if updated
      */
-    async updateMetadata(id, metadata) {
+    async updateMetadata(id: number, metadata: Partial<MediaItem>): Promise<boolean> {
         const result = await this.db.update('local_media', metadata, 'id = ?', [id]);
         return result > 0;
     }
 
     /**
      * Refresh metadata for an item
-     * @param {number} id - Media ID
-     * @returns {Promise<boolean>} True if refreshed
      */
-    async refreshMetadata(id) {
+    async refreshMetadata(id: number): Promise<boolean> {
         const item = await this.db.findOne('local_media', 'id = ?', [id]);
         if (!item) return false;
 
-        const filename = item.file_path.split('/').pop();
+        const filename = item.file_path.split('/').pop()!;
         const parsed = this.parser.parse(filename);
 
         const metadata = await this.fetchMetadata(parsed);
@@ -506,9 +571,8 @@ class LibraryService {
 
     /**
      * Clear entire library
-     * @returns {Promise<boolean>} True if cleared
      */
-    async clearLibrary() {
+    async clearLibrary(): Promise<boolean> {
         await this.db.run('DELETE FROM local_media');
         console.log('Library cleared');
         return true;
@@ -517,43 +581,37 @@ class LibraryService {
     /**
      * Cancel ongoing scan
      */
-    cancelScan() {
+    cancelScan(): void {
         this.scanCancelled = true;
         console.log('Scan cancellation requested');
     }
 
     /**
      * Check if scan is running
-     * @returns {boolean} True if scanning
      */
-    isScanning() {
+    isScanning(): boolean {
         return this.currentScan !== null;
     }
 
     /**
      * Classify media type from file
-     * @param {string} filePath - File path
-     * @returns {string} Media type
      */
-    classifyMediaType(filePath) {
-        const filename = filePath.split('/').pop();
+    classifyMediaType(filePath: string): string {
+        const filename = filePath.split('/').pop()!;
         return this.parser.classifyType(filename);
     }
 
     /**
      * Get media items - wrapper for getLibraryItems for collection compatibility
-     * @param {Object} filters - Filter options
-     * @returns {Promise<Array>} Media items
      */
-    async getMedia(filters = {}) {
+    async getMedia(filters: LibraryFilters = {}): Promise<MediaItem[]> {
         return this.getLibraryItems(filters);
     }
 
     /**
      * Get total media count
-     * @returns {Promise<number>} Total count of media items
      */
-    async getMediaCount() {
+    async getMediaCount(): Promise<number> {
         const result = await this.db.query('SELECT COUNT(*) as count FROM local_media');
         return result[0]?.count || 0;
     }
@@ -562,10 +620,11 @@ class LibraryService {
 // Export as singleton
 const libraryService = new LibraryService();
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = libraryService;
-}
+// Export for ES modules
+export { libraryService, LibraryService };
+export default libraryService;
 
+// Export for window
 if (typeof window !== 'undefined') {
     window.LibraryService = libraryService;
 }
