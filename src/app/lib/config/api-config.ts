@@ -8,11 +8,55 @@
  * Supports both Vite (import.meta.env) and Node.js (process.env) environments.
  */
 
+// Type definitions
+interface ImageSizes {
+    small: string;
+    medium: string;
+    large: string;
+    original: string;
+}
+
+interface TMDBConfig {
+    apiKey: string;
+    readApiKey: string;
+    baseUrl: string;
+    imageBaseUrl: string;
+    defaultLanguage: string;
+    posterSizes: ImageSizes;
+    backdropSizes: ImageSizes;
+}
+
+interface OMDBConfig {
+    apiKey: string;
+    baseUrl: string;
+}
+
+interface OpenSubtitlesConfig {
+    apiKey: string;
+    baseUrl: string;
+    userAgent: string;
+}
+
+interface ConfigStatus {
+    tmdb: boolean;
+    omdb: boolean;
+    opensubtitles: boolean;
+}
+
+interface ApiConfigType {
+    tmdb: TMDBConfig;
+    omdb: OMDBConfig;
+    opensubtitles: OpenSubtitlesConfig;
+    isConfigured: () => ConfigStatus;
+    getMissingKeys: () => string[];
+    validate: () => boolean;
+}
+
 // Helper to get environment variable (supports both Vite and Node.js)
-const getEnv = (key) => {
+const getEnv = (key: string): string | undefined => {
     // Try Vite first (browser/build)
-    if (typeof import.meta !== 'undefined' && import.meta.env) {
-        return import.meta.env[key];
+    if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
+        return (import.meta as any).env[key];
     }
     // Fallback to Node.js (testing)
     if (typeof process !== 'undefined' && process.env) {
@@ -21,7 +65,7 @@ const getEnv = (key) => {
     return undefined;
 };
 
-export const ApiConfig = {
+export const ApiConfig: ApiConfigType = {
     /**
      * TMDB (The Movie Database)
      * https://www.themoviedb.org/settings/api
@@ -72,7 +116,7 @@ export const ApiConfig = {
     /**
      * Check if all required API keys are configured
      */
-    isConfigured() {
+    isConfigured(): ConfigStatus {
         return {
             tmdb: !!this.tmdb.apiKey,
             omdb: !!this.omdb.apiKey,
@@ -83,9 +127,9 @@ export const ApiConfig = {
     /**
      * Get missing API keys
      */
-    getMissingKeys() {
+    getMissingKeys(): string[] {
         const config = this.isConfigured();
-        const missing = [];
+        const missing: string[] = [];
 
         if (!config.tmdb) missing.push('VITE_TMDB_API_KEY');
         if (!config.omdb) missing.push('VITE_OMDB_API_KEY');
@@ -97,7 +141,7 @@ export const ApiConfig = {
     /**
      * Validate configuration on app startup
      */
-    validate() {
+    validate(): boolean {
         const missing = this.getMissingKeys();
 
         if (missing.length > 0) {
