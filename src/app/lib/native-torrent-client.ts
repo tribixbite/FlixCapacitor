@@ -7,10 +7,83 @@
 // Import TorrentStreamer plugin
 // Note: If this fails, make sure you've run: npm install && npm run build && npx cap sync
 import { TorrentStreamer } from 'capacitor-plugin-torrent-streamer';
+import type { PluginListenerHandle } from '@capacitor/core';
 
+export interface TorrentInfo {
+    name?: string;
+    infoHash?: string;
+    totalSize?: number;
+    numFiles?: number;
+    selectedFile?: string;
+    selectedFileSize?: number;
+    streamUrl?: string;
+}
 
+export interface StreamInfo {
+    streamUrl: string;
+    torrent: {
+        name?: string;
+        infoHash?: string;
+    };
+    file: {
+        name: string;
+    };
+    status: string;
+}
+
+export interface ProgressStatus {
+    status: string;
+    progress?: number;
+    downloadSpeed?: number;
+    uploadSpeed?: number;
+    numPeers?: number;
+    downloaded?: number;
+    uploaded?: number;
+    timeRemaining?: number;
+    message?: string;
+}
+
+export interface TorrentStatus {
+    name: string;
+    infoHash: string;
+    progress: number;
+    downloadSpeed: number;
+    uploadSpeed: number;
+    numPeers: number;
+    downloaded: number;
+    uploaded: number;
+    length: number;
+    timeRemaining: number;
+}
+
+export interface VideoFile {
+    index: number;
+    name: string;
+    size: number;
+}
+
+export interface SubtitleTrack {
+    lang: string;
+    path?: string;
+    url?: string;
+}
+
+export interface StreamOptions {
+    maxDownloadSpeed?: number;
+    maxUploadSpeed?: number;
+    maxConnections?: number;
+}
+
+type ProgressCallback = (status: ProgressStatus) => void;
 
 class NativeTorrentClient {
+    private initialized: boolean;
+    private currentStreamUrl: string | null;
+    private currentTorrentInfo: TorrentInfo | null;
+    private progressCallback: ProgressCallback | null;
+    private listeners: PluginListenerHandle[];
+    private loadingToastId: string | null;
+
     constructor() {
         this.initialized = false;
         this.currentStreamUrl = null;
@@ -23,7 +96,7 @@ class NativeTorrentClient {
     /**
      * Initialize the native torrent client
      */
-    async initialize() {
+    async initialize(): Promise<void> {
         if (this.initialized) {
             console.log('Native torrent client already initialized');
             return;
@@ -50,17 +123,17 @@ class NativeTorrentClient {
     /**
      * Set up event listeners for TorrentStreamer plugin
      */
-    setupEventListeners() {
+    private setupEventListeners(): void {
         try {
             // Metadata received event
-            const metadataListener = TorrentStreamer.addListener('metadata', (data) => {
+            const metadataListener = TorrentStreamer.addListener('metadata', (data: any) => {
             console.log('✓ Torrent metadata received');
             console.log('  Name:', data.name);
             console.log('  Files:', data.numFiles);
             console.log('  Selected file:', data.selectedFile);
 
-            if (typeof window !== 'undefined' && window.App?.SafeToast) {
-                window.App.SafeToast.peer('Metadata Received', `Found ${data.numFiles} files in torrent.`);
+            if (typeof window !== 'undefined' && (window as any).App?.SafeToast) {
+                (window as any).App.SafeToast.peer('Metadata Received', `Found ${data.numFiles} files in torrent.`);
             }
 
             this.currentTorrentInfo = {
@@ -74,14 +147,14 @@ class NativeTorrentClient {
         this.listeners.push(metadataListener);
 
         // Ready event (stream URL available)
-        const readyListener = TorrentStreamer.addListener('ready', (data) => {
+        const readyListener = TorrentStreamer.addListener('ready', (data: any) => {
             console.log('✓ Stream ready:', data.streamUrl);
             this.currentStreamUrl = data.streamUrl;
 
-            if (typeof window !== 'undefined' && window.App?.SafeToast) {
-                window.App.SafeToast.success('Stream Ready', 'Video is now ready to play.');
+            if (typeof window !== 'undefined' && (window as any).App?.SafeToast) {
+                (window as any).App.SafeToast.success('Stream Ready', 'Video is now ready to play.');
                 if (this.loadingToastId) {
-                    window.App.SafeToast.close(this.loadingToastId);
+                    (window as any).App.SafeToast.close(this.loadingToastId);
                     this.loadingToastId = null;
                 }
             }
@@ -93,17 +166,17 @@ class NativeTorrentClient {
         this.listeners.push(readyListener);
 
         // Progress event
-        const progressListener = TorrentStreamer.addListener('progress', (status) => {
-            if (typeof window !== 'undefined' && window.App?.SafeToast) {
+        const progressListener = TorrentStreamer.addListener('progress', (status: any) => {
+            if (typeof window !== 'undefined' && (window as any).App?.SafeToast) {
                 if (!this.loadingToastId) {
-                    this.loadingToastId = window.App.SafeToast.loading('Downloading', 'Starting download...');
+                    this.loadingToastId = (window as any).App.SafeToast.loading('Downloading', 'Starting download...');
                 }
 
                 const progress = status.progress * 100;
                 const message = `${progress.toFixed(1)}% complete`;
                 const details = `${this.formatBytes(status.totalDownloaded)} / ${this.formatBytes(this.currentTorrentInfo?.selectedFileSize || 0)} • ${status.numPeers} peers`;
 
-                window.App.SafeToast.update(this.loadingToastId, {
+                (window as any).App.SafeToast.update(this.loadingToastId, {
                     progress,
                     message,
                     details
@@ -126,13 +199,13 @@ class NativeTorrentClient {
         this.listeners.push(progressListener);
 
         // Error event
-        const errorListener = TorrentStreamer.addListener('error', (error) => {
+        const errorListener = TorrentStreamer.addListener('error', (error: any) => {
             console.error('Native torrent error:', error.message);
 
-            if (typeof window !== 'undefined' && window.App?.SafeToast) {
-                window.App.SafeToast.error('Torrent Error', error.message);
+            if (typeof window !== 'undefined' && (window as any).App?.SafeToast) {
+                (window as any).App.SafeToast.error('Torrent Error', error.message);
                 if (this.loadingToastId) {
-                    window.App.SafeToast.close(this.loadingToastId);
+                    (window as any).App.SafeToast.close(this.loadingToastId);
                     this.loadingToastId = null;
                 }
             }
@@ -152,10 +225,10 @@ class NativeTorrentClient {
             this.currentStreamUrl = null;
             this.currentTorrentInfo = null;
 
-            if (typeof window !== 'undefined' && window.App?.SafeToast) {
-                window.App.SafeToast.info('Stream Stopped', 'The torrent stream has been stopped.');
+            if (typeof window !== 'undefined' && (window as any).App?.SafeToast) {
+                (window as any).App.SafeToast.info('Stream Stopped', 'The torrent stream has been stopped.');
                 if (this.loadingToastId) {
-                    window.App.SafeToast.close(this.loadingToastId);
+                    (window as any).App.SafeToast.close(this.loadingToastId);
                     this.loadingToastId = null;
                 }
             }
@@ -180,7 +253,7 @@ class NativeTorrentClient {
      * Clean up all event listeners - BUG-003 FIX
      * Prevents listener accumulation across app lifecycle
      */
-    async cleanup() {
+    async cleanup(): Promise<void> {
         console.log(`Cleaning up ${this.listeners.length} native torrent client listeners`);
         for (const listener of this.listeners) {
             try {
@@ -199,12 +272,8 @@ class NativeTorrentClient {
 
     /**
      * Start streaming a torrent
-     * @param {string} magnetURI - Magnet link
-     * @param {Object} options - Streaming options
-     * @param {Function} onProgress - Progress callback
-     * @returns {Promise<Object>} Stream info with video URL
      */
-    async startStream(magnetURI, options = {}, onProgress = null) {
+    async startStream(magnetURI: string, options: StreamOptions = {}, onProgress: ProgressCallback | null = null): Promise<StreamInfo> {
         // Ensure client is initialized
         if (!this.initialized) {
             await this.initialize();
@@ -223,9 +292,9 @@ class NativeTorrentClient {
 
             try {
                 // Set up one-time ready listener for this stream
-                let readyHandler, errorHandler; // BUG-004 FIX: Store handlers to remove both
-                const readyPromise = new Promise((resolveReady) => {
-                    readyHandler = TorrentStreamer.addListener('ready', async (data) => {
+                let readyHandler: PluginListenerHandle, errorHandler: PluginListenerHandle; // BUG-004 FIX: Store handlers to remove both
+                const readyPromise = new Promise<any>((resolveReady) => {
+                    readyHandler = TorrentStreamer.addListener('ready', async (data: any) => {
                         await readyHandler.remove();
                         await errorHandler.remove(); // BUG-004 FIX: Remove error handler too
                         resolveReady(data);
@@ -233,8 +302,8 @@ class NativeTorrentClient {
                 });
 
                 // Set up one-time error listener
-                const errorPromise = new Promise((_, rejectError) => {
-                    errorHandler = TorrentStreamer.addListener('error', async (error) => {
+                const errorPromise = new Promise<any>((_, rejectError) => {
+                    errorHandler = TorrentStreamer.addListener('error', async (error: any) => {
                         await readyHandler.remove(); // BUG-004 FIX: Remove ready handler too
                         await errorHandler.remove();
                         rejectError(new Error(error.message));
@@ -282,9 +351,8 @@ class NativeTorrentClient {
 
     /**
      * Stop current stream
-     * @returns {Promise<void>}
      */
-    async stopStream() {
+    async stopStream(): Promise<void> {
         if (!this.currentStreamUrl) {
             return;
         }
@@ -307,9 +375,8 @@ class NativeTorrentClient {
 
     /**
      * Pause current stream
-     * @returns {Promise<void>}
      */
-    async pauseStream() {
+    async pauseStream(): Promise<void> {
         // BUG-009 FIX: Check if stream is active before pausing
         if (!this.currentStreamUrl) {
             console.warn('No active stream to pause');
@@ -327,9 +394,8 @@ class NativeTorrentClient {
 
     /**
      * Resume current stream
-     * @returns {Promise<void>}
      */
-    async resumeStream() {
+    async resumeStream(): Promise<void> {
         // BUG-009 FIX: Check if stream is active before resuming
         if (!this.currentStreamUrl) {
             console.warn('No active stream to resume');
@@ -347,9 +413,8 @@ class NativeTorrentClient {
 
     /**
      * Get current torrent info
-     * @returns {Object|null} Torrent info
      */
-    async getTorrentInfo() {
+    async getTorrentInfo(): Promise<TorrentStatus | null> {
         if (!this.currentStreamUrl) {
             return null;
         }
@@ -378,10 +443,8 @@ class NativeTorrentClient {
 
     /**
      * Estimate time remaining based on current download speed
-     * @param {Object} status - Torrent status
-     * @returns {number} Time remaining in milliseconds
      */
-    estimateTimeRemaining(status) {
+    private estimateTimeRemaining(status: any): number {
         if (!status.downloadSpeed || status.downloadSpeed === 0) {
             return Infinity;
         }
@@ -394,9 +457,8 @@ class NativeTorrentClient {
 
     /**
      * Get list of all video files in the current torrent
-     * @returns {Promise<Array>} Array of {index, name, size} for each video file
      */
-    async getVideoFileList() {
+    async getVideoFileList(): Promise<VideoFile[]> {
         try {
             const result = await TorrentStreamer.getVideoFileList();
             console.log(`Found ${result.files.length} video files in torrent`);
@@ -410,10 +472,8 @@ class NativeTorrentClient {
     /**
      * Select a specific file index to stream
      * Must be called after metadata is received but before streaming starts
-     * @param {number} fileIndex - Index of the file to select (0-based)
-     * @returns {Promise<boolean>} True if file was selected successfully
      */
-    async selectFile(fileIndex) {
+    async selectFile(fileIndex: number): Promise<boolean> {
         try {
             const result = await TorrentStreamer.selectFile({ fileIndex });
             console.log(`File ${fileIndex} selected successfully`);
@@ -426,10 +486,8 @@ class NativeTorrentClient {
 
     /**
      * Format bytes to human-readable size
-     * @param {number} bytes - Number of bytes
-     * @returns {string} Formatted size
      */
-    formatBytes(bytes) {
+    private formatBytes(bytes: number): string {
         if (bytes === 0) return '0 B';
 
         const k = 1024;
@@ -441,18 +499,15 @@ class NativeTorrentClient {
 
     /**
      * Format speed to human-readable format
-     * @param {number} bytesPerSecond - Bytes per second
-     * @returns {string} Formatted speed
      */
-    formatSpeed(bytesPerSecond) {
+    formatSpeed(bytesPerSecond: number): string {
         return this.formatBytes(bytesPerSecond) + '/s';
     }
 
     /**
      * Find and extract subtitle files from the torrent
-     * @returns {Promise<Array>} Array of subtitle file paths
      */
-    async findSubtitles() {
+    async findSubtitles(): Promise<SubtitleTrack[]> {
         // TODO: Implement subtitle file detection from torrent
         // This should:
         // 1. Check torrent files for .srt, .vtt, .sub files
@@ -468,10 +523,8 @@ class NativeTorrentClient {
 
     /**
      * Download subtitles for the current video
-     * @param {Object} metadata - Video metadata (imdbId, season, episode)
-     * @returns {Promise<Object>} Subtitle URLs by language
      */
-    async downloadSubtitles(metadata = {}) {
+    async downloadSubtitles(metadata: { imdbId?: string; season?: number; episode?: number } = {}): Promise<Record<string, SubtitleTrack>> {
         if (!metadata.imdbId) {
             console.warn('Cannot download subtitles without IMDB ID');
             return {};
@@ -486,15 +539,17 @@ class NativeTorrentClient {
 
             const subtitleRows = doc.querySelectorAll('.table > tbody > tr');
 
-            const subtitles = {};
+            const subtitles: Record<string, SubtitleTrack> = {};
 
             for (const row of subtitleRows) {
-                const lang = row.querySelector('.flag-cell .sub-lang').textContent.toLowerCase();
+                const langElement = row.querySelector('.flag-cell .sub-lang');
                 const downloadCell = row.querySelector('td:nth-child(3)');
-                const downloadLink = downloadCell.querySelector('a').getAttribute('href');
+                const downloadLink = downloadCell?.querySelector('a')?.getAttribute('href');
 
-                if (downloadLink) {
+                if (langElement && downloadLink) {
+                    const lang = langElement.textContent!.toLowerCase();
                     subtitles[lang] = {
+                        lang,
                         url: `https://yifysubtitles.ch${downloadLink}`
                     };
                 }
@@ -510,7 +565,7 @@ class NativeTorrentClient {
     /**
      * Destroy client and cleanup
      */
-    async destroy() {
+    async destroy(): Promise<void> {
         console.log('Destroying native torrent client...');
 
         // Stop current stream
@@ -543,10 +598,11 @@ class NativeTorrentClient {
 // Create singleton instance
 const nativeTorrentClient = new NativeTorrentClient();
 
-// Make available globally
-if (typeof window !== 'undefined') {
-    window.NativeTorrentClient = nativeTorrentClient;
-}
-
+// Export for ES modules
 export { nativeTorrentClient, NativeTorrentClient };
 export default nativeTorrentClient;
+
+// Make available globally
+if (typeof window !== 'undefined') {
+    (window as any).NativeTorrentClient = nativeTorrentClient;
+}
