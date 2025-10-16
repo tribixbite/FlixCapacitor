@@ -3,7 +3,33 @@
  * Extracts metadata (title, year, season, episode) from media filenames
  */
 
+export interface ParsedFilename {
+  title: string;
+  year?: number;
+  season?: number | null;
+  episode?: number | null;
+  type: 'movie' | 'tvshow' | 'other';
+  originalFilename?: string;
+}
+
+interface TVShowResult {
+  title: string;
+  year?: number;
+  season: number | null;
+  episode: number | null;
+}
+
+interface MovieResult {
+  title: string;
+  year?: number;
+}
+
 class FilenameParser {
+    moviePatterns: RegExp[];
+    tvShowPatterns: RegExp[];
+    qualityIndicators: string[];
+    groupTagPattern: RegExp;
+
     constructor() {
         // Movie patterns
         this.moviePatterns = [
@@ -48,12 +74,10 @@ class FilenameParser {
 
     /**
      * Parse a filename to extract metadata
-     * @param {string} filename - The filename to parse
-     * @returns {Object} Parsed metadata {title, year, season, episode, type}
      */
-    parse(filename) {
+    parse(filename: string): ParsedFilename {
         if (!filename) {
-            return { title: 'Unknown', type: 'other' };
+            return { title: 'Unknown', type: 'other' as const };
         }
 
         // Remove file extension
@@ -84,10 +108,8 @@ class FilenameParser {
 
     /**
      * Parse TV show filename
-     * @param {string} baseName - Filename without extension
-     * @returns {Object|null} Parsed TV show data or null
      */
-    parseTVShow(baseName) {
+    parseTVShow(baseName: string): TVShowResult | null {
         for (const pattern of this.tvShowPatterns) {
             const match = baseName.match(pattern);
             if (match) {
@@ -121,10 +143,8 @@ class FilenameParser {
 
     /**
      * Parse movie filename
-     * @param {string} baseName - Filename without extension
-     * @returns {Object|null} Parsed movie data or null
      */
-    parseMovie(baseName) {
+    parseMovie(baseName: string): MovieResult | null {
         for (const pattern of this.moviePatterns) {
             const match = baseName.match(pattern);
             if (match) {
@@ -148,10 +168,8 @@ class FilenameParser {
 
     /**
      * Clean up title text
-     * @param {string} title - Raw title
-     * @returns {string} Cleaned title
      */
-    cleanTitle(title) {
+    cleanTitle(title: string): string {
         if (!title) return 'Unknown';
 
         // Replace dots and underscores with spaces
@@ -176,20 +194,16 @@ class FilenameParser {
 
     /**
      * Classify media type based on filename
-     * @param {string} filename - The filename to classify
-     * @returns {string} 'movie', 'tvshow', or 'other'
      */
-    classifyType(filename) {
+    classifyType(filename: string): 'movie' | 'tvshow' | 'other' {
         const parsed = this.parse(filename);
         return parsed.type;
     }
 
     /**
      * Check if filename matches TV show patterns
-     * @param {string} filename - The filename to check
-     * @returns {boolean} True if likely a TV show
      */
-    isTVShow(filename) {
+    isTVShow(filename: string): boolean {
         if (!filename) return false;
         const baseName = filename.replace(/\.[^.]+$/, '');
         return this.tvShowPatterns.some(pattern => pattern.test(baseName));
@@ -197,10 +211,8 @@ class FilenameParser {
 
     /**
      * Check if filename has a year indicator
-     * @param {string} filename - The filename to check
-     * @returns {boolean} True if year found
      */
-    hasYear(filename) {
+    hasYear(filename: string): boolean {
         if (!filename) return false;
         const yearPattern = /\(?\d{4}\)?/;
         return yearPattern.test(filename);
