@@ -3,9 +3,48 @@
  * Handles fetching, parsing, and managing educational courses from Academic Torrents
  */
 
-import sqliteService from './sqlite-service.js';
+import sqliteService from './sqlite-service';
+import type { SQLiteService } from './sqlite-service';
+
+export interface Course {
+    id?: number;
+    title: string;
+    provider: string;
+    subject_area: string;
+    description?: string;
+    infohash: string;
+    magnet_link: string;
+    size_bytes: number;
+    mirrors: number;
+    downloaders: number;
+    times_completed: number;
+    date_added: number;
+    date_modified: number;
+    thumbnail_url?: string;
+    provider_logo: string;
+    last_updated?: number;
+}
+
+export interface CoursesFilter {
+    provider?: string | null;
+    subject?: string | null;
+    search?: string | null;
+    sorter?: string | null;
+    sort?: string | null;
+    limit?: number;
+    offset?: number;
+}
+
+type ProviderLogos = {
+    [key: string]: string;
+};
 
 class LearningService {
+    private db: SQLiteService;
+    private csvUrl: string;
+    private providerLogos: ProviderLogos;
+    private defaultLogo: string;
+
     constructor() {
         this.db = sqliteService;
         this.csvUrl = 'https://academictorrents.com/collection/video-lectures.csv';
@@ -26,9 +65,8 @@ class LearningService {
 
     /**
      * Fetch courses CSV - tries local embedded file first, then proxy, then falls back to demo data
-     * @returns {Promise<string>} CSV data
      */
-    async fetchCoursesCSV() {
+    async fetchCoursesCSV(): Promise<string> {
         // Try local embedded CSV file first (bundled with app for offline use)
         try {
             console.log('Attempting to fetch local embedded courses CSV...');
@@ -41,7 +79,7 @@ class LearningService {
             } else {
                 console.warn('Local CSV not found (status:', response.status, ')');
             }
-        } catch (localError) {
+        } catch (localError: any) {
             console.warn('Failed to fetch local CSV:', localError.message);
         }
 
@@ -67,7 +105,7 @@ class LearningService {
             const csvData = await response.text();
             console.log('✅ CSV fetched successfully via proxy, size:', csvData.length, 'bytes');
             return csvData;
-        } catch (proxyError) {
+        } catch (proxyError: any) {
             console.warn('Failed to fetch courses via proxy:', proxyError.message);
         }
 
@@ -88,7 +126,7 @@ class LearningService {
             const csvData = await response.text();
             console.log('✅ Direct CSV fetch succeeded, size:', csvData.length, 'bytes');
             return csvData;
-        } catch (directError) {
+        } catch (directError: any) {
             console.warn('Direct fetch also failed:', directError.message);
         }
 
@@ -99,9 +137,8 @@ class LearningService {
 
     /**
      * Get full Academic Torrents course data as embedded fallback
-     * @returns {string} Complete Academic Torrents CSV data with real infohashes
      */
-    getDemoCSV() {
+    getDemoCSV(): string {
         // Full Academic Torrents video lectures dataset embedded for offline/standalone use
         return `TYPE,NAME,INFOHASH,SIZEBYTES,MIRRORS,DOWNLOADERS,TIMESCOMPLETED,DATEADDED,DATEMODIFIED
 Course,"Democratic Development by Larry Diamond",1452d6a906d5d164c1adfc4b81a74a6690a8ec4b,3691712674,9,1,5062,1391175900,1391175900
@@ -279,15 +316,13 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
 
     /**
      * Parse CSV data
-     * @param {string} csvData - Raw CSV string
-     * @returns {Array<Object>} Parsed course objects
      */
-    parseCSV(csvData) {
+    parseCSV(csvData: string): Course[] {
         if (!csvData) return [];
 
         const lines = csvData.split('\n');
         const headers = lines[0].split(',');
-        const courses = [];
+        const courses: Course[] = [];
 
         // Parse each line (skip header)
         for (let i = 1; i < lines.length; i++) {
@@ -297,7 +332,7 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
             // Simple CSV parsing (handles basic cases)
             const values = this.parseCSVLine(line);
             if (values.length === headers.length) {
-                const course = {};
+                const course: Record<string, string> = {};
                 headers.forEach((header, index) => {
                     course[header] = values[index];
                 });
@@ -329,11 +364,9 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
 
     /**
      * Parse a single CSV line handling quoted values
-     * @param {string} line - CSV line
-     * @returns {Array<string>} Parsed values
      */
-    parseCSVLine(line) {
-        const values = [];
+    private parseCSVLine(line: string): string[] {
+        const values: string[] = [];
         let current = '';
         let inQuotes = false;
 
@@ -356,10 +389,8 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
 
     /**
      * Extract provider name from course title
-     * @param {string} title - Course title
-     * @returns {string} Provider name
      */
-    extractProvider(title) {
+    private extractProvider(title: string): string {
         if (!title) return 'Unknown';
 
         // Check for known providers
@@ -401,10 +432,8 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
 
     /**
      * Extract subject area from course title
-     * @param {string} title - Course title
-     * @returns {string} Subject area
      */
-    extractSubject(title) {
+    private extractSubject(title: string): string {
         if (!title) return 'General';
 
         const upperTitle = title.toUpperCase();
@@ -445,29 +474,23 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
 
     /**
      * Create magnet link from infohash and name
-     * @param {string} infohash - Torrent infohash
-     * @param {string} name - Torrent name
-     * @returns {string} Magnet link
      */
-    createMagnetLink(infohash, name) {
+    private createMagnetLink(infohash: string, name: string): string {
         const encodedName = encodeURIComponent(name || 'Course');
         return `magnet:?xt=urn:btih:${infohash}&dn=${encodedName}&tr=udp://tracker.openbittorrent.com:80`;
     }
 
     /**
      * Get provider logo path
-     * @param {string} provider - Provider name
-     * @returns {string} Logo filename
      */
-    getProviderLogo(provider) {
+    private getProviderLogo(provider: string): string {
         return this.providerLogos[provider] || this.defaultLogo;
     }
 
     /**
      * Sync courses from CSV to database
-     * @returns {Promise<number>} Number of courses synced
      */
-    async syncCourses() {
+    async syncCourses(): Promise<number> {
         try {
             console.log('Starting course sync...');
 
@@ -519,10 +542,8 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
 
     /**
      * Get courses with optional filters
-     * @param {Object} filters - {provider, subject, search, limit, offset}
-     * @returns {Promise<Array<Object>>} Courses
      */
-    async getCourses(filters = {}) {
+    async getCourses(filters: CoursesFilter = {}): Promise<Course[]> {
         const {
             provider = null,
             subject = null,
@@ -537,7 +558,7 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
         const sortBy = sorter || sort;
 
         let sql = 'SELECT * FROM learning_courses WHERE 1=1';
-        const params = [];
+        const params: any[] = [];
 
         if (provider && provider !== 'All') {
             sql += ' AND provider = ?';
@@ -555,7 +576,7 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
         }
 
         // Sorting - handle both internal and display names
-        const sortMap = {
+        const sortMap: Record<string, string> = {
             'title': 'title ASC',
             'provider': 'provider ASC, title ASC',
             'subject': 'subject_area ASC, title ASC',
@@ -566,7 +587,7 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
             'date_added': 'last_updated DESC, title ASC',
             'last_updated': 'last_updated DESC, title ASC'
         };
-        const sortColumn = sortMap[sortBy] || sortMap[sortBy?.toLowerCase()] || 'times_completed DESC, title ASC';
+        const sortColumn = sortMap[sortBy as string] || sortMap[sortBy?.toLowerCase() as string] || 'times_completed DESC, title ASC';
 
         sql += ` ORDER BY ${sortColumn}`;
         sql += ' LIMIT ? OFFSET ?';
@@ -577,29 +598,26 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
 
     /**
      * Get list of providers
-     * @returns {Promise<Array<string>>} Provider names
      */
-    async getProviders() {
+    async getProviders(): Promise<string[]> {
         const sql = 'SELECT DISTINCT provider FROM learning_courses ORDER BY provider';
         const rows = await this.db.query(sql);
-        return rows.map(row => row.provider);
+        return rows.map((row: any) => row.provider);
     }
 
     /**
      * Get list of subjects
-     * @returns {Promise<Array<string>>} Subject names
      */
-    async getSubjects() {
+    async getSubjects(): Promise<string[]> {
         const sql = 'SELECT DISTINCT subject_area FROM learning_courses ORDER BY subject_area';
         const rows = await this.db.query(sql);
-        return rows.map(row => row.subject_area);
+        return rows.map((row: any) => row.subject_area);
     }
 
     /**
      * Get course count from cache
-     * @returns {Promise<number>} Number of courses
      */
-    async getCachedCourseCount() {
+    async getCachedCourseCount(): Promise<number> {
         const sql = 'SELECT COUNT(*) as count FROM learning_courses';
         const rows = await this.db.query(sql);
         return rows[0]?.count || 0;
@@ -607,18 +625,15 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
 
     /**
      * Get course by ID
-     * @param {number} id - Course ID
-     * @returns {Promise<Object|null>} Course data
      */
-    async getCourseById(id) {
+    async getCourseById(id: number): Promise<Course | null> {
         return await this.db.findOne('learning_courses', 'id = ?', [id]);
     }
 
     /**
      * Get total courses count - wrapper for getCachedCourseCount for view compatibility
-     * @returns {Promise<number>} Total count of courses
      */
-    async getCoursesCount() {
+    async getCoursesCount(): Promise<number> {
         return this.getCachedCourseCount();
     }
 }
@@ -626,10 +641,11 @@ Course,"Computational NeuroScience",4a16e5c3b12ad16246ff773337851ddca669d0a5,100
 // Export as singleton
 const learningService = new LearningService();
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = learningService;
-}
+// Export for ES modules
+export { learningService, LearningService };
+export default learningService;
 
+// Export for window
 if (typeof window !== 'undefined') {
     window.LearningService = learningService;
 }
