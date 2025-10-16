@@ -4,6 +4,99 @@
 
 ### TypeScript Conversion
 
+#### 12. Service Files TypeScript Conversion ✅
+**Goal:** Convert all core service files to TypeScript for type safety and better maintainability
+
+**Implementation:**
+- Converted 9 service files from JavaScript to TypeScript
+- Added comprehensive type definitions and interfaces for all services
+- Made internal/helper methods private where appropriate
+- Maintained singleton patterns and window exports for compatibility
+
+**Files Converted:**
+1. **filename-parser.ts** (326 lines)
+   - Added ParsedFilename, TVShowResult, MovieResult interfaces
+   - Typed all regex patterns and parsing methods
+
+2. **toast-manager.ts** (459 lines)
+   - Converted IIFE to ES6 class
+   - Added ToastType, ToastOptions, ToastData interfaces
+   - Typed notification system with progress tracking
+
+3. **settings-manager.ts** (249 lines)
+   - Added AppSettings, CustomEndpoint interfaces
+   - Typed all get/set methods with SettingKey type safety
+   - Maintained localStorage persistence
+
+4. **favorites-service.ts** (213 lines)
+   - Added FavoriteItem, ContentType, FavoritesQueryOptions types
+   - Typed SQLite database operations
+   - Support for movies, shows, anime, courses
+
+5. **watchlist-service.ts** (212 lines)
+   - Reused types from favorites-service (identical structure)
+   - Typed watchlist database operations
+   - Separate table management
+
+6. **sqlite-service.ts** (512 lines)
+   - Added QueryOptions, TransactionStatement, DatabaseStats, ExportData interfaces
+   - Typed all database methods (query, run, insert, update, delete)
+   - Added get() and all() aliases for compatibility
+   - Foundation for all other database services
+
+7. **learning-service.ts** (635 lines)
+   - Added Course, CoursesFilter, ProviderLogos types
+   - Typed CSV parsing and Academic Torrents integration
+   - Provider/subject extraction and metadata
+
+8. **library-service.ts** (571 lines)
+   - Added FileInfo, ScanResults, MediaMetadata, LibraryFilters interfaces
+   - LibraryStats, ScanHistory, MediaItem types
+   - Typed folder scanning, metadata fetching, TMDB/OMDB integration
+
+9. **native-torrent-client.ts** (552 lines)
+   - Added TorrentInfo, StreamInfo, ProgressStatus, TorrentStatus interfaces
+   - VideoFile, SubtitleTrack, StreamOptions types
+   - Typed Capacitor plugin event listeners
+   - Imported PluginListenerHandle from @capacitor/core
+
+**Biome Linter/Formatter Setup:**
+- Installed @biomejs/biome package
+- Created biome.json configuration
+- Added npm scripts: lint, lint:fix, format, check
+- Configured for 4-space indents, 120 line width, single quotes
+- Note: Biome binaries not available for Termux/Android (works on desktop/CI)
+
+**Build Results:**
+- Successfully compiled: `dist/assets/main-Bij06PdV.js` (492 kB, gzip: 142 kB)
+- All 9 files build without errors
+- TypeScript strict mode disabled for gradual migration
+
+**Files Created:**
+- src/app/lib/filename-parser.ts
+- src/app/lib/toast-manager.ts
+- src/app/lib/settings-manager.ts
+- src/app/lib/favorites-service.ts
+- src/app/lib/watchlist-service.ts
+- src/app/lib/learning-service.ts
+- src/app/lib/sqlite-service.ts
+- src/app/lib/library-service.ts
+- src/app/lib/native-torrent-client.ts
+- biome.json
+
+**Files Removed:**
+- src/app/lib/filename-parser.js
+- src/app/lib/toast-manager.js
+- src/app/lib/settings-manager.js
+- src/app/lib/favorites-service.js
+- src/app/lib/watchlist-service.js
+- src/app/lib/learning-service.js
+- src/app/lib/sqlite-service.js
+- src/app/lib/library-service.js
+- src/app/lib/native-torrent-client.js
+
+**Commits:** 4b97d3d4, 060f3f24, ff33a1c2, fe0c9b3c, 5963f93e, 198fe388
+
 #### 11. Convert mobile-ui-views to TypeScript ✅
 **Goal:** Migrate core UI controller from JavaScript to TypeScript for better type safety
 
@@ -289,18 +382,21 @@ Used zen-mcp debug tool with gemini-2.5-pro model for systematic investigation:
 ✅ Java 21 compatibility
 ✅ AAPT2 local/CI compatibility
 
-**Technology Upgrades (3/3):**
+**Technology Upgrades (4/4):**
 ✅ TypeScript 5.9.3 integrated with gradual migration
-✅ **Converted mobile-ui-views.js to TypeScript with full type definitions (NEW)**
+✅ Converted mobile-ui-views.js to TypeScript with full type definitions
+✅ **Converted 9 service files to TypeScript with comprehensive interfaces (NEW)**
+✅ **Biome linter/formatter configured (NEW)**
 ⚠️ Bun documented as incompatible with Termux (continue with npm)
 
 ### Next Steps
 1. Test video playback on device to verify CORS fixes
 2. Test permission flow on first video play
 3. Verify GitHub release created with downloadable APKs
-4. Continue TypeScript migration for remaining JavaScript files
-5. Monitor for any remaining issues
+4. Continue TypeScript migration for remaining JavaScript files (providers, views, etc.)
+5. Run Biome linter on desktop/CI environment for code quality checks
+6. Monitor for any remaining issues
 
 ---
 
-Last updated: 2025-10-16 (TypeScript conversion complete, GitHub Actions build triggered)
+Last updated: 2025-10-16 (9 service files converted to TypeScript, Biome linter configured)
