@@ -11,13 +11,61 @@ import OMDbClient from './providers/omdb-client.js';
 import OpenSubtitlesClient from './providers/opensubtitles-client.js';
 import ApiConfig from './config/api-config.js';
 
+// Type definitions
+interface APIClients {
+    TMDB: typeof TMDBClient;
+    OMDb: typeof OMDbClient;
+    OpenSubtitles: typeof OpenSubtitlesClient;
+    Config: typeof ApiConfig;
+}
+
+interface EnhancedMovieMetadata {
+    title: string;
+    year: string;
+    runtime: string;
+    overview: string;
+    tagline: string;
+    imdbId: string;
+    tmdbId: number;
+    poster: string;
+    backdrop: string;
+    genres: string[];
+    ratings: {
+        tmdb: number;
+        imdb: string | null;
+        rottenTomatoes: string | null;
+        metacritic: string | null;
+    };
+    cast: any[];
+    directors: string[];
+    writers: string[];
+    budget: number;
+    revenue: number;
+    status: string;
+    certification: string;
+    _tmdb: any;
+    _omdb: any;
+}
+
+interface SubtitlesForMovie {
+    all: any[];
+    best: any;
+    byLanguage: Record<string, any[]>;
+}
+
 /**
  * Initialize API clients and attach to global App object
  */
-export function initializeAPIClients() {
-    if (!window.App) {
+export function initializeAPIClients(): APIClients {
+    const App = (window as any).App;
+    if (!App) {
         console.error('App object not found. Make sure this runs after App initialization.');
-        return;
+        return {
+            TMDB: TMDBClient,
+            OMDb: OMDbClient,
+            OpenSubtitles: OpenSubtitlesClient,
+            Config: ApiConfig
+        };
     }
 
     // Validate API configuration
@@ -27,7 +75,7 @@ export function initializeAPIClients() {
     }
 
     // Attach clients to global App object
-    window.App.API = {
+    App.API = {
         TMDB: TMDBClient,
         OMDb: OMDbClient,
         OpenSubtitles: OpenSubtitlesClient,
@@ -35,9 +83,9 @@ export function initializeAPIClients() {
     };
 
     // Also expose directly for convenience
-    window.TMDBClient = TMDBClient;
-    window.OMDbClient = OMDbClient;
-    window.OpenSubtitlesClient = OpenSubtitlesClient;
+    (window as any).TMDBClient = TMDBClient;
+    (window as any).OMDbClient = OMDbClient;
+    (window as any).OpenSubtitlesClient = OpenSubtitlesClient;
 
     console.log('✅ API clients initialized and available globally');
     console.log('   Access via: App.API.TMDB, App.API.OMDb, App.API.OpenSubtitles');
@@ -46,7 +94,8 @@ export function initializeAPIClients() {
     return {
         TMDB: TMDBClient,
         OMDb: OMDbClient,
-        OpenSubtitles: OpenSubtitlesClient
+        OpenSubtitles: OpenSubtitlesClient,
+        Config: ApiConfig
     };
 }
 
@@ -54,7 +103,7 @@ export function initializeAPIClients() {
  * Helper: Get enhanced movie metadata from multiple sources
  * Combines TMDB and OMDb data for rich movie information
  */
-export async function getEnhancedMovieMetadata(imdbId) {
+export async function getEnhancedMovieMetadata(imdbId: string): Promise<EnhancedMovieMetadata | null> {
     try {
         // Get TMDB data by IMDb ID
         const tmdbResult = await TMDBClient.findByExternalId(imdbId, 'imdb_id');
@@ -89,7 +138,7 @@ export async function getEnhancedMovieMetadata(imdbId) {
             backdrop: TMDBClient.getBestBackdrop(tmdbDetails),
 
             // Genres
-            genres: tmdbDetails.genres.map(g => g.name),
+            genres: tmdbDetails.genres.map((g: any) => g.name),
 
             // Ratings from multiple sources
             ratings: {
@@ -123,7 +172,7 @@ export async function getEnhancedMovieMetadata(imdbId) {
 /**
  * Helper: Search for subtitles with enhanced matching
  */
-export async function getSubtitlesForMovie(imdbId, language = 'en') {
+export async function getSubtitlesForMovie(imdbId: string, language: string = 'en'): Promise<SubtitlesForMovie | null> {
     try {
         const results = await OpenSubtitlesClient.searchByIMDb(imdbId, language);
         const formatted = OpenSubtitlesClient.formatResults(results, language);

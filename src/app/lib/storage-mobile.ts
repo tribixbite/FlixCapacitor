@@ -5,10 +5,15 @@
 
 import { Preferences } from '@capacitor/preferences';
 
+type StorageCache = Record<string, string>;
+
 /**
  * Storage class that mimics localStorage API but uses Capacitor Preferences
  */
 class MobileStorage {
+    private _cache: StorageCache;
+    private _initialized: boolean;
+
     constructor() {
         this._cache = {};
         this._initialized = false;
@@ -17,7 +22,7 @@ class MobileStorage {
     /**
      * Initialize storage and load all values into cache
      */
-    async initialize() {
+    async initialize(): Promise<void> {
         if (this._initialized) {
             return;
         }
@@ -47,14 +52,14 @@ class MobileStorage {
     /**
      * Get item (synchronous, uses cache)
      */
-    getItem(key) {
+    getItem(key: string): string | null {
         return this._cache[key] !== undefined ? this._cache[key] : null;
     }
 
     /**
      * Set item (updates cache immediately, persists asynchronously)
      */
-    setItem(key, value) {
+    setItem(key: string, value: string): void {
         const stringValue = String(value);
         this._cache[key] = stringValue;
 
@@ -67,7 +72,7 @@ class MobileStorage {
     /**
      * Remove item
      */
-    removeItem(key) {
+    removeItem(key: string): void {
         delete this._cache[key];
 
         // Remove from Preferences asynchronously
@@ -79,7 +84,7 @@ class MobileStorage {
     /**
      * Clear all items
      */
-    clear() {
+    clear(): void {
         this._cache = {};
 
         // Clear Preferences asynchronously
@@ -91,7 +96,7 @@ class MobileStorage {
     /**
      * Get key at index (for compatibility with localStorage)
      */
-    key(index) {
+    key(index: number): string | null {
         const keys = Object.keys(this._cache);
         return keys[index] !== undefined ? keys[index] : null;
     }
@@ -99,14 +104,14 @@ class MobileStorage {
     /**
      * Get number of items
      */
-    get length() {
+    get length(): number {
         return Object.keys(this._cache).length;
     }
 
     /**
      * Get item async (direct from Preferences)
      */
-    async getItemAsync(key) {
+    async getItemAsync(key: string): Promise<string | null> {
         try {
             const { value } = await Preferences.get({ key });
             return value;
@@ -119,7 +124,7 @@ class MobileStorage {
     /**
      * Set item async (waits for persistence)
      */
-    async setItemAsync(key, value) {
+    async setItemAsync(key: string, value: string): Promise<void> {
         const stringValue = String(value);
         this._cache[key] = stringValue;
 
@@ -134,7 +139,7 @@ class MobileStorage {
     /**
      * Get all keys
      */
-    async keys() {
+    async keys(): Promise<string[]> {
         try {
             const { keys } = await Preferences.keys();
             return keys;
@@ -147,10 +152,10 @@ class MobileStorage {
     /**
      * Get all key-value pairs
      */
-    async getAll() {
+    async getAll(): Promise<StorageCache> {
         try {
             const { keys } = await Preferences.keys();
-            const result = {};
+            const result: StorageCache = {};
 
             for (const key of keys) {
                 const { value } = await Preferences.get({ key });
@@ -169,7 +174,7 @@ class MobileStorage {
     /**
      * Migrate data from localStorage to Preferences
      */
-    async migrateFromLocalStorage() {
+    async migrateFromLocalStorage(): Promise<number> {
         console.log('Migrating from localStorage to Preferences...');
 
         let migrated = 0;

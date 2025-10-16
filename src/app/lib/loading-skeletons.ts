@@ -7,7 +7,7 @@ export const LoadingSkeletons = {
     /**
      * Create skeleton for content grid (movies/shows)
      */
-    contentGrid(count = 12) {
+    contentGrid(count: number = 12): string {
         const skeletons = Array.from({ length: count }, () => `
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
@@ -26,7 +26,7 @@ export const LoadingSkeletons = {
     /**
      * Create skeleton for detail view
      */
-    detailView() {
+    detailView(): string {
         return `
             <div class="skeleton-detail">
                 <div class="skeleton-backdrop"></div>
@@ -49,7 +49,7 @@ export const LoadingSkeletons = {
     /**
      * Create skeleton for list items
      */
-    listItems(count = 5) {
+    listItems(count: number = 5): string {
         const skeletons = Array.from({ length: count }, () => `
             <div class="skeleton-list-item">
                 <div class="skeleton-list-icon"></div>
@@ -71,7 +71,7 @@ export const LoadingSkeletons = {
 /**
  * Initialize skeleton styles
  */
-export function initSkeletonStyles() {
+export function initSkeletonStyles(): void {
     if (document.getElementById('skeleton-styles')) {
         return; // Already initialized
     }

@@ -3,27 +3,53 @@
  * Replaces desktop keyboard shortcuts with touch gestures
  */
 
+interface GestureState {
+    touchStartX: number;
+    touchStartY: number;
+    touchStartTime: number;
+    isLongPress: boolean;
+    longPressTimer: ReturnType<typeof setTimeout> | null;
+    lastTapTime: number;
+    tapCount: number;
+}
+
+interface GestureActions {
+    goBack: () => void;
+    showSearch: () => void;
+    toggleFullscreen: () => void;
+    closePlayer: () => void;
+    showSettings: () => void;
+    showAbout: () => void;
+}
+
+interface TouchGesturesAPI {
+    init: () => void;
+    actions: GestureActions;
+}
+
 (function () {
     'use strict';
 
-    // Gesture state tracking
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchStartTime = 0;
-    let isLongPress = false;
-    let longPressTimer = null;
-
+    // Constants
     const SWIPE_THRESHOLD = 50; // pixels
     const LONG_PRESS_DURATION = 500; // ms
     const DOUBLE_TAP_DELAY = 300; // ms
 
-    let lastTapTime = 0;
-    let tapCount = 0;
+    // Gesture state tracking
+    const state: GestureState = {
+        touchStartX: 0,
+        touchStartY: 0,
+        touchStartTime: 0,
+        isLongPress: false,
+        longPressTimer: null,
+        lastTapTime: 0,
+        tapCount: 0
+    };
 
     /**
      * Initialize touch gesture system
      */
-    function init() {
+    function init(): void {
         console.log('Touch gesture system initializing...');
 
         // Swipe gestures for navigation
@@ -32,8 +58,8 @@
         document.addEventListener('touchmove', handleTouchMove, { passive: true });
 
         // Prevent context menu on long press (conflicts with our gestures)
-        document.addEventListener('contextmenu', (e) => {
-            if (isLongPress) {
+        document.addEventListener('contextmenu', (e: Event) => {
+            if (state.isLongPress) {
                 e.preventDefault();
             }
         });
@@ -44,21 +70,23 @@
     /**
      * Handle touch start event
      */
-    function handleTouchStart(e) {
+    function handleTouchStart(e: TouchEvent): void {
         if (e.touches.length === 1) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            touchStartTime = Date.now();
-            isLongPress = false;
+            state.touchStartX = e.touches[0].clientX;
+            state.touchStartY = e.touches[0].clientY;
+            state.touchStartTime = Date.now();
+            state.isLongPress = false;
 
             // Start long press timer
-            longPressTimer = setTimeout(() => {
-                isLongPress = true;
+            state.longPressTimer = setTimeout(() => {
+                state.isLongPress = true;
                 handleLongPress(e);
             }, LONG_PRESS_DURATION);
         } else if (e.touches.length === 2) {
             // Two-finger gesture
-            clearTimeout(longPressTimer);
+            if (state.longPressTimer) {
+                clearTimeout(state.longPressTimer);
+            }
             handleTwoFingerGesture(e);
         }
     }
@@ -66,26 +94,28 @@
     /**
      * Handle touch move event
      */
-    function handleTouchMove(e) {
+    function handleTouchMove(e: TouchEvent): void {
         // Cancel long press if finger moves
-        if (longPressTimer) {
-            clearTimeout(longPressTimer);
+        if (state.longPressTimer) {
+            clearTimeout(state.longPressTimer);
         }
     }
 
     /**
      * Handle touch end event
      */
-    function handleTouchEnd(e) {
-        clearTimeout(longPressTimer);
+    function handleTouchEnd(e: TouchEvent): void {
+        if (state.longPressTimer) {
+            clearTimeout(state.longPressTimer);
+        }
 
-        if (e.changedTouches.length === 1 && !isLongPress) {
+        if (e.changedTouches.length === 1 && !state.isLongPress) {
             const touchEndX = e.changedTouches[0].clientX;
             const touchEndY = e.changedTouches[0].clientY;
-            const touchDuration = Date.now() - touchStartTime;
+            const touchDuration = Date.now() - state.touchStartTime;
 
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
+            const deltaX = touchEndX - state.touchStartX;
+            const deltaY = touchEndY - state.touchStartY;
 
             // Detect swipe
             if (Math.abs(deltaX) > SWIPE_THRESHOLD || Math.abs(deltaY) > SWIPE_THRESHOLD) {
@@ -101,15 +131,16 @@
     /**
      * Handle swipe gestures
      */
-    function handleSwipe(deltaX, deltaY) {
-        if (!window.App || !window.App.vent) return;
+    function handleSwipe(deltaX: number, deltaY: number): void {
+        const App = (window as any).App;
+        if (!App || !App.vent) return;
 
         // Horizontal swipe (left/right navigation)
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
             if (deltaX > 0) {
                 // Swipe right - go back
                 console.log('Gesture: Swipe right (back)');
-                if (window.App.ViewStack && window.App.ViewStack.length > 0) {
+                if (App.ViewStack && App.ViewStack.length > 0) {
                     window.history.back();
                 }
             } else {
@@ -123,7 +154,7 @@
             if (deltaY > 0 && window.scrollY === 0) {
                 // Swipe down from top - refresh
                 console.log('Gesture: Swipe down (refresh)');
-                const currentView = window.App.ViewStack[window.App.ViewStack.length - 1];
+                const currentView = App.ViewStack[App.ViewStack.length - 1];
                 if (currentView && currentView.refresh) {
                     currentView.refresh();
                 }
@@ -134,29 +165,29 @@
     /**
      * Handle tap gestures
      */
-    function handleTap(e) {
+    function handleTap(e: TouchEvent): void {
         const now = Date.now();
-        const timeSinceLastTap = now - lastTapTime;
+        const timeSinceLastTap = now - state.lastTapTime;
 
         if (timeSinceLastTap < DOUBLE_TAP_DELAY) {
             // Double tap detected
-            tapCount++;
-            if (tapCount === 1) {
+            state.tapCount++;
+            if (state.tapCount === 1) {
                 // Triple tap (2nd double tap)
                 handleTripleTap(e);
-                tapCount = 0;
+                state.tapCount = 0;
             }
         } else {
-            tapCount = 0;
+            state.tapCount = 0;
         }
 
-        lastTapTime = now;
+        state.lastTapTime = now;
     }
 
     /**
      * Handle triple tap (Easter egg or special features)
      */
-    function handleTripleTap(e) {
+    function handleTripleTap(e: TouchEvent): void {
         console.log('Gesture: Triple tap');
         // Could toggle debug mode or show easter egg
     }
@@ -164,22 +195,23 @@
     /**
      * Handle long press
      */
-    function handleLongPress(e) {
+    function handleLongPress(e: TouchEvent): void {
         console.log('Gesture: Long press');
 
-        if (!window.App || !window.App.vent) return;
+        const App = (window as any).App;
+        if (!App || !App.vent) return;
 
         // Long press could open context menu or show options
-        const target = e.touches[0].target;
+        const target = e.touches[0].target as HTMLElement;
 
         // Check if long press is on a content item (movie/show poster)
         const contentItem = target.closest('.movie-item, .show-item, .anime-item');
         if (contentItem) {
             // Show options for this content item
-            window.App.vent.trigger('content:longpress', {
+            App.vent.trigger('content:longpress', {
                 element: contentItem,
-                x: touchStartX,
-                y: touchStartY
+                x: state.touchStartX,
+                y: state.touchStartY
             });
         }
     }
@@ -187,10 +219,11 @@
     /**
      * Handle two-finger gestures
      */
-    function handleTwoFingerGesture(e) {
+    function handleTwoFingerGesture(e: TouchEvent): void {
         console.log('Gesture: Two-finger gesture');
 
-        if (!window.App || !window.App.vent) return;
+        const App = (window as any).App;
+        if (!App || !App.vent) return;
 
         // Two-finger tap - toggle favorites or watchlist
         if (e.touches.length === 2) {
@@ -201,23 +234,25 @@
     /**
      * Programmatic gesture triggers for common actions
      */
-    const GestureActions = {
+    const GestureActions: GestureActions = {
         // Navigate back
-        goBack: function () {
-            if (window.App.ViewStack && window.App.ViewStack.length > 0) {
+        goBack(): void {
+            const App = (window as any).App;
+            if (App.ViewStack && App.ViewStack.length > 0) {
                 window.history.back();
             }
         },
 
         // Show search
-        showSearch: function () {
-            if (window.App && window.App.vent) {
-                window.App.vent.trigger('keyboard:togglesearch');
+        showSearch(): void {
+            const App = (window as any).App;
+            if (App && App.vent) {
+                App.vent.trigger('keyboard:togglesearch');
             }
         },
 
         // Toggle fullscreen
-        toggleFullscreen: function () {
+        toggleFullscreen(): void {
             if (document.fullscreenElement) {
                 document.exitFullscreen();
             } else {
@@ -226,32 +261,35 @@
         },
 
         // Close player
-        closePlayer: function () {
-            if (window.App && window.App.PlayerView) {
-                window.App.PlayerView.closePlayer();
+        closePlayer(): void {
+            const App = (window as any).App;
+            if (App && App.PlayerView) {
+                App.PlayerView.closePlayer();
             }
         },
 
         // Show settings
-        showSettings: function () {
-            if (window.App && window.App.vent) {
-                window.App.vent.trigger('settings:show');
+        showSettings(): void {
+            const App = (window as any).App;
+            if (App && App.vent) {
+                App.vent.trigger('settings:show');
             }
         },
 
         // Show about
-        showAbout: function () {
-            if (window.App && window.App.vent) {
-                window.App.vent.trigger('about:show');
+        showAbout(): void {
+            const App = (window as any).App;
+            if (App && App.vent) {
+                App.vent.trigger('about:show');
             }
         }
     };
 
     // Export to global scope
-    window.TouchGestures = {
+    (window as any).TouchGestures = {
         init: init,
         actions: GestureActions
-    };
+    } as TouchGesturesAPI;
 
     // Auto-initialize when DOM is ready
     if (document.readyState === 'loading') {
@@ -259,5 +297,7 @@
     } else {
         init();
     }
-
 })();
+
+// Export for ES modules
+export {};
