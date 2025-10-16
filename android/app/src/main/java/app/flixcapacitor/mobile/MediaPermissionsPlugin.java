@@ -20,6 +20,12 @@ import com.getcapacitor.annotation.PermissionCallback;
 /**
  * Capacitor plugin to request Android 13+ granular media permissions
  * (READ_MEDIA_VIDEO and READ_MEDIA_AUDIO)
+ *
+ * Best Practices (per Gemini):
+ * - Request permissions contextually (when user needs the feature)
+ * - Check shouldShowRationale to provide context
+ * - READ_MEDIA_VIDEO/AUDIO is sufficient - no need for MANAGE_EXTERNAL_STORAGE
+ * - WRITE_EXTERNAL_STORAGE removed - not needed for reading files
  */
 @CapacitorPlugin(
     name = "MediaPermissions",
@@ -33,10 +39,7 @@ import com.getcapacitor.annotation.PermissionCallback;
             alias = "readMediaAudio"
         ),
         @Permission(
-            strings = {
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            },
+            strings = { Manifest.permission.READ_EXTERNAL_STORAGE },
             alias = "storage"
         )
     }
@@ -44,34 +47,40 @@ import com.getcapacitor.annotation.PermissionCallback;
 public class MediaPermissionsPlugin extends Plugin {
 
     /**
+     * Get permission state for a specific permission
+     * Returns: "granted", "prompt-with-rationale", or "prompt"
+     */
+    private String getPermissionState(String permission) {
+        if (ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
+            return "granted";
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+            // User denied once, should show rationale before asking again
+            return "prompt-with-rationale";
+        } else {
+            // Either first time or user selected "Don't ask again"
+            return "prompt";
+        }
+    }
+
+    /**
      * Check if media permissions are granted
+     * Returns detailed state for each permission
      */
     @PluginMethod
     public void checkPermissions(PluginCall call) {
         JSObject result = new JSObject();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
-            boolean videoGranted = ContextCompat.checkSelfPermission(
-                getContext(),
-                Manifest.permission.READ_MEDIA_VIDEO
-            ) == PackageManager.PERMISSION_GRANTED;
+            String videoState = getPermissionState(Manifest.permission.READ_MEDIA_VIDEO);
+            String audioState = getPermissionState(Manifest.permission.READ_MEDIA_AUDIO);
 
-            boolean audioGranted = ContextCompat.checkSelfPermission(
-                getContext(),
-                Manifest.permission.READ_MEDIA_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED;
-
-            result.put("readMediaVideo", videoGranted ? "granted" : "denied");
-            result.put("readMediaAudio", audioGranted ? "granted" : "denied");
-            result.put("granted", videoGranted || audioGranted);
+            result.put("readMediaVideo", videoState);
+            result.put("readMediaAudio", audioState);
+            result.put("granted", videoState.equals("granted") || audioState.equals("granted"));
         } else { // Android 12 and below
-            boolean storageGranted = ContextCompat.checkSelfPermission(
-                getContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED;
-
-            result.put("storage", storageGranted ? "granted" : "denied");
-            result.put("granted", storageGranted);
+            String storageState = getPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE);
+            result.put("storage", storageState);
+            result.put("granted", storageState.equals("granted"));
         }
 
         call.resolve(result);
@@ -83,83 +92,32 @@ public class MediaPermissionsPlugin extends Plugin {
     @PluginMethod
     public void requestPermissions(PluginCall call) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
-            // Request both READ_MEDIA_VIDEO and READ_MEDIA_AUDIO
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-
-                requestPermissionForAliases(
-                    new String[] { "readMediaVideo", "readMediaAudio" },
-                    call,
-                    "permissionsCallback"
-                );
-            } else {
-                // Already granted
-                JSObject result = new JSObject();
-                result.put("readMediaVideo", "granted");
-                result.put("readMediaAudio", "granted");
-                result.put("granted", true);
-                call.resolve(result);
-            }
+            requestPermissionForAliases(
+                new String[] { "readMediaVideo", "readMediaAudio" },
+                call,
+                "permissionsCallback"
+            );
         } else { // Android 12 and below
-            // Request READ_EXTERNAL_STORAGE
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissionForAlias("storage", call, "permissionsCallback");
-            } else {
-                // Already granted
-                JSObject result = new JSObject();
-                result.put("storage", "granted");
-                result.put("granted", true);
-                call.resolve(result);
-            }
+            requestPermissionForAlias("storage", call, "permissionsCallback");
         }
     }
 
     /**
      * Handle permission request result
+     * After request, check permissions returns the updated state
      */
     @PermissionCallback
     private void permissionsCallback(PluginCall call) {
-        JSObject result = new JSObject();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
-            boolean videoGranted = ContextCompat.checkSelfPermission(
-                getContext(),
-                Manifest.permission.READ_MEDIA_VIDEO
-            ) == PackageManager.PERMISSION_GRANTED;
-
-            boolean audioGranted = ContextCompat.checkSelfPermission(
-                getContext(),
-                Manifest.permission.READ_MEDIA_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED;
-
-            result.put("readMediaVideo", videoGranted ? "granted" : "denied");
-            result.put("readMediaAudio", audioGranted ? "granted" : "denied");
-            result.put("granted", videoGranted || audioGranted);
-
-            if (!videoGranted && !audioGranted) {
-                call.reject("Media permissions were denied");
-                return;
-            }
-        } else { // Android 12 and below
-            boolean storageGranted = ContextCompat.checkSelfPermission(
-                getContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED;
-
-            result.put("storage", storageGranted ? "granted" : "denied");
-            result.put("granted", storageGranted);
-
-            if (!storageGranted) {
-                call.reject("Storage permission was denied");
-                return;
-            }
-        }
-
-        call.resolve(result);
+        // Reuse checkPermissions logic for consistency
+        checkPermissions(call);
     }
 
     /**
      * Open app settings page where user can manually grant permissions
+     * Opens ACTION_APPLICATION_DETAILS_SETTINGS (most reliable across devices)
+     *
+     * Note: There's no standard Intent to open the Permissions sub-page directly.
+     * Accompany this with UI instruction: "Tap 'Permissions' → Enable media access"
      */
     @PluginMethod
     public void openSettings(PluginCall call) {
@@ -167,7 +125,7 @@ public class MediaPermissionsPlugin extends Plugin {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
             intent.setData(uri);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
 
             JSObject result = new JSObject();
