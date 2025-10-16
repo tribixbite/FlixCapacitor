@@ -8,22 +8,34 @@ import type { SQLiteService } from '../app/lib/sqlite-service';
 declare global {
   interface Window {
     // Services
-    LibraryService?: typeof LibraryService;
-    SQLiteService?: SQLiteService;
+    LibraryService?: any;
+    SQLiteService?: any;
     TMDBClient?: any;
     OMDbClient?: any;
     TorrentClient?: any;
+    SettingsManager?: any;
+    FavoritesService?: any;
+    WatchlistService?: any;
+    LearningService?: any;
+
+    // Providers
+    TVShowsProvider?: any;
+    AnimeProvider?: any;
+    PublicDomainProvider?: any;
 
     // App instances
     App?: {
       providers?: {
         TMDB?: any;
         OMDb?: any;
+        TVApi?: any;
+        AnimeApi?: any;
       };
       Config?: {
         tmdbApiKey?: string;
         omdbApiKey?: string;
       };
+      UI?: any;
     };
 
     // Capacitor plugins (loaded dynamically)

@@ -3,8 +3,21 @@
  * Gorgeous, modern, mobile-first interface design
  */
 
+import type {
+  Movie,
+  TVShow,
+  Episode,
+  TorrentInfo,
+  TorrentFile,
+  StreamInfo,
+  PlaybackPosition,
+  MobileApp,
+  LearningCourse
+} from '@/types/mobile-ui';
+import type { LibraryItem } from '@/types/library';
+
 // CSS Styles for UI Components
-const componentStyles = `
+const componentStyles: string = `
 <style>
 /* Content Browser Styles */
 .browser-container {
@@ -1216,7 +1229,20 @@ export const UITemplates = {
 
 // UI Controller
 export class MobileUIController {
-    constructor(app) {
+    app: MobileApp;
+    currentView: string | null;
+    navigationHistory: string[];
+    moviesCache: Movie[] | null;
+    currentMovieData: Map<string, Movie | TVShow | LearningCourse>;
+    backButtonListener: (() => boolean) | null;
+    currentVideoElement: HTMLVideoElement | null;
+    playbackPositions: Map<string, PlaybackPosition>;
+    isLoadingStream: boolean;
+    videoPlayerCleanup: { listeners: Array<() => void>; intervals: number[] };
+    Haptics: any;
+    StatusBar: any;
+
+    constructor(app: MobileApp) {
         this.app = app;
         this.currentView = null;
         this.navigationHistory = []; // Track navigation history for back button
@@ -1257,9 +1283,8 @@ export class MobileUIController {
 
     /**
      * Conference Polish: Trigger haptic feedback
-     * @param {string} style - 'light', 'medium', 'heavy'
      */
-    async haptic(style = 'light') {
+    async haptic(style: 'light' | 'medium' | 'heavy' = 'light'): Promise<void> {
         if (this.Haptics) {
             try {
                 await this.Haptics.impact({ style });
@@ -1271,12 +1296,11 @@ export class MobileUIController {
 
     /**
      * Conference Polish: Update status bar color based on current view
-     * @param {string} view - Current view name
      */
-    async updateStatusBarColor(view) {
+    async updateStatusBarColor(view: string): Promise<void> {
         if (!this.StatusBar) return;
 
-        const colors = {
+        const colors: Record<string, string> = {
             'movies': '#0a0a0a',
             'shows': '#0a0a0a',
             'anime': '#0a0a0a',
@@ -1295,9 +1319,9 @@ export class MobileUIController {
         }
     }
 
-    setupNavigation() {
+    setupNavigation(): void {
         // Conference Polish: Import Haptics for tactile feedback
-        let Haptics = null;
+        let Haptics: any = null;
         import('@capacitor/haptics').then(module => {
             Haptics = module.Haptics;
         }).catch(() => {
@@ -1370,7 +1394,7 @@ export class MobileUIController {
         });
     }
 
-    navigateTo(route) {
+    navigateTo(route: string): void {
         const mainRegion = document.querySelector('.main-window-region');
 
         // Hide loading screen
@@ -1425,11 +1449,10 @@ export class MobileUIController {
 
     /**
      * Go back to previous view
-     * @returns {boolean} True if navigated back, false if no history
      */
-    goBack() {
+    goBack(): boolean {
         if (this.navigationHistory.length > 0) {
-            const previousView = this.navigationHistory.pop();
+            const previousView = this.navigationHistory.pop()!;
             // Navigate without adding to history
             const tempHistory = this.navigationHistory;
             this.navigationHistory = [];
@@ -1440,7 +1463,7 @@ export class MobileUIController {
         return false;
     }
 
-    async showMovies() {
+    async showMovies(): Promise<void> {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion.innerHTML = UITemplates.browserView('Movies', 'movies');
 
@@ -1467,9 +1490,9 @@ export class MobileUIController {
         }
     }
 
-    async showShows() {
+    async showShows(): Promise<void> {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.browserView('TV Shows', 'shows');
+        mainRegion!.innerHTML = UITemplates.browserView('TV Shows', 'shows');
 
         const contentGrid = document.querySelector('.content-grid');
 
@@ -1509,9 +1532,9 @@ export class MobileUIController {
         }
     }
 
-    async showAnime() {
+    async showAnime(): Promise<void> {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.browserView('Anime', 'anime');
+        mainRegion!.innerHTML = UITemplates.browserView('Anime', 'anime');
 
         const contentGrid = document.querySelector('.content-grid');
 
@@ -1668,9 +1691,9 @@ export class MobileUIController {
         }
     }
 
-    async showLibrary() {
+    async showLibrary(): Promise<void> {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.browserView('Library', 'library');
+        mainRegion!.innerHTML = UITemplates.browserView('Library', 'library');
 
         // Replace filter tabs with folder-based filters
         const filterTabs = document.querySelector('.filter-tabs');
@@ -1764,7 +1787,7 @@ export class MobileUIController {
      * Show library with folder filter applied
      * @param {string} folder - Folder to filter by ('all', 'movies', 'downloads', 'dcim', 'videos')
      */
-    async showLibraryFiltered(folder) {
+    async showLibraryFiltered(folder: string): Promise<void> {
         const contentGrid = document.querySelector('.content-grid');
 
         try {
@@ -2017,9 +2040,9 @@ export class MobileUIController {
         }
     }
 
-    async showLearning() {
+    async showLearning(): Promise<void> {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.browserView('Learning', 'learning');
+        mainRegion!.innerHTML = UITemplates.browserView('Learning', 'learning');
 
         // Replace filter tabs with provider-based filters
         const filterTabs = document.querySelector('.filter-tabs');
@@ -2054,14 +2077,14 @@ export class MobileUIController {
         await this.renderRealCourses();
     }
 
-    async showWatchlist() {
+    async showWatchlist(): Promise<void> {
         // Redirect to favorites with watchlist tab
         await this.showFavorites('watchlist');
     }
 
-    showSettings() {
+    showSettings(): void {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.settingsView();
+        mainRegion!.innerHTML = UITemplates.settingsView();
 
         // Get settings manager
         const settings = window.SettingsManager;
@@ -3007,7 +3030,7 @@ export class MobileUIController {
         this.showVideoPlayer(movie, selectedTorrent, selectedQuality);
     }
 
-    async playLocalFile(movie) {
+    async playLocalFile(movie: LibraryItem): Promise<void> {
         console.log('Playing local file from library:', movie.file_path);
 
         const mainRegion = document.querySelector('.main-window-region');
@@ -3231,7 +3254,7 @@ export class MobileUIController {
         });
     }
 
-    async showVideoPlayer(movie, torrent, quality) {
+    async showVideoPlayer(movie: Movie | Episode | LibraryItem, torrent: TorrentInfo | null, quality: string): Promise<void> {
         // Prevent concurrent calls - if already loading a stream, ignore
         if (this.isLoadingStream) {
             console.warn('Stream already loading, ignoring duplicate call');
