@@ -3241,6 +3241,73 @@ export class MobileUIController {
         try {
             this.isLoadingStream = true; // Set flag to prevent concurrent calls
 
+            // Check and request media permissions before playing video
+            try {
+                const { Capacitor } = await import('@capacitor/core');
+
+                if (Capacitor.Plugins.MediaPermissions) {
+                    console.log('Checking media permissions before video playback...');
+                    const checkResult = await Capacitor.Plugins.MediaPermissions.checkPermissions();
+
+                    if (!checkResult.granted) {
+                        console.log('Permissions not granted, requesting...');
+                        const requestResult = await Capacitor.Plugins.MediaPermissions.requestPermissions();
+
+                        if (!requestResult.granted) {
+                            // User denied permissions - show error instead of trying to play
+                            this.isLoadingStream = false;
+                            const mainRegion = document.querySelector('.main-window-region');
+                            mainRegion.innerHTML = `
+                                <div class="content-empty">
+                                    <div class="empty-icon">🔒</div>
+                                    <div class="empty-title">Permission Required</div>
+                                    <div class="empty-message">FlixCapacitor needs access to your media files to play videos.</div>
+                                    <button class="open-settings-btn" id="video-settings-btn" style="
+                                        margin-top: 1.5rem;
+                                        padding: 0.875rem 2rem;
+                                        background: linear-gradient(135deg, #10b981, #059669);
+                                        border: none;
+                                        border-radius: 8px;
+                                        color: white;
+                                        font-size: 1rem;
+                                        font-weight: 600;
+                                        cursor: pointer;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.5rem;
+                                        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                                    ">
+                                        <span>⚙️</span>
+                                        <span>Open Settings</span>
+                                    </button>
+                                    <div class="empty-message" style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.7;">
+                                        Grant "Photos and videos" and "Music and audio" permissions, then try again
+                                    </div>
+                                </div>
+                            `;
+
+                            // Add settings button handler
+                            const settingsBtn = document.getElementById('video-settings-btn');
+                            if (settingsBtn) {
+                                settingsBtn.addEventListener('click', async () => {
+                                    try {
+                                        await Capacitor.Plugins.MediaPermissions.openSettings();
+                                    } catch (error) {
+                                        console.error('Failed to open settings:', error);
+                                        alert('Please open Settings → Apps → FlixCapacitor → Permissions manually.');
+                                    }
+                                });
+                            }
+                            return;
+                        }
+                    }
+                    console.log('Media permissions granted, proceeding with video playback');
+                }
+            } catch (permError) {
+                console.error('Permission check failed:', permError);
+                // Continue anyway - might work without explicit permissions
+            }
+
             const mainRegion = document.querySelector('.main-window-region');
 
             // Truncate title if too long for mobile
