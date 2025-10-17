@@ -17,6 +17,49 @@ declare global {
     FavoritesService?: any;
     WatchlistService?: any;
     LearningService?: any;
+    Database?: any;
+    FilenameParser?: any;
+
+    // Mobile compatibility shims
+    win?: any;
+    nw?: any;
+    os?: {
+      platform: () => string;
+      type: () => string;
+    };
+    path?: {
+      join: (...parts: string[]) => string;
+      extname: (filepath: string) => string;
+      basename: (filepath: string, ext?: string) => string;
+      dirname: (filepath: string) => string;
+    };
+    fs?: {
+      existsSync: (path: string) => Promise<boolean>;
+      readFileSync: (path: string, encoding?: string) => Promise<string>;
+      writeFile: (path: string, data: string, callback?: (error: any) => void) => Promise<void>;
+      appendFileSync: (path: string, data: string) => Promise<void>;
+      unlinkSync: (path: string, callback?: (error: any) => void) => Promise<void>;
+      readdirSync: (path: string) => Promise<string[]>;
+      lstatSync: (path: string) => Promise<{ isDirectory: () => boolean; isFile: () => boolean }>;
+      rmdirSync: (path: string) => Promise<void>;
+    };
+    data_path?: string;
+    ScreenResolution?: {
+      readonly SD: boolean;
+      readonly HD: boolean;
+      readonly FullHD: boolean;
+      readonly QuadHD: boolean;
+      readonly UltraHD: boolean;
+      readonly Standard: boolean;
+      readonly Retina: boolean;
+      readonly hasTouch: boolean;
+    };
+    Q?: {
+      defer: () => { promise: Promise<any>; resolve: (value?: any) => void; reject: (reason?: any) => void };
+      Promise: (fn: any) => Promise<any>;
+      all: typeof Promise.all;
+      when: typeof Promise.resolve;
+    };
 
     // Providers
     TVShowsProvider?: any;
@@ -24,19 +67,7 @@ declare global {
     PublicDomainProvider?: any;
 
     // App instances
-    App?: {
-      providers?: {
-        TMDB?: any;
-        OMDb?: any;
-        TVApi?: any;
-        AnimeApi?: any;
-      };
-      Config?: {
-        tmdbApiKey?: string;
-        omdbApiKey?: string;
-      };
-      UI?: any;
-    };
+    App?: MobileApp;
 
     // Capacitor plugins (loaded dynamically)
     Capacitor?: any;
@@ -57,6 +88,43 @@ declare global {
 
     // Development
     __DEV__?: boolean;
+
+    // Deep linking
+    _pendingDeepLink?: string;
+  }
+
+  interface MobileApp {
+    providers?: {
+      TMDB?: any;
+      OMDb?: any;
+      TVApi?: any;
+      AnimeApi?: any;
+      getProviderForType?: (type: string) => any;
+    };
+    Config?: {
+      tmdbApiKey?: string;
+      omdbApiKey?: string;
+      cache?: any;
+      getProviderForType?: (type: string) => any;
+    };
+    UI?: any;
+    Model?: any;
+    PlayerView?: any;
+    ViewStack?: any;
+    userBookmarks?: any;
+    watchedMovies?: any;
+    watchedShows?: any;
+    vent?: {
+      trigger: (event: string, ...args: any[]) => void;
+      on: (event: string, callback: (...args: any[]) => void) => void;
+    };
+    Trakt?: any;
+    TVShowTime?: any;
+    Updater?: {
+      onUpdateAvailable?: (updateInfo: any) => void;
+    };
+    cleanup?: () => void;
+    ToastManager?: any;
   }
 
   // Environment variables

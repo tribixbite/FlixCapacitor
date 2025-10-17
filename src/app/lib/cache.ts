@@ -120,16 +120,16 @@ class Cache {
         const Q: any = (window as any).Q;
         const _: any = (window as any)._;
 
-        // getItems can be used with scalar id
-        ids = $.makeArray(ids);
+        // getItems can be used with scalar id - normalize to array
+        const idsArray: string[] = $.makeArray(ids);
 
         const deferred = Q.defer();
         db.transaction((tx: SQLTransaction) => {
             // Select item in db
-            const query = 'SELECT * FROM ' + self.table + ' WHERE ' + buildWhereIn(ids);
+            const query = 'SELECT * FROM ' + self.table + ' WHERE ' + buildWhereIn(idsArray);
             tx.executeSql(
                 query,
-                ids,
+                idsArray,
                 (tx: SQLTransaction, results: SQLResultSet) => {
                     const cachedData: CachedData = {};
                     const expiredData: string[] = [];
@@ -182,7 +182,7 @@ class Cache {
         const now = +new Date();
 
         self.getItems(_.keys(items)).then((cachedData: CachedData) => {
-            db.transaction((tx: SQLTransaction) => {
+            (db as any).transaction((tx: SQLTransaction) => {
                 _.each(cachedData, (item: any, id: string) => {
                     const data = JSON.stringify(item);
                     tx.executeSql(
@@ -197,7 +197,7 @@ class Cache {
                     const query = 'INSERT INTO ' + self.table + ' VALUES (?, ?, ?, ?)';
                     tx.executeSql(query, [id, data, ttl, now]);
                 });
-            }, (err: SQLError) => {
+            }, (err: any) => {
                 (window as any).error('db.transaction()', err);
             });
         });
@@ -224,7 +224,7 @@ class Cache {
         return Q.Promise((resolve: () => void, reject: (err: any) => void) => {
             db.transaction((tx: SQLTransaction) => {
                 const query = 'DELETE FROM ' + self.table;
-                tx.executeSql(query, () => {});
+                tx.executeSql(query, []);
                 resolve();
             });
         });

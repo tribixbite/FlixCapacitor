@@ -379,10 +379,10 @@ function initMarionette(): any {
     });
 
     // Create old v2 style vent
-    AppInstance.vent = Backbone.Radio.channel('v2-vent');
+    (AppInstance as any).vent = Backbone.Radio.channel('v2-vent');
 
     // View stack for navigation
-    AppInstance.ViewStack = [];
+    (AppInstance as any).ViewStack = [];
 
     // Make globally available
     window.App = AppInstance;
@@ -420,8 +420,8 @@ function initMarionette(): any {
         try {
             // Initialize the beautiful mobile UI
             console.log('Creating MobileUIController...');
-            const uiController = new MobileUIController(AppInstance);
-            AppInstance.UI = uiController;
+            const uiController = new MobileUIController(AppInstance as any);
+            (AppInstance as any).UI = uiController;
             console.log('MobileUIController created successfully');
 
             // Show the Movies view by default
@@ -432,7 +432,7 @@ function initMarionette(): any {
             }, 700);
 
             // Trigger app started event
-            AppInstance.vent.trigger('app:started');
+            (AppInstance as any).vent.trigger('app:started');
 
             // Process any pending deep links
             if (window._pendingDeepLink) {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * FlixCapacitor - Beautiful UI View Components
  * Gorgeous, modern, mobile-first interface design

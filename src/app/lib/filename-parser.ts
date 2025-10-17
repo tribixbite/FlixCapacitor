@@ -113,10 +113,11 @@ class FilenameParser {
         for (const pattern of this.tvShowPatterns) {
             const match = baseName.match(pattern);
             if (match) {
-                const result = {
+                const result: any = {
                     title: this.cleanTitle(match[1]),
                     season: null,
-                    episode: null
+                    episode: null,
+                    year: null
                 };
 
                 // Handle different capture group arrangements
@@ -148,8 +149,9 @@ class FilenameParser {
         for (const pattern of this.moviePatterns) {
             const match = baseName.match(pattern);
             if (match) {
-                const result = {
-                    title: this.cleanTitle(match[1])
+                const result: any = {
+                    title: this.cleanTitle(match[1]),
+                    year: null
                 };
 
                 if (match[2]) {

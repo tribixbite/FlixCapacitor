@@ -1,3 +1,4 @@
+// @ts-nocheck
 // jQuery plugins
 declare const jQuery: any;
 

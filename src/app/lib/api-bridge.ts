@@ -21,8 +21,8 @@ interface APIClients {
 
 interface EnhancedMovieMetadata {
     title: string;
-    year: string;
-    runtime: string;
+    year: string | number;
+    runtime: string | number;
     overview: string;
     tagline: string;
     imdbId: string;
@@ -31,10 +31,10 @@ interface EnhancedMovieMetadata {
     backdrop: string;
     genres: string[];
     ratings: {
-        tmdb: number;
-        imdb: string | null;
-        rottenTomatoes: string | null;
-        metacritic: string | null;
+        tmdb: number | string;
+        imdb: number | string | null;
+        rottenTomatoes: number | string | null;
+        metacritic: number | string | null;
     };
     cast: any[];
     directors: string[];
@@ -50,7 +50,7 @@ interface EnhancedMovieMetadata {
 interface SubtitlesForMovie {
     all: any[];
     best: any;
-    byLanguage: Record<string, any[]>;
+    byLanguage: Record<string, any[]> | {};
 }
 
 /**

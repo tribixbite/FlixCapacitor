@@ -80,9 +80,15 @@ window.fs = {
         const result = await Filesystem.readFile({
             path,
             directory: Directory.Data,
-            encoding: encoding === 'utf8' ? 'utf8' : undefined
+            encoding: encoding === 'utf8' ? ('utf8' as any) : undefined
         });
-        return result.data;
+        // Always return string - convert Blob to string if needed
+        if (typeof result.data === 'string') {
+            return result.data;
+        }
+        // If Blob, convert to text
+        const blob = result.data as Blob;
+        return await blob.text();
     },
     writeFile: async (path, data, callback) => {
         try {
@@ -163,6 +169,9 @@ const ScreenResolution = {
     },
     get Standard() {
         return this.HD;
+    },
+    get Retina() {
+        return window.devicePixelRatio >= 2;
     },
     get hasTouch() {
         return true; // Always true on mobile

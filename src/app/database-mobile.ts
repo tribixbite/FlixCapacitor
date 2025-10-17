@@ -3,20 +3,24 @@
  * Replaces NeDB with SQLite while maintaining the same API
  */
 
+import _ from 'lodash';
 import sqliteService from './lib/sqlite-service.ts';
 
 const db = sqliteService;
+
+// Helper to access App with proper typing
+const getApp = (): any => (window as any).App;
 
 const startupTime = window.performance.now();
 console.debug('Database initializing with SQLite...');
 
 // Helper functions
 const extractIds = function (items: any[]): string[] {
-    return _.pluck(items, 'imdb_id');
+    return _.map(items, 'imdb_id');
 };
 
 const extractMovieIds = function (items: any[]): string[] {
-    return _.pluck(items, 'movie_id');
+    return _.map(items, 'movie_id');
 };
 
 const Database: any = {
@@ -61,8 +65,9 @@ const Database: any = {
      * BOOKMARKS
      */
     addBookmark: async function (imdb_id, type) {
-        if (window.App && window.App.userBookmarks) {
-            window.App.userBookmarks.push(imdb_id);
+        const App = getApp();
+        if (App && App.userBookmarks) {
+            App.userBookmarks.push(imdb_id);
         }
 
         try {
@@ -82,10 +87,11 @@ const Database: any = {
     },
 
     deleteBookmark: async function (imdb_id) {
-        if (window.App && window.App.userBookmarks) {
-            const index = window.App.userBookmarks.indexOf(imdb_id);
+        const App = getApp();
+        if (App && App.userBookmarks) {
+            const index = App.userBookmarks.indexOf(imdb_id);
             if (index !== -1) {
-                window.App.userBookmarks.splice(index, 1);
+                App.userBookmarks.splice(index, 1);
             }
         }
 
@@ -130,8 +136,9 @@ const Database: any = {
             return;
         }
 
-        if (window.App && window.App.watchedMovies) {
-            window.App.watchedMovies.push(data.imdb_id);
+        const App = getApp();
+        if (App && App.watchedMovies) {
+            App.watchedMovies.push(data.imdb_id);
         }
 
         try {
@@ -146,9 +153,10 @@ const Database: any = {
     },
 
     markMovieAsNotWatched: async function (data) {
-        if (window.App && window.App.watchedMovies) {
-            while (window.App.watchedMovies.indexOf(data.imdb_id) !== -1) {
-                window.App.watchedMovies.splice(window.App.watchedMovies.indexOf(data.imdb_id), 1);
+        const App = getApp();
+        if (App && App.watchedMovies) {
+            while (App.watchedMovies.indexOf(data.imdb_id) !== -1) {
+                App.watchedMovies.splice(App.watchedMovies.indexOf(data.imdb_id), 1);
             }
         }
 
@@ -241,8 +249,9 @@ const Database: any = {
             // Check if this is the first episode watched for this show
             const existingEpisodes = await db.find('watched_episodes', 'tvdb_id = ?', [data.tvdb_id.toString()]);
 
-            if (existingEpisodes.length === 0 && window.App && window.App.watchedShows) {
-                window.App.watchedShows.push(data.imdb_id.toString());
+            const App = getApp();
+            if (existingEpisodes.length === 0 && App && App.watchedShows) {
+                App.watchedShows.push(data.imdb_id.toString());
             }
 
             // Insert the watched episode
@@ -254,8 +263,8 @@ const Database: any = {
             });
 
             // Trigger event
-            if (window.App && window.App.vent) {
-                window.App.vent.trigger('show:watched:' + data.imdb_id, data);
+            if (App && App.vent) {
+                App.vent.trigger('show:watched:' + data.imdb_id, data);
             }
 
             return data;
@@ -298,16 +307,17 @@ const Database: any = {
             // Check if there are any remaining watched episodes for this show
             const remainingEpisodes = await db.find('watched_episodes', 'tvdb_id = ?', [data.tvdb_id.toString()]);
 
-            if (remainingEpisodes.length === 0 && window.App && window.App.watchedShows) {
-                const index = window.App.watchedShows.indexOf(data.imdb_id.toString());
+            const App = getApp();
+            if (remainingEpisodes.length === 0 && App && App.watchedShows) {
+                const index = App.watchedShows.indexOf(data.imdb_id.toString());
                 if (index !== -1) {
-                    window.App.watchedShows.splice(index, 1);
+                    App.watchedShows.splice(index, 1);
                 }
             }
 
             // Trigger event
-            if (window.App && window.App.vent) {
-                window.App.vent.trigger('show:unwatched:' + data.tvdb_id, data);
+            if (App && App.vent) {
+                App.vent.trigger('show:unwatched:' + data.tvdb_id, data);
             }
 
             return data;
@@ -371,36 +381,38 @@ const Database: any = {
      */
     getUserInfo: async function () {
         try {
+            const App = getApp();
+
             // Load bookmarks
             const bookmarks = await Database.getAllBookmarks();
-            if (window.App) {
-                window.App.userBookmarks = bookmarks;
+            if (App) {
+                App.userBookmarks = bookmarks;
             }
 
             // Load watched movies
             const watchedMoviesData = await Database.getMoviesWatched();
             const watchedMovies = extractMovieIds(watchedMoviesData);
-            if (window.App) {
-                window.App.watchedMovies = watchedMovies;
+            if (App) {
+                App.watchedMovies = watchedMovies;
             }
 
             // Load watched episodes
             const watchedEpisodesData = await Database.getAllEpisodesWatched();
             const watchedShows = extractIds(watchedEpisodesData);
-            if (window.App) {
-                window.App.watchedShows = _.uniq(watchedShows);
+            if (App) {
+                App.watchedShows = _.uniq(watchedShows);
             }
 
             console.log('User info loaded:', {
                 bookmarks: bookmarks.length,
                 watchedMovies: watchedMovies.length,
-                watchedShows: window.App.watchedShows.length
+                watchedShows: App ? App.watchedShows.length : 0
             });
 
             return {
                 bookmarks,
                 watchedMovies,
-                watchedShows: window.App.watchedShows
+                watchedShows: App ? App.watchedShows : []
             };
         } catch (error) {
             console.error('Failed to load user info:', error);
@@ -423,8 +435,10 @@ const Database: any = {
             await db.truncate('watched_episodes');
 
             // Clear IndexedDB cache
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.deleteDatabase(window.App.Config.cache.name);
+            const App = getApp();
+            return new Promise<void>((resolve, reject) => {
+                const cacheName = App?.Config?.cache?.name || 'app_cache';
+                const req = indexedDB.deleteDatabase(cacheName);
                 req.onsuccess = () => resolve();
                 req.onerror = () => resolve();
             });
@@ -443,12 +457,14 @@ const Database: any = {
         // Ensure SQLite is initialized
         await db.initialize();
 
+        const App = getApp();
+
         // Set up event listeners
-        if (window.App && window.App.vent) {
-            window.App.vent.on('show:watched', _.bind(this.markEpisodeAsWatched, this));
-            window.App.vent.on('show:unwatched', _.bind(this.markEpisodeAsNotWatched, this));
-            window.App.vent.on('movie:watched', _.bind(this.markMovieAsWatched, this));
-            window.App.vent.on('movie:unwatched', _.bind(this.markMovieAsNotWatched, this));
+        if (App && App.vent) {
+            App.vent.on('show:watched', _.bind(this.markEpisodeAsWatched, this));
+            App.vent.on('show:unwatched', _.bind(this.markEpisodeAsNotWatched, this));
+            App.vent.on('movie:watched', _.bind(this.markMovieAsWatched, this));
+            App.vent.on('movie:unwatched', _.bind(this.markMovieAsNotWatched, this));
         }
 
         try {
@@ -459,10 +475,10 @@ const Database: any = {
             // No need to load from database
 
             // Trigger events
-            if (window.App && window.App.vent) {
-                window.App.vent.trigger('initHttpApi');
-                window.App.vent.trigger('db:ready');
-                window.App.vent.trigger('stream:loadExistTorrents');
+            if (App && App.vent) {
+                App.vent.trigger('initHttpApi');
+                App.vent.trigger('db:ready');
+                App.vent.trigger('stream:loadExistTorrents');
             }
 
             // Set app language (from Preferences)
@@ -476,18 +492,18 @@ const Database: any = {
             }
 
             // Initialize metadata providers
-            if (window.App && window.App.Config) {
-                window.App.Trakt = window.App.Config.getProviderForType('metadata');
+            if (App && App.Config) {
+                App.Trakt = App.Config.getProviderForType('metadata');
 
-                window.App.TVShowTime = window.App.Config.getProviderForType('tvst');
-                if (window.App.TVShowTime && window.App.TVShowTime.restoreToken) {
-                    window.App.TVShowTime.restoreToken();
+                App.TVShowTime = App.Config.getProviderForType('tvst');
+                if (App.TVShowTime && App.TVShowTime.restoreToken) {
+                    App.TVShowTime.restoreToken();
                 }
             }
 
             // Check for updates
-            if (window.App && window.App.Updater) {
-                const updater = new window.App.Updater();
+            if (App && App.Updater) {
+                const updater = new App.Updater();
                 updater.update().catch(function (err) {
                     console.error('updater.update()', err);
                 });

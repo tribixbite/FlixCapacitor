@@ -7,7 +7,6 @@ import sqliteService from './sqlite-service';
 import filenameParser from './filename-parser';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import type { SQLiteService } from './sqlite-service';
-import type { FilenameParser } from './filename-parser';
 
 export interface FileInfo {
     path: string;
@@ -90,7 +89,7 @@ type ProgressCallback = (current: number, total: number | null, filename: string
 
 class LibraryService {
     private db: SQLiteService;
-    private parser: FilenameParser;
+    private parser: typeof filenameParser;
     private currentScan: { id: number } | null;
     private scanCancelled: boolean;
     private videoExtensions: string[];
