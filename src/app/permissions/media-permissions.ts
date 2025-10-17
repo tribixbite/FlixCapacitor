@@ -56,6 +56,7 @@ class MediaPermissionsManager {
 
     try {
       const status = await this.getStatus();
+      console.log('[Permissions] Current status:', JSON.stringify(status));
 
       if (status.granted) {
         console.log('[Permissions] Media permissions already granted');
@@ -63,7 +64,10 @@ class MediaPermissionsManager {
       }
 
       // Check if permanently denied (user clicked "Don't ask again")
-      if (!this.canPrompt(status)) {
+      const canPrompt = this.canPrompt(status);
+      console.log('[Permissions] Can prompt?', canPrompt);
+
+      if (!canPrompt) {
         console.warn('[Permissions] Media permissions permanently denied');
         return { granted: false, permanentlyDenied: true };
       }
@@ -71,6 +75,7 @@ class MediaPermissionsManager {
       // Show system permission dialog (status is 'prompt' or 'prompt-with-rationale')
       console.log('[Permissions] Requesting media permissions via system dialog...');
       const requestStatus = await MediaPermissionsPluginInternal.requestPermissions();
+      console.log('[Permissions] Request result:', JSON.stringify(requestStatus));
 
       if (requestStatus.granted) {
         console.log('[Permissions] Media permissions granted');
@@ -142,17 +147,26 @@ class MediaPermissionsManager {
       const videoState = status.readMediaVideo || 'denied';
       const audioState = status.readMediaAudio || 'denied';
 
-      return videoState === 'prompt' ||
+      console.log('[Permissions] Android 13+ - videoState:', videoState, 'audioState:', audioState);
+
+      const result = videoState === 'prompt' ||
              videoState === 'prompt-with-rationale' ||
              audioState === 'prompt' ||
              audioState === 'prompt-with-rationale';
+
+      console.log('[Permissions] Android 13+ canPrompt result:', result);
+      return result;
     }
 
     // For Android 12 and below
     if (status.storage !== undefined) {
-      return status.storage === 'prompt' || status.storage === 'prompt-with-rationale';
+      console.log('[Permissions] Android 12- - storage:', status.storage);
+      const result = status.storage === 'prompt' || status.storage === 'prompt-with-rationale';
+      console.log('[Permissions] Android 12- canPrompt result:', result);
+      return result;
     }
 
+    console.log('[Permissions] No permission status fields, returning false');
     return false;
   }
 
