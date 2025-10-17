@@ -3,23 +3,23 @@
  * Replaces NeDB with SQLite while maintaining the same API
  */
 
-import sqliteService from './lib/sqlite-service.js';
+import sqliteService from './lib/sqlite-service.ts';
 
 const db = sqliteService;
 
-var startupTime = window.performance.now();
+const startupTime = window.performance.now();
 console.debug('Database initializing with SQLite...');
 
 // Helper functions
-var extractIds = function (items) {
+const extractIds = function (items: any[]): string[] {
     return _.pluck(items, 'imdb_id');
 };
 
-var extractMovieIds = function (items) {
+const extractMovieIds = function (items: any[]): string[] {
     return _.pluck(items, 'movie_id');
 };
 
-var Database = {
+const Database: any = {
     /**
      * MOVIES
      */
