@@ -16,6 +16,7 @@ import type {
   LearningCourse
 } from '@/types/mobile-ui';
 import type { LibraryItem } from '@/types/library';
+import { MediaPermissions } from '../permissions/media-permissions';
 
 // CSS Styles for UI Components
 const componentStyles: string = `
@@ -1898,35 +1899,15 @@ export class MobileUIController {
 
         const contentGrid = document.querySelector('.content-grid');
 
-        // Request storage permissions first
+        // Request storage permissions contextually
         try {
-            const { Capacitor } = await import('@capacitor/core');
+            const hasPermission = await MediaPermissions.ensurePermissions();
 
-            console.log('Checking media permissions...');
+            if (!hasPermission) {
+                const isPermanentlyDenied = await MediaPermissions.isPermanentlyDenied();
 
-            // Try custom MediaPermissions plugin first (Android 13+ support)
-            if (Capacitor.Plugins.MediaPermissions) {
-                console.log('Using native MediaPermissions plugin');
-                const checkResult = await Capacitor.Plugins.MediaPermissions.checkPermissions();
-                console.log('Permission check result:', checkResult);
-
-                if (!checkResult.granted) {
-                    console.log('Requesting media permissions...');
-                    const requestResult = await Capacitor.Plugins.MediaPermissions.requestPermissions();
-                    console.log('Permission request result:', requestResult);
-
-                    if (!requestResult.granted) {
-                        contentGrid.innerHTML = UITemplates.emptyState(
-                            '🔒',
-                            'Permission Denied',
-                            'Media access is required to scan your library. Please grant permission to access videos and audio files.'
-                        );
-                        return;
-                    }
-                }
-            } else {
-                // Fallback: Show button to open settings
-                console.warn('MediaPermissions plugin not available, showing settings button');
+                if (isPermanentlyDenied) {
+                    // Permissions permanently denied - show settings button
                 contentGrid.innerHTML = `
                     <div class="content-empty">
                         <div class="empty-icon">🔐</div>
@@ -1957,26 +1938,29 @@ export class MobileUIController {
                     </div>
                 `;
 
-                // Add click handler for settings button
-                const settingsBtn = document.getElementById('open-settings-btn');
-                if (settingsBtn) {
-                    settingsBtn.addEventListener('click', async () => {
-                        try {
-                            // Try to open settings using Capacitor App plugin
-                            const { App } = await import('@capacitor/app');
-                            await App.openUrl({
-                                url: 'app-settings:'
-                            });
-                        } catch (error) {
-                            console.error('Failed to open settings:', error);
-                            alert('Please open Settings → Apps → FlixCapacitor → Permissions manually.');
-                        }
-                    });
+                    // Add click handler for settings button
+                    const settingsBtn = document.getElementById('open-settings-btn');
+                    if (settingsBtn) {
+                        settingsBtn.addEventListener('click', async () => {
+                            const opened = await MediaPermissions.openSettings();
+                            if (!opened) {
+                                alert('Please open Settings → Apps → FlixCapacitor → Permissions manually.');
+                            }
+                        });
+                    }
+                    return;
+                } else {
+                    // User can be prompted again
+                    contentGrid.innerHTML = UITemplates.emptyState(
+                        '🔒',
+                        'Permission Required',
+                        'Media access is required to scan your library. Please try again.'
+                    );
+                    return;
                 }
-                return;
             }
 
-            console.log('Media permissions granted, starting scan...');
+            console.log('[Library] Media permissions granted, starting scan...');
         } catch (error) {
             console.error('Failed to request permissions:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
@@ -3192,71 +3176,60 @@ export class MobileUIController {
             this.isLoadingStream = true; // Set flag to prevent concurrent calls
 
             // Check and request media permissions before playing video
-            try {
-                const { Capacitor } = await import('@capacitor/core');
+            const hasPermission = await MediaPermissions.ensurePermissions();
 
-                if (Capacitor.Plugins.MediaPermissions) {
-                    console.log('Checking media permissions before video playback...');
-                    const checkResult = await Capacitor.Plugins.MediaPermissions.checkPermissions();
+            if (!hasPermission) {
+                const isPermanentlyDenied = await MediaPermissions.isPermanentlyDenied();
 
-                    if (!checkResult.granted) {
-                        console.log('Permissions not granted, requesting...');
-                        const requestResult = await Capacitor.Plugins.MediaPermissions.requestPermissions();
+                this.isLoadingStream = false;
+                const mainRegion = document.querySelector('.main-window-region');
+                mainRegion.innerHTML = `
+                    <div class="content-empty">
+                        <div class="empty-icon">🔒</div>
+                        <div class="empty-title">Permission Required</div>
+                        <div class="empty-message">FlixCapacitor needs access to your media files to play videos.</div>
+                        ${isPermanentlyDenied ? `
+                        <button class="open-settings-btn" id="video-settings-btn" style="
+                            margin-top: 1.5rem;
+                            padding: 0.875rem 2rem;
+                            background: linear-gradient(135deg, #10b981, #059669);
+                            border: none;
+                            border-radius: 8px;
+                            color: white;
+                            font-size: 1rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                        ">
+                            <span>⚙️</span>
+                            <span>Open Settings</span>
+                        </button>
+                        <div class="empty-message" style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.7;">
+                            Grant "Photos and videos" and "Music and audio" permissions, then try again
+                        </div>
+                        ` : '<div class="empty-message" style="margin-top: 1rem;">Please try again</div>'}
+                    </div>
+                `;
 
-                        if (!requestResult.granted) {
-                            // User denied permissions - show error instead of trying to play
-                            this.isLoadingStream = false;
-                            const mainRegion = document.querySelector('.main-window-region');
-                            mainRegion.innerHTML = `
-                                <div class="content-empty">
-                                    <div class="empty-icon">🔒</div>
-                                    <div class="empty-title">Permission Required</div>
-                                    <div class="empty-message">FlixCapacitor needs access to your media files to play videos.</div>
-                                    <button class="open-settings-btn" id="video-settings-btn" style="
-                                        margin-top: 1.5rem;
-                                        padding: 0.875rem 2rem;
-                                        background: linear-gradient(135deg, #10b981, #059669);
-                                        border: none;
-                                        border-radius: 8px;
-                                        color: white;
-                                        font-size: 1rem;
-                                        font-weight: 600;
-                                        cursor: pointer;
-                                        display: flex;
-                                        align-items: center;
-                                        gap: 0.5rem;
-                                        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-                                    ">
-                                        <span>⚙️</span>
-                                        <span>Open Settings</span>
-                                    </button>
-                                    <div class="empty-message" style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.7;">
-                                        Grant "Photos and videos" and "Music and audio" permissions, then try again
-                                    </div>
-                                </div>
-                            `;
-
-                            // Add settings button handler
-                            const settingsBtn = document.getElementById('video-settings-btn');
-                            if (settingsBtn) {
-                                settingsBtn.addEventListener('click', async () => {
-                                    try {
-                                        await Capacitor.Plugins.MediaPermissions.openSettings();
-                                    } catch (error) {
-                                        console.error('Failed to open settings:', error);
-                                        alert('Please open Settings → Apps → FlixCapacitor → Permissions manually.');
-                                    }
-                                });
+                if (isPermanentlyDenied) {
+                    // Add settings button handler
+                    const settingsBtn = document.getElementById('video-settings-btn');
+                    if (settingsBtn) {
+                        settingsBtn.addEventListener('click', async () => {
+                            const opened = await MediaPermissions.openSettings();
+                            if (!opened) {
+                                alert('Please open Settings → Apps → FlixCapacitor → Permissions manually.');
                             }
-                            return;
-                        }
+                        });
                     }
-                    console.log('Media permissions granted, proceeding with video playback');
                 }
-            } catch (permError) {
-                console.error('Permission check failed:', permError);
-                // Continue anyway - might work without explicit permissions
+                return;
             }
+
+            console.log('[Video] Media permissions granted, proceeding with playback');
 
             const mainRegion = document.querySelector('.main-window-region');
 
