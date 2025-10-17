@@ -50,7 +50,8 @@ public class MediaPermissionsPlugin extends Plugin {
      * Get permission state for a specific permission
      * Returns: "granted", "prompt-with-rationale", or "prompt"
      */
-    private String getPermissionState(String permission) {
+    @Override
+    public String getPermissionState(String permission) {
         if (ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
             return "granted";
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
