@@ -82,6 +82,9 @@ declare global {
     $?: JQueryStatic;
     jQuery?: JQueryStatic;
 
+    // Underscore/Lodash (legacy support)
+    _?: any;
+
     // Backbone (legacy support)
     Backbone?: any;
     Marionette?: any;

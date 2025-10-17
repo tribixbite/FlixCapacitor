@@ -126,8 +126,8 @@ window.Marionette = Marionette;
 
 console.log('FlixCapacitor starting...');
 console.log('jQuery version:', $.fn.jquery);
-console.log('Backbone version:', Backbone.VERSION);
-console.log('Marionette version:', Marionette.VERSION);
+console.log('Backbone version:', (Backbone as any).VERSION);
+console.log('Marionette version:', (Marionette as any).VERSION);
 
 // Initialize Capacitor plugins
 async function initCapacitorPlugins(): Promise<void> {
@@ -143,7 +143,7 @@ async function initCapacitorPlugins(): Promise<void> {
         App.addListener('appStateChange', async ({ isActive }) => {
             console.log('App state changed. Active:', isActive);
 
-            const app = window.App;
+            const app = window.App as MobileApp | undefined;
             if (app?.vent) {
                 app.vent.trigger('app:stateChange', { isActive });
             }
@@ -164,9 +164,10 @@ async function initCapacitorPlugins(): Promise<void> {
             console.log('Back button pressed');
 
             // Try to go back in navigation history first
-            if (window.App && window.App.UI && window.App.UI.goBack) {
-                const didNavigateBack = window.App.UI.goBack();
-                if (didNavigateBack) {
+            const app = window.App as MobileApp | undefined;
+            if (app?.UI?.goBack) {
+                const didNavigateBack = app.UI.goBack();
+                if (didNavigateBack !== false) {
                     console.log('Navigated to previous view');
                     return;
                 }
@@ -174,7 +175,6 @@ async function initCapacitorPlugins(): Promise<void> {
 
             // No history, so exit app after cleanup
             console.log('No navigation history, exiting app');
-            const app = window.App;
             if (app?.cleanup) {
                 await app.cleanup();
             }
@@ -186,10 +186,11 @@ async function initCapacitorPlugins(): Promise<void> {
             console.log('App opened with URL:', data.url);
 
             const url = data.url;
+            const app = window.App as MobileApp | undefined;
 
             // Handle magnet links
             if (url.startsWith('magnet:')) {
-                if (window.App && window.App.vent) {
+                if (app?.vent) {
                     window.Settings.droppedMagnet = url;
                     handleTorrent(url);
                 } else {
@@ -199,7 +200,7 @@ async function initCapacitorPlugins(): Promise<void> {
             }
             // Handle torrent files
             else if (url.endsWith('.torrent')) {
-                if (window.App && window.App.vent) {
+                if (app?.vent) {
                     handleTorrent(url);
                 } else {
                     window._pendingDeepLink = url;
@@ -207,7 +208,7 @@ async function initCapacitorPlugins(): Promise<void> {
             }
             // Handle video files
             else if (isVideoFile(url)) {
-                if (window.App && window.App.vent) {
+                if (app?.vent) {
                     const fileName = url.split('/').pop();
                     handleVideoFile({
                         path: url,
@@ -254,7 +255,8 @@ function handleVideoFile(file: { path: string; name: string }): void {
         return window.Q.Promise((resolve, reject) => {
             console.log('Subtitles data request:', subdata);
 
-            const subtitleProvider = window.App.Config.getProviderForType('subtitle');
+            const app = window.App as MobileApp | undefined;
+            const subtitleProvider = app?.Config?.getProviderForType?.('subtitle');
 
             subtitleProvider.fetch(subdata).then((subs) => {
                 if (subs && Object.keys(subs).length > 0) {
@@ -270,29 +272,32 @@ function handleVideoFile(file: { path: string; name: string }): void {
 
     // Close any existing player
     try {
-        if (window.App.PlayerView) {
-            window.App.PlayerView.closePlayer();
+        const app = window.App as MobileApp | undefined;
+        if (app?.PlayerView) {
+            app.PlayerView.closePlayer();
         }
     } catch (err) {
         console.warn('No player to close');
     }
 
     // Prepare playback object
-    const playObj = {
+    const playObj: any = {
         src: 'file://' + window.path.join(file.path),
         type: 'video/mp4',
         title: file.name,
         quality: '480p'
     };
 
-    const sub_data = {
+    const sub_data: any = {
         filename: window.path.basename(file.path),
         path: file.path
     };
 
+    const app = window.App as MobileApp | undefined;
+
     // Attempt to match with Trakt for metadata
-    if (window.App.Trakt && window.App.Trakt.client) {
-        window.App.Trakt.client.matcher.match({ path: file.path })
+    if (app?.Trakt?.client) {
+        app.Trakt.client.matcher.match({ path: file.path })
             .then((res) => {
                 // Enrich playObj with Trakt metadata
                 if (res.type === 'movie') {
@@ -322,23 +327,29 @@ function handleVideoFile(file: { path: string; name: string }): void {
                 }
 
                 // Start playback
-                const localVideo = new window.App.Model.StreamInfo(playObj);
-                window.App.vent.trigger('stream:ready', localVideo);
+                if (app?.Model?.StreamInfo && app?.vent) {
+                    const localVideo = new app.Model.StreamInfo(playObj);
+                    app.vent.trigger('stream:ready', localVideo);
+                }
 
                 if (spinner) spinner.style.display = 'none';
             })
-            .catch((err) => {
+            .catch((err: any) => {
                 console.warn('Trakt match failed, playing without metadata:', err);
                 // Play anyway without metadata
-                const localVideo = new window.App.Model.StreamInfo(playObj);
-                window.App.vent.trigger('stream:ready', localVideo);
+                if (app?.Model?.StreamInfo && app?.vent) {
+                    const localVideo = new app.Model.StreamInfo(playObj);
+                    app.vent.trigger('stream:ready', localVideo);
+                }
 
                 if (spinner) spinner.style.display = 'none';
             });
     } else {
         // No Trakt, play directly
-        const localVideo = new window.App.Model.StreamInfo(playObj);
-        window.App.vent.trigger('stream:ready', localVideo);
+        if (app?.Model?.StreamInfo && app?.vent) {
+            const localVideo = new app.Model.StreamInfo(playObj);
+            app.vent.trigger('stream:ready', localVideo);
+        }
 
         if (spinner) spinner.style.display = 'none';
     }
@@ -347,16 +358,18 @@ function handleVideoFile(file: { path: string; name: string }): void {
 function handleTorrent(torrent: string): void {
     console.log('Handling torrent:', torrent);
 
+    const app = window.App as MobileApp | undefined;
+
     try {
-        if (window.App.PlayerView) {
-            window.App.PlayerView.closePlayer();
+        if (app?.PlayerView) {
+            app.PlayerView.closePlayer();
         }
     } catch (err) {
         console.warn('No player to close');
     }
 
-    if (window.App.Config) {
-        window.App.Config.getProviderForType('torrentCache').resolve(torrent);
+    if (app?.Config) {
+        app.Config.getProviderForType('torrentCache').resolve(torrent);
     } else {
         console.error('App.Config not available for torrent handling');
     }
