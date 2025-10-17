@@ -50,8 +50,7 @@ public class MediaPermissionsPlugin extends Plugin {
      * Get permission state for a specific permission
      * Returns: "granted", "prompt-with-rationale", or "prompt"
      */
-    @Override
-    public String getPermissionState(String permission) {
+    private String getPermissionStateString(String permission) {
         if (ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
             return "granted";
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
@@ -72,14 +71,14 @@ public class MediaPermissionsPlugin extends Plugin {
         JSObject result = new JSObject();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
-            String videoState = getPermissionState(Manifest.permission.READ_MEDIA_VIDEO);
-            String audioState = getPermissionState(Manifest.permission.READ_MEDIA_AUDIO);
+            String videoState = getPermissionStateString(Manifest.permission.READ_MEDIA_VIDEO);
+            String audioState = getPermissionStateString(Manifest.permission.READ_MEDIA_AUDIO);
 
             result.put("readMediaVideo", videoState);
             result.put("readMediaAudio", audioState);
             result.put("granted", videoState.equals("granted") || audioState.equals("granted"));
         } else { // Android 12 and below
-            String storageState = getPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE);
+            String storageState = getPermissionStateString(Manifest.permission.READ_EXTERNAL_STORAGE);
             result.put("storage", storageState);
             result.put("granted", storageState.equals("granted"));
         }
