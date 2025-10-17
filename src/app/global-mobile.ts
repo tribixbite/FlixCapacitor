@@ -3,9 +3,9 @@
  * Replaces src/app/global.js for mobile environment
  */
 
-import { win, nw } from './lib/nw-compat.js';
+import { win, nw } from './lib/nw-compat.ts';
 import { Directory, Filesystem } from '@capacitor/filesystem';
-import Database from './database-mobile.js';
+import Database from './database-mobile.ts';
 
 // Make win and nw available globally for legacy code
 window.win = win;

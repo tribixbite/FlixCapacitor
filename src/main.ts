@@ -90,7 +90,7 @@ import { App } from '@capacitor/app';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
 // Import global compatibility layer FIRST
-import './app/global-mobile.js';
+import './app/global-mobile.ts';
 
 // Import mobile UI components
 import './app/lib/touch-gestures.ts';
