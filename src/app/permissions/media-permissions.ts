@@ -37,17 +37,21 @@ class MediaPermissionsManager {
    * Ensures media permissions are granted, requesting if necessary.
    * This is the primary method for contextual "auto-prompting".
    *
-   * @returns True if permissions are granted, false otherwise.
+   * @returns Object with granted status and whether permissions are permanently denied
    *
    * @example
-   * const hasPermission = await MediaPermissions.ensurePermissions();
-   * if (hasPermission) {
+   * const { granted, permanentlyDenied } = await MediaPermissions.ensurePermissions();
+   * if (granted) {
    *   // Proceed with media access
+   * } else if (permanentlyDenied) {
+   *   // Show settings button
+   * } else {
+   *   // User denied but can be prompted again
    * }
    */
-  async ensurePermissions(): Promise<boolean> {
+  async ensurePermissions(): Promise<{ granted: boolean; permanentlyDenied: boolean }> {
     if (Capacitor.getPlatform() !== 'android') {
-      return true;
+      return { granted: true, permanentlyDenied: false };
     }
 
     try {
@@ -55,28 +59,30 @@ class MediaPermissionsManager {
 
       if (status.granted) {
         console.log('[Permissions] Media permissions already granted');
-        return true;
+        return { granted: true, permanentlyDenied: false };
       }
 
-      if (this.canPrompt(status)) {
-        console.log('[Permissions] Requesting media permissions...');
-        const requestStatus = await MediaPermissionsPluginInternal.requestPermissions();
-
-        if (requestStatus.granted) {
-          console.log('[Permissions] Media permissions granted');
-          return true;
-        }
-
-        console.warn('[Permissions] User denied media permissions');
-        return false;
+      // Check if permanently denied (user clicked "Don't ask again")
+      if (!this.canPrompt(status)) {
+        console.warn('[Permissions] Media permissions permanently denied');
+        return { granted: false, permanentlyDenied: true };
       }
 
-      console.warn('[Permissions] Media permissions permanently denied');
-      return false;
+      // Show system permission dialog (status is 'prompt' or 'prompt-with-rationale')
+      console.log('[Permissions] Requesting media permissions via system dialog...');
+      const requestStatus = await MediaPermissionsPluginInternal.requestPermissions();
+
+      if (requestStatus.granted) {
+        console.log('[Permissions] Media permissions granted');
+        return { granted: true, permanentlyDenied: false };
+      }
+
+      console.log('[Permissions] User denied media permissions');
+      return { granted: false, permanentlyDenied: false };
 
     } catch (error) {
       console.error('[Permissions] Failed to check/request permissions:', error);
-      return false;
+      return { granted: false, permanentlyDenied: false };
     }
   }
 

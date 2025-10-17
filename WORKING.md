@@ -837,6 +837,55 @@ Test Files  5 passed (5)
 
 **Status:** All automated tests pass without errors
 
+#### 19. Permission Flow Refactoring and Back Button Fix
+**Issues:**
+1. Back button only worked on main navigation screens, not detail views
+2. Permission flow used bad UX with manual settings navigation instructions
+3. No app load permission check for partial permissions
+
+**Research:** Used zen MCP to research Android permission best practices:
+- Permission states: `prompt` (first request), `prompt-with-rationale` (user denied once), `denied` (permanently denied), `granted`
+- System dialog should show for `prompt` and `prompt-with-rationale` states
+- Only send to settings when status is `denied` (user clicked "Don't ask again")
+- Best practice: Just-in-time requests (when user initiates action)
+- Check for partial permissions on app load and complete them
+
+**Fixes Applied:**
+
+**1. src/app/permissions/media-permissions.ts:**
+- Changed `ensurePermissions()` return type from `boolean` to `{ granted: boolean; permanentlyDenied: boolean }`
+- Properly detect permanently denied state using `canPrompt()` check
+- Return clear status so UI can show appropriate message/button
+
+**2. src/app/lib/mobile-ui-views.ts - Library scan (line ~1900):**
+- Use new `ensurePermissions()` API: `const { granted, permanentlyDenied } = await MediaPermissions.ensurePermissions()`
+- If not granted and permanently denied: Show "Open Settings" button (opens app settings)
+- If not granted but can prompt again: Show "Enable" button that triggers system dialog by retrying scan
+- Removed bad UX message "Please open Settings → Apps → FlixCapacitor → Permissions manually"
+
+**3. src/app/lib/mobile-ui-views.ts - Video playback (line ~3195):**
+- Same pattern as library scan
+- If permanently denied: Show "Open Settings" button
+- If can prompt again: Show "Enable" button that triggers system dialog by retrying playback
+
+**4. src/app/lib/mobile-ui-views.ts - Back button navigation (line ~2649, ~2692, ~1455):**
+- Track detail views in navigation history with format "detail-<id>"
+- `showDetail()` now pushes current view to history before showing detail
+- Detail view back button calls `goBack()` instead of hardcoding to 'movies'
+- `goBack()` checks if previous view is detail view and calls `showDetail()` accordingly
+- Falls back to 'movies' if no history exists
+
+**5. src/main.ts - App load permission check (line ~142):**
+- Import MediaPermissions on app load
+- Check for partial permissions (e.g., video granted but audio not granted)
+- If partial permissions detected, call `ensurePermissions()` to complete access
+- Runs only on Android, skips on web platform
+
+**Build Results:**
+- TypeScript compilation: 0 errors
+- Android build: successful
+- APK size: 74MB
+
 ### Next Steps
 1. **Test library scan permission flow** - Verify MediaPermissionsPlugin works correctly in Library tab
 2. Test video playback on device to verify CORS fixes
