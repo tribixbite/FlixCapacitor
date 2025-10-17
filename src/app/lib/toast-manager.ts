@@ -3,6 +3,8 @@
  * Provides lightweight toast notifications for streaming events, errors, and general feedback
  */
 
+import type { Application } from 'backbone.marionette';
+
 export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'peer';
 
 export interface ToastOptions {
@@ -373,8 +375,10 @@ const ToastManager = new ToastManagerClass();
 
 // Make available globally
 if (typeof window !== 'undefined') {
-  window.App = window.App || {};
-  window.App.ToastManager = ToastManager;
+  if (!window.App) {
+    window.App = {} as MobileApp & Application;
+  }
+  (window.App as MobileApp & Application).ToastManager = ToastManager;
 }
 
 export default ToastManager;

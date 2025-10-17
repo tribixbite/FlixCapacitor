@@ -44,11 +44,11 @@ window.addEventListener('unhandledrejection', (event) => {
 function showErrorNotification(message: string): void {
     try {
         // Try to use existing loading screen for error display
-        const loadingScreen = document.querySelector('.loading-screen');
+        const loadingScreen = document.querySelector<HTMLElement>('.loading-screen');
         if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
-            const title = loadingScreen.querySelector('.loading-title');
-            const subtitle = loadingScreen.querySelector('.loading-subtitle');
-            const spinner = loadingScreen.querySelector('.loading-spinner');
+            const title = loadingScreen.querySelector<HTMLElement>('.loading-title');
+            const subtitle = loadingScreen.querySelector<HTMLElement>('.loading-subtitle');
+            const spinner = loadingScreen.querySelector<HTMLElement>('.loading-spinner');
 
             if (title) title.textContent = 'Error';
             if (subtitle) subtitle.textContent = message;
@@ -143,15 +143,16 @@ async function initCapacitorPlugins(): Promise<void> {
         App.addListener('appStateChange', async ({ isActive }) => {
             console.log('App state changed. Active:', isActive);
 
-            if (window.App && window.App.vent) {
-                window.App.vent.trigger('app:stateChange', { isActive });
+            const app = window.App;
+            if (app?.vent) {
+                app.vent.trigger('app:stateChange', { isActive });
             }
 
             // When app goes to background, perform cleanup
-            if (!isActive && window.App && window.App.cleanup) {
+            if (!isActive && app?.cleanup) {
                 console.log('App backgrounding - running cleanup');
                 try {
-                    await window.App.cleanup();
+                    await app.cleanup();
                 } catch (error) {
                     console.error('Cleanup failed on background:', error);
                 }
@@ -173,8 +174,9 @@ async function initCapacitorPlugins(): Promise<void> {
 
             // No history, so exit app after cleanup
             console.log('No navigation history, exiting app');
-            if (window.App && window.App.cleanup) {
-                await window.App.cleanup();
+            const app = window.App;
+            if (app?.cleanup) {
+                await app.cleanup();
             }
             await App.exitApp();
         });
@@ -233,7 +235,7 @@ function handleVideoFile(file: { path: string; name: string }): void {
     console.log('Handling video file:', file.path);
 
     // Show loading spinner
-    const spinner = document.querySelector('.spinner');
+    const spinner = document.querySelector<HTMLElement>('.spinner');
     if (spinner) spinner.style.display = 'block';
 
     // Check for local subtitles
