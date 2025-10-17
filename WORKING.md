@@ -578,7 +578,52 @@ return type String is not compatible with PermissionState
 
 **Verification:** Build-and-install.sh completed successfully (BUILD SUCCESSFUL in 4s)
 
-#### 4. Documentation Updates ✅
+#### 4. Android Plugins Kotlin Conversion ✅
+**Files Converted:**
+- `MainActivity.java` → `MainActivity.kt` (11 lines)
+- `MediaPermissionsPlugin.java` → `MediaPermissionsPlugin.kt` (122 lines)
+
+**Why Kotlin:**
+- Modern Android development standard (Google's recommended language since 2019)
+- Better null safety and type inference
+- More concise and expressive syntax
+- Consistent with existing TorrentStreamerPlugin implementation
+- All other custom Capacitor plugins in project use Kotlin
+
+**Key Improvements:**
+- Proper use of `PermissionState` enum instead of String
+- Added `permissionStateToString()` helper for JavaScript compatibility
+- Returns lowercase strings matching JS expectations: "granted", "denied", "prompt", "prompt-with-rationale"
+- Removed error-prone String comparison with proper enum handling
+- Idiomatic Kotlin syntax with `when` expressions
+
+**Permission Flow Fixed:**
+```kotlin
+// Before (Java - incorrect):
+public String getPermissionState(String permission) {
+    return "granted"; // String doesn't match parent's PermissionState return type
+}
+
+// After (Kotlin - correct):
+override fun getPermissionState(alias: String): PermissionState {
+    // Parent Plugin class method returns PermissionState enum
+}
+
+private fun permissionStateToString(state: PermissionState): String {
+    return when (state) {
+        PermissionState.GRANTED -> "granted"
+        PermissionState.DENIED -> "denied"
+        PermissionState.PROMPT -> "prompt"
+        PermissionState.PROMPT_WITH_RATIONALE -> "prompt-with-rationale"
+    }
+}
+```
+
+**Commit:** 2fe8f567
+
+**Verification:** BUILD SUCCESSFUL in 5s with custom AAPT2
+
+#### 5. Documentation Updates ✅
 Updated WORKING.md with:
 - Section 14: Android Build Compilation Fix
 - Section 15: Core Application Files TypeScript Conversion
@@ -603,29 +648,33 @@ Updated WORKING.md with:
 ✅ GitHub Actions CI/CD pipeline with automatic releases
 ✅ Java 21 compatibility
 ✅ AAPT2 local/CI compatibility
+✅ **Kotlin conversion for all custom Android plugins (NEW)**
 
-**Technology Upgrades (4/4):**
+**Technology Upgrades (5/5):**
 ✅ TypeScript 5.9.3 integrated with gradual migration
 ✅ Converted mobile-ui-views.js to TypeScript with full type definitions
 ✅ **Converted all 24 src/app/lib files to TypeScript (COMPLETE)**
-✅ **Converted core root files (main.ts, database-mobile.ts, global-mobile.ts) (NEW)**
+✅ **Converted core root files (main.ts, database-mobile.ts, global-mobile.ts)**
+✅ **Converted Android plugins from Java to Kotlin (MainActivity, MediaPermissionsPlugin)**
 ✅ **Biome linter/formatter configured**
 ⚠️ Bun documented as incompatible with Termux (continue with npm)
 
 **Build Status:**
-✅ Android build successful (BUILD SUCCESSFUL in 4s)
+✅ Android build successful (BUILD SUCCESSFUL in 5s)
 ✅ APK size: 74MB
 ✅ All TypeScript files compile without errors
-✅ MediaPermissionsPlugin Java issues resolved
+✅ All Android plugins now using Kotlin (modern standard)
+✅ Permission flow properly using PermissionState enum
 
 ### Next Steps
-1. Test video playback on device to verify CORS fixes
-2. Test permission flow on first video play
-3. Verify GitHub release created with downloadable APKs
-4. Continue TypeScript migration for remaining JavaScript files (providers, views, styl)
-5. Run Biome linter on desktop/CI environment for code quality checks
-6. Monitor for any remaining issues
+1. **Test library scan permission flow** - Verify MediaPermissionsPlugin works correctly in Library tab
+2. Test video playback on device to verify CORS fixes
+3. Test permission flow on first video play
+4. Verify GitHub release created with downloadable APKs
+5. Continue TypeScript migration for remaining JavaScript files (providers, views, styl)
+6. Run Biome linter on desktop/CI environment for code quality checks
+7. Monitor for any remaining issues
 
 ---
 
-Last updated: 2025-10-16 (All core app files converted to TypeScript, Android build fixed)
+Last updated: 2025-10-16 (Android plugins converted to Kotlin, TypeScript core files complete)
