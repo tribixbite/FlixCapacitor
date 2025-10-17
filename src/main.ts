@@ -41,7 +41,7 @@ window.addEventListener('unhandledrejection', (event) => {
 /**
  * Display error notification to user
  */
-function showErrorNotification(message) {
+function showErrorNotification(message: string): void {
     try {
         // Try to use existing loading screen for error display
         const loadingScreen = document.querySelector('.loading-screen');
@@ -93,23 +93,23 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import './app/global-mobile.js';
 
 // Import mobile UI components
-import './app/lib/touch-gestures.js';
-import './app/lib/mobile-ui.js';
-import './app/lib/provider-loader.js';
-import './app/lib/settings-manager.js';
+import './app/lib/touch-gestures.ts';
+import './app/lib/mobile-ui.ts';
+import './app/lib/provider-loader.ts';
+import './app/lib/settings-manager.ts';
 // Import native torrent client (replaces WebTorrent)
-import './app/lib/native-torrent-client.js';
+import './app/lib/native-torrent-client.ts';
 import './app/lib/providers/public-domain-provider.js';
 import './app/lib/providers/tvshows-provider.js';
 import './app/lib/providers/anime-provider.js';
-import './app/lib/learning-service.js';
-import './app/lib/favorites-service.js';
-import './app/lib/library-service.js';
-import './app/lib/watchlist-service.js';
-import MobileUIController from './app/lib/mobile-ui-views.js';
+import './app/lib/learning-service.ts';
+import './app/lib/favorites-service.ts';
+import './app/lib/library-service.ts';
+import './app/lib/watchlist-service.ts';
+import MobileUIController from './app/lib/mobile-ui-views.ts';
 
 // Import API bridge for TMDB, OMDb, OpenSubtitles
-import { initializeAPIClients } from './app/lib/api-bridge.js';
+import { initializeAPIClients } from './app/lib/api-bridge.ts';
 
 // Import core libraries
 import $ from 'jquery';
@@ -130,7 +130,7 @@ console.log('Backbone version:', Backbone.VERSION);
 console.log('Marionette version:', Marionette.VERSION);
 
 // Initialize Capacitor plugins
-async function initCapacitorPlugins() {
+async function initCapacitorPlugins(): Promise<void> {
     try {
         // Set status bar style (try for iOS, ignore errors on Android)
         try {
@@ -224,12 +224,12 @@ async function initCapacitorPlugins() {
 }
 
 // Helper functions for deep link handling
-function isVideoFile(filepath) {
+function isVideoFile(filepath: string): boolean {
     const ext = filepath.toLowerCase().match(/\.[^.]*$/)?.[0] || '';
     return ['.mp4', '.avi', '.mov', '.mkv', '.wmv'].includes(ext);
 }
 
-function handleVideoFile(file) {
+function handleVideoFile(file: { path: string; name: string }): void {
     console.log('Handling video file:', file.path);
 
     // Show loading spinner
@@ -342,7 +342,7 @@ function handleVideoFile(file) {
     }
 }
 
-function handleTorrent(torrent) {
+function handleTorrent(torrent: string): void {
     console.log('Handling torrent:', torrent);
 
     try {
@@ -361,7 +361,7 @@ function handleTorrent(torrent) {
 }
 
 // Initialize the Marionette application
-function initMarionette() {
+function initMarionette(): any {
     // Create global App skeleton for Backbone
     const AppInstance = new Marionette.Application({
         region: '.main-window-region'
