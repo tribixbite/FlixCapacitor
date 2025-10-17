@@ -73,7 +73,8 @@ class SQLiteService {
         this.dbName,
         false, // encrypted
         'no-encryption',
-        this.dbVersion
+        this.dbVersion,
+        false // readonly
       );
 
       // Open the database
@@ -494,7 +495,7 @@ class SQLiteService {
       await this.db.close();
     }
 
-    await this.sqlite!.deleteDatabase(this.dbName);
+    await CapacitorSQLite.deleteDatabase({ database: this.dbName });
     this.isInitialized = false;
     console.log('Database deleted');
   }

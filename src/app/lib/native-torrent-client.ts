@@ -109,7 +109,7 @@ class NativeTorrentClient {
             }
 
             // Set up event listeners
-            this.setupEventListeners();
+            await this.setupEventListeners();
 
             this.initialized = true;
             console.log('Native torrent client initialized');
@@ -123,10 +123,10 @@ class NativeTorrentClient {
     /**
      * Set up event listeners for TorrentStreamer plugin
      */
-    private setupEventListeners(): void {
+    private async setupEventListeners(): Promise<void> {
         try {
             // Metadata received event
-            const metadataListener = TorrentStreamer.addListener('metadata', (data: any) => {
+            const metadataListener = await TorrentStreamer.addListener('metadata', (data: any) => {
             console.log('✓ Torrent metadata received');
             console.log('  Name:', data.name);
             console.log('  Files:', data.numFiles);
@@ -147,7 +147,7 @@ class NativeTorrentClient {
         this.listeners.push(metadataListener);
 
         // Ready event (stream URL available)
-        const readyListener = TorrentStreamer.addListener('ready', (data: any) => {
+        const readyListener = await TorrentStreamer.addListener('ready', (data: any) => {
             console.log('✓ Stream ready:', data.streamUrl);
             this.currentStreamUrl = data.streamUrl;
 
@@ -166,7 +166,7 @@ class NativeTorrentClient {
         this.listeners.push(readyListener);
 
         // Progress event
-        const progressListener = TorrentStreamer.addListener('progress', (status: any) => {
+        const progressListener = await TorrentStreamer.addListener('progress', (status: any) => {
             if (typeof window !== 'undefined' && (window as any).App?.SafeToast) {
                 if (!this.loadingToastId) {
                     this.loadingToastId = (window as any).App.SafeToast.loading('Downloading', 'Starting download...');
@@ -199,7 +199,7 @@ class NativeTorrentClient {
         this.listeners.push(progressListener);
 
         // Error event
-        const errorListener = TorrentStreamer.addListener('error', (error: any) => {
+        const errorListener = await TorrentStreamer.addListener('error', (error: any) => {
             console.error('Native torrent error:', error.message);
 
             if (typeof window !== 'undefined' && (window as any).App?.SafeToast) {
@@ -220,7 +220,7 @@ class NativeTorrentClient {
         this.listeners.push(errorListener);
 
         // Stopped event
-        const stoppedListener = TorrentStreamer.addListener('stopped', () => {
+        const stoppedListener = await TorrentStreamer.addListener('stopped', () => {
             console.log('Torrent stream stopped');
             this.currentStreamUrl = null;
             this.currentTorrentInfo = null;
@@ -293,8 +293,8 @@ class NativeTorrentClient {
             try {
                 // Set up one-time ready listener for this stream
                 let readyHandler: PluginListenerHandle, errorHandler: PluginListenerHandle; // BUG-004 FIX: Store handlers to remove both
-                const readyPromise = new Promise<any>((resolveReady) => {
-                    readyHandler = TorrentStreamer.addListener('ready', async (data: any) => {
+                const readyPromise = new Promise<any>(async (resolveReady) => {
+                    readyHandler = await TorrentStreamer.addListener('ready', async (data: any) => {
                         await readyHandler.remove();
                         await errorHandler.remove(); // BUG-004 FIX: Remove error handler too
                         resolveReady(data);
@@ -302,8 +302,8 @@ class NativeTorrentClient {
                 });
 
                 // Set up one-time error listener
-                const errorPromise = new Promise<any>((_, rejectError) => {
-                    errorHandler = TorrentStreamer.addListener('error', async (error: any) => {
+                const errorPromise = new Promise<any>(async (_, rejectError) => {
+                    errorHandler = await TorrentStreamer.addListener('error', async (error: any) => {
                         await readyHandler.remove(); // BUG-004 FIX: Remove ready handler too
                         await errorHandler.remove();
                         rejectError(new Error(error.message));
