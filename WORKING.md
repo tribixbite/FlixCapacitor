@@ -2,6 +2,76 @@
 
 ## Session Date: 2025-10-17
 
+### Android Kotlin Build Configuration
+
+#### 17. Kotlin Plugin Configuration for Android Build ✅
+**Issue:** App crashed on startup with `ClassNotFoundException: app.flixcapacitor.mobile.MainActivity`
+
+**Root Cause:** When MainActivity and MediaPermissionsPlugin were converted from Java to Kotlin (commit 2fe8f567), the Android Gradle build configuration was missing Kotlin plugin support. The Kotlin source files were present but not being compiled into the APK.
+
+**Investigation:**
+- MainActivity.kt file existed in correct location
+- Kotlin compilation produced MainActivity.class in build/tmp/kotlin-classes/
+- MainActivity.dex created in build/intermediates/project_dex_archive/
+- BUT: MainActivity class missing from final APK classes.dex
+
+**Diagnosis:** Missing kotlin-android plugin prevented Kotlin classes from being packaged into APK
+
+**Fixes Applied:**
+
+**1. android/build.gradle (Project level):**
+```gradle
+buildscript {
+    ext.kotlin_version = '1.9.22'
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+```
+
+**2. android/app/build.gradle (App level):**
+```gradle
+apply plugin: 'kotlin-android'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+```
+
+**3. MediaPermissionsPlugin.kt:**
+- Added `override` modifier to `checkPermissions()` method
+- Added `override` modifier to `requestPermissions()` method
+- Fixed Kotlin compilation errors for method overrides
+
+**Build Results:**
+- `Task :app:compileDebugKotlin` - **SUCCESSFUL** ✅
+- APK size: 74MB
+- MainActivity.class properly compiled and packaged
+
+**Verification:**
+```
+adb logcat | grep MainActivity
+✅ app.flixcapacitor.mobile.MainActivity.onCreate(MainActivity.kt:8)
+✅ D Capacitor: Starting BridgeActivity
+✅ I Capacitor/Console: FlixCapacitor starting...
+```
+
+**App Status:** **FULLY FUNCTIONAL** ✅
+- MainActivity loads without ClassNotFoundException
+- Capacitor initializes successfully
+- All plugins register properly (KeepAwake, SQLite, App, Device, Filesystem, Haptics, Preferences, StatusBar)
+- JavaScript bundle executes successfully
+- TypeScript code runs without errors
+
+**Files Modified:**
+- android/build.gradle (added Kotlin plugin classpath)
+- android/app/build.gradle (applied kotlin-android plugin, added stdlib)
+- android/app/src/main/java/app/flixcapacitor/mobile/MediaPermissionsPlugin.kt (added override modifiers)
+
+**Commit:** 844607cb
+
+---
+
 ### TypeScript Error Resolution
 
 #### 16. All TypeScript Compilation Errors Fixed ✅
