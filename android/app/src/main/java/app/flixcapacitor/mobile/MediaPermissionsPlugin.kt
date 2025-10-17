@@ -63,7 +63,7 @@ class MediaPermissionsPlugin : Plugin() {
      * Returns detailed state for each permission
      */
     @PluginMethod
-    fun checkPermissions(call: PluginCall) {
+    override fun checkPermissions(call: PluginCall) {
         val result = JSObject()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
@@ -86,7 +86,7 @@ class MediaPermissionsPlugin : Plugin() {
      * Request media permissions
      */
     @PluginMethod
-    fun requestPermissions(call: PluginCall) {
+    override fun requestPermissions(call: PluginCall) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
             requestPermissionForAliases(
                 arrayOf("readMediaVideo", "readMediaAudio"),
