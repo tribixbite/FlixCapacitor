@@ -2,6 +2,33 @@
 
 ## Session Date: 2025-10-16
 
+### TypeScript Conversion - Core Files
+
+#### 15. Core Application Files Converted to TypeScript ✅
+**Goal:** Convert critical core application files to TypeScript
+
+**Files Converted:**
+1. **src/main.ts** (532 lines)
+   - Application entry point with Capacitor + Marionette initialization
+   - Added type annotations for all functions
+   - Updated all imports to use .ts extensions for converted files
+   - Typed error handlers, deep link handlers, Capacitor plugin initialization
+
+2. **src/app/database-mobile.ts** (512 lines)
+   - Mobile SQLite database wrapper replacing NeDB
+   - Typed helper functions (extractIds, extractMovieIds)
+   - Updated sqlite-service import path
+
+3. **src/app/global-mobile.ts** (193 lines)
+   - Global mobile environment setup
+   - Provides win, nw, os, path, fs compatibility layer for Capacitor
+   - Updated nw-compat and database-mobile import paths
+
+**Build Status:** ✅ All conversions successful, no errors
+**Bundle:** main-ZIBbvdza.js
+
+**Commits:** 3834c723, 05d75b79, 7e59fef7
+
 ### Bug Fixes
 
 #### 14. Android Build Compilation Fix ✅
