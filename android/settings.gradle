@@ -2,4 +2,7 @@ include ':app'
 include ':capacitor-cordova-android-plugins'
 project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
 
+include ':capacitor-plugin-media-permissions'
+project(':capacitor-plugin-media-permissions').projectDir = new File('../plugins/capacitor-plugin-media-permissions/android')
+
 apply from: 'capacitor.settings.gradle'

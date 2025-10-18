@@ -1,0 +1,23 @@
+{
+  "name": "capacitor-plugin-media-permissions",
+  "version": "1.0.0",
+  "description": "Capacitor plugin for Android media permissions (handles SDK 22-36+)",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "capacitor": {
+    "android": {
+      "src": "android"
+    }
+  },
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "android",
+    "permissions",
+    "media"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@capacitor/core": "^7.0.0"
+  }
+}

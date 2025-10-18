@@ -1,13 +1,10 @@
-package app.flixcapacitor.mobile
+package app.flixcapacitor.permissions
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.getcapacitor.JSObject
 import com.getcapacitor.PermissionState
 import com.getcapacitor.Plugin
@@ -18,14 +15,16 @@ import com.getcapacitor.annotation.Permission
 import com.getcapacitor.annotation.PermissionCallback
 
 /**
- * Capacitor plugin to request Android 13+ granular media permissions
- * (READ_MEDIA_VIDEO and READ_MEDIA_AUDIO)
+ * Capacitor plugin to request Android media permissions across all versions
+ *
+ * Android 14+ (SDK 34+): READ_MEDIA_VIDEO, READ_MEDIA_AUDIO, READ_MEDIA_VISUAL_USER_SELECTED
+ * Android 13 (SDK 33): READ_MEDIA_VIDEO, READ_MEDIA_AUDIO
+ * Android 12- (SDK 32-): READ_EXTERNAL_STORAGE
  *
  * Best Practices:
  * - Request permissions contextually (when user needs the feature)
  * - Check shouldShowRationale to provide context
- * - READ_MEDIA_VIDEO/AUDIO is sufficient - no need for MANAGE_EXTERNAL_STORAGE
- * - WRITE_EXTERNAL_STORAGE removed - not needed for reading files
+ * - Handles partial permissions in Android 14+ (user can select specific photos/videos)
  */
 @CapacitorPlugin(
     name = "MediaPermissions",
@@ -37,6 +36,10 @@ import com.getcapacitor.annotation.PermissionCallback
         Permission(
             strings = [Manifest.permission.READ_MEDIA_AUDIO],
             alias = "readMediaAudio"
+        ),
+        Permission(
+            strings = [Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED],
+            alias = "readMediaVisualUserSelected"
         ),
         Permission(
             strings = [Manifest.permission.READ_EXTERNAL_STORAGE],
@@ -66,14 +69,29 @@ class MediaPermissionsPlugin : Plugin() {
     override fun checkPermissions(call: PluginCall) {
         val result = JSObject()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+        if (Build.VERSION.SDK_INT >= 34) { // Android 14+ (SDK 34+)
+            val videoState = getPermissionState("readMediaVideo")
+            val audioState = getPermissionState("readMediaAudio")
+            val visualUserSelectedState = getPermissionState("readMediaVisualUserSelected")
+
+            result.put("readMediaVideo", permissionStateToString(videoState))
+            result.put("readMediaAudio", permissionStateToString(audioState))
+            result.put("readMediaVisualUserSelected", permissionStateToString(visualUserSelectedState))
+
+            // Granted if we have full access OR user-selected access
+            val granted = videoState == PermissionState.GRANTED ||
+                         audioState == PermissionState.GRANTED ||
+                         visualUserSelectedState == PermissionState.GRANTED
+
+            result.put("granted", granted)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13 (SDK 33)
             val videoState = getPermissionState("readMediaVideo")
             val audioState = getPermissionState("readMediaAudio")
 
             result.put("readMediaVideo", permissionStateToString(videoState))
             result.put("readMediaAudio", permissionStateToString(audioState))
             result.put("granted", videoState == PermissionState.GRANTED || audioState == PermissionState.GRANTED)
-        } else { // Android 12 and below
+        } else { // Android 12 and below (SDK 32-)
             val storageState = getPermissionState("storage")
             result.put("storage", permissionStateToString(storageState))
             result.put("granted", storageState == PermissionState.GRANTED)
@@ -87,13 +105,20 @@ class MediaPermissionsPlugin : Plugin() {
      */
     @PluginMethod
     override fun requestPermissions(call: PluginCall) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+        if (Build.VERSION.SDK_INT >= 34) { // Android 14+ (SDK 34+)
+            // Request all three permissions - Android will handle showing appropriate UI
+            requestPermissionForAliases(
+                arrayOf("readMediaVideo", "readMediaAudio", "readMediaVisualUserSelected"),
+                call,
+                "permissionsCallback"
+            )
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13 (SDK 33)
             requestPermissionForAliases(
                 arrayOf("readMediaVideo", "readMediaAudio"),
                 call,
                 "permissionsCallback"
             )
-        } else { // Android 12 and below
+        } else { // Android 12 and below (SDK 32-)
             requestPermissionForAlias("storage", call, "permissionsCallback")
         }
     }

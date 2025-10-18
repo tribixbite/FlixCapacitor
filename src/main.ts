@@ -139,29 +139,6 @@ async function initCapacitorPlugins(): Promise<void> {
             console.log('Status bar style not set (may be Android):', e.message);
         }
 
-        // Check media permissions on app load (Android only)
-        try {
-            const { MediaPermissions } = await import('./app/permissions/media-permissions.ts');
-            const status = await MediaPermissions.getStatus();
-
-            // Check for partial permissions (Android 13+)
-            const hasVideo = status.readMediaVideo === 'granted';
-            const hasAudio = status.readMediaAudio === 'granted';
-            const hasStorage = status.storage === 'granted';
-
-            // If we have partial permissions, request complete access
-            if ((hasVideo && !hasAudio) || (!hasVideo && hasAudio) || (!status.granted && !hasStorage)) {
-                console.log('[Permissions] Partial permissions detected, requesting complete access...');
-                await MediaPermissions.ensurePermissions();
-            } else if (!status.granted) {
-                console.log('[Permissions] No permissions granted yet - will prompt when needed');
-            } else {
-                console.log('[Permissions] Media permissions already granted');
-            }
-        } catch (e) {
-            console.log('Permission check skipped (may be web platform):', e);
-        }
-
         // Handle app state changes
         App.addListener('appStateChange', async ({ isActive }) => {
             console.log('App state changed. Active:', isActive);

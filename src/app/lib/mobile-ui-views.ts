@@ -16,7 +16,7 @@ import type {
   LearningCourse
 } from '@/types/mobile-ui';
 import type { LibraryItem } from '@/types/library';
-import { MediaPermissions } from '../permissions/media-permissions';
+import MediaPermissions from 'capacitor-plugin-media-permissions';
 
 // CSS Styles for UI Components
 const componentStyles: string = `
@@ -3292,6 +3292,17 @@ export class MobileUIController {
             }
 
             console.log('[Video] Media permissions granted, proceeding with playback');
+
+            // Stop any existing torrent stream before starting a new one
+            try {
+                const { nativeTorrentClient } = await import('./native-torrent-client');
+                if (nativeTorrentClient) {
+                    console.log('[Video] Stopping any existing torrent stream...');
+                    await nativeTorrentClient.stopStream();
+                }
+            } catch (e) {
+                console.warn('[Video] Failed to stop existing torrent (may not exist):', e);
+            }
 
             const mainRegion = document.querySelector('.main-window-region');
 

@@ -886,15 +886,121 @@ Test Files  5 passed (5)
 - Android build: successful
 - APK size: 74MB
 
+#### 20. Capacitor Plugin Module Structure and Android 14+ Permission Support
+**Issues:**
+1. MediaPermissions plugin not being recognized by Capacitor - "plugin is not implemented on android"
+2. Plugin was in app's source directory instead of proper Capacitor module structure
+3. Android 14+ (SDK 34+) introduced new READ_MEDIA_VISUAL_USER_SELECTED permission not supported
+
+**Root Causes:**
+- Plugin in `android/app/src/main/java/app/flixcapacitor/mobile/MediaPermissionsPlugin.kt`
+- No proper Capacitor plugin module structure (package.json, build.gradle)
+- Capacitor only auto-discovers plugins in proper module format
+- Android 14+ requires READ_MEDIA_VISUAL_USER_SELECTED for partial photo/video access
+
+**Fixes Applied:**
+
+**1. Created proper Capacitor plugin module at `plugins/capacitor-plugin-media-permissions/`:**
+- package.json with capacitor configuration for auto-discovery
+- android/build.gradle for the plugin module
+- TypeScript wrapper (src/index.ts) with MediaPermissionsManager class
+- Moved MediaPermissionsPlugin.kt to new location with updated package name
+
+**2. Updated Android configuration:**
+- android/settings.gradle: Added plugin module include
+- package.json: Added plugin as file dependency
+- MainActivity.kt: Removed manual registration (now auto-discovered)
+
+**3. Added Android 14+ support in MediaPermissionsPlugin.kt:**
+```kotlin
+if (Build.VERSION.SDK_INT >= 34) { // Android 14+ (SDK 34+)
+    val videoState = getPermissionState("readMediaVideo")
+    val audioState = getPermissionState("readMediaAudio")
+    val visualUserSelectedState = getPermissionState("readMediaVisualUserSelected")
+    // Granted if ANY permission is granted
+} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13
+    // READ_MEDIA_VIDEO, READ_MEDIA_AUDIO
+} else { // Android 12 and below
+    // READ_EXTERNAL_STORAGE
+}
+```
+
+**4. TypeScript MediaPermissionsManager (src/index.ts):**
+- `ensurePermissions()`: Checks permissions and requests if needed
+- `canPrompt()`: Determines if system dialog can be shown
+- `getStatus()`: Returns current permission state
+- Handles Android 14+ partial permissions (user selected photos/videos)
+
+**5. Removed app load permission check:**
+- Removed lines 142-163 from src/main.ts
+- Permissions now only requested when user clicks "Scan Media" (contextual)
+- Better UX - no unexpected permission prompts on app launch
+
+**Build Results:**
+- `npx cap sync android` shows "Found 10 Capacitor plugins" including "capacitor-plugin-media-permissions@1.0.0"
+- Plugin properly discovered and registered
+- Compilation successful with Android 14+ support
+
+**Files Created:**
+- plugins/capacitor-plugin-media-permissions/package.json
+- plugins/capacitor-plugin-media-permissions/android/build.gradle
+- plugins/capacitor-plugin-media-permissions/src/index.ts
+- plugins/capacitor-plugin-media-permissions/android/src/main/java/app/flixcapacitor/permissions/MediaPermissionsPlugin.kt
+
+**Files Modified:**
+- android/settings.gradle (added plugin module)
+- package.json (added plugin dependency)
+- android/app/src/main/java/app/flixcapacitor/mobile/MainActivity.kt (removed manual registration)
+- src/app/lib/mobile-ui-views.ts (updated import path)
+- src/main.ts (removed app load permission check)
+
+**Commits:** [pending]
+
+#### 21. Torrent Stream Cleanup Fix
+**Issue:** In Learning tab, after playing one video, clicking another video plays the first video instead. Progress indicators jump around showing updates for multiple torrents. New video never plays.
+
+**Root Cause:** Previous torrent stream not being stopped before starting new one, causing:
+- First video continues playing
+- Progress updates from multiple torrents
+- New video stream never starts
+
+**Fix Applied:**
+Added cleanup code in `showVideoPlayer()` method (mobile-ui-views.ts:3296-3305):
+```typescript
+// Stop any existing torrent stream before starting a new one
+try {
+    const { nativeTorrentClient } = await import('./native-torrent-client');
+    if (nativeTorrentClient) {
+        console.log('[Video] Stopping any existing torrent stream...');
+        await nativeTorrentClient.stopStream();
+    }
+} catch (e) {
+    console.warn('[Video] Failed to stop existing torrent (may not exist):', e);
+}
+```
+
+**NativeTorrentClient Methods Available:**
+- `stopStream()`: Stops current torrent and clears state (line 355)
+- `destroy()`: Full cleanup including event listeners (line 568)
+- `startStream()` already calls `stopStream()` if current stream exists (line 286)
+
+**Build Results:**
+- Build successful: main-C5i9z-mR.js (559.13 kB, gzip: 166.78 kB)
+- Synced to Android successfully
+
+**Files Modified:**
+- src/app/lib/mobile-ui-views.ts
+
+**Commits:** [pending]
+
 ### Next Steps
-1. **Test library scan permission flow** - Verify MediaPermissionsPlugin works correctly in Library tab
-2. Test video playback on device to verify CORS fixes
-3. Test permission flow on first video play
-4. Verify GitHub release created with downloadable APKs
-5. Continue TypeScript migration for remaining JavaScript files (providers, views, styl)
-6. Run Biome linter on desktop/CI environment for code quality checks
-7. Monitor for any remaining issues
+1. **Install and test torrent cleanup fix** - Verify clicking different videos in Learning tab works correctly
+2. **Test MediaPermissions plugin on device** - Verify "Scan Media" shows system permission dialog instead of "Open Settings"
+3. **Verify Android 14+ partial permission support** - Test on SDK 34+ device
+4. Continue TypeScript migration for remaining JavaScript files (providers, views, styl)
+5. Run Biome linter on desktop/CI environment for code quality checks
+6. Monitor for any remaining issues
 
 ---
 
-Last updated: 2025-10-16 (Android plugins converted to Kotlin, TypeScript core files complete)
+Last updated: 2025-10-17 (Proper Capacitor plugin structure, Android 14+ permissions, torrent cleanup fix)
