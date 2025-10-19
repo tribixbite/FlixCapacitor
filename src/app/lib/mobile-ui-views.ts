@@ -3452,6 +3452,9 @@ export class MobileUIController {
             // Clear video reference
             this.currentVideoElement = null;
 
+            // CRITICAL: Reset loading flag so new videos can be played
+            this.isLoadingStream = false;
+
             // Return to detail view
             this.showDetail(movie.imdb_id);
         };
