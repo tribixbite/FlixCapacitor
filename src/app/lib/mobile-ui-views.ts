@@ -3293,17 +3293,6 @@ export class MobileUIController {
 
             console.log('[Video] Media permissions granted, proceeding with playback');
 
-            // Stop any existing torrent stream before starting a new one
-            try {
-                const { nativeTorrentClient } = await import('./native-torrent-client');
-                if (nativeTorrentClient) {
-                    console.log('[Video] Stopping any existing torrent stream...');
-                    await nativeTorrentClient.stopStream();
-                }
-            } catch (e) {
-                console.warn('[Video] Failed to stop existing torrent (may not exist):', e);
-            }
-
             const mainRegion = document.querySelector('.main-window-region');
 
             // Truncate title if too long for mobile
