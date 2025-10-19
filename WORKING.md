@@ -991,16 +991,33 @@ try {
 **Files Modified:**
 - src/app/lib/mobile-ui-views.ts
 
-**Commits:** [pending]
+**Commits:** 12dca1ed, f97220c3
+
+#### 22. Mobile UI Views Modularization (In Progress)
+**Issue:** mobile-ui-views.ts is 4,351 lines - too large for maintainability
+
+**Modularization Plan:**
+1. **video-player.ts** (~1000 lines, lines 3207-4351) - showVideoPlayer, playLocalFile, showFilePickerModal
+2. **content-renderers.ts** (~800 lines) - renderRealMovies, renderMockMovies, showMovies, showShows, showAnime
+3. **detail-view-renderer.ts** (~400 lines, lines 2657-2728) - showDetail, renderDetailView, updateFavoriteButtonStates
+4. **library-manager.ts** (~500 lines, lines 1704-2052) - showLibrary, startLibraryScan, showLibraryFiltered
+5. **settings-ui.ts** (~400 lines, lines 2095-2384) - showSettings, setupProxySettings
+6. **navigation-controller.ts** (~200 lines) - navigateTo, goBack, setupBackButtonHandler, removeBackButtonHandler
+
+**Status:** Initial planning - created video-player.ts skeleton
+
+**Files Created:**
+- src/app/lib/video-player.ts (initial structure with permission handling)
+
+**Commits:** [pending - will complete after testing current fixes]
 
 ### Next Steps
-1. **Install and test torrent cleanup fix** - Verify clicking different videos in Learning tab works correctly
-2. **Test MediaPermissions plugin on device** - Verify "Scan Media" shows system permission dialog instead of "Open Settings"
-3. **Verify Android 14+ partial permission support** - Test on SDK 34+ device
+1. **Test current fixes first** - Verify video playback works after removing duplicate cleanup
+2. **Test MediaPermissions plugin** - Verify "Scan Media" shows system permission dialog
+3. **Complete modularization** - Extract remaining modules from mobile-ui-views.ts
 4. Continue TypeScript migration for remaining JavaScript files (providers, views, styl)
 5. Run Biome linter on desktop/CI environment for code quality checks
-6. Monitor for any remaining issues
 
 ---
 
-Last updated: 2025-10-17 (Proper Capacitor plugin structure, Android 14+ permissions, torrent cleanup fix)
+Last updated: 2025-10-19 (Modularization plan created, torrent cleanup fix)
