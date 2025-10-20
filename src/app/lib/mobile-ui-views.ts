@@ -3205,10 +3205,27 @@ export class MobileUIController {
     }
 
     async showVideoPlayer(movie: Movie | Episode | LibraryItem, torrent: TorrentInfo | null, quality: string): Promise<void> {
-        // Prevent concurrent calls - if already loading a stream, ignore
+        // If already loading a stream, stop it first before starting new one
         if (this.isLoadingStream) {
-            console.warn('Stream already loading, ignoring duplicate call');
-            return;
+            console.warn('Stream already loading, stopping current stream before starting new one');
+            this.isLoadingStream = false; // Reset flag
+
+            // Stop current video/torrent if any
+            if (window.NativeTorrentClient) {
+                try {
+                    await window.NativeTorrentClient.stopStream();
+                    console.log('Stopped previous stream');
+                } catch (e) {
+                    console.warn('Failed to stop previous stream:', e);
+                }
+            }
+
+            // Clear video element
+            if (this.currentVideoElement) {
+                this.currentVideoElement.pause();
+                this.currentVideoElement.src = '';
+                this.currentVideoElement = null;
+            }
         }
 
         try {

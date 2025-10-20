@@ -17,8 +17,10 @@ window.addEventListener('error', (event) => {
     console.error('Line:', event.lineno, 'Column:', event.colno);
     console.error('Stack:', event.error?.stack);
 
-    // Show user-friendly error message
-    showErrorNotification('An unexpected error occurred. Please restart the app.');
+    // Show actual error message with debugging info
+    const errorMsg = event.message || event.error?.message || 'Unknown error';
+    const location = event.filename ? `${event.filename}:${event.lineno}` : 'Unknown location';
+    showErrorNotification(`Error: ${errorMsg}\nLocation: ${location}`);
 
     // Prevent default browser error handling
     event.preventDefault();
@@ -31,8 +33,9 @@ window.addEventListener('unhandledrejection', (event) => {
     console.error('💥 UNHANDLED PROMISE REJECTION:', event.reason);
     console.error('Promise:', event.promise);
 
-    // Show user-friendly error message
-    showErrorNotification('A background operation failed. Some features may not work.');
+    // Show actual rejection reason
+    const reason = event.reason?.message || event.reason?.toString() || 'Unknown reason';
+    showErrorNotification(`Promise rejection: ${reason}`);
 
     // Prevent default browser handling
     event.preventDefault();
