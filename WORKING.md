@@ -1011,13 +1011,39 @@ try {
 
 **Commits:** [pending - will complete after testing current fixes]
 
+#### 23. Video Error Handling Improvements
+**Issue:** Generic "unexpected error" messages during video playback didn't provide debugging information
+
+**Zen Debug Analysis:**
+Used zen MCP debug tool to systematically review error handling across showVideoPlayer method (4,100+ lines) and native-torrent-client.ts.
+
+**Findings:**
+- Existing error handling was comprehensive - all catch blocks showed `${error.message}`
+- Video error codes 1-4 properly mapped to specific messages
+- Generic fallback at line 3693 only triggered when `videoElement.error` is null (browser edge case)
+
+**Fix Applied (mobile-ui-views.ts:3693-3710):**
+1. Removed generic "An unexpected error occurred" message
+2. Added default case for unknown error codes
+3. Enhanced fallback to show diagnostic info when error object is null:
+   - `networkState` (0:EMPTY, 1:IDLE, 2:LOADING, 3:NO_SOURCE)
+   - `readyState` (0-4 indicating buffer state)
+   - Whether video source URL is set
+
+**Result:** All error paths now provide actionable messages for debugging network, buffering, or codec issues.
+
+**Files Modified:**
+- src/app/lib/mobile-ui-views.ts
+
+**Commits:** fecda6d7, 5e0aec18
+
 ### Next Steps
-1. **Test current fixes first** - Verify video playback works after removing duplicate cleanup
-2. **Test MediaPermissions plugin** - Verify "Scan Media" shows system permission dialog
-3. **Complete modularization** - Extract remaining modules from mobile-ui-views.ts
-4. Continue TypeScript migration for remaining JavaScript files (providers, views, styl)
-5. Run Biome linter on desktop/CI environment for code quality checks
+1. **Test video playback** - Verify both successful playback and error scenarios show proper messages
+2. **Test back button flow** - Verify isLoadingStream flag resets correctly
+3. **Test MediaPermissions plugin** - Verify "Scan Media" shows system permission dialog
+4. **Complete modularization** - Extract remaining modules from mobile-ui-views.ts (4,351 lines)
+5. Continue TypeScript migration for remaining JavaScript files (providers, views, styl)
 
 ---
 
-Last updated: 2025-10-19 (Modularization plan created, torrent cleanup fix)
+Last updated: 2025-10-19 (Error handling improvements, loading flag fix)
