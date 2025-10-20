@@ -3690,7 +3690,7 @@ export class MobileUIController {
                     // CRITICAL: Set error flag to prevent progress updates from overwriting this UI
                     hasVideoError = true;
 
-                    let errorMsg = 'An unexpected error occurred.';
+                    let errorMsg = '';
                     let errorCode = 'N/A';
                     if (videoElement.error) {
                         errorCode = videoElement.error.code;
@@ -3699,10 +3699,14 @@ export class MobileUIController {
                             case 2: errorMsg = 'A network error caused the video download to fail part-way.'; break;
                             case 3: errorMsg = 'Video playback aborted due to corruption or unsupported features (likely codec/format issue).'; break;
                             case 4: errorMsg = 'The video could not be loaded, either due to a server/network issue or an unsupported format.'; break;
+                            default: errorMsg = `Unknown video error (code ${videoElement.error.code})`; break;
                         }
                         if (videoElement.error.message) {
                             errorMsg += ` (${videoElement.error.message})`;
                         }
+                    } else {
+                        // No error object available - provide debugging info
+                        errorMsg = `Video error occurred but no error details available. Network: ${videoElement.networkState}, Ready: ${videoElement.readyState}, Source: ${videoElement.currentSrc ? 'set' : 'empty'}`;
                     }
 
                     // Log comprehensive debug information to the console
