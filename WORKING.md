@@ -1037,13 +1037,46 @@ Used zen MCP debug tool to systematically review error handling across showVideo
 
 **Commits:** fecda6d7, 5e0aec18
 
+#### 24. Video Switching and Global Error Handler Fixes
+**Issues:**
+1. Clicking different video while one is loading played first video instead
+2. Global error handler showed generic "unexpected error" message
+3. Back button didn't reset isLoadingStream flag
+
+**Fixes Applied:**
+
+**1. Video Switching (mobile-ui-views.ts:3208-3229):**
+- When isLoadingStream is true, stop current stream before starting new one
+- Call NativeTorrentClient.stopStream() to release previous torrent
+- Clear video element (pause, clear src, nullify reference)
+- Reset flag and allow new video to start
+
+**2. Global Error Handler (main.ts:13-42):**
+- Show actual error message + file location instead of generic message
+- Promise rejection handler shows actual rejection reason
+- Provides debugging info for all uncaught errors
+
+**3. Back Button Reset:**
+- exitVideoPlayer now resets isLoadingStream flag
+- Allows playing videos after pressing back
+
+**Files Modified:**
+- src/app/lib/mobile-ui-views.ts
+- src/main.ts
+
+**Commits:** 5aa0e63e
+
 ### Next Steps
-1. **Test video playback** - Verify both successful playback and error scenarios show proper messages
-2. **Test back button flow** - Verify isLoadingStream flag resets correctly
-3. **Test MediaPermissions plugin** - Verify "Scan Media" shows system permission dialog
-4. **Complete modularization** - Extract remaining modules from mobile-ui-views.ts (4,351 lines)
-5. Continue TypeScript migration for remaining JavaScript files (providers, views, styl)
+1. **Complete modularization** - Extract modules from mobile-ui-views.ts (4,375 lines):
+   - video-player.ts (~1100 lines) - showVideoPlayer, playLocalFile, showFilePickerModal
+   - content-renderers.ts (~800 lines) - renderRealMovies, showMovies, showShows, showAnime
+   - detail-view-renderer.ts (~400 lines) - showDetail, renderDetailView
+   - library-manager.ts (~500 lines) - showLibrary, startLibraryScan
+   - settings-ui.ts (~400 lines) - showSettings, setupProxySettings
+2. Test all video playback scenarios with new fixes
+3. Test MediaPermissions plugin - Verify "Scan Media" shows system permission dialog
+4. Continue TypeScript migration for remaining JavaScript files
 
 ---
 
-Last updated: 2025-10-19 (Error handling improvements, loading flag fix)
+Last updated: 2025-10-21 (Video switching fixed, error messages show actual errors)
