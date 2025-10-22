@@ -1120,10 +1120,23 @@ Given the size and complexity of the video player code (~1100 lines with intrica
 - File picker: showFilePickerModal (complete)
 - Torrent streaming: showVideoPlayer (complete - 1123 lines with all UI, events, cleanup)
 
-**Phase 3 (Next):**
-- Update mobile-ui-views.ts to delegate video player methods to VideoPlayer module
-- Test TypeScript compilation
-- Test video playback functionality
+**Phase 3 Complete:**
+- ✅ Imported VideoPlayer module in mobile-ui-views.ts
+- ✅ Initialized VideoPlayer with controller context
+- ✅ Replaced ALL 11 video player methods with delegations:
+  - getFileName, formatBytes (helpers)
+  - savePlaybackPosition, getPlaybackPosition, getContinueWatchingItems (state)
+  - setupBackButtonHandler, removeBackButtonHandler (Android)
+  - playMovie, playLocalFile (playback)
+  - showFilePickerModal (262 lines → 3 lines)
+  - showVideoPlayer (1122 lines → 3 lines)
+
+**Results:**
+- mobile-ui-views.ts: **4,372 → 2,831 lines (35% reduction, 1,541 lines saved)**
+- video-player.ts: **1,678 lines (complete module)**
+- All video playback code now properly modularized
+
+**Next:** Test TypeScript compilation and video playback functionality
 
 ### Next Steps
 1. **Complete video-player.ts extraction** - Extract all video player code from mobile-ui-views.ts
