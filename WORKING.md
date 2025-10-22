@@ -1095,7 +1095,25 @@ Given the size and complexity of the video player code (~1100 lines with intrica
   - Torrent streaming integration
   - Cleanup and resource management
 
-**Next:** Begin extraction starting with simpler helper methods, build up to complex showVideoPlayer.
+**Progress:** Phase 1 extraction complete.
+
+**Phase 1 Complete (305 lines extracted to video-player.ts):**
+- ✅ VideoPlayerContext interface - provides access to controller state
+- ✅ Helper methods: getFileName, formatBytes
+- ✅ State management: savePlaybackPosition, getPlaybackPosition, getContinueWatchingItems
+- ✅ Back button handlers: setupBackButtonHandler, removeBackButtonHandler
+- ✅ Entry point: playMovie
+- ✅ Local file playback: playLocalFile (complete implementation)
+- 📝 Placeholders: showVideoPlayer, showFilePickerModal (to be extracted next)
+
+**Phase 2 (In Progress):**
+- Extract showFilePickerModal (~261 lines, lines 2729-2990)
+- Extract showVideoPlayer (~1122 lines, lines 3207-4329)
+
+**Phase 3 (Pending):**
+- Update mobile-ui-views.ts to delegate video player methods to VideoPlayer module
+- Test TypeScript compilation
+- Test video playback functionality
 
 ### Next Steps
 1. **Complete video-player.ts extraction** - Extract all video player code from mobile-ui-views.ts
