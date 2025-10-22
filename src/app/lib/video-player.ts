@@ -1163,10 +1163,6 @@ export class VideoPlayer {
                             }
                         }, 100);
                     }
-                    if (statusText) {
-                        statusText.textContent = 'Use External Player';
-                        statusText.style.color = '#f59e0b';
-                    }
 
                     // Hide spinner
                     const spinner = document.querySelector('.loading-spinner-large');
