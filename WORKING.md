@@ -1107,8 +1107,8 @@ Given the size and complexity of the video player code (~1100 lines with intrica
 - 📝 Placeholders: showVideoPlayer, showFilePickerModal (to be extracted next)
 
 **Phase 2 (In Progress):**
-- Extract showFilePickerModal (~261 lines, lines 2729-2990)
-- Extract showVideoPlayer (~1122 lines, lines 3207-4329)
+- ✅ Extract showFilePickerModal (261 lines complete)
+- 🔄 Extract showVideoPlayer (~1122 lines) - Next
 
 **Phase 3 (Pending):**
 - Update mobile-ui-views.ts to delegate video player methods to VideoPlayer module

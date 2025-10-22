@@ -297,11 +297,268 @@ export class VideoPlayer {
 
     /**
      * Show file picker modal for multi-file torrents
-     * This is a placeholder - implementation will be added incrementally
+     * Displays list of video files with checkbox selection and star/favorite support
      */
     async showFilePickerModal(videoFiles: any[], movie: any): Promise<number | null> {
-        console.log('[VideoPlayer] showFilePickerModal called - full implementation pending');
-        // TODO: Extract showFilePickerModal implementation from mobile-ui-views.ts lines 2729-2990
-        return null;
+        return new Promise((resolve) => {
+            const mainRegion = document.querySelector('.main-window-region');
+            const modal = document.createElement('div');
+            modal.className = 'file-picker-modal';
+            modal.innerHTML = `
+                <div class="file-picker-overlay"></div>
+                <div class="file-picker-content">
+                    <div class="file-picker-header">
+                        <h2>${movie.title || 'Select Video File'}</h2>
+                        <p>${videoFiles.length} video files found</p>
+                        <button class="file-picker-close">×</button>
+                    </div>
+                    <div class="file-picker-body">
+                        ${videoFiles.map((file, idx) => `
+                            <div class="file-picker-item" data-index="${file.index}">
+                                <div class="file-picker-item-checkbox">
+                                    <input type="checkbox" id="file-${file.index}" />
+                                </div>
+                                <div class="file-picker-item-info" data-index="${file.index}">
+                                    <div class="file-picker-item-name">${this.getFileName(file.name)}</div>
+                                    <div class="file-picker-item-size">${this.formatBytes(file.size)}</div>
+                                </div>
+                                <div class="file-picker-item-star" data-index="${file.index}">
+                                    ☆
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="file-picker-footer">
+                        <button class="file-picker-cancel">Cancel</button>
+                        <button class="file-picker-play" disabled>Play Selected</button>
+                    </div>
+                </div>
+                <style>
+                    .file-picker-modal {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        z-index: 10000;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .file-picker-overlay {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.85);
+                    }
+                    .file-picker-content {
+                        position: relative;
+                        background: #1a1a1a;
+                        border-radius: 12px;
+                        max-width: 90%;
+                        max-height: 80vh;
+                        width: 500px;
+                        display: flex;
+                        flex-direction: column;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+                    }
+                    .file-picker-header {
+                        padding: 1.5rem;
+                        border-bottom: 1px solid #333;
+                        position: relative;
+                    }
+                    .file-picker-header h2 {
+                        margin: 0 0 0.5rem 0;
+                        font-size: 1.25rem;
+                        color: #fff;
+                    }
+                    .file-picker-header p {
+                        margin: 0;
+                        font-size: 0.875rem;
+                        color: #999;
+                    }
+                    .file-picker-close {
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        background: none;
+                        border: none;
+                        color: #999;
+                        font-size: 2rem;
+                        cursor: pointer;
+                        padding: 0;
+                        width: 32px;
+                        height: 32px;
+                        line-height: 1;
+                    }
+                    .file-picker-close:hover {
+                        color: #fff;
+                    }
+                    .file-picker-body {
+                        flex: 1;
+                        overflow-y: auto;
+                        padding: 1rem;
+                    }
+                    .file-picker-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        padding: 0.75rem;
+                        margin-bottom: 0.5rem;
+                        background: #252525;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: background 0.2s;
+                    }
+                    .file-picker-item:hover {
+                        background: #2a2a2a;
+                    }
+                    .file-picker-item.selected {
+                        background: #2d4a7c;
+                    }
+                    .file-picker-item-checkbox input {
+                        width: 18px;
+                        height: 18px;
+                        cursor: pointer;
+                    }
+                    .file-picker-item-info {
+                        flex: 1;
+                        cursor: pointer;
+                    }
+                    .file-picker-item-name {
+                        color: #fff;
+                        font-size: 0.9rem;
+                        margin-bottom: 0.25rem;
+                    }
+                    .file-picker-item-size {
+                        color: #999;
+                        font-size: 0.8rem;
+                    }
+                    .file-picker-item-star {
+                        font-size: 1.5rem;
+                        color: #999;
+                        cursor: pointer;
+                        user-select: none;
+                    }
+                    .file-picker-item-star.starred {
+                        color: #f59e0b;
+                    }
+                    .file-picker-footer {
+                        padding: 1rem 1.5rem;
+                        border-top: 1px solid #333;
+                        display: flex;
+                        gap: 0.75rem;
+                        justify-content: flex-end;
+                    }
+                    .file-picker-footer button {
+                        padding: 0.6rem 1.5rem;
+                        border-radius: 6px;
+                        border: none;
+                        font-size: 0.9rem;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    }
+                    .file-picker-cancel {
+                        background: #333;
+                        color: #fff;
+                    }
+                    .file-picker-cancel:hover {
+                        background: #444;
+                    }
+                    .file-picker-play {
+                        background: #3b82f6;
+                        color: #fff;
+                    }
+                    .file-picker-play:hover:not(:disabled) {
+                        background: #2563eb;
+                    }
+                    .file-picker-play:disabled {
+                        background: #444;
+                        color: #666;
+                        cursor: not-allowed;
+                    }
+                </style>
+            `;
+
+            mainRegion!.appendChild(modal);
+
+            // Track selected files
+            const selectedIndices = new Set();
+            const playButton = modal.querySelector('.file-picker-play') as HTMLButtonElement;
+
+            // Update play button state
+            const updatePlayButton = () => {
+                playButton.disabled = selectedIndices.size === 0;
+                playButton.textContent = selectedIndices.size > 1
+                    ? `Play ${selectedIndices.size} Files`
+                    : 'Play Selected';
+            };
+
+            // Handle checkbox changes
+            modal.querySelectorAll('.file-picker-item-checkbox input').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const item = (e.target as HTMLElement).closest('.file-picker-item') as HTMLElement;
+                    const index = parseInt(item.dataset.index!);
+
+                    if ((e.target as HTMLInputElement).checked) {
+                        selectedIndices.add(index);
+                        item.classList.add('selected');
+                    } else {
+                        selectedIndices.delete(index);
+                        item.classList.remove('selected');
+                    }
+                    updatePlayButton();
+                });
+            });
+
+            // Handle clicking on file info (toggle selection)
+            modal.querySelectorAll('.file-picker-item-info').forEach(info => {
+                info.addEventListener('click', (e) => {
+                    const item = (e.target as HTMLElement).closest('.file-picker-item') as HTMLElement;
+                    const checkbox = item.querySelector('input[type="checkbox"]') as HTMLInputElement;
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+            });
+
+            // Handle star/favorite
+            modal.querySelectorAll('.file-picker-item-star').forEach(star => {
+                star.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    star.classList.toggle('starred');
+                    star.textContent = star.classList.contains('starred') ? '★' : '☆';
+                    // TODO: Save favorite to database
+                });
+            });
+
+            // Handle close button
+            modal.querySelector('.file-picker-close')!.addEventListener('click', () => {
+                modal.remove();
+                resolve(null);
+            });
+
+            // Handle cancel button
+            modal.querySelector('.file-picker-cancel')!.addEventListener('click', () => {
+                modal.remove();
+                resolve(null);
+            });
+
+            // Handle play button
+            playButton.addEventListener('click', () => {
+                const indices = Array.from(selectedIndices);
+                modal.remove();
+                // For now, return first selected index
+                // TODO: Support playing multiple files in sequence
+                resolve(indices[0]);
+            });
+
+            // Handle overlay click
+            modal.querySelector('.file-picker-overlay')!.addEventListener('click', () => {
+                modal.remove();
+                resolve(null);
+            });
+        });
     }
 }
