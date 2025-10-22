@@ -1106,11 +1106,21 @@ Given the size and complexity of the video player code (~1100 lines with intrica
 - ✅ Local file playback: playLocalFile (complete implementation)
 - 📝 Placeholders: showVideoPlayer, showFilePickerModal (to be extracted next)
 
-**Phase 2 (In Progress):**
-- ✅ Extract showFilePickerModal (261 lines complete)
-- 🔄 Extract showVideoPlayer (~1122 lines) - Next
+**Phase 2 Complete:**
+- ✅ Extract showFilePickerModal (261 lines)
+- ✅ Extract showVideoPlayer (1123 lines)
 
-**Phase 3 (Pending):**
+**video-player.ts Module Complete - 1678 total lines:**
+- VideoPlayerContext interface
+- Helper methods: getFileName, formatBytes
+- State management: savePlaybackPosition, getPlaybackPosition, getContinueWatchingItems
+- Back button handlers: setupBackButtonHandler, removeBackButtonHandler
+- Entry point: playMovie
+- Local playback: playLocalFile (complete)
+- File picker: showFilePickerModal (complete)
+- Torrent streaming: showVideoPlayer (complete - 1123 lines with all UI, events, cleanup)
+
+**Phase 3 (Next):**
 - Update mobile-ui-views.ts to delegate video player methods to VideoPlayer module
 - Test TypeScript compilation
 - Test video playback functionality
