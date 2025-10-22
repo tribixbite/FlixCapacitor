@@ -551,7 +551,13 @@ export class VideoPlayer {
             });
         });
     }
-}
+
+    // ===== TORRENT STREAMING =====
+
+    /**
+     * Show video player with torrent streaming
+     * Complete implementation with UI, events, and cleanup
+     */
     async showVideoPlayer(movie: Movie | Episode | LibraryItem, torrent: TorrentInfo | null, quality: string): Promise<void> {
         // If already loading a stream, stop it first before starting new one
         if (this.ctx.isLoadingStream) {

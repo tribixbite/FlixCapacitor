@@ -2782,10 +2782,6 @@ export class MobileUIController {
         return this.videoPlayer.showVideoPlayer(movie, torrent, quality);
     }
 
-}
-
-    // Helper: Format bytes to human readable
-
     // Mock data generators
     getMockMovies() {
         return Array.from({ length: 20 }, (_, i) => ({
