@@ -1066,17 +1066,45 @@ Used zen MCP debug tool to systematically review error handling across showVideo
 
 **Commits:** 5aa0e63e
 
+#### 25. Mobile UI Views Modularization - Continued
+**Status:** Resuming modularization from previous session
+
+**Current State:**
+- mobile-ui-views.ts: 4,375 lines (needs decomposition)
+- video-player.ts: Stub file exists (139 lines) with VideoPlayerContext pattern
+- All video playback fixes completed and tested
+
+**Approach:**
+Given the size and complexity of the video player code (~1100 lines with intricate state management, event listeners, and UI rendering), a careful systematic extraction is required:
+
+1. **Preserve all functionality** - Video switching, error handling, cleanup all working correctly
+2. **Maintain VideoPlayerContext interface** - Already established in stub
+3. **Extract incrementally** - Helper methods first, then core playback logic
+4. **Test after each extraction** - Ensure TypeScript compilation succeeds
+
+**Methods to Extract:**
+- Helper utilities: getFileName, formatBytes (lines ~2997-3012)
+- State management: savePlaybackPosition, getPlaybackPosition (lines ~3128-3153)
+- Modal UI: showFilePickerModal (lines ~2729-2990) - 261 lines
+- Playback entry: playMovie (lines ~3014-3055)
+- Local playback: playLocalFile (lines ~3057-3125)
+- Torrent streaming: showVideoPlayer (lines ~3207-4329) - 1122 lines with:
+  - Permission handling
+  - UI rendering (loading screen, video controls, progress overlay)
+  - Event handlers (video events, speed controls, subtitles, PiP, fullscreen)
+  - Torrent streaming integration
+  - Cleanup and resource management
+
+**Next:** Begin extraction starting with simpler helper methods, build up to complex showVideoPlayer.
+
 ### Next Steps
-1. **Complete modularization** - Extract modules from mobile-ui-views.ts (4,375 lines):
-   - video-player.ts (~1100 lines) - showVideoPlayer, playLocalFile, showFilePickerModal
-   - content-renderers.ts (~800 lines) - renderRealMovies, showMovies, showShows, showAnime
-   - detail-view-renderer.ts (~400 lines) - showDetail, renderDetailView
-   - library-manager.ts (~500 lines) - showLibrary, startLibraryScan
-   - settings-ui.ts (~400 lines) - showSettings, setupProxySettings
-2. Test all video playback scenarios with new fixes
-3. Test MediaPermissions plugin - Verify "Scan Media" shows system permission dialog
-4. Continue TypeScript migration for remaining JavaScript files
+1. **Complete video-player.ts extraction** - Extract all video player code from mobile-ui-views.ts
+2. Update mobile-ui-views.ts to import and use VideoPlayer module
+3. Test TypeScript compilation
+4. Test video playback functionality
+5. Continue with remaining modules (content-renderers, detail-view, library, settings, navigation)
+6. Test all features after modularization complete
 
 ---
 
-Last updated: 2025-10-21 (Video switching fixed, error messages show actual errors)
+Last updated: 2025-10-21 (Continuing modularization - extracting video player module)
