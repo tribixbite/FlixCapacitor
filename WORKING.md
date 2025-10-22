@@ -1155,7 +1155,18 @@ Given the size and complexity of the video player code (~1100 lines with intrica
 - ✅ Rebuild successful - error resolved
 - **Commit:** 94b74d93
 
-**Status:** Modularization complete. TypeScript compilation ✅, Build ✅, Runtime error fixed ✅. Ready for device testing.
+**Status:** Modularization complete. TypeScript compilation ✅, Build ✅, Runtime error fixed ✅.
+
+**Android APK Build and Testing:**
+- ⚠️ Gradle build fails on Termux/ARM due to x86-only AAPT2 binary incompatibility
+- ✅ Workaround: Manual APK repackaging using zip/zipalign/apksigner
+  1. Updated existing APK assets via `zip` (added dist/public/* and capacitor.config.json)
+  2. Aligned APK with `zipalign -f 4`
+  3. Signed with `apksigner` (v2/v3 scheme) using debug.keystore
+- ✅ Installed via `adb install -r` (Success)
+- ✅ Launched via `adb shell am start`
+- ✅ Verified in logcat: **No statusText ReferenceError** - fix confirmed working
+- 📱 App running on device with modularized video-player.ts code
 
 ### Next Steps
 1. ✅ **Video player module complete** - Successfully extracted 1,678 lines to video-player.ts
