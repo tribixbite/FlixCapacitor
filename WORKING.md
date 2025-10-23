@@ -1186,16 +1186,44 @@ Given the size and complexity of the video player code (~1100 lines with intrica
 
 ---
 
-Last updated: 2025-10-22 (Video player modularization complete - TypeScript compilation verified)
+Last updated: 2025-10-23 (Video switching bug diagnosis in progress)
 
 **APK Update Issue Found and Fixed:**
 - 🐛 Initial APK install had old build (main-DGO_B6rD.js) instead of new build (main-Ch09mQni.js)
 - 🔧 Root cause: `zip -ru` command doesn't replace existing files in APK properly
-- ✅ Fix: 
+- ✅ Fix:
   1. Decoded base APK with apktool
   2. Deleted old assets: `zip -d app.apk "assets/public/*" "public/*"`
   3. Added new assets from android/app/src/main/assets
   4. Re-aligned and re-signed
 - ✅ Verified: `unzip -l app-final.apk | grep main-` shows only main-Ch09mQni.js
 - 📱 Installed and ready for testing
+
+**Video Switching Bug Found:**
+- 🐛 Critical issue: Clicking second video while first video is loading/playing causes first video to play instead
+- 🔍 Analysis: `isLoadingStream` flag is `false` when second video is clicked (should be `true`)
+- 🔍 No "Stream already loading" warning appears in logs, confirming flag is not properly set
+- 📝 Hypothesis: Flag is being reset somewhere unexpected or not being checked at correct time
+
+**Diagnostic Logging Added:**
+- ✅ Added console.log statements to track `isLoadingStream` flag behavior:
+  - Line 562: Log when showVideoPlayer is called with current flag state
+  - Line 568: Log when flag is set to false (stopping previous stream)
+  - Line 590: Log when flag is set to true (starting new video)
+  - Line 598: Log when flag is set to false (permissions denied)
+- **Commit:** f9d262d3
+
+**APK Rebuilt with Logging:**
+- ✅ Build: `npm run build` → main-DPrrcWor.js (2025-10-23 01:31)
+- ✅ Sync: `npx cap sync android` → Assets copied to android/app/src/main/assets
+- ✅ Package: Manual APK repackaging (deleted old assets, added new)
+- ✅ Verify: `unzip -l app.apk | grep main-` shows only main-DPrrcWor.js
+- ✅ Install: `adb install -r` → Success
+- 📱 Ready for testing: User needs to click two videos in sequence while monitoring logcat
+
+**Next Steps:**
+1. 🧪 User test: Click on video 1, then quickly click on video 2 while video 1 is loading
+2. 📊 Analyze logcat: Check `[showVideoPlayer]` log messages to track flag state
+3. 🔧 Implement fix: Based on logging output, identify where flag is incorrectly reset
+4. ✅ Verify fix: Ensure video switching properly stops first video before starting second
 
