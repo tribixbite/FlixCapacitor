@@ -559,10 +559,13 @@ export class VideoPlayer {
      * Complete implementation with UI, events, and cleanup
      */
     async showVideoPlayer(movie: Movie | Episode | LibraryItem, torrent: TorrentInfo | null, quality: string): Promise<void> {
+        console.log(`[showVideoPlayer] Called for: ${movie.title}, isLoadingStream=${this.ctx.isLoadingStream}`);
+
         // If already loading a stream, stop it first before starting new one
         if (this.ctx.isLoadingStream) {
             console.warn('Stream already loading, stopping current stream before starting new one');
             this.ctx.isLoadingStream = false; // Reset flag
+            console.log(`[showVideoPlayer] Set isLoadingStream = false (stopping previous)`);
 
             // Stop current video/torrent if any
             if (window.NativeTorrentClient) {
@@ -584,12 +587,15 @@ export class VideoPlayer {
 
         try {
             this.ctx.isLoadingStream = true; // Set flag to prevent concurrent calls
+            console.log(`[showVideoPlayer] Set isLoadingStream = true (starting ${movie.title})`);
+
 
             // Check and request media permissions before playing video
             const { granted, permanentlyDenied } = await MediaPermissions.ensurePermissions();
 
             if (!granted) {
                 this.ctx.isLoadingStream = false;
+                console.log(`[showVideoPlayer] Set isLoadingStream = false (permissions denied)`);
                 const mainRegion = document.querySelector('.main-window-region');
 
                 if (permanentlyDenied) {
