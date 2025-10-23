@@ -1652,6 +1652,9 @@ export class VideoPlayer {
             // Hide spinner
             const spinner = document.querySelector('.loading-spinner-large');
             if (spinner) spinner.style.display = 'none';
+
+            // Reset loading flag on error - user needs to retry
+            this.ctx.isLoadingStream = false;
         }
     } catch (error) {
         console.error('Video player error:', error);
@@ -1673,8 +1676,11 @@ export class VideoPlayer {
             `;
         }
         if (spinner) spinner.style.display = 'none';
-    } finally {
-        this.ctx.isLoadingStream = false; // Always reset flag
+
+        // Reset loading flag on error - user needs to retry
+        this.ctx.isLoadingStream = false;
     }
+    // NOTE: Do NOT reset isLoadingStream here - it should stay true while video is playing
+    // Only reset in exitVideoPlayer() when user explicitly exits
 }
 }
