@@ -1187,3 +1187,15 @@ Given the size and complexity of the video player code (~1100 lines with intrica
 ---
 
 Last updated: 2025-10-22 (Video player modularization complete - TypeScript compilation verified)
+
+**APK Update Issue Found and Fixed:**
+- 🐛 Initial APK install had old build (main-DGO_B6rD.js) instead of new build (main-Ch09mQni.js)
+- 🔧 Root cause: `zip -ru` command doesn't replace existing files in APK properly
+- ✅ Fix: 
+  1. Decoded base APK with apktool
+  2. Deleted old assets: `zip -d app.apk "assets/public/*" "public/*"`
+  3. Added new assets from android/app/src/main/assets
+  4. Re-aligned and re-signed
+- ✅ Verified: `unzip -l app-final.apk | grep main-` shows only main-Ch09mQni.js
+- 📱 Installed and ready for testing
+
