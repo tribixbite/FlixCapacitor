@@ -1346,5 +1346,57 @@ Further extraction would create unnecessary indirection and make the code harder
 
 ---
 
-Last updated: 2025-10-23 (Modularization complete - 63% reduction achieved)
+## TODO Implementation Progress
+
+### Browser Integration ✅
+**Priority:** P2 - Short-term (Low complexity, high value)
+**Date:** 2025-10-23
+**Files Modified:** `src/app/lib/nw-compat.ts`, `package.json`
+
+**Implementation:**
+- Installed `@capacitor/browser@7.0.2` dependency
+- Added Browser import to nw-compat.ts
+- Implemented `Shell.openExternal(url)` to open URLs in system browser
+- Implemented `Shell.openItem(path)` with URL detection
+- Added proper error handling and logging
+- Mobile limitation handling (local files not supported)
+
+**Changes:**
+```typescript
+import { Browser } from '@capacitor/browser';
+
+Shell: {
+  openExternal: async (url: string) => {
+    try {
+      await Browser.open({ url });
+      console.log('Opened external URL:', url);
+    } catch (error) {
+      console.error('Failed to open external URL:', url, error);
+    }
+  },
+  openItem: async (path: string) => {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      await Browser.open({ url: path });
+    } else {
+      console.warn('Local file opening not supported on mobile:', path);
+    }
+  }
+}
+```
+
+**Verification:**
+- ✅ TypeScript compilation passed
+- ✅ Vite build successful (main-aEeiar-9.js)
+- ✅ Capacitor sync successful (11 plugins detected including @capacitor/browser)
+- ✅ TODOs removed from nw-compat.ts
+
+**Impact:**
+- External links in app can now open in system browser
+- Better user experience for help links, documentation, etc.
+- Platform compatibility improved
+- 2 TODO items resolved (nw-compat.ts:121, 125)
+
+---
+
+Last updated: 2025-10-23 (Browser integration complete)
 

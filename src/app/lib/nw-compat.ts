@@ -5,6 +5,7 @@
 
 import { App } from '@capacitor/app';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Browser } from '@capacitor/browser';
 
 // Mock window object
 export const win = {
@@ -116,13 +117,34 @@ export const nw = {
     },
 
     Shell: {
-        openItem: async (path) => {
-            console.warn('nw.Shell.openItem not fully implemented:', path);
-            // # TODO: Implement with Capacitor Browser plugin if needed
+        /**
+         * Open a file or directory with system default application
+         * On mobile, only HTTP/HTTPS URLs are supported via Browser
+         */
+        openItem: async (path: string) => {
+            try {
+                // Check if it's a URL
+                if (path.startsWith('http://') || path.startsWith('https://')) {
+                    await Browser.open({ url: path });
+                    console.log('Opened URL in browser:', path);
+                } else {
+                    // Local file paths not supported on mobile
+                    console.warn('Local file opening not supported on mobile:', path);
+                }
+            } catch (error) {
+                console.error('Failed to open item:', path, error);
+            }
         },
-        openExternal: async (url) => {
-            console.warn('nw.Shell.openExternal:', url);
-            // # TODO: Implement with Capacitor Browser plugin
+        /**
+         * Open a URL in the system browser
+         */
+        openExternal: async (url: string) => {
+            try {
+                await Browser.open({ url });
+                console.log('Opened external URL:', url);
+            } catch (error) {
+                console.error('Failed to open external URL:', url, error);
+            }
         }
     },
 
