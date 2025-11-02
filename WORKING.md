@@ -1398,5 +1398,96 @@ Shell: {
 
 ---
 
-Last updated: 2025-10-23 (Browser integration complete)
+### App Exit Cleanup ✅
+**Priority:** P2 - Short-term (Low-Medium complexity)
+**Date:** 2025-11-02
+**Files Modified:** `src/app/lib/nw-compat.ts`, `src/types/global.d.ts`
+
+**Implementation:**
+- Enhanced `win.on('close')` event handler with proper cleanup logic
+- Added `appStateChange` listener to handle app going to background
+- Added `pause` listener to handle app pause events
+- Implemented torrent stream cleanup via `NativeTorrentClient.stopStream()`
+- Added video element cleanup (pause and clear src)
+- Fixed TypeScript compilation by adding `NativeTorrentClient` to Window interface
+
+**Changes:**
+```typescript
+// nw-compat.ts - Enhanced event handler
+on: (event, callback) => {
+  if (event === 'close') {
+    // Cleanup on app going to background
+    App.addListener('appStateChange', async ({ isActive }) => {
+      if (!isActive) {
+        console.log('App going to background, performing cleanup...');
+
+        // Stop any active torrents
+        if (window.NativeTorrentClient) {
+          try {
+            await window.NativeTorrentClient.stopStream();
+            console.log('Stopped torrent stream on app exit');
+          } catch (e) {
+            console.warn('Failed to stop stream:', e);
+          }
+        }
+
+        // Clear video element
+        const video = document.querySelector('video');
+        if (video) {
+          video.pause();
+          video.src = '';
+          console.log('Cleared video element');
+        }
+
+        callback();
+      }
+    });
+
+    // Cleanup on app pause
+    App.addListener('pause', async () => {
+      console.log('App paused, performing cleanup...');
+
+      if (window.NativeTorrentClient) {
+        try {
+          await window.NativeTorrentClient.stopStream();
+          console.log('Stopped torrent stream on pause');
+        } catch (e) {
+          console.warn('Failed to stop stream on pause:', e);
+        }
+      }
+
+      const video = document.querySelector('video');
+      if (video) {
+        video.pause();
+        console.log('Paused video on app pause');
+      }
+    });
+  }
+}
+
+// global.d.ts - Added type definition
+interface Window {
+  NativeTorrentClient?: any;  // Added for cleanup functionality
+  // ... other properties
+}
+```
+
+**Verification:**
+- ✅ TypeScript compilation passed
+- ✅ Vite build successful
+- ✅ Capacitor sync successful
+- ✅ TODO removed from nw-compat.ts:59
+- ⏳ Device testing pending (verify torrents stop on app exit/pause)
+
+**Impact:**
+- Prevents resource leaks when app exits or goes to background
+- Properly stops torrent downloads when user switches apps
+- Clears video player resources to free memory
+- Better battery life (stops network activity on pause)
+- Improved app stability and performance
+- 1 TODO item resolved (nw-compat.ts:59)
+
+---
+
+Last updated: 2025-11-02 (App exit cleanup complete)
 

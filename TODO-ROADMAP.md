@@ -281,9 +281,9 @@ document.getElementById('folder-picker-btn')?.addEventListener('click', async ()
 
 ## Priority 4: Platform Compatibility
 
-### 7. App Exit Cleanup
+### 7. App Exit Cleanup ✅
 **File:** `src/app/lib/nw-compat.ts:59`
-**Status:** TODO
+**Status:** COMPLETE (2025-11-02)
 **Complexity:** Low-Medium
 **Dependencies:** Capacitor App plugin
 
@@ -326,6 +326,17 @@ on: (event, callback) => {
 
 **Files to Modify:**
 - `src/app/lib/nw-compat.ts` - Implement cleanup handlers
+
+**Implementation Complete:**
+- ✅ Enhanced win.on('close') handler with proper cleanup logic
+- ✅ Added appStateChange listener to stop torrents when app goes to background
+- ✅ Added pause listener to stop torrents when app is paused
+- ✅ Implemented NativeTorrentClient.stopStream() cleanup with error handling
+- ✅ Added video element pause and src clearing
+- ✅ Added NativeTorrentClient to Window interface (src/types/global.d.ts)
+- ✅ TypeScript compilation verified
+- ✅ Build successful (0068a74b)
+- ✅ Synced to Android
 
 ---
 
