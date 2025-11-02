@@ -13,6 +13,7 @@ declare global {
     TMDBClient?: any;
     OMDbClient?: any;
     TorrentClient?: any;
+    NativeTorrentClient?: any;
     SettingsManager?: any;
     FavoritesService?: any;
     WatchlistService?: any;

@@ -57,9 +57,54 @@ export const win = {
     on: (event, callback) => {
         console.warn(`win.on('${event}') not fully implemented`);
         if (event === 'close') {
-            // # TODO: Implement proper cleanup on app exit
-            App.addListener('appStateChange', ({ isActive }) => {
-                if (!isActive) callback();
+            // Proper cleanup on app exit
+            App.addListener('appStateChange', async ({ isActive }) => {
+                if (!isActive) {
+                    console.log('App going to background, performing cleanup...');
+
+                    // Stop any active torrents
+                    if (window.NativeTorrentClient) {
+                        try {
+                            await window.NativeTorrentClient.stopStream();
+                            console.log('Stopped torrent stream on app exit');
+                        } catch (e) {
+                            console.warn('Failed to stop stream:', e);
+                        }
+                    }
+
+                    // Clear video element
+                    const video = document.querySelector('video');
+                    if (video) {
+                        video.pause();
+                        video.src = '';
+                        console.log('Cleared video element');
+                    }
+
+                    // Call original callback
+                    callback();
+                }
+            });
+
+            // Also handle app termination/pause
+            App.addListener('pause', async () => {
+                console.log('App paused, performing cleanup...');
+
+                // Stop any active torrents
+                if (window.NativeTorrentClient) {
+                    try {
+                        await window.NativeTorrentClient.stopStream();
+                        console.log('Stopped torrent stream on pause');
+                    } catch (e) {
+                        console.warn('Failed to stop stream on pause:', e);
+                    }
+                }
+
+                // Pause and clear video
+                const video = document.querySelector('video');
+                if (video) {
+                    video.pause();
+                    console.log('Paused video on app pause');
+                }
             });
         }
     },
