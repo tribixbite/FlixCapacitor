@@ -1489,5 +1489,128 @@ interface Window {
 
 ---
 
-Last updated: 2025-11-02 (App exit cleanup complete)
+### API Key Configuration ✅
+**Priority:** P3 - Configuration & Setup (Low complexity)
+**Date:** 2025-11-03
+**Files Modified:** `src/app/lib/settings-manager.ts`, `src/app/lib/config/api-config.ts`, `src/app/lib/library-service.ts`, `src/app/lib/ui-templates.ts`, `src/app/lib/mobile-ui-views.ts`
+
+**Implementation:**
+- Added `tmdbApiKey` and `omdbApiKey` to AppSettings interface
+- Created `getApiKey()` helper function with priority fallback system
+- Modified ApiConfig to use getters that check SettingsManager first
+- Updated library-service.ts to use ApiConfig instead of null values
+- Added "API Keys" section to settings UI
+- Implemented input field save handlers
+
+**Priority System:**
+1. **User-configured values** (SettingsManager) - Highest priority
+2. **Environment variables** (VITE_TMDB_API_KEY, VITE_OMDB_API_KEY) - Fallback
+3. **Empty string** - Default
+
+**Changes:**
+```typescript
+// settings-manager.ts - Added to AppSettings interface
+export interface AppSettings {
+  // ... existing fields
+  tmdbApiKey: string;
+  omdbApiKey: string;
+}
+
+// api-config.ts - Added helper function
+const getApiKey = (settingsKey: 'tmdbApiKey' | 'omdbApiKey', envKey: string): string => {
+  // Priority 1: User-configured value in SettingsManager (if not empty)
+  if (typeof window !== 'undefined' && (window as any).SettingsManager) {
+    const userKey = (window as any).SettingsManager.get(settingsKey);
+    if (userKey && userKey.trim() !== '') {
+      return userKey;
+    }
+  }
+
+  // Priority 2: Environment variable
+  const envValue = getEnv(envKey);
+  if (envValue && envValue.trim() !== '') {
+    return envValue;
+  }
+
+  // Priority 3: Empty string
+  return '';
+};
+
+// api-config.ts - Modified to use getters
+tmdb: {
+  get apiKey() {
+    return getApiKey('tmdbApiKey', 'VITE_TMDB_API_KEY');
+  },
+  // ... other properties
+},
+omdb: {
+  get apiKey() {
+    return getApiKey('omdbApiKey', 'VITE_OMDB_API_KEY');
+  },
+  // ... other properties
+}
+
+// library-service.ts - Updated to use ApiConfig
+import ApiConfig from './config/api-config';
+
+this.tmdbApiKey = ApiConfig.tmdb.apiKey || null;
+this.omdbApiKey = ApiConfig.omdb.apiKey || null;
+
+// ui-templates.ts - Added API Keys section
+<div class="settings-section">
+  <div class="settings-section-title">API Keys</div>
+  <div class="settings-item" id="setting-tmdb-key">
+    <div class="settings-item-content">
+      <div class="settings-item-label">TMDB API Key</div>
+      <div class="settings-item-description">For movie metadata and images</div>
+    </div>
+    <input type="text" value="${tmdbApiKey}" placeholder="Enter TMDB API key..." />
+  </div>
+  <div class="settings-item" id="setting-omdb-key">
+    <div class="settings-item-content">
+      <div class="settings-item-label">OMDB API Key</div>
+      <div class="settings-item-description">For additional movie ratings and metadata</div>
+    </div>
+    <input type="text" value="${omdbApiKey}" placeholder="Enter OMDB API key..." />
+  </div>
+</div>
+
+// mobile-ui-views.ts - Added save handlers
+const tmdbInput = document.querySelector('#setting-tmdb-key input');
+if (tmdbInput) {
+  tmdbInput.addEventListener('blur', () => {
+    const key = tmdbInput.value.trim();
+    settings.set('tmdbApiKey', key);
+    console.log('TMDB API key updated');
+  });
+}
+
+const omdbInput = document.querySelector('#setting-omdb-key input');
+if (omdbInput) {
+  omdbInput.addEventListener('blur', () => {
+    const key = omdbInput.value.trim();
+    settings.set('omdbApiKey', key);
+    console.log('OMDB API key updated');
+  });
+}
+```
+
+**Verification:**
+- ✅ TypeScript compilation passed
+- ✅ Vite build successful (main-B1_mn7DT.js)
+- ✅ Capacitor sync successful (11 plugins)
+- ✅ TODOs removed from library-service.ts:112-113
+- ⏳ Device testing pending (verify API keys can be saved and loaded)
+
+**Impact:**
+- Users can now configure TMDB/OMDB API keys via settings UI
+- No need to rebuild app to change API keys
+- Environment variables still work as fallback for developers
+- API keys persist in localStorage across app restarts
+- Better user experience for API key management
+- 2 TODO items resolved (library-service.ts:112-113)
+
+---
+
+Last updated: 2025-11-03 (API key configuration complete)
 

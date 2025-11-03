@@ -188,9 +188,9 @@ videoFiles.forEach((file, index) => {
 
 ## Priority 3: Configuration & Setup
 
-### 5. TMDB & OMDB API Keys
+### 5. TMDB & OMDB API Keys ✅
 **File:** `src/app/lib/library-service.ts:112-113`
-**Status:** TODO
+**Status:** COMPLETE (2025-11-03)
 **Complexity:** Low
 **Dependencies:** App.Config or settings system
 
@@ -221,6 +221,21 @@ this.omdbApiKey = settings.get('omdbApiKey');
 - `src/app/lib/library-service.ts` - Load from settings
 - `src/app/lib/ui-templates.ts` - Add settings fields
 - `src/app/lib/mobile-ui-views.ts` - Add save handlers
+
+**Implementation Complete:**
+- ✅ Added tmdbApiKey and omdbApiKey to AppSettings interface
+- ✅ Created getApiKey() helper with priority system:
+  1. User-configured value in SettingsManager (highest priority)
+  2. Environment variable (VITE_TMDB_API_KEY, VITE_OMDB_API_KEY)
+  3. Empty string (fallback)
+- ✅ Modified ApiConfig.tmdb.apiKey and ApiConfig.omdb.apiKey to use getApiKey() getter
+- ✅ Updated library-service.ts to use ApiConfig.tmdb.apiKey and ApiConfig.omdb.apiKey
+- ✅ Added "API Keys" section to settings UI with input fields
+- ✅ Implemented save handlers using blur event
+- ✅ TypeScript compilation verified
+- ✅ Build successful (main-B1_mn7DT.js)
+- ✅ Synced to Android
+- ✅ TODOs removed from library-service.ts:112-113
 
 ---
 
