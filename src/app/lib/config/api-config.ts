@@ -65,13 +65,35 @@ const getEnv = (key: string): string | undefined => {
     return undefined;
 };
 
+// Helper to get API key with SettingsManager fallback
+const getApiKey = (settingsKey: 'tmdbApiKey' | 'omdbApiKey', envKey: string): string => {
+    // Priority 1: User-configured value in SettingsManager (if not empty)
+    if (typeof window !== 'undefined' && (window as any).SettingsManager) {
+        const userKey = (window as any).SettingsManager.get(settingsKey);
+        if (userKey && userKey.trim() !== '') {
+            return userKey;
+        }
+    }
+
+    // Priority 2: Environment variable
+    const envValue = getEnv(envKey);
+    if (envValue && envValue.trim() !== '') {
+        return envValue;
+    }
+
+    // Priority 3: Empty string
+    return '';
+};
+
 export const ApiConfig: ApiConfigType = {
     /**
      * TMDB (The Movie Database)
      * https://www.themoviedb.org/settings/api
      */
     tmdb: {
-        apiKey: getEnv('VITE_TMDB_API_KEY') || '',
+        get apiKey() {
+            return getApiKey('tmdbApiKey', 'VITE_TMDB_API_KEY');
+        },
         readApiKey: getEnv('VITE_TMDB_READ_API_KEY') || '',
         baseUrl: 'https://api.themoviedb.org/3',
         imageBaseUrl: 'https://image.tmdb.org/t/p',
@@ -97,7 +119,9 @@ export const ApiConfig: ApiConfigType = {
      * https://www.omdbapi.com/apikey.aspx
      */
     omdb: {
-        apiKey: getEnv('VITE_OMDB_API_KEY') || '',
+        get apiKey() {
+            return getApiKey('omdbApiKey', 'VITE_OMDB_API_KEY');
+        },
         baseUrl: 'https://www.omdbapi.com',
         // Free tier: 1,000 requests/day
     },

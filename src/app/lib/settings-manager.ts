@@ -17,6 +17,8 @@ export interface AppSettings {
   quality: string;
   subtitlesLanguage: string;
   autoplayNext: boolean;
+  tmdbApiKey: string;
+  omdbApiKey: string;
 }
 
 type SettingKey = keyof AppSettings;
@@ -29,7 +31,9 @@ class SettingsManager {
     customApiEndpoints: [],
     quality: '720p',
     subtitlesLanguage: 'en',
-    autoplayNext: true
+    autoplayNext: true,
+    tmdbApiKey: '',
+    omdbApiKey: ''
   };
 
   settings: AppSettings;

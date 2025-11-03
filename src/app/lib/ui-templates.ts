@@ -1039,6 +1039,8 @@ export const UITemplates = {
         const quality = settings.get('quality') || '720p';
         const autoplay = settings.get('autoplayNext') !== false;
         const customEndpoints = settings.get('customApiEndpoints') || [];
+        const tmdbApiKey = settings.get('tmdbApiKey') || '';
+        const omdbApiKey = settings.get('omdbApiKey') || '';
 
         return `
             ${componentStyles}
@@ -1070,6 +1072,32 @@ export const UITemplates = {
                                 <option value="curated" ${provider === 'curated' ? 'selected' : ''}>Curated Collection (8 movies)</option>
                                 <option value="publicdomaintorrents" ${provider === 'publicdomaintorrents' ? 'selected' : ''}>PublicDomainTorrents.info (50+ movies)</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-title">API Keys</div>
+                        <div class="settings-item" id="setting-tmdb-key">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">TMDB API Key</div>
+                                <div class="settings-item-description">For movie metadata and images</div>
+                            </div>
+                            <input type="text"
+                                   class="settings-input"
+                                   value="${tmdbApiKey}"
+                                   placeholder="Enter TMDB API key..."
+                                   style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; width: 100%; max-width: 300px; font-size: 0.9rem;">
+                        </div>
+                        <div class="settings-item" id="setting-omdb-key">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">OMDB API Key</div>
+                                <div class="settings-item-description">For additional movie ratings and metadata</div>
+                            </div>
+                            <input type="text"
+                                   class="settings-input"
+                                   value="${omdbApiKey}"
+                                   placeholder="Enter OMDB API key..."
+                                   style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; color: white; width: 100%; max-width: 300px; font-size: 0.9rem;">
                         </div>
                     </div>
 

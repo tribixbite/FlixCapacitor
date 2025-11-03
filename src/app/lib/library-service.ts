@@ -7,6 +7,7 @@ import sqliteService from './sqlite-service';
 import filenameParser from './filename-parser';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import type { SQLiteService } from './sqlite-service';
+import ApiConfig from './config/api-config';
 
 export interface FileInfo {
     path: string;
@@ -108,9 +109,9 @@ class LibraryService {
             '.webm', '.m4v', '.mpg', '.mpeg', '.3gp', '.ogv'
         ];
 
-        // TMDB/OMDB API keys - should be moved to config
-        this.tmdbApiKey = null; // # TODO: Get from App.Config
-        this.omdbApiKey = null; // # TODO: Get from App.Config
+        // TMDB/OMDB API keys - loaded from ApiConfig (checks SettingsManager then env vars)
+        this.tmdbApiKey = ApiConfig.tmdb.apiKey || null;
+        this.omdbApiKey = ApiConfig.omdb.apiKey || null;
     }
 
     /**

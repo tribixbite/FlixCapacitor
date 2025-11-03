@@ -912,6 +912,26 @@ export class MobileUIController {
             });
         }
 
+        // TMDB API Key
+        const tmdbInput = document.querySelector('#setting-tmdb-key input');
+        if (tmdbInput) {
+            tmdbInput.addEventListener('blur', () => {
+                const key = tmdbInput.value.trim();
+                settings.set('tmdbApiKey', key);
+                console.log('TMDB API key updated');
+            });
+        }
+
+        // OMDB API Key
+        const omdbInput = document.querySelector('#setting-omdb-key input');
+        if (omdbInput) {
+            omdbInput.addEventListener('blur', () => {
+                const key = omdbInput.value.trim();
+                settings.set('omdbApiKey', key);
+                console.log('OMDB API key updated');
+            });
+        }
+
         // Provider Selection
         const providerSelect = document.querySelector('#setting-provider select');
         if (providerSelect) {
