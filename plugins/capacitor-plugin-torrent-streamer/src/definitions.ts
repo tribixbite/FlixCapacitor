@@ -104,6 +104,28 @@ export interface TorrentStreamerPlugin {
   getVideoFileList(): Promise<VideoFileListResult>;
 
   /**
+   * Get list of ALL files in the current torrent (videos, subtitles, etc.)
+   *
+   * Returns an array of all files with their index, name, and size.
+   * Useful for detecting subtitle files (.srt, .vtt, etc.) in multi-file torrents.
+   *
+   * @returns Promise resolving with array of all file information
+   * @throws Will reject if no active torrent or metadata not yet received
+   *
+   * @since 1.2.0
+   *
+   * @example
+   * ```typescript
+   * const result = await TorrentStreamer.getAllFiles();
+   * const subtitles = result.files.filter(f =>
+   *   f.name.endsWith('.srt') || f.name.endsWith('.vtt')
+   * );
+   * console.log(`Found ${subtitles.length} subtitle files`);
+   * ```
+   */
+  getAllFiles(): Promise<FileListResult>;
+
+  /**
    * Select a specific file index to stream
    *
    * Must be called after metadata is received but before streaming starts.
@@ -418,6 +440,30 @@ export interface VideoFileListResult {
    * Array of video files found in the torrent
    */
   files: VideoFile[];
+}
+
+export interface TorrentFileInfo {
+  /**
+   * File index in the torrent (0-based)
+   */
+  index: number;
+
+  /**
+   * File name/path relative to torrent root
+   */
+  name: string;
+
+  /**
+   * File size in bytes
+   */
+  size: number;
+}
+
+export interface FileListResult {
+  /**
+   * Array of all files found in the torrent
+   */
+  files: TorrentFileInfo[];
 }
 
 export interface SelectFileOptions {

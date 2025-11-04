@@ -211,6 +211,26 @@ class TorrentStreamerPlugin : Plugin() {
     }
 
     /**
+     * Get list of ALL files in the current torrent (videos, subtitles, etc.)
+     * Returns array of {index, name, size} for each file
+     */
+    @PluginMethod
+    fun getAllFiles(call: PluginCall) {
+        try {
+            val allFiles = TorrentStreamingService.getAllFiles()
+            if (allFiles != null) {
+                val result = JSObject()
+                result.put("files", allFiles)
+                call.resolve(result)
+            } else {
+                call.reject("No active torrent or metadata not yet received")
+            }
+        } catch (e: Exception) {
+            call.reject("Failed to get file list: ${e.message}", e)
+        }
+    }
+
+    /**
      * Select a specific file index to stream
      * Must be called before streaming starts
      */

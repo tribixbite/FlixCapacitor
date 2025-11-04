@@ -482,6 +482,44 @@ class TorrentSession(
     }
 
     /**
+     * Get list of ALL files in the current torrent (videos, subtitles, etc.)
+     * Returns array of file info for all files regardless of type
+     */
+    fun getAllFiles(): List<JSObject>? {
+        LogHelper.i("TorrentSession", "📋 getAllFiles() - Getting all files in torrent")
+
+        getActiveTorrentHandle()?.let { handle ->
+            val torrentInfo = handle.torrentFile()
+            if (torrentInfo == null) {
+                LogHelper.w("TorrentSession", "  ❌ torrentFile() returned null")
+                return null
+            }
+
+            val files = torrentInfo.files()
+            val numFiles = files.numFiles()
+            val allFiles = mutableListOf<JSObject>()
+
+            for (i in 0 until numFiles) {
+                val filePath = files.filePath(i)
+                val fileSize = files.fileSize(i)
+
+                val fileObj = JSObject()
+                fileObj.put("index", i)
+                fileObj.put("name", filePath)
+                fileObj.put("size", fileSize)
+                allFiles.add(fileObj)
+            }
+
+            LogHelper.i("TorrentSession", "  - Found ${allFiles.size} total files")
+            return allFiles
+        } ?: run {
+            LogHelper.w("TorrentSession", "❌ getActiveTorrentHandle() returned null")
+        }
+
+        return null
+    }
+
+    /**
      * Select a specific file index to stream
      * Must be called before file is prioritized
      */

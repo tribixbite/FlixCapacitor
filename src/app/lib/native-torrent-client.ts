@@ -508,17 +508,103 @@ class NativeTorrentClient {
      * Find and extract subtitle files from the torrent
      */
     async findSubtitles(): Promise<SubtitleTrack[]> {
-        // TODO: Implement subtitle file detection from torrent
-        // This should:
-        // 1. Check torrent files for .srt, .vtt, .sub files
-        // 2. Return list of available subtitle tracks
-        console.log('Subtitle detection not yet implemented, returning dummy subtitle');
-        return [
-            {
-                lang: 'en',
-                path: 'dummy.srt'
+        console.log('Finding subtitle files in torrent...');
+
+        try {
+            // Get all files from the torrent (including subtitles)
+            const result = await window.TorrentStreamer.getAllFiles();
+
+            if (!result || !result.files) {
+                console.log('No torrent files available');
+                return [];
             }
+
+            // Subtitle file extensions
+            const subtitleExtensions = ['.srt', '.vtt', '.sub', '.ass', '.ssa'];
+
+            // Filter for subtitle files
+            const subtitleFiles = result.files.filter((file: { name: string }) =>
+                subtitleExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+            );
+
+            if (subtitleFiles.length === 0) {
+                console.log('No subtitle files found in torrent');
+                return [];
+            }
+
+            // Extract language and create subtitle tracks
+            const tracks: SubtitleTrack[] = subtitleFiles.map((file: { name: string; index: number }) => ({
+                lang: this.extractLanguageFromFilename(file.name),
+                path: file.name
+            }));
+
+            console.log(`Found ${tracks.length} subtitle files:`, tracks);
+            return tracks;
+        } catch (error) {
+            console.error('Failed to find subtitles:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Extract language code from subtitle filename
+     * Checks for patterns like: .en.srt, _eng.srt, (English).srt, [en].srt
+     */
+    private extractLanguageFromFilename(filename: string): string {
+        // Language code patterns
+        const langPatterns = [
+            /\.([a-z]{2,3})\.(?:srt|vtt|sub|ass|ssa)$/i,  // .en.srt
+            /_([a-z]{2,3})\.(?:srt|vtt|sub|ass|ssa)$/i,   // _eng.srt
+            /\(([a-z]+)\)\.(?:srt|vtt|sub|ass|ssa)$/i,    // (English).srt
+            /\[([a-z]{2,3})\]\.(?:srt|vtt|sub|ass|ssa)$/i // [en].srt
         ];
+
+        for (const pattern of langPatterns) {
+            const match = filename.match(pattern);
+            if (match) {
+                return this.normalizeLanguageCode(match[1]);
+            }
+        }
+
+        // If no language found, return 'unknown'
+        return 'unknown';
+    }
+
+    /**
+     * Normalize language codes to 2-letter ISO 639-1 codes
+     */
+    private normalizeLanguageCode(code: string): string {
+        const normalizedCode = code.toLowerCase();
+
+        // Map 3-letter codes to 2-letter codes
+        const langMap: { [key: string]: string } = {
+            'eng': 'en',
+            'fra': 'fr',
+            'spa': 'es',
+            'deu': 'de',
+            'ita': 'it',
+            'por': 'pt',
+            'rus': 'ru',
+            'jpn': 'ja',
+            'kor': 'ko',
+            'chi': 'zh',
+            'ara': 'ar',
+            'hin': 'hi',
+            'english': 'en',
+            'french': 'fr',
+            'spanish': 'es',
+            'german': 'de',
+            'italian': 'it',
+            'portuguese': 'pt',
+            'russian': 'ru',
+            'japanese': 'ja',
+            'korean': 'ko',
+            'chinese': 'zh',
+            'arabic': 'ar',
+            'hindi': 'hi'
+        };
+
+        return langMap[normalizedCode] || normalizedCode;
     }
 
     /**

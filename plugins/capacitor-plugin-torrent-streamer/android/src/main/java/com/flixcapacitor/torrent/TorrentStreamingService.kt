@@ -60,6 +60,10 @@ class TorrentStreamingService : Service() {
             return instance?.torrentSession?.getVideoFileList()
         }
 
+        fun getAllFiles(): List<JSObject>? {
+            return instance?.torrentSession?.getAllFiles()
+        }
+
         fun selectFile(fileIndex: Int): Boolean {
             return instance?.torrentSession?.selectFile(fileIndex) ?: false
         }

@@ -8,6 +8,7 @@ import type {
   ExternalPlayerOptions,
   ExternalPlayerResult,
   VideoFileListResult,
+  FileListResult,
   SelectFileOptions,
   SelectFileResult,
 } from './definitions';
@@ -37,6 +38,10 @@ export class TorrentStreamerWeb
   }
 
   async getVideoFileList(): Promise<VideoFileListResult> {
+    throw this.unimplemented('Not implemented on web.');
+  }
+
+  async getAllFiles(): Promise<FileListResult> {
     throw this.unimplemented('Not implemented on web.');
   }
 
