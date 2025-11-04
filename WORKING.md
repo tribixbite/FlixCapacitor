@@ -1612,5 +1612,124 @@ if (omdbInput) {
 
 ---
 
-Last updated: 2025-11-03 (API key configuration complete)
+### Content Deep Linking ✅
+**Priority:** P3 - Medium-term (Medium complexity)
+**Date:** 2025-11-03
+**Files Modified:** `android/app/src/main/AndroidManifest.xml`, `src/main.ts`, `src/app/lib/nw-compat.ts`
+
+**Implementation:**
+- Added intent filters to Android manifest for custom URL scheme
+- Implemented `handleContentDeepLink()` function for URL parsing and routing
+- Extended appUrlOpen listener to handle content URLs
+- Added pending deep link processing for queued URLs
+- Documented nw-compat.ts handler
+
+**Supported Deep Link Formats:**
+1. **Custom scheme:** `flixcapacitor://movie/tt1234567` or `flixcapacitor://show/tt7654321`
+2. **HTTP/HTTPS:** `https://flixcapacitor.app/movie/tt1234567` or `https://flixcapacitor.app/show/tt7654321`
+
+**Changes:**
+```typescript
+// AndroidManifest.xml - Added intent filters
+<!-- Deep linking for content (movies/shows) -->
+<intent-filter>
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="flixcapacitor" />
+</intent-filter>
+
+<!-- HTTP/HTTPS deep linking -->
+<intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="http" android:host="flixcapacitor.app" />
+    <data android:scheme="https" android:host="flixcapacitor.app" />
+</intent-filter>
+
+// main.ts - Added handleContentDeepLink function
+function handleContentDeepLink(url: string): void {
+    console.log('Handling content deep link:', url);
+
+    try {
+        // Parse the URL to extract type and ID
+        let match: RegExpMatchArray | null = null;
+
+        // Try flixcapacitor:// scheme
+        if (url.startsWith('flixcapacitor://')) {
+            match = url.match(/flixcapacitor:\/\/(movie|show)\/(.+)/);
+        }
+        // Try https://flixcapacitor.app/ scheme
+        else if (url.includes('flixcapacitor.app')) {
+            match = url.match(/flixcapacitor\.app\/(movie|show)\/(.+)/);
+        }
+
+        if (!match) {
+            console.warn('Invalid content deep link format:', url);
+            return;
+        }
+
+        const [, type, id] = match;
+        console.log('Deep link parsed - Type:', type, 'ID:', id);
+
+        const app = window.App as MobileApp | undefined;
+        if (app?.UI && typeof app.UI.showDetail === 'function') {
+            // Navigate to detail view for the content
+            app.UI.showDetail(id);
+            console.log(`Navigated to ${type} detail: ${id}`);
+        } else {
+            console.error('App.UI.showDetail not available');
+        }
+    } catch (error) {
+        console.error('Failed to handle content deep link:', error);
+    }
+}
+
+// appUrlOpen listener - Extended to handle content deep links
+else if (url.startsWith('flixcapacitor://') || url.includes('flixcapacitor.app')) {
+    if (app?.UI) {
+        handleContentDeepLink(url);
+    } else {
+        window._pendingDeepLink = url;
+    }
+}
+
+// Pending deep link processing
+else if (url.startsWith('flixcapacitor://') || url.includes('flixcapacitor.app')) {
+    handleContentDeepLink(url);
+}
+```
+
+**Verification:**
+- ✅ TypeScript compilation passed
+- ✅ Vite build successful (main-CoWjmtMn.js)
+- ✅ Capacitor sync successful (11 plugins)
+- ✅ Intent filters added to Android manifest
+- ✅ TODO removed from nw-compat.ts:152
+- ⏳ Device testing pending (test with `adb shell am start -a android.intent.action.VIEW -d "flixcapacitor://movie/tt0111161"`)
+
+**Impact:**
+- Users can share and open specific movies/shows via deep links
+- External apps and websites can link directly to content
+- Better integration with Android sharing and intent system
+- Supports both custom scheme and web URLs
+- HTTP links with App Links verification (autoVerify=true)
+- 1 TODO item resolved (nw-compat.ts:152)
+
+**Testing Commands:**
+```bash
+# Test custom scheme deep link
+adb shell am start -a android.intent.action.VIEW -d "flixcapacitor://movie/tt0111161"
+
+# Test HTTP deep link
+adb shell am start -a android.intent.action.VIEW -d "https://flixcapacitor.app/movie/tt0111161"
+
+# Test show deep link
+adb shell am start -a android.intent.action.VIEW -d "flixcapacitor://show/tt0944947"
+```
+
+---
+
+Last updated: 2025-11-03 (Deep linking implementation complete)
 

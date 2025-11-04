@@ -355,9 +355,9 @@ on: (event, callback) => {
 
 ---
 
-### 8. Deep Linking Handler
-**File:** `src/app/lib/nw-compat.ts:106`
-**Status:** TODO
+### 8. Deep Linking Handler ✅
+**File:** `src/app/lib/nw-compat.ts:152`
+**Status:** COMPLETE (2025-11-03)
 **Complexity:** Medium
 **Dependencies:** Capacitor App plugin
 
@@ -395,6 +395,23 @@ App.addListener('appUrlOpen', ({ url }) => {
 - `capacitor.config.json` - Register URL scheme
 - `src/app/lib/nw-compat.ts` - Implement handler
 - `android/app/src/main/AndroidManifest.xml` - Add intent filter
+
+**Implementation Complete:**
+- ✅ Added intent filters to Android manifest for `flixcapacitor://` scheme
+- ✅ Added HTTP/HTTPS deep linking support for `flixcapacitor.app` domain with autoVerify
+- ✅ Implemented `handleContentDeepLink()` function in main.ts
+- ✅ Supports formats:
+  - `flixcapacitor://movie/tt1234567`
+  - `flixcapacitor://show/tt7654321`
+  - `https://flixcapacitor.app/movie/tt1234567`
+  - `https://flixcapacitor.app/show/tt7654321`
+- ✅ Updated appUrlOpen listener to handle content deep links
+- ✅ Added pending deep link processing for queued URLs
+- ✅ Documented handler in nw-compat.ts
+- ✅ TypeScript compilation verified
+- ✅ Build successful (main-CoWjmtMn.js)
+- ✅ Synced to Android
+- ✅ TODO removed from nw-compat.ts:152
 
 ---
 
