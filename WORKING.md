@@ -1928,3 +1928,303 @@ To test subtitle detection:
 
 Last updated: 2025-11-03 (Subtitle detection complete)
 
+
+---
+
+## DirectoryPicker Plugin Implementation ✅
+
+**Date:** 2025-11-04
+**Status:** Plugin complete, UI integration pending
+**Complexity:** Medium
+**Related TODO:** Library Folder Picker (TODO-ROADMAP.md #6)
+
+### Overview
+
+Implemented custom Capacitor plugin for Android directory picking with Storage Access Framework (SAF) integration and persistent permissions. This plugin enables users to select folders for the local video library feature with long-term access to the selected directories.
+
+### Plugin API
+
+**Methods:**
+1. `pickDirectory()` - Opens system directory picker
+2. `listFiles(options)` - Lists files in a directory with filtering
+3. `getPersistedDirectories()` - Returns all directories with active permissions
+4. `releaseDirectory(options)` - Releases permissions for a directory
+
+### Files Created
+
+**TypeScript Definitions:**
+- `plugins/capacitor-plugin-directory-picker/src/definitions.ts`
+- `plugins/capacitor-plugin-directory-picker/src/web.ts`
+- `plugins/capacitor-plugin-directory-picker/src/index.ts`
+- `plugins/capacitor-plugin-directory-picker/package.json`
+- `plugins/capacitor-plugin-directory-picker/tsconfig.json`
+
+**Android Implementation:**
+- `plugins/capacitor-plugin-directory-picker/android/src/main/java/com/flixcapacitor/directorypicker/DirectoryPickerPlugin.kt`
+- `plugins/capacitor-plugin-directory-picker/android/src/main/AndroidManifest.xml`
+- `plugins/capacitor-plugin-directory-picker/android/build.gradle`
+
+**App Integration:**
+- `package.json` - Added plugin dependency
+- `src/types/global.d.ts` - Added DirectoryPicker to Window interface
+- `android/app/capacitor.build.gradle` - Auto-generated plugin registration
+- `android/capacitor.settings.gradle` - Auto-generated plugin settings
+
+### Implementation Details
+
+#### pickDirectory() - Directory Picker with Persistent Permissions
+
+```kotlin
+private val directoryPicker = bridge.registerForActivityResult(
+    ActivityResultContracts.OpenDocumentTree()
+) { uri ->
+    if (uri != null) {
+        // CRITICAL: Take persistent read permissions
+        val contentResolver = context.contentResolver
+        val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        contentResolver.takePersistableUriPermission(uri, takeFlags)
+
+        // Get display name
+        val directory = DocumentFile.fromTreeUri(context, uri)
+        val displayName = directory?.name ?: "Unknown"
+
+        // Return URI and display name
+        val result = JSObject()
+        result.put("uri", uri.toString())
+        result.put("displayName", displayName)
+        call?.resolve(result)
+    }
+}
+```
+
+**Returns:**
+```typescript
+{
+  uri: "content://com.android.externalstorage.documents/tree/primary:Movies",
+  displayName: "Movies"
+}
+```
+
+#### listFiles() - Recursive File Listing with DocumentFile API
+
+```kotlin
+@PluginMethod
+fun listFiles(call: PluginCall) {
+    val uriString = call.getString("uri")
+    val directoryUri = Uri.parse(uriString)
+    val directory = DocumentFile.fromTreeUri(context, directoryUri)
+
+    // Get options
+    val extensions = call.getArray("extensions") // [".mp4", ".mkv", ".avi"]
+    val recursive = call.getBoolean("recursive", true) ?: true
+
+    // List files recursively
+    val files = listFilesRecursive(directory, extensions, recursive, "")
+
+    val result = JSObject()
+    result.put("files", filesArray)
+    call.resolve(result)
+}
+```
+
+**Usage:**
+```typescript
+const result = await DirectoryPicker.listFiles({
+  uri: "content://...",
+  extensions: [".mp4", ".mkv", ".avi"],
+  recursive: true
+});
+```
+
+**Returns:**
+```typescript
+{
+  files: [
+    {
+      uri: "content://.../document/primary:Movies/video.mp4",
+      name: "video.mp4",
+      size: 1234567890,
+      mimeType: "video/mp4",
+      relativePath: "subfolder/video.mp4"
+    }
+  ]
+}
+```
+
+#### getPersistedDirectories() - List Active Permissions
+
+```kotlin
+@PluginMethod
+fun getPersistedDirectories(call: PluginCall) {
+    val contentResolver = context.contentResolver
+    val persistedUriPermissions = contentResolver.persistedUriPermissions
+
+    val uris = JSArray()
+    persistedUriPermissions.forEach { permission ->
+        if (permission.isReadPermission) {
+            uris.put(permission.uri.toString())
+        }
+    }
+
+    val result = JSObject()
+    result.put("uris", uris)
+    call.resolve(result)
+}
+```
+
+**Returns:**
+```typescript
+{
+  uris: [
+    "content://com.android.externalstorage.documents/tree/primary:Movies",
+    "content://com.android.externalstorage.documents/tree/primary:Download"
+  ]
+}
+```
+
+#### releaseDirectory() - Release Permissions
+
+```kotlin
+@PluginMethod
+fun releaseDirectory(call: PluginCall) {
+    val uriString = call.getString("uri")
+    val uri = Uri.parse(uriString)
+    val contentResolver = context.contentResolver
+    val releaseFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+    contentResolver.releasePersistableUriPermission(uri, releaseFlags)
+    call.resolve()
+}
+```
+
+### Key Technical Features
+
+1. **Storage Access Framework (SAF):**
+   - Uses `ActivityResultContracts.OpenDocumentTree()` for native picker UI
+   - Proper Android 13+ scoped storage support
+   - User-friendly directory selection experience
+
+2. **Persistent Permissions:**
+   - `takePersistableUriPermission()` grants long-term access
+   - Survives app restarts and device reboots
+   - No special Android permissions required in manifest
+   - Permissions granted through user interaction
+
+3. **Content URI Handling:**
+   - Properly handles `content://` URIs (not file:// paths)
+   - Uses `DocumentFile` API for correct content provider access
+   - Supports recursive directory traversal
+   - File metadata extraction (name, size, mimeType, path)
+
+4. **File Filtering:**
+   - Extension-based filtering (e.g., `[".mp4", ".mkv", ".avi"]`)
+   - Recursive or non-recursive scanning
+   - Relative path tracking for nested files
+
+5. **Permission Management:**
+   - List all directories with active permissions
+   - Release permissions when user removes folders
+   - Proper cleanup to avoid permission leaks
+
+### Build and Integration
+
+**Plugin Build:**
+```bash
+cd plugins/capacitor-plugin-directory-picker
+npm install  # Installs dependencies and builds TypeScript
+```
+
+**Main App Integration:**
+```bash
+# package.json already has:
+# "capacitor-plugin-directory-picker": "file:./plugins/capacitor-plugin-directory-picker"
+
+npm install  # Creates symlink in node_modules
+npx cap sync android  # Syncs plugin to Android project
+```
+
+**Verification:**
+```bash
+npx cap sync android
+# Output should show:
+# Found 12 Capacitor plugins for android:
+#    ...
+#    capacitor-plugin-directory-picker@1.0.0
+#    ...
+```
+
+### Verification Checklist
+
+- ✅ Plugin TypeScript definitions created
+- ✅ Web stub implementation created
+- ✅ Android Plugin class implemented
+- ✅ All 4 methods implemented (pick, list, getPersisted, release)
+- ✅ DocumentFile dependency added to build.gradle
+- ✅ AndroidManifest.xml created (minimal, no permissions needed)
+- ✅ Plugin TypeScript compilation successful
+- ✅ Plugin registered in main app package.json
+- ✅ Plugin symlinked in node_modules
+- ✅ DirectoryPicker added to global Window interface
+- ✅ Capacitor sync successful (12 plugins detected)
+- ⏳ UI integration pending
+- ⏳ Device testing pending
+
+### Next Steps (UI Integration)
+
+1. **Library View Integration:**
+   - Add folder picker button to library view
+   - Implement picker button click handler
+   - Call `DirectoryPicker.pickDirectory()`
+   - Store selected URIs in SettingsManager
+
+2. **Settings Management:**
+   - Add "Library Folders" section to settings UI
+   - Display list of selected folders with display names
+   - Add remove button for each folder
+   - Call `DirectoryPicker.releaseDirectory()` on remove
+
+3. **Directory Scanning:**
+   - Implement `LibraryService.scanDirectory()` method
+   - Use `DirectoryPicker.listFiles()` to get video files
+   - Filter for video extensions (.mp4, .mkv, .avi, .webm, etc.)
+   - Extract metadata using FilenameParser
+   - Store in SQLite database
+
+4. **Permissions Restoration:**
+   - On app startup, call `DirectoryPicker.getPersistedDirectories()`
+   - Restore library folders from persisted permissions
+   - Re-scan directories if needed
+
+### Impact
+
+- ✅ Custom Capacitor plugin created (first directory picker plugin)
+- ✅ SAF integration with persistent permissions
+- ✅ Content URI handling via DocumentFile API
+- ✅ Plugin fully built and synced to Android
+- ✅ Foundation laid for local video library feature
+- ⏳ UI integration pending (next "go" command)
+- ⏳ 1 TODO item partially complete (Library Folder Picker #6)
+
+### Testing Strategy
+
+**Manual Testing (Device):**
+1. Open library view and click folder picker button
+2. Select a folder containing video files
+3. Verify folder appears in settings with display name
+4. Verify video files are scanned and added to library
+5. Restart app and verify folder is still accessible
+6. Remove folder from settings and verify permission is released
+7. Test with nested folder structures (recursive scanning)
+8. Test with different video formats (.mp4, .mkv, .avi, .webm)
+
+**Edge Cases:**
+- Empty folders
+- Folders with no video files
+- Deeply nested folder structures (10+ levels)
+- Large folders with thousands of files
+- Permission denied scenarios
+- App restart after folder selection
+
+---
+
+Last updated: 2025-11-04 (DirectoryPicker plugin complete, UI integration pending)

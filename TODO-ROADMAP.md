@@ -256,9 +256,9 @@ this.omdbApiKey = settings.get('omdbApiKey');
 
 ### 6. Library Folder Picker
 **File:** `src/app/lib/mobile-ui-views.ts:796`
-**Status:** TODO
+**Status:** IN PROGRESS - Plugin complete, UI integration pending
 **Complexity:** Medium
-**Dependencies:** Capacitor Filesystem plugin
+**Dependencies:** DirectoryPicker plugin (✅ COMPLETE)
 
 **Implementation Plan:**
 ```typescript
@@ -303,9 +303,33 @@ document.getElementById('folder-picker-btn')?.addEventListener('click', async ()
 ```
 
 **Files to Modify:**
-- `src/app/lib/mobile-ui-views.ts` - Add picker button and handler
-- `src/app/lib/ui-templates.ts` - Add folder picker UI
-- `src/app/lib/library-service.ts` - May need scanDirectory method
+- `src/app/lib/mobile-ui-views.ts` - Add picker button and handler (PENDING)
+- `src/app/lib/ui-templates.ts` - Add folder picker UI (PENDING)
+- `src/app/lib/library-service.ts` - May need scanDirectory method (PENDING)
+
+**Plugin Implementation Complete:**
+- ✅ Created custom DirectoryPicker Capacitor plugin
+- ✅ Implemented pickDirectory() with SAF and persistent permissions
+- ✅ Implemented listFiles() with DocumentFile API for content:// URIs
+- ✅ Added getPersistedDirectories() to list active permissions
+- ✅ Added releaseDirectory() to revoke permissions
+- ✅ Supports file extension filtering and recursive scanning
+- ✅ Plugin TypeScript built successfully
+- ✅ Synced to Android (12 plugins detected)
+- ✅ Registered in package.json and global types
+
+**Plugin Features:**
+- Uses ActivityResultContracts.OpenDocumentTree() for native picker
+- Grants persistent read permissions via takePersistableUriPermission()
+- Handles content:// URIs through DocumentFile API
+- No special Android permissions required (SAF handles via user interaction)
+- Returns file metadata: uri, name, size, mimeType, relativePath
+
+**Next Steps:**
+- Integrate DirectoryPicker into library view UI
+- Add settings UI for managing selected folders
+- Implement directory scanning with video file detection
+- Test on device with various folder structures
 
 ---
 
