@@ -77,6 +77,7 @@ declare global {
     Filesystem?: any;
     Preferences?: any;
     Haptics?: any;
+    DirectoryPicker?: any;
     TorrentStreamer?: any;
 
     // jQuery (legacy support)

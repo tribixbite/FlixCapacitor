@@ -70,6 +70,7 @@
     "backbone": "^1.6.1",
     "backbone.marionette": "^4.1.3",
     "backbone.radio": "^2.0.0",
+    "capacitor-plugin-directory-picker": "file:./plugins/capacitor-plugin-directory-picker",
     "capacitor-plugin-media-permissions": "file:./plugins/capacitor-plugin-media-permissions",
     "capacitor-plugin-torrent-streamer": "file:./plugins/capacitor-plugin-torrent-streamer",
     "cheerio": "^1.1.2",
