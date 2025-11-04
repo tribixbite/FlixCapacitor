@@ -79,9 +79,9 @@ videoElement.addEventListener('ended', () => {
 
 ---
 
-### 3. Subtitle File Detection
+### 3. Subtitle File Detection ✅
 **File:** `src/app/lib/native-torrent-client.ts:511`
-**Status:** TODO (returns dummy subtitle)
+**Status:** COMPLETE (2025-11-03)
 **Complexity:** Medium
 **Dependencies:** TorrentStreamer plugin API
 
@@ -127,6 +127,21 @@ function extractLanguage(filename: string): string {
 **Files to Modify:**
 - `src/app/lib/native-torrent-client.ts` - Implement detection
 - `plugins/capacitor-plugin-torrent-streamer/` - May need to expose file listing API
+
+**Implementation Complete:**
+- ✅ Added `getAllFiles()` method to TorrentStreamer plugin definitions
+- ✅ Implemented `getAllFiles()` in Android native code (Plugin, Service, Session)
+- ✅ Implemented `findSubtitles()` in native-torrent-client.ts
+- ✅ Language detection from filename patterns (.en.srt, _eng.srt, (English).srt, [en].srt)
+- ✅ Language code normalization (eng → en, English → en)
+- ✅ Supports 12 common languages with proper mappings
+- ✅ Handles 5 subtitle formats: .srt, .vtt, .sub, .ass, .ssa
+- ✅ Returns empty array if no subtitles found
+- ✅ Error handling and logging
+- ✅ Plugin TypeScript built successfully
+- ✅ Main app build successful (main-C-fH0rRq.js)
+- ✅ Synced to Android
+- ✅ TODO removed from native-torrent-client.ts:511
 
 ---
 

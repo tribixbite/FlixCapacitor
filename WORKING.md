@@ -1731,5 +1731,200 @@ adb shell am start -a android.intent.action.VIEW -d "flixcapacitor://show/tt0944
 
 ---
 
-Last updated: 2025-11-03 (Deep linking implementation complete)
+### Subtitle File Detection ✅
+**Priority:** P2 - High-Value Features (Medium complexity)
+**Date:** 2025-11-03
+**Files Modified:**
+- `plugins/capacitor-plugin-torrent-streamer/src/definitions.ts`
+- `plugins/capacitor-plugin-torrent-streamer/src/web.ts`
+- `plugins/capacitor-plugin-torrent-streamer/android/src/main/java/com/flixcapacitor/torrent/TorrentStreamerPlugin.kt`
+- `plugins/capacitor-plugin-torrent-streamer/android/src/main/java/com/flixcapacitor/torrent/TorrentStreamingService.kt`
+- `plugins/capacitor-plugin-torrent-streamer/android/src/main/java/com/flixcapacitor/torrent/TorrentSession.kt`
+- `src/app/lib/native-torrent-client.ts`
+
+**Implementation:**
+- Added `getAllFiles()` method to TorrentStreamer plugin to return ALL files in torrent
+- Implemented Android native code to enumerate torrent files without filtering
+- Implemented `findSubtitles()` to detect and parse subtitle files from torrents
+- Language detection from multiple filename patterns
+- Language code normalization (3-letter codes and full names → 2-letter ISO 639-1)
+
+**Supported Subtitle Formats:**
+- `.srt` (SubRip)
+- `.vtt` (WebVTT)
+- `.sub` (MicroDVD/Sub Station Alpha)
+- `.ass` (Advanced SubStation Alpha)
+- `.ssa` (Sub Station Alpha v4)
+
+**Language Detection Patterns:**
+1. `.en.srt` - ISO code before extension
+2. `_eng.srt` - 3-letter code with underscore
+3. `(English).srt` - Full language name in parentheses
+4. `[en].srt` - ISO code in brackets
+
+**Language Mappings:**
+Supports 12 common languages:
+- English (en, eng, english)
+- French (fr, fra, french)
+- Spanish (es, spa, spanish)
+- German (de, deu, german)
+- Italian (it, ita, italian)
+- Portuguese (pt, por, portuguese)
+- Russian (ru, rus, russian)
+- Japanese (ja, jpn, japanese)
+- Korean (ko, kor, korean)
+- Chinese (zh, chi, chinese)
+- Arabic (ar, ara, arabic)
+- Hindi (hi, hin, hindi)
+
+**Changes:**
+```typescript
+// Plugin definitions.ts - Added new method
+getAllFiles(): Promise<FileListResult>;
+
+export interface TorrentFileInfo {
+  index: number;
+  name: string;
+  size: number;
+}
+
+export interface FileListResult {
+  files: TorrentFileInfo[];
+}
+
+// TorrentSession.kt - Native implementation
+fun getAllFiles(): List<JSObject>? {
+    LogHelper.i("TorrentSession", "📋 getAllFiles() - Getting all files in torrent")
+
+    getActiveTorrentHandle()?.let { handle ->
+        val torrentInfo = handle.torrentFile()
+        if (torrentInfo == null) {
+            LogHelper.w("TorrentSession", "  ❌ torrentFile() returned null")
+            return null
+        }
+
+        val files = torrentInfo.files()
+        val numFiles = files.numFiles()
+        val allFiles = mutableListOf<JSObject>()
+
+        for (i in 0 until numFiles) {
+            val filePath = files.filePath(i)
+            val fileSize = files.fileSize(i)
+
+            val fileObj = JSObject()
+            fileObj.put("index", i)
+            fileObj.put("name", filePath)
+            fileObj.put("size", fileSize)
+            allFiles.add(fileObj)
+        }
+
+        LogHelper.i("TorrentSession", "  - Found ${allFiles.size} total files")
+        return allFiles
+    }
+
+    return null
+}
+
+// native-torrent-client.ts - TypeScript implementation
+async findSubtitles(): Promise<SubtitleTrack[]> {
+    console.log('Finding subtitle files in torrent...');
+
+    try {
+        // Get all files from the torrent (including subtitles)
+        const result = await window.TorrentStreamer.getAllFiles();
+
+        if (!result || !result.files) {
+            console.log('No torrent files available');
+            return [];
+        }
+
+        // Subtitle file extensions
+        const subtitleExtensions = ['.srt', '.vtt', '.sub', '.ass', '.ssa'];
+
+        // Filter for subtitle files
+        const subtitleFiles = result.files.filter((file: { name: string }) =>
+            subtitleExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+        );
+
+        if (subtitleFiles.length === 0) {
+            console.log('No subtitle files found in torrent');
+            return [];
+        }
+
+        // Extract language and create subtitle tracks
+        const tracks: SubtitleTrack[] = subtitleFiles.map((file: { name: string; index: number }) => ({
+            lang: this.extractLanguageFromFilename(file.name),
+            path: file.name
+        }));
+
+        console.log(`Found ${tracks.length} subtitle files:`, tracks);
+        return tracks;
+    } catch (error) {
+        console.error('Failed to find subtitles:', error);
+        return [];
+    }
+}
+
+private extractLanguageFromFilename(filename: string): string {
+    const langPatterns = [
+        /\.([a-z]{2,3})\.(?:srt|vtt|sub|ass|ssa)$/i,
+        /_([a-z]{2,3})\.(?:srt|vtt|sub|ass|ssa)$/i,
+        /\(([a-z]+)\)\.(?:srt|vtt|sub|ass|ssa)$/i,
+        /\[([a-z]{2,3})\]\.(?:srt|vtt|sub|ass|ssa)$/i
+    ];
+
+    for (const pattern of langPatterns) {
+        const match = filename.match(pattern);
+        if (match) {
+            return this.normalizeLanguageCode(match[1]);
+        }
+    }
+
+    return 'unknown';
+}
+
+private normalizeLanguageCode(code: string): string {
+    const normalizedCode = code.toLowerCase();
+
+    const langMap: { [key: string]: string } = {
+        'eng': 'en', 'fra': 'fr', 'spa': 'es', 'deu': 'de',
+        'ita': 'it', 'por': 'pt', 'rus': 'ru', 'jpn': 'ja',
+        'kor': 'ko', 'chi': 'zh', 'ara': 'ar', 'hin': 'hi',
+        'english': 'en', 'french': 'fr', 'spanish': 'es', 'german': 'de',
+        'italian': 'it', 'portuguese': 'pt', 'russian': 'ru', 'japanese': 'ja',
+        'korean': 'ko', 'chinese': 'zh', 'arabic': 'ar', 'hindi': 'hi'
+    };
+
+    return langMap[normalizedCode] || normalizedCode;
+}
+```
+
+**Verification:**
+- ✅ Plugin TypeScript compilation passed
+- ✅ Main app TypeScript compilation passed
+- ✅ Vite build successful (main-C-fH0rRq.js)
+- ✅ Capacitor sync successful (11 plugins)
+- ✅ TODO removed from native-torrent-client.ts:511
+- ⏳ Device testing pending (test with multi-file torrent containing subtitle files)
+
+**Impact:**
+- Automatic subtitle detection in multi-file torrents
+- No need to manually search for subtitle files
+- Language detection for better user experience
+- Supports multiple subtitle formats
+- Extensible language mapping system
+- Empty array returned if no subtitles (graceful degradation)
+- Plugin API extended without breaking changes
+- 1 TODO item resolved (native-torrent-client.ts:511)
+
+**Testing:**
+To test subtitle detection:
+1. Start streaming a torrent with subtitle files
+2. Check console for: `Found X subtitle files: [{lang: 'en', path: '...'}]`
+3. Verify language codes are correctly extracted and normalized
+4. Test with various filename patterns (.en.srt, _eng.srt, etc.)
+
+---
+
+Last updated: 2025-11-03 (Subtitle detection complete)
 
