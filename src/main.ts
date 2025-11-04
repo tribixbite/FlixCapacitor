@@ -184,7 +184,7 @@ async function initCapacitorPlugins(): Promise<void> {
             await App.exitApp();
         });
 
-        // Handle deep links for magnet:// and file:// URIs
+        // Handle deep links for magnet:// and file:// URIs, plus content deep links
         App.addListener('appUrlOpen', (data) => {
             console.log('App opened with URL:', data.url);
 
@@ -221,6 +221,15 @@ async function initCapacitorPlugins(): Promise<void> {
                     window._pendingDeepLink = url;
                 }
             }
+            // Handle content deep links (flixcapacitor://movie/tt1234567 or https://flixcapacitor.app/movie/tt1234567)
+            else if (url.startsWith('flixcapacitor://') || url.includes('flixcapacitor.app')) {
+                if (app?.UI) {
+                    handleContentDeepLink(url);
+                } else {
+                    // App not ready yet, queue for later
+                    window._pendingDeepLink = url;
+                }
+            }
         });
 
         console.log('Capacitor plugins initialized');
@@ -230,6 +239,52 @@ async function initCapacitorPlugins(): Promise<void> {
 }
 
 // Helper functions for deep link handling
+
+/**
+ * Handle content deep links (movies/shows)
+ * Supports formats:
+ * - flixcapacitor://movie/tt1234567
+ * - flixcapacitor://show/tt7654321
+ * - https://flixcapacitor.app/movie/tt1234567
+ * - https://flixcapacitor.app/show/tt7654321
+ */
+function handleContentDeepLink(url: string): void {
+    console.log('Handling content deep link:', url);
+
+    try {
+        // Parse the URL to extract type and ID
+        let match: RegExpMatchArray | null = null;
+
+        // Try flixcapacitor:// scheme
+        if (url.startsWith('flixcapacitor://')) {
+            match = url.match(/flixcapacitor:\/\/(movie|show)\/(.+)/);
+        }
+        // Try https://flixcapacitor.app/ scheme
+        else if (url.includes('flixcapacitor.app')) {
+            match = url.match(/flixcapacitor\.app\/(movie|show)\/(.+)/);
+        }
+
+        if (!match) {
+            console.warn('Invalid content deep link format:', url);
+            return;
+        }
+
+        const [, type, id] = match;
+        console.log('Deep link parsed - Type:', type, 'ID:', id);
+
+        const app = window.App as MobileApp | undefined;
+        if (app?.UI && typeof app.UI.showDetail === 'function') {
+            // Navigate to detail view for the content
+            app.UI.showDetail(id);
+            console.log(`Navigated to ${type} detail: ${id}`);
+        } else {
+            console.error('App.UI.showDetail not available');
+        }
+    } catch (error) {
+        console.error('Failed to handle content deep link:', error);
+    }
+}
+
 function isVideoFile(filepath: string): boolean {
     const ext = filepath.toLowerCase().match(/\.[^.]*$/)?.[0] || '';
     return ['.mp4', '.avi', '.mov', '.mkv', '.wmv'].includes(ext);
@@ -463,6 +518,8 @@ function initMarionette(): any {
                     } else if (isVideoFile(url)) {
                         const fileName = url.split('/').pop();
                         handleVideoFile({ path: url, name: fileName });
+                    } else if (url.startsWith('flixcapacitor://') || url.includes('flixcapacitor.app')) {
+                        handleContentDeepLink(url);
                     }
                 }, 1000);
             }

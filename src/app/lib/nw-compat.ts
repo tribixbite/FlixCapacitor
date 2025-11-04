@@ -149,7 +149,14 @@ export const nw = {
         on: (event, callback) => {
             console.warn(`nw.App.on('${event}') - using Capacitor App listeners instead`);
             if (event === 'open') {
-                // # TODO: Implement deep linking handler
+                /**
+                 * Deep linking handler for content URLs
+                 * Supports:
+                 * - flixcapacitor://movie/tt1234567
+                 * - flixcapacitor://show/tt7654321
+                 * - https://flixcapacitor.app/movie/tt1234567
+                 * Implemented in main.ts appUrlOpen listener
+                 */
                 App.addListener('appUrlOpen', (data) => {
                     callback(data.url);
                 });
