@@ -319,6 +319,66 @@ class LibraryService {
     }
 
     /**
+     * Add media file from content:// URI (DirectoryPicker)
+     */
+    async addMediaFromUri(fileInfo: {
+        uri: string;
+        filename: string;
+        size: number;
+        mimeType: string;
+        folderUri: string;
+        folderName: string;
+        relativePath: string;
+    }): Promise<boolean> {
+        // Parse filename
+        const parsed = this.parser.parse(fileInfo.filename);
+
+        // Check if already exists by URI
+        const existing = await this.db.findOne('local_media', 'file_path = ?', [fileInfo.uri]);
+        if (existing) {
+            console.log('URI already in library:', fileInfo.uri);
+            return false;
+        }
+
+        // Fetch metadata if possible
+        let metadata: MediaMetadata | null = null;
+        if (parsed.type !== 'other') {
+            try {
+                metadata = await this.fetchMetadata(parsed);
+            } catch (error) {
+                console.warn('Failed to fetch metadata for:', fileInfo.filename, error);
+            }
+        }
+
+        // Insert into database (using URI in file_path field)
+        await this.db.insert('local_media', {
+            file_path: fileInfo.uri,
+            original_filename: fileInfo.filename,
+            file_size: fileInfo.size || 0,
+            media_type: parsed.type,
+            title: metadata?.title || parsed.title,
+            year: metadata?.year || parsed.year || null,
+            season: parsed.season || null,
+            episode: parsed.episode || null,
+            imdb_id: metadata?.imdb_id || null,
+            tmdb_id: metadata?.tmdb_id || null,
+            poster_url: metadata?.poster || null,
+            backdrop_url: metadata?.backdrop || null,
+            genres: metadata?.genres ? JSON.stringify(metadata.genres) : null,
+            rating: metadata?.rating || null,
+            synopsis: metadata?.synopsis || null,
+            metadata_json: metadata ? JSON.stringify(metadata) : null,
+            last_modified: Math.floor(Date.now() / 1000),
+            folder_uri: fileInfo.folderUri,
+            folder_name: fileInfo.folderName,
+            relative_path: fileInfo.relativePath
+        });
+
+        console.log('Added URI to library:', fileInfo.filename, parsed.type);
+        return true;
+    }
+
+    /**
      * Fetch metadata from TMDB/OMDB
      */
     private async fetchMetadata(parsed: any): Promise<MediaMetadata | null> {

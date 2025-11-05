@@ -172,6 +172,7 @@ class SQLiteService {
       CREATE TABLE IF NOT EXISTS local_media (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         file_path TEXT UNIQUE NOT NULL,
+        original_filename TEXT,
         file_size INTEGER,
         media_type TEXT CHECK(media_type IN ('movie', 'tvshow', 'other')),
         title TEXT,
@@ -184,11 +185,15 @@ class SQLiteService {
         backdrop_url TEXT,
         genres TEXT,
         rating REAL,
+        synopsis TEXT,
         metadata_json TEXT,
         last_modified INTEGER,
         date_added INTEGER DEFAULT (strftime('%s','now')),
         last_played INTEGER,
-        play_count INTEGER DEFAULT 0
+        play_count INTEGER DEFAULT 0,
+        folder_uri TEXT,
+        folder_name TEXT,
+        relative_path TEXT
       );
       CREATE INDEX IF NOT EXISTS idx_local_media_type ON local_media(media_type);
       CREATE INDEX IF NOT EXISTS idx_local_media_title ON local_media(title);

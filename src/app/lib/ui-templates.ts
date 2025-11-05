@@ -823,17 +823,29 @@ export const UITemplates = {
         <div class="content-empty">
             <div class="empty-icon">📁</div>
             <div class="empty-title">Library is Empty</div>
-            <div class="empty-message">Scan your device for local media files to build your library</div>
-            <button class="library-scan-btn" id="library-scan-btn">
-                <span>🔍</span>
-                <span>Scan Library</span>
-            </button>
+            <div class="empty-message">Choose folders or scan your device for local media files</div>
+            <div class="library-action-buttons">
+                <button class="library-folder-picker-btn" id="library-folder-picker-btn">
+                    <span>📂</span>
+                    <span>Choose Folders</span>
+                </button>
+                <button class="library-scan-btn" id="library-scan-btn">
+                    <span>🔍</span>
+                    <span>Quick Scan</span>
+                </button>
+            </div>
         </div>
         <style>
-        .library-scan-btn {
+        .library-action-buttons {
+            display: flex;
+            gap: 1rem;
             margin-top: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .library-folder-picker-btn,
+        .library-scan-btn {
             padding: 0.875rem 2rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             border: none;
             border-radius: var(--radius-md);
             color: white;
@@ -846,6 +858,13 @@ export const UITemplates = {
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: var(--shadow-md);
         }
+        .library-folder-picker-btn {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .library-scan-btn {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        }
+        .library-folder-picker-btn:active,
         .library-scan-btn:active {
             transform: scale(0.95);
         }

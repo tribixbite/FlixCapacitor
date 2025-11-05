@@ -17,6 +17,7 @@ import type {
 } from '@/types/mobile-ui';
 import type { LibraryItem } from '@/types/library';
 import MediaPermissions from 'capacitor-plugin-media-permissions';
+import { DirectoryPicker } from 'capacitor-plugin-directory-picker';
 import { VideoPlayer, type VideoPlayerContext } from './video-player';
 import { UITemplates } from './ui-templates';
 
@@ -690,6 +691,13 @@ export class MobileUIController {
                 await this.startLibraryScan();
             });
         }
+
+        const folderPickerButton = document.querySelector('#library-folder-picker-btn');
+        if (folderPickerButton) {
+            folderPickerButton.addEventListener('click', async () => {
+                await this.pickLibraryFolder();
+            });
+        }
     }
 
     /**
@@ -843,6 +851,158 @@ export class MobileUIController {
                 '⚠️',
                 'Scan Failed',
                 error.message || 'Failed to scan media folders. Please check storage permissions.'
+            );
+        }
+    }
+
+    /**
+     * Pick a folder using DirectoryPicker plugin
+     */
+    async pickLibraryFolder() {
+        const contentGrid = document.querySelector('.content-grid');
+
+        try {
+            console.log('[Library] Opening folder picker...');
+
+            // Open directory picker with SAF
+            const result = await DirectoryPicker.pickDirectory();
+
+            if (!result || !result.uri) {
+                console.log('[Library] No directory selected');
+                return;
+            }
+
+            console.log('[Library] Directory selected:', result.displayName, result.uri);
+
+            // Store selected folder URI in settings
+            const settings = window.SettingsManager;
+            const libraryFolders = settings.get('libraryFolders') || [];
+
+            // Check if folder already added
+            if (libraryFolders.some(f => f.uri === result.uri)) {
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    'ℹ️',
+                    'Folder Already Added',
+                    `"${result.displayName}" is already in your library`
+                );
+                setTimeout(async () => {
+                    await this.showLibrary();
+                }, 1500);
+                return;
+            }
+
+            // Add new folder
+            libraryFolders.push({
+                uri: result.uri,
+                displayName: result.displayName,
+                addedAt: Date.now()
+            });
+            settings.set('libraryFolders', libraryFolders);
+
+            console.log('[Library] Folder added to settings:', result.displayName);
+
+            // Scan the selected folder
+            await this.scanLibraryFolder(result.uri, result.displayName);
+
+        } catch (error) {
+            console.error('[Library] Failed to pick folder:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Folder Picker Error',
+                error.message || 'Failed to open folder picker. Please try again.'
+            );
+        }
+    }
+
+    /**
+     * Scan a specific folder for video files using DirectoryPicker.listFiles()
+     */
+    async scanLibraryFolder(folderUri: string, folderName: string) {
+        const contentGrid = document.querySelector('.content-grid');
+        const libraryService = window.LibraryService;
+
+        if (!libraryService) {
+            console.error('[Library] LibraryService not available');
+            return;
+        }
+
+        try {
+            // Show scanning UI
+            contentGrid.innerHTML = UITemplates.libraryScanningState(0, 0);
+
+            console.log('[Library] Scanning folder:', folderName, folderUri);
+
+            // List video files in the selected directory
+            const videoExtensions = ['.mp4', '.mkv', '.avi', '.webm', '.mov', '.m4v', '.flv', '.wmv'];
+            const filesResult = await DirectoryPicker.listFiles({
+                uri: folderUri,
+                extensions: videoExtensions,
+                recursive: true
+            });
+
+            console.log('[Library] Found files:', filesResult.files.length);
+
+            if (filesResult.files.length === 0) {
+                contentGrid.innerHTML = UITemplates.emptyState(
+                    '📁',
+                    'No Videos Found',
+                    `No video files found in "${folderName}"`
+                );
+                setTimeout(async () => {
+                    await this.showLibrary();
+                }, 1500);
+                return;
+            }
+
+            // Process and add files to library
+            let processedCount = 0;
+            for (const file of filesResult.files) {
+                processedCount++;
+
+                // Update progress UI
+                const progress = Math.round((processedCount / filesResult.files.length) * 100);
+                const progressText = document.querySelector('.scan-progress-text');
+                const progressBar = document.querySelector('.scan-progress-bar-fill');
+                const currentFileText = document.querySelector('.scan-current-file');
+
+                if (progressText) progressText.textContent = `${processedCount} / ${filesResult.files.length} files`;
+                if (progressBar) progressBar.style.width = `${progress}%`;
+                if (currentFileText) currentFileText.textContent = file.name;
+
+                // Add file to library
+                try {
+                    await libraryService.addMediaFromUri({
+                        uri: file.uri,
+                        filename: file.name,
+                        size: file.size,
+                        mimeType: file.mimeType,
+                        folderUri: folderUri,
+                        folderName: folderName,
+                        relativePath: file.relativePath
+                    });
+                } catch (error) {
+                    console.error(`[Library] Failed to add file ${file.name}:`, error);
+                }
+            }
+
+            // Show completion
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '✅',
+                'Folder Scanned',
+                `Added ${processedCount} videos from "${folderName}"`
+            );
+
+            // Refresh library view
+            setTimeout(async () => {
+                await this.showLibrary();
+            }, 1500);
+
+        } catch (error) {
+            console.error('[Library] Failed to scan folder:', error);
+            contentGrid.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Scan Failed',
+                error.message || 'Failed to scan folder. Please try again.'
             );
         }
     }
