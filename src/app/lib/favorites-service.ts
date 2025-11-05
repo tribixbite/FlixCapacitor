@@ -82,9 +82,22 @@ class FavoritesService {
           metadata TEXT
         )
       `);
-      console.log('Favorites table initialized');
+
+      // Create table for favorite torrent files (multi-file torrents)
+      await this.db.run(`
+        CREATE TABLE IF NOT EXISTS favorite_torrent_files (
+          id TEXT PRIMARY KEY,
+          torrent_hash TEXT NOT NULL,
+          file_index INTEGER NOT NULL,
+          file_name TEXT NOT NULL,
+          movie_id TEXT,
+          added_at INTEGER NOT NULL
+        )
+      `);
+
+      console.log('Favorites tables initialized');
     } catch (error) {
-      console.error('Failed to initialize favorites table:', error);
+      console.error('Failed to initialize favorites tables:', error);
     }
   }
 
@@ -225,6 +238,71 @@ class FavoritesService {
     } catch (error) {
       console.error('Failed to clear favorites:', error);
       return false;
+    }
+  }
+
+  /**
+   * Add a torrent file to favorites (for multi-file torrents)
+   */
+  async addFavoriteTorrentFile(hash: string, index: number, name: string, movieId?: string): Promise<boolean> {
+    try {
+      const id = `${hash}:${index}`;
+      await this.db.run(`
+        INSERT OR REPLACE INTO favorite_torrent_files (
+          id, torrent_hash, file_index, file_name, movie_id, added_at
+        ) VALUES (?, ?, ?, ?, ?, ?)
+      `, [id, hash, index, name, movieId || null, Date.now()]);
+
+      console.log(`Added torrent file to favorites: ${name} (${hash}:${index})`);
+      return true;
+    } catch (error) {
+      console.error('Failed to add favorite torrent file:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Remove a torrent file from favorites
+   */
+  async removeFavoriteTorrentFile(hash: string, index: number): Promise<boolean> {
+    try {
+      const id = `${hash}:${index}`;
+      await this.db.run('DELETE FROM favorite_torrent_files WHERE id = ?', [id]);
+      console.log(`Removed torrent file from favorites: ${id}`);
+      return true;
+    } catch (error) {
+      console.error('Failed to remove favorite torrent file:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Check if a torrent file is favorited
+   */
+  async isFavoriteTorrentFile(hash: string, index: number): Promise<boolean> {
+    try {
+      const id = `${hash}:${index}`;
+      const result = await this.db.get('SELECT id FROM favorite_torrent_files WHERE id = ?', [id]);
+      return !!result;
+    } catch (error) {
+      console.error('Failed to check favorite torrent file status:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get all favorite file indices for a torrent
+   */
+  async getFavoriteTorrentFiles(hash: string): Promise<number[]> {
+    try {
+      const results = await this.db.all(
+        'SELECT file_index FROM favorite_torrent_files WHERE torrent_hash = ? ORDER BY file_index ASC',
+        [hash]
+      );
+      return results.map(row => row.file_index);
+    } catch (error) {
+      console.error('Failed to get favorite torrent files:', error);
+      return [];
     }
   }
 

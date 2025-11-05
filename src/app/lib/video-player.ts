@@ -66,6 +66,30 @@ export class VideoPlayer {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
+    /**
+     * Get torrent hash for favorites tracking
+     * Extracts infohash from magnet link or uses movie ID + quality as identifier
+     */
+    getTorrentHash(movie: any, videoFiles: any[]): string {
+        // Try to get movie/show ID
+        const movieId = movie.imdb_id || movie.id || 'unknown';
+
+        // Try to extract infohash from magnet link if available
+        const torrent = movie.torrents?.[movie.quality] || movie.torrent;
+        if (torrent?.magnet) {
+            const match = torrent.magnet.match(/btih:([a-fA-F0-9]{40})/);
+            if (match) {
+                return match[1].toLowerCase();
+            }
+        }
+
+        // Fallback: Use movie ID + first file name as hash
+        // This ensures different torrents for same movie have different hashes
+        const firstFileName = videoFiles.length > 0 ? videoFiles[0].name : '';
+        const hashSource = `${movieId}_${firstFileName}`.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        return hashSource;
+    }
+
     // ===== PLAYBACK POSITION MANAGEMENT =====
 
     /**
@@ -513,13 +537,50 @@ export class VideoPlayer {
                 });
             });
 
+            // Load starred state for all files
+            const torrentHash = this.getTorrentHash(movie, videoFiles);
+            if (torrentHash && window.FavoritesService) {
+                window.FavoritesService.getFavoriteTorrentFiles(torrentHash).then(favoriteIndices => {
+                    videoFiles.forEach((file, idx) => {
+                        if (favoriteIndices.includes(file.index)) {
+                            const star = modal.querySelector(`.file-picker-item-star[data-index="${file.index}"]`);
+                            if (star) {
+                                star.classList.add('starred');
+                                star.textContent = '★';
+                            }
+                        }
+                    });
+                });
+            }
+
             // Handle star/favorite
             modal.querySelectorAll('.file-picker-item-star').forEach(star => {
-                star.addEventListener('click', (e) => {
+                star.addEventListener('click', async (e) => {
                     e.stopPropagation();
-                    star.classList.toggle('starred');
-                    star.textContent = star.classList.contains('starred') ? '★' : '☆';
-                    // TODO: Save favorite to database
+
+                    if (!window.FavoritesService) {
+                        console.warn('FavoritesService not available');
+                        return;
+                    }
+
+                    const fileIndex = parseInt(star.getAttribute('data-index')!);
+                    const file = videoFiles.find(f => f.index === fileIndex);
+                    const fileName = file ? file.name : `File ${fileIndex}`;
+                    const movieId = movie.imdb_id || movie.id;
+
+                    if (star.classList.contains('starred')) {
+                        // Remove from favorites
+                        await window.FavoritesService.removeFavoriteTorrentFile(torrentHash, fileIndex);
+                        star.classList.remove('starred');
+                        star.textContent = '☆';
+                        console.log(`Removed from favorites: ${fileName}`);
+                    } else {
+                        // Add to favorites
+                        await window.FavoritesService.addFavoriteTorrentFile(torrentHash, fileIndex, fileName, movieId);
+                        star.classList.add('starred');
+                        star.textContent = '★';
+                        console.log(`Added to favorites: ${fileName}`);
+                    }
                 });
             });
 
