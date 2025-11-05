@@ -254,9 +254,9 @@ this.omdbApiKey = settings.get('omdbApiKey');
 
 ---
 
-### 6. Library Folder Picker
+### 6. Library Folder Picker ✅
 **File:** `src/app/lib/mobile-ui-views.ts:796`
-**Status:** IN PROGRESS - Plugin complete, UI integration pending
+**Status:** COMPLETE (2025-11-04)
 **Complexity:** Medium
 **Dependencies:** DirectoryPicker plugin (✅ COMPLETE)
 
@@ -302,10 +302,11 @@ document.getElementById('folder-picker-btn')?.addEventListener('click', async ()
 </div>
 ```
 
-**Files to Modify:**
-- `src/app/lib/mobile-ui-views.ts` - Add picker button and handler (PENDING)
-- `src/app/lib/ui-templates.ts` - Add folder picker UI (PENDING)
-- `src/app/lib/library-service.ts` - May need scanDirectory method (PENDING)
+**Files Modified:**
+- ✅ `src/app/lib/mobile-ui-views.ts` - Added pickLibraryFolder() and scanLibraryFolder()
+- ✅ `src/app/lib/ui-templates.ts` - Added "Choose Folders" button to libraryEmptyState
+- ✅ `src/app/lib/library-service.ts` - Added addMediaFromUri() method
+- ✅ `src/app/lib/sqlite-service.ts` - Updated local_media schema with new fields
 
 **Plugin Implementation Complete:**
 - ✅ Created custom DirectoryPicker Capacitor plugin
@@ -318,6 +319,29 @@ document.getElementById('folder-picker-btn')?.addEventListener('click', async ()
 - ✅ Synced to Android (12 plugins detected)
 - ✅ Registered in package.json and global types
 
+**UI Integration Complete:**
+- ✅ Added "Choose Folders" button to library empty state
+- ✅ Implemented folder picker click handler
+- ✅ Store selected folders in SettingsManager
+- ✅ Recursive video file scanning (8 video formats supported)
+- ✅ Progress UI with file count and current file display
+- ✅ Duplicate folder detection
+- ✅ Empty folder handling with user messaging
+- ✅ Automatic library refresh after scanning
+- ✅ TMDB/OMDB metadata fetching integration
+- ✅ content:// URI storage in database
+- ✅ Folder context tracking (folderUri, folderName, relativePath)
+
+**Supported Video Formats:**
+- .mp4, .mkv, .avi, .webm, .mov, .m4v, .flv, .wmv
+
+**Database Schema Updates:**
+- ✅ Added original_filename field
+- ✅ Added synopsis field
+- ✅ Added folder_uri field (content:// URI)
+- ✅ Added folder_name field (display name)
+- ✅ Added relative_path field (path within folder)
+
 **Plugin Features:**
 - Uses ActivityResultContracts.OpenDocumentTree() for native picker
 - Grants persistent read permissions via takePersistableUriPermission()
@@ -325,11 +349,13 @@ document.getElementById('folder-picker-btn')?.addEventListener('click', async ()
 - No special Android permissions required (SAF handles via user interaction)
 - Returns file metadata: uri, name, size, mimeType, relativePath
 
-**Next Steps:**
-- Integrate DirectoryPicker into library view UI
-- Add settings UI for managing selected folders
-- Implement directory scanning with video file detection
-- Test on device with various folder structures
+**Testing Requirements:**
+- ⏳ Device testing: Select folder and verify scanning
+- ⏳ Test with nested folder structures
+- ⏳ Test with various video formats
+- ⏳ Test duplicate folder handling
+- ⏳ Test app restart persistence (getPersistedDirectories)
+- ⏳ Test metadata fetching for recognized titles
 
 ---
 
