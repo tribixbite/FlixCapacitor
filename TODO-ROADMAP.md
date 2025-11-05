@@ -3,7 +3,7 @@
 ## Overview
 This document provides a prioritized roadmap for implementing outstanding TODO items in the codebase.
 
-**Last Updated:** 2025-10-23
+**Last Updated:** 2025-11-05
 **Total TODOs:** 13
 
 ---
@@ -145,59 +145,99 @@ function extractLanguage(filename: string): string {
 
 ---
 
-### 4. File-Level Favorites (Multi-File Torrents)
+### 4. File-Level Favorites (Multi-File Torrents) ✅
 **File:** `src/app/lib/video-player.ts:522`
-**Status:** TODO
+**Status:** COMPLETE (2025-11-05)
 **Complexity:** Medium-High
 **Dependencies:** FavoritesService extension
 
 **Current Behavior:**
 Star button in file picker has no effect.
 
-**Implementation Plan:**
+**Implementation Complete:**
+- ✅ Created favorite_torrent_files table with composite key (torrent_hash:file_index)
+- ✅ Added 4 new FavoritesService methods:
+  - `addFavoriteTorrentFile(hash, index, name, movieId)`
+  - `removeFavoriteTorrentFile(hash, index)`
+  - `isFavoriteTorrentFile(hash, index)`
+  - `getFavoriteTorrentFiles(hash)` - Returns array of favorited file indices
+- ✅ Implemented `getTorrentHash()` helper to extract infohash from magnet links
+- ✅ Updated file picker star button click handler with database integration
+- ✅ Load and display starred state when opening file picker modal
+- ✅ Fallback to movieId + filename hash if no magnet link available
+- ✅ CSS class toggling for visual feedback (★ starred / ☆ unstarred)
+- ✅ TypeScript compilation verified
+- ✅ Build successful (main-DE6cRcLZ.js)
+- ✅ Synced to Android (12 plugins detected)
+
+**Files Modified:**
+- `src/app/lib/favorites-service.ts` - Added table and file-level methods
+- `src/app/lib/video-player.ts` - Implemented star button functionality
+
+**Technical Implementation:**
 ```typescript
-// 1. Extend FavoritesService with file-level favorites table
+// Database schema
 CREATE TABLE IF NOT EXISTS favorite_torrent_files (
-  id TEXT PRIMARY KEY,           -- torrent_hash:file_index
-  torrent_hash TEXT NOT NULL,
-  file_index INTEGER NOT NULL,
-  file_name TEXT NOT NULL,
-  movie_id TEXT,                  -- Link to parent movie/show
-  added_at INTEGER NOT NULL
+  id TEXT PRIMARY KEY,               -- Composite: "torrent_hash:file_index"
+  torrent_hash TEXT NOT NULL,        -- Infohash from magnet link
+  file_index INTEGER NOT NULL,       -- File position in torrent
+  file_name TEXT NOT NULL,           -- Display name
+  movie_id TEXT,                     -- Optional IMDB ID
+  added_at INTEGER NOT NULL          -- Timestamp
 )
 
-// 2. Add methods to FavoritesService
-async addFavoriteTorrentFile(hash: string, index: number, name: string): Promise<void>
-async removeFavoriteTorrentFile(hash: string, index: number): Promise<void>
-async isFavoriteTorrentFile(hash: string, index: number): Promise<boolean>
-async getFavoriteTorrentFiles(hash: string): Promise<number[]>
+// Torrent hash extraction
+getTorrentHash(movie: any, videoFiles: any[]): string {
+    // Extract infohash from magnet link using regex
+    const match = torrent.magnet.match(/btih:([a-fA-F0-9]{40})/);
+    if (match) return match[1].toLowerCase();
 
-// 3. Update file picker star handler
+    // Fallback to movieId + filename hash
+    const hashSource = `${movieId}_${firstFileName}`.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    return hashSource;
+}
+
+// Star button handler with persistence
 star.addEventListener('click', async (e) => {
-  const torrentHash = movie.torrent_hash;
-  const fileIndex = parseInt(star.dataset.index);
-  const fileName = star.dataset.name;
+  const torrentHash = this.getTorrentHash(movie, videoFiles);
+  const fileIndex = parseInt(star.getAttribute('data-index')!);
+  const fileName = file ? file.name : `File ${fileIndex}`;
 
   if (star.classList.contains('starred')) {
     await window.FavoritesService.removeFavoriteTorrentFile(torrentHash, fileIndex);
     star.classList.remove('starred');
+    star.textContent = '☆';
   } else {
-    await window.FavoritesService.addFavoriteTorrentFile(torrentHash, fileIndex, fileName);
+    await window.FavoritesService.addFavoriteTorrentFile(torrentHash, fileIndex, fileName, movieId);
     star.classList.add('starred');
+    star.textContent = '★';
   }
 });
 
-// 4. Load starred state when opening picker
-const favoriteFiles = await window.FavoritesService.getFavoriteTorrentFiles(torrentHash);
-videoFiles.forEach((file, index) => {
-  const isStarred = favoriteFiles.includes(index);
-  // Set starred class based on isStarred
+// Load starred state on picker open
+const favoriteIndices = await window.FavoritesService.getFavoriteTorrentFiles(torrentHash);
+videoFiles.forEach((file, idx) => {
+    if (favoriteIndices.includes(file.index)) {
+        const star = modal.querySelector(`.file-picker-item-star[data-index="${file.index}"]`);
+        if (star) {
+            star.classList.add('starred');
+            star.textContent = '★';
+        }
+    }
 });
 ```
 
-**Files to Modify:**
-- `src/app/lib/favorites-service.ts` - Add file-level methods
-- `src/app/lib/video-player.ts` - Implement star button functionality
+**Benefits:**
+- Users can bookmark favorite episodes in TV show packs
+- Quick access to preferred files in large torrents
+- Per-file granularity for multi-file content
+- Favorites persist across app restarts via SQLite
+
+**Testing Requirements:**
+- ⏳ Device testing: Open multi-file torrent and star files
+- ⏳ Test starred state persistence after app restart
+- ⏳ Test remove favorite functionality
+- ⏳ Test with various torrent types (TV shows, movie collections)
 
 ---
 

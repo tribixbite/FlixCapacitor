@@ -2550,3 +2550,165 @@ CREATE TABLE IF NOT EXISTS local_media (
 ---
 
 Last updated: 2025-11-04 (Library Folder Picker complete - UI integration done)
+
+### File-Level Favorites for Multi-File Torrents
+
+#### Implementation Date: 2025-11-05
+
+**Feature:** Allow users to favorite specific files within multi-file torrents, enabling easy access to preferred episodes or videos.
+
+**Problem:** Star button in file picker modal (video-player.ts:516-524) had no effect. Users could favorite movies/shows, but couldn't mark individual files within multi-file torrents.
+
+**Solution Components:**
+
+**1. Database Schema (favorites-service.ts:86-96):**
+```typescript
+CREATE TABLE IF NOT EXISTS favorite_torrent_files (
+  id TEXT PRIMARY KEY,               -- Composite: "torrent_hash:file_index"
+  torrent_hash TEXT NOT NULL,        -- Infohash from magnet link
+  file_index INTEGER NOT NULL,       -- File position in torrent
+  file_name TEXT NOT NULL,           -- Display name
+  movie_id TEXT,                     -- Optional IMDB ID
+  added_at INTEGER NOT NULL          -- Timestamp
+)
+```
+
+**2. FavoritesService Methods (favorites-service.ts:247-307):**
+
+Added 4 new methods for file-level favorite management:
+
+```typescript
+async addFavoriteTorrentFile(hash: string, index: number, name: string, movieId?: string): Promise<boolean> {
+    const id = `${hash}:${index}`;
+    await this.db.run(`
+        INSERT OR REPLACE INTO favorite_torrent_files (
+          id, torrent_hash, file_index, file_name, movie_id, added_at
+        ) VALUES (?, ?, ?, ?, ?, ?)
+    `, [id, hash, index, name, movieId || null, Date.now()]);
+    console.log(`Added torrent file to favorites: ${name} (${hash}:${index})`);
+    return true;
+}
+
+async removeFavoriteTorrentFile(hash: string, index: number): Promise<boolean> {
+    const id = `${hash}:${index}`;
+    await this.db.run('DELETE FROM favorite_torrent_files WHERE id = ?', [id]);
+    console.log(`Removed torrent file from favorites: ${id}`);
+    return true;
+}
+
+async isFavoriteTorrentFile(hash: string, index: number): Promise<boolean> {
+    const id = `${hash}:${index}`;
+    const result = await this.db.get('SELECT id FROM favorite_torrent_files WHERE id = ?', [id]);
+    return !!result;
+}
+
+async getFavoriteTorrentFiles(hash: string): Promise<number[]> {
+    const results = await this.db.all(
+        'SELECT file_index FROM favorite_torrent_files WHERE torrent_hash = ? ORDER BY file_index ASC',
+        [hash]
+    );
+    return results.map(row => row.file_index);
+}
+```
+
+**3. Torrent Hash Extraction (video-player.ts):**
+
+Implemented `getTorrentHash()` helper method to extract stable identifiers:
+
+```typescript
+getTorrentHash(movie: any, videoFiles: any[]): string {
+    const movieId = movie.imdb_id || movie.id || 'unknown';
+    
+    // Try to extract infohash from magnet link (40-char hex)
+    const torrent = movie.torrents?.[movie.quality] || movie.torrent;
+    if (torrent?.magnet) {
+        const match = torrent.magnet.match(/btih:([a-fA-F0-9]{40})/);
+        if (match) {
+            return match[1].toLowerCase();
+        }
+    }
+    
+    // Fallback: Use movie ID + first file name as hash
+    const firstFileName = videoFiles.length > 0 ? videoFiles[0].name : '';
+    const hashSource = `${movieId}_${firstFileName}`.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    return hashSource;
+}
+```
+
+**4. File Picker Integration (video-player.ts):**
+
+Updated star button click handler with database integration:
+
+```typescript
+// Load starred state when opening picker
+const torrentHash = this.getTorrentHash(movie, videoFiles);
+if (torrentHash && window.FavoritesService) {
+    window.FavoritesService.getFavoriteTorrentFiles(torrentHash).then(favoriteIndices => {
+        videoFiles.forEach((file, idx) => {
+            if (favoriteIndices.includes(file.index)) {
+                const star = modal.querySelector(`.file-picker-item-star[data-index="${file.index}"]`);
+                if (star) {
+                    star.classList.add('starred');
+                    star.textContent = '★';
+                }
+            }
+        });
+    });
+}
+
+// Handle star click events
+modal.querySelectorAll('.file-picker-item-star').forEach(star => {
+    star.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        
+        const fileIndex = parseInt(star.getAttribute('data-index')!);
+        const file = videoFiles.find(f => f.index === fileIndex);
+        const fileName = file ? file.name : `File ${fileIndex}`;
+        const movieId = movie.imdb_id || movie.id;
+        
+        if (star.classList.contains('starred')) {
+            await window.FavoritesService.removeFavoriteTorrentFile(torrentHash, fileIndex);
+            star.classList.remove('starred');
+            star.textContent = '☆';
+        } else {
+            await window.FavoritesService.addFavoriteTorrentFile(torrentHash, fileIndex, fileName, movieId);
+            star.classList.add('starred');
+            star.textContent = '★';
+        }
+    });
+});
+```
+
+**Technical Decisions:**
+
+1. **Composite Primary Key:** Using `torrent_hash:file_index` ensures unique identification per file within each torrent
+2. **Infohash Extraction:** Regex pattern `/btih:([a-fA-F0-9]{40})/` extracts 40-character hex hash from magnet links
+3. **Fallback Strategy:** If no magnet link, use `movieId_fileName` hash for identification
+4. **Persistent Storage:** SQLite ensures favorites survive app restarts
+5. **Async/Await Pattern:** All database operations use promises for clean error handling
+6. **Visual Feedback:** CSS class toggle (`starred`/`unstarred`) and text change (★/☆)
+
+**Build Results:**
+- Compilation: Success
+- Bundle: main-DE6cRcLZ.js
+- Capacitor sync: 12 plugins detected
+- TypeScript: No errors
+
+**Usage:**
+1. Open movie/show with multi-file torrent
+2. Click file picker icon to see available files
+3. Click star (☆) next to any file to favorite it → becomes ★
+4. Starred files persist across app restarts
+5. Click starred file (★) to remove from favorites → becomes ☆
+
+**Benefits:**
+- Users can bookmark favorite episodes in TV show packs
+- Quick access to preferred files in large torrents
+- Per-file granularity for multi-file content
+- No impact on single-file torrent playback
+
+**Future Enhancements:**
+- Favorites view showing all favorited torrent files
+- Auto-play next favorited file in sequence
+- Export/import favorite file lists
+
