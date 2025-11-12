@@ -2712,3 +2712,258 @@ modal.querySelectorAll('.file-picker-item-star').forEach(star => {
 - Auto-play next favorited file in sequence
 - Export/import favorite file lists
 
+
+### Multi-File Torrent Sequence Playback
+
+#### Implementation Date: 2025-11-12
+
+**Feature:** Enable sequential playback of multiple files from multi-file torrents with automatic transitions and queue status display.
+
+**Problem:** File picker allowed selecting multiple files, but only played the first one. Users had to manually select each file to continue watching TV shows or course videos.
+
+**Solution Components:**
+
+**1. PlaybackQueue Class (video-player.ts:15-107):**
+
+Manages queue state and playback sequence:
+
+```typescript
+class PlaybackQueue {
+    private queue: Array<{ index: number; name: string }> = [];
+    private currentIndex: number = 0;
+    private movie: any = null;
+    private videoFiles: any[] = [];
+
+    constructor(fileIndices: number[], videoFiles: any[], movie: any) {
+        this.videoFiles = videoFiles;
+        this.movie = movie;
+        this.queue = fileIndices.map(idx => {
+            const file = videoFiles.find(f => f.index === idx);
+            return {
+                index: idx,
+                name: file ? file.name : `File ${idx}`
+            };
+        });
+    }
+
+    // Check if more files exist
+    hasNext(): boolean {
+        return this.currentIndex < this.queue.length - 1;
+    }
+
+    // Move to next file and return its index
+    playNext(): number | null {
+        if (this.hasNext()) {
+            this.currentIndex++;
+            return this.queue[this.currentIndex].index;
+        }
+        return null;
+    }
+
+    // Get current file info
+    getCurrentFile() {
+        return this.queue[this.currentIndex];
+    }
+
+    // Get next file without advancing
+    getNextFile() {
+        if (this.hasNext()) {
+            return this.queue[this.currentIndex + 1];
+        }
+        return null;
+    }
+
+    // Get position (1-indexed for display)
+    getCurrentPosition(): number {
+        return this.currentIndex + 1;
+    }
+
+    getTotalFiles(): number {
+        return this.queue.length;
+    }
+
+    getMovie() {
+        return this.movie;
+    }
+
+    clear() {
+        this.queue = [];
+        this.currentIndex = 0;
+    }
+}
+```
+
+**2. File Picker Return Type Update (video-player.ts:416):**
+
+Changed from returning single index to array of indices:
+
+```typescript
+// Before
+async showFilePickerModal(videoFiles: any[], movie: any): Promise<number | null>
+
+// After  
+async showFilePickerModal(videoFiles: any[], movie: any): Promise<number[] | null> {
+    // ...
+    playButton.addEventListener('click', () => {
+        const indices = Array.from(selectedIndices) as number[];
+        modal.remove();
+        resolve(indices.sort((a, b) => a - b)); // Sort by file index
+    });
+}
+```
+
+**3. Auto-Play Next Implementation (video-player.ts:1559-1610):**
+
+Video 'ended' event handler for automatic queue progression:
+
+```typescript
+const endedHandler = async () => {
+    console.log('Video playback ended');
+
+    if (this.playbackQueue && this.playbackQueue.hasNext()) {
+        const nextFileIndex = this.playbackQueue.playNext();
+        const nextFile = this.playbackQueue.getCurrentFile();
+
+        console.log(`Auto-playing next file: ${nextFile.name}`);
+
+        // Show loading UI
+        if (loadingContent) {
+            loadingContent.style.display = 'flex';
+            loadingContent.style.opacity = '1';
+        }
+        if (loadingTitle) loadingTitle.textContent = 'Loading Next Video';
+        if (loadingSubtitle) loadingSubtitle.textContent = `Playing ${nextFile.name}...`;
+
+        try {
+            // Stop current stream
+            await window.NativeTorrentClient.stopStream();
+
+            // Start stream for next file
+            const movieData = this.playbackQueue.getMovie();
+            const torrent = movieData.torrents?.[movieData.quality] || movieData.torrent;
+
+            const streamInfo = await window.NativeTorrentClient.startStream({
+                magnetLink: torrent.magnet,
+                fileIndex: nextFileIndex
+            });
+
+            // Set new video source and play
+            if (videoElement && streamInfo.streamUrl) {
+                videoElement.src = streamInfo.streamUrl;
+                await videoElement.play();
+            }
+
+            // Update queue UI
+            this.updateQueueStatusUI();
+        } catch (error) {
+            console.error('Error playing next file:', error);
+            if (loadingTitle) loadingTitle.textContent = 'Failed to Play Next Video';
+            if (loadingSubtitle) loadingSubtitle.textContent = error.message;
+        }
+    } else {
+        // Queue finished - clear it
+        if (this.playbackQueue) {
+            this.playbackQueue.clear();
+            this.playbackQueue = null;
+        }
+    }
+};
+addTrackedListener(videoElement, 'ended', endedHandler);
+```
+
+**4. Queue Status UI (video-player.ts:869-873):**
+
+Added visual indicator showing current and next files:
+
+```html
+<!-- Playback queue status indicator -->
+<div id="queue-status" style="display: none; position: absolute; top: 0.75rem; left: 1rem; z-index: 101; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.5rem 0.75rem; max-width: 280px;">
+    <div id="queue-current" style="font-size: 0.75rem; font-weight: 600; color: #3b82f6; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+    <div id="queue-next" style="font-size: 0.7rem; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+</div>
+```
+
+**5. Queue UI Update Helper (video-player.ts:229-262):**
+
+Updates queue status display at key points:
+
+```typescript
+updateQueueStatusUI(): void {
+    const queueStatus = document.getElementById('queue-status');
+    const queueCurrent = document.getElementById('queue-current');
+    const queueNext = document.getElementById('queue-next');
+
+    if (!queueStatus || !queueCurrent || !queueNext) {
+        return;
+    }
+
+    if (this.playbackQueue && this.playbackQueue.getTotalFiles() > 1) {
+        const currentFile = this.playbackQueue.getCurrentFile();
+        const nextFile = this.playbackQueue.getNextFile();
+        const position = this.playbackQueue.getCurrentPosition();
+        const total = this.playbackQueue.getTotalFiles();
+
+        // Show and update queue status
+        queueStatus.style.display = 'block';
+        queueCurrent.textContent = `Playing: ${currentFile.name} (${position}/${total})`;
+        
+        if (nextFile) {
+            queueNext.textContent = `Next: ${nextFile.name}`;
+        } else {
+            queueNext.textContent = 'Last video in queue';
+        }
+    } else {
+        // Hide for single file or empty queue
+        queueStatus.style.display = 'none';
+    }
+}
+```
+
+**Technical Decisions:**
+
+1. **Queue as Class**: Encapsulates all queue logic in reusable PlaybackQueue class
+2. **Sorted Indices**: File indices sorted on selection for natural playback order
+3. **Zero-Based Internal, One-Based Display**: currentIndex is 0-based, getCurrentPosition() returns 1-based for UI
+4. **Automatic Cleanup**: Queue clears itself after last file completes
+5. **Loading UI Between Files**: Shows loading state during stream transitions
+6. **Stream Restart**: Fully stops current stream before starting next to avoid conflicts
+7. **UI Updates at Key Points**: Queue status updates when created, metadata loads, and files transition
+
+**Build Results:**
+- Compilation: Success  
+- Bundle: main-C-mgP9UD.js (585.73 kB)
+- Capacitor sync: 12 plugins detected
+- TypeScript: No errors
+
+**User Flow:**
+1. Open multi-file torrent (e.g., TV show season)
+2. File picker shows list of video files with checkboxes
+3. User selects multiple files (e.g., episodes 1-5)
+4. Click "Play 5 Files" button
+5. First file starts playing
+6. Queue status appears in top-left: "Playing: Episode.1.mp4 (1/5)" / "Next: Episode.2.mp4"
+7. When Episode 1 ends, Episode 2 automatically starts
+8. Queue UI updates: "Playing: Episode.2.mp4 (2/5)" / "Next: Episode.3.mp4"
+9. Process continues through all selected files
+10. After last file, queue clears and UI hides
+
+**Benefits:**
+- **Binge Watching**: Watch multiple TV episodes without manual intervention
+- **Course Content**: Queue lecture videos for uninterrupted learning
+- **Visual Feedback**: Always know what's playing and what's next
+- **Seamless Transitions**: Automatic stream switching without user input
+- **Flexible Selection**: Choose any files in any order from torrent
+
+**Edge Cases Handled:**
+- Single file selection: Queue UI hidden, no auto-play
+- Queue cancellation: User can exit player, queue clears automatically
+- Stream errors: Error shown, queue doesn't advance to prevent cascading failures
+- Empty queue: hasNext() prevents out-of-bounds access
+
+**Future Enhancements:**
+- Skip to next/previous file buttons
+- Queue reordering via drag-and-drop
+- Resume queue from specific position
+- Save queue state across app restarts
+- Shuffle mode for random playback order
+

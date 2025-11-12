@@ -3,7 +3,7 @@
 ## Overview
 This document provides a prioritized roadmap for implementing outstanding TODO items in the codebase.
 
-**Last Updated:** 2025-11-05
+**Last Updated:** 2025-11-12
 **Total TODOs:** 13
 
 ---
@@ -35,47 +35,64 @@ Clicking a second video while the first is loading causes the first video to pla
 
 ## Priority 2: High-Value Features
 
-### 2. Multi-File Torrent Sequence Playback
-**File:** `src/app/lib/video-player.ts:543`
-**Status:** TODO
+### 2. Multi-File Torrent Sequence Playback ✅
+**File:** `src/app/lib/video-player.ts`
+**Status:** COMPLETE (2025-11-12)
 **Complexity:** High
 **Dependencies:** None
 
 **Current Behavior:**
 File picker allows multiple file selection but only plays the first file.
 
-**Implementation Plan:**
-```typescript
-// 1. Change return type to accept array of indices
-async showFilePickerModal(videoFiles, movie): Promise<number[]>
+**Implementation Complete:**
+- ✅ Created PlaybackQueue class for queue management (video-player.ts:15-107)
+  - Tracks queue state: current position, total files, file metadata
+  - Methods: hasNext(), playNext(), getCurrentFile(), getNextFile(), getTotalFiles()
+  - Stores movie/torrent data for auto-play functionality
+- ✅ Updated showFilePickerModal return type to Promise<number[] | null> (video-player.ts:416)
+  - Returns sorted array of all selected file indices
+  - Supports sequential multi-file playback
+- ✅ Implemented auto-play next functionality (video-player.ts:1559-1610)
+  - Added 'ended' event handler to video element
+  - Automatically stops current stream and starts next file
+  - Shows loading UI between files
+  - Clears queue after last file completes
+- ✅ Added queue status UI indicator (video-player.ts:869-873)
+  - Shows "Playing: filename (X of Y)"
+  - Shows "Next: next_filename" or "Last video in queue"
+  - Auto-hides for single file or empty queue
+  - Positioned at top-left with backdrop blur effect
+- ✅ Created updateQueueStatusUI() helper method (video-player.ts:229-262)
+  - Updates UI when queue changes
+  - Called on queue creation, video metadata load, and file transitions
+- ✅ TypeScript compilation verified
+- ✅ Build successful (main-C-mgP9UD.js - 585.73 kB)
+- ✅ Synced to Android (12 plugins detected)
 
-// 2. Create playback queue system
-class PlaybackQueue {
-  private queue: number[] = [];
-  private currentIndex: number = 0;
+**Files Modified:**
+- `src/app/lib/video-player.ts` - Added PlaybackQueue class, updated file picker, added auto-play logic, added queue UI
 
-  addFiles(indices: number[]): void
-  playNext(): void
-  hasNext(): boolean
-}
+**Usage:**
+1. Open movie/show with multi-file torrent
+2. Select multiple files in file picker using checkboxes
+3. Click "Play X Files" button
+4. First file plays, queue status shows in top-left corner
+5. When video ends, next file automatically starts
+6. Queue UI updates to show current position
+7. After last file, queue clears automatically
 
-// 3. Hook into video 'ended' event
-videoElement.addEventListener('ended', () => {
-  if (playbackQueue.hasNext()) {
-    playbackQueue.playNext();
-  }
-});
+**Benefits:**
+- Binge-watch TV show episodes without manual selection
+- Queue multiple files from lecture/course torrents
+- Visual feedback showing progress through queue
+- Seamless transitions between files
 
-// 4. Update UI to show queue status
-<div class="playback-queue">
-  Playing: Episode 1 of 5
-  Next: Episode 2
-</div>
-```
-
-**Files to Modify:**
-- `src/app/lib/video-player.ts` - Add queue system
-- `src/app/lib/ui-templates.ts` - Add queue UI elements
+**Testing Requirements:**
+- ⏳ Device testing: Select 3+ files and verify sequential playback
+- ⏳ Test queue UI visibility and updates
+- ⏳ Test auto-play next file functionality
+- ⏳ Test queue clearing after last file
+- ⏳ Test single file selection (should not show queue UI)
 
 ---
 
