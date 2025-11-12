@@ -8,16 +8,43 @@
 - test-adb.sh script ready
 - TESTING.md documentation complete
 
-⚠️ **Building Limitation:**
-- Cannot build APK from Termux due to AAPT2 ARM incompatibility
-- Need to build on proper development machine (x86/x64)
+✅ **Termux ARM64 Build Support:**
+- Custom AAPT2 for ARM64 architecture available
+- Build script `build-and-install.sh` handles all build steps
+- Auto-installation via multiple methods (termux-open, ADB, manual)
 
 ## Building the APK
 
-### Option 1: Build on Development Machine (Recommended)
+### Option 1: Build on Termux (Recommended for ARM64 devices)
 
 ```bash
-# On your development machine (not Termux)
+# Navigate to project directory
+cd ~/git/pop/popcorn-mobile
+
+# Pull latest code (if needed)
+git pull origin main
+
+# Build and install using the build script
+./build-and-install.sh
+
+# For clean build (removes previous build artifacts)
+./build-and-install.sh clean
+
+# The script handles:
+# 1. Web asset build (npm run build)
+# 2. Capacitor sync (npx cap sync android)
+# 3. Gradle build with custom ARM64 AAPT2
+# 4. Multi-tier APK installation (termux-open, ADB, manual)
+
+# Output: android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+**Important:** Do NOT use `cd android && ./gradlew assembleDebug` directly on Termux - it will fail with AAPT2 errors. Always use `./build-and-install.sh`.
+
+### Option 2: Build on x86/x64 Development Machine
+
+```bash
+# On your x86/x64 Linux/Mac/Windows machine
 cd /path/to/popcorn-mobile
 
 # Pull latest code
@@ -29,14 +56,14 @@ npm run build
 # Sync to Android
 npx cap sync android
 
-# Build APK
+# Build APK (standard Gradle works on x86/x64)
 cd android
 ./gradlew assembleDebug
 
 # Output: android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### Option 2: Use Android Studio
+### Option 3: Use Android Studio
 
 ```bash
 # Open project in Android Studio
@@ -48,7 +75,7 @@ android-studio /path/to/popcorn-mobile/android
 # Run > Run 'app'
 ```
 
-### Option 3: GitHub Actions (CI/CD)
+### Option 4: GitHub Actions (CI/CD)
 
 ```yaml
 # .github/workflows/build-apk.yml
@@ -184,8 +211,9 @@ adb logcat -s FlixTest:D VideoPlayer:D PlaybackQueue:D
 ### Build Errors
 
 **AAPT2 Error on Termux:**
-- Cannot build on ARM architecture (Termux limitation)
-- Solution: Build on x86/x64 development machine
+- Error: "AAPT2 aapt2-8.7.2-12006047-linux Daemon: Syntax error"
+- Cause: Running `./gradlew assembleDebug` directly instead of using build script
+- Solution: ALWAYS use `./build-and-install.sh` which includes custom ARM64 AAPT2
 
 **Gradle Version Mismatch:**
 ```bash
@@ -255,13 +283,32 @@ adb logcat -d -s FlixTest:D
 
 ## Testing Workflow
 
-### Daily Development
+### Daily Development (Termux)
 
 ```bash
 # 1. Make code changes
 vim src/app/lib/video-player.ts
 
-# 2. Build (on dev machine)
+# 2. Build and install (single command)
+./build-and-install.sh
+
+# 3. Test
+./test-adb.sh multifile
+
+# 4. Monitor
+adb logcat -s FlixTest:D
+
+# For clean build:
+./build-and-install.sh clean
+```
+
+### Daily Development (x86/x64 Machine)
+
+```bash
+# 1. Make code changes
+vim src/app/lib/video-player.ts
+
+# 2. Build
 npm run build
 npx cap sync android
 cd android && ./gradlew assembleDebug
