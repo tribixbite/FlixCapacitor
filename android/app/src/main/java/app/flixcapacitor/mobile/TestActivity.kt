@@ -51,11 +51,6 @@ class TestActivity : AppCompatActivity() {
         log("TestActivity created")
 
         // Handle intent
-        handleTestIntent(intent)
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
         intent?.let { handleTestIntent(it) }
     }
 

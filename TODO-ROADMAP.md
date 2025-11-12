@@ -68,9 +68,16 @@ File picker allows multiple file selection but only plays the first file.
 - ✅ TypeScript compilation verified
 - ✅ Build successful (main-C-mgP9UD.js - 585.73 kB)
 - ✅ Synced to Android (12 plugins detected)
+- ✅ APK built successfully (app-debug.apk - 74MB)
+- ✅ Automated testing infrastructure created (TestActivity.kt, test-adb.sh, TESTING.md, BUILD-AND-TEST.md)
 
 **Files Modified:**
 - `src/app/lib/video-player.ts` - Added PlaybackQueue class, updated file picker, added auto-play logic, added queue UI
+- `android/app/src/main/java/app/flixcapacitor/mobile/TestActivity.kt` - Automated testing via ADB intents
+- `android/app/src/main/AndroidManifest.xml` - Registered TestActivity with flixtest:// intent filter
+- `test-adb.sh` - Test automation script for all features
+- `TESTING.md` - Comprehensive automated testing documentation
+- `BUILD-AND-TEST.md` - Build and testing workflow guide
 
 **Usage:**
 1. Open movie/show with multi-file torrent
@@ -88,11 +95,12 @@ File picker allows multiple file selection but only plays the first file.
 - Seamless transitions between files
 
 **Testing Requirements:**
-- ⏳ Device testing: Select 3+ files and verify sequential playback
-- ⏳ Test queue UI visibility and updates
-- ⏳ Test auto-play next file functionality
-- ⏳ Test queue clearing after last file
-- ⏳ Test single file selection (should not show queue UI)
+- ⏳ Connect device via ADB for automated testing
+- ⏳ Run: `./test-adb.sh multifile` to test multi-file playback
+- ⏳ Run: `./test-adb.sh favorites` to test file-level favorites
+- ⏳ Run: `./test-adb.sh library` to test library folder scanning
+- ⏳ Run: `./test-adb.sh subtitles` to test subtitle detection
+- ⏳ Run: `./test-adb.sh all` to run full test suite
 
 ---
 
