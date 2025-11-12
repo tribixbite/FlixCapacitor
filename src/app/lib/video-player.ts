@@ -118,6 +118,7 @@ export interface VideoPlayerContext {
         intervals: number[];
     };
     isLoadingStream: boolean;
+    currentStreamRequestId: number; // Track current stream request to ignore old/cancelled requests
     playbackPositions: Map<string, number>;
     currentMovieData: Map<string, any>;
     backButtonListener: any;
@@ -757,11 +758,14 @@ export class VideoPlayer {
      * Complete implementation with UI, events, and cleanup
      */
     async showVideoPlayer(movie: Movie | Episode | LibraryItem, torrent: TorrentInfo | null, quality: string): Promise<void> {
-        console.log(`[showVideoPlayer] Called for: ${movie.title}, isLoadingStream=${this.ctx.isLoadingStream}`);
+        // Increment stream request ID to track this specific request
+        this.ctx.currentStreamRequestId = (this.ctx.currentStreamRequestId || 0) + 1;
+        const thisRequestId = this.ctx.currentStreamRequestId;
+        console.log(`[showVideoPlayer] Called for: ${movie.title}, requestId=${thisRequestId}, isLoadingStream=${this.ctx.isLoadingStream}`);
 
         // If already loading a stream, stop it first before starting new one
         if (this.ctx.isLoadingStream) {
-            console.warn('Stream already loading, stopping current stream before starting new one');
+            console.warn(`Stream already loading, cancelling previous request and starting new one (requestId=${thisRequestId})`);
             this.ctx.isLoadingStream = false; // Reset flag
             console.log(`[showVideoPlayer] Set isLoadingStream = false (stopping previous)`);
 
@@ -785,7 +789,7 @@ export class VideoPlayer {
 
         try {
             this.ctx.isLoadingStream = true; // Set flag to prevent concurrent calls
-            console.log(`[showVideoPlayer] Set isLoadingStream = true (starting ${movie.title})`);
+            console.log(`[showVideoPlayer] Set isLoadingStream = true (starting ${movie.title}, requestId=${thisRequestId})`);
 
 
             // Check and request media permissions before playing video
@@ -1187,8 +1191,8 @@ export class VideoPlayer {
                     throw new Error('Stream started but no URL was provided');
                 }
 
-                // Multi-file torrent support
-                // Check if torrent has multiple video files (e.g., course lectures, TV series)
+                // Multi-file torrent support - Check AFTER stream is ready
+                // If multi-file, we need to stop, let user pick, then restart with selected file
                 const torrentInfo = window.NativeTorrentClient?.currentTorrentInfo;
                 if (torrentInfo && torrentInfo.numFiles > 1) {
                     console.log(`⚠️ Multi-file torrent detected: ${torrentInfo.numFiles} files`);
@@ -1197,10 +1201,26 @@ export class VideoPlayer {
                     try {
                         const videoFiles = await window.NativeTorrentClient.getVideoFileList();
                         if (videoFiles && videoFiles.length > 1) {
-                            console.log(`Found ${videoFiles.length} video files - showing file picker`);
+                            console.log(`Found ${videoFiles.length} video files - need to let user choose`);
+
+                            // IMPORTANT: Stop the auto-started stream so we can select a different file
+                            console.log('Stopping auto-started stream to allow file selection...');
+                            await window.NativeTorrentClient.stopStream();
+
+                            // Update loading UI
+                            if (loadingTitle) loadingTitle.textContent = 'Choose Files to Play';
+                            if (loadingSubtitle) loadingSubtitle.textContent = 'Select one or more files...';
 
                             // Show file picker modal
                             const selectedIndices = await this.showFilePickerModal(videoFiles, movie);
+
+                            // Check if request is still current after user made selection
+                            if (this.ctx.currentStreamRequestId !== thisRequestId) {
+                                console.warn(`Request outdated after file selection (thisRequestId=${thisRequestId}, currentRequestId=${this.ctx.currentStreamRequestId}). Aborting.`);
+                                this.ctx.isLoadingStream = false;
+                                return;
+                            }
+
                             if (selectedIndices && selectedIndices.length > 0) {
                                 console.log(`User selected ${selectedIndices.length} file(s):`, selectedIndices);
 
@@ -1208,18 +1228,81 @@ export class VideoPlayer {
                                 this.playbackQueue = new PlaybackQueue(selectedIndices, videoFiles, movie);
                                 console.log(`Created playback queue: ${this.playbackQueue.getCurrentPosition()}/${this.playbackQueue.getTotalFiles()}`);
 
-                                // Update queue UI (will show when video metadata loads)
-                                // Note: UI elements may not exist yet, updateQueueStatusUI will be called again in loadedmetadata handler
-                                this.updateQueueStatusUI();
+                                // Select the first file in the user's selection
+                                const firstFileIndex = selectedIndices[0];
+                                console.log(`Selecting file ${firstFileIndex} for playback...`);
 
-                                // Note: First file is already selected by native code
-                                // Queue will be used for auto-play next when current video ends
+                                // Import TorrentStreamer to call selectFile
+                                const { TorrentStreamer } = await import('capacitor-plugin-torrent-streamer');
+                                await TorrentStreamer.selectFile({ fileIndex: firstFileIndex });
+
+                                // Update loading UI
+                                if (loadingTitle) loadingTitle.textContent = 'Starting Selected File';
+                                if (loadingSubtitle) loadingSubtitle.textContent = 'Connecting to peers...';
+
+                                // Restart stream with selected file
+                                console.log('Restarting stream with selected file...');
+                                streamInfo = await Promise.race([
+                                    window.NativeTorrentClient.startStream(
+                                        torrent.url,
+                                        { quality: quality },
+                                        (status) => {
+                                            // Same progress callback as before
+                                            if (hasVideoError) return;
+
+                                            if (loadingTitle && status.status === 'downloading') {
+                                                loadingTitle.textContent = 'Downloading';
+                                            } else if (loadingTitle && status.status === 'buffering') {
+                                                loadingTitle.textContent = 'Buffering';
+                                            }
+
+                                            if (loadingSubtitle && status.message) {
+                                                loadingSubtitle.textContent = status.message;
+                                            } else if (loadingSubtitle && status.numPeers !== undefined) {
+                                                loadingSubtitle.textContent = `${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''} connected`;
+                                            }
+
+                                            if (status.progress !== undefined && torrentStatus) {
+                                                torrentStatus.style.display = 'block';
+                                                if (progressText) progressText.textContent = `${Math.round(status.progress * 100)}%`;
+                                                const dlProgress = document.getElementById('dl-progress');
+                                                if (dlProgress) dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
+                                            }
+
+                                            if (status.downloadSpeed !== undefined && speedText) {
+                                                const speedMB = (status.downloadSpeed / 1024 / 1024).toFixed(2);
+                                                speedText.textContent = `${speedMB} MB/s`;
+                                                const dlSpeed = document.getElementById('dl-speed');
+                                                if (dlSpeed) dlSpeed.textContent = `${speedMB} MB/s`;
+                                            }
+
+                                            if (status.numPeers !== undefined) {
+                                                if (peersText) peersText.textContent = status.numPeers.toString();
+                                                const dlPeers = document.getElementById('dl-peers');
+                                                if (dlPeers) dlPeers.textContent = `${status.numPeers} peer${status.numPeers !== 1 ? 's' : ''}`;
+                                            }
+                                        }
+                                    ),
+                                    new Promise((_, reject) =>
+                                        setTimeout(() => reject(new Error('Timeout: Failed to receive torrent metadata after 90 seconds')), 90000)
+                                    )
+                                ]);
+
+                                console.log('Stream restarted with selected file:', streamInfo);
+
+                                // Update queue UI (will show when video metadata loads)
+                                this.updateQueueStatusUI();
                             } else {
-                                console.log('User cancelled file selection, using default (largest file)');
+                                console.log('User cancelled file selection, aborting playback');
+                                this.ctx.isLoadingStream = false;
+                                // Return to previous view
+                                history.back();
+                                return;
                             }
                         }
                     } catch (error) {
-                        console.error('Error getting video file list:', error);
+                        console.error('Error handling multi-file torrent:', error);
+                        // Continue with default file if error occurs
                     }
                 }
             } catch (error) {
@@ -1262,9 +1345,17 @@ export class VideoPlayer {
             // Show video container (but keep loading UI visible until video loads)
             if (videoContainer) videoContainer.style.display = 'block';
 
+            // CRITICAL FIX: Check if this is still the current stream request
+            // Prevents old/cancelled streams from playing when user switches videos quickly
+            if (this.ctx.currentStreamRequestId !== thisRequestId) {
+                console.warn(`Stream ready but request is outdated (thisRequestId=${thisRequestId}, currentRequestId=${this.ctx.currentStreamRequestId}). Ignoring.`);
+                this.ctx.isLoadingStream = false;
+                return;
+            }
+
             // CRITICAL FIX: Set video source immediately now that stream is ready
             // The progress callback can't access streamInfo because it runs before Promise resolves
-            console.log('Stream URL ready:', streamInfo.streamUrl);
+            console.log(`Stream URL ready (requestId=${thisRequestId}):`, streamInfo.streamUrl);
             console.log('Setting video source...');
             if (videoElement && streamInfo.streamUrl) {
                 videoElement.src = streamInfo.streamUrl;

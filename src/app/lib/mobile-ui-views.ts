@@ -33,6 +33,7 @@ export class MobileUIController {
     currentVideoElement: HTMLVideoElement | null;
     playbackPositions: Map<string, PlaybackPosition>;
     isLoadingStream: boolean;
+    currentStreamRequestId: number; // Track current stream request to prevent old requests from playing
     videoPlayerCleanup: { listeners: Array<() => void>; intervals: number[] };
     Haptics: any;
     StatusBar: any;
@@ -49,6 +50,7 @@ export class MobileUIController {
         this.currentVideoElement = null; // Current video element reference
         this.playbackPositions = new Map(); // Store playback positions by movie ID
         this.isLoadingStream = false; // Prevent duplicate concurrent stream loading
+        this.currentStreamRequestId = 0; // Track current stream request to prevent old/cancelled requests from playing
         this.videoPlayerCleanup = { listeners: [], intervals: [] }; // Track resources for cleanup
         this.Haptics = null; // Conference Polish: Haptics module for tactile feedback
         this.StatusBar = null; // Conference Polish: StatusBar module for dynamic colors
