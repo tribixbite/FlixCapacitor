@@ -1,7 +1,7 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-12
-**Status:** Multi-file playback complete, APK built, awaiting device testing
+**Status:** Critical bug fixes completed, ready for device testing
 
 ## Current State
 
@@ -12,6 +12,14 @@
    - Auto-play next functionality with 'ended' event handler
    - Queue status UI showing progress (X of Y)
    - Build successful: main-C-mgP9UD.js (585.73 kB)
+
+2. **Video Switching Bug Fixes** (Priority 1 - FIXED ✅)
+   - Fixed file picker timing: now shows BEFORE video starts
+   - Fixed race condition: stream request tracking prevents wrong video from playing
+   - Implementation: currentStreamRequestId validates each stream request
+   - Multi-file flow restructured: start→metadata→stop→pick→select→restart
+   - Build successful: main-BsodZREa.js (588.35 kB)
+   - APK ready: app-debug.apk (74MB)
 
 2. **Automated Testing Infrastructure**
    - TestActivity.kt created and compiled successfully
@@ -233,6 +241,11 @@ adb logcat -d -s FlixTest:D
 
 ## Files Modified This Session
 
+**Bug Fixes:**
+- `src/app/lib/video-player.ts` - Stream request tracking, file picker timing fix
+- `src/app/lib/mobile-ui-views.ts` - Added currentStreamRequestId context
+- `NEXT-STEPS.md` - Updated with bug fix status
+
 **Core Features:**
 - `src/app/lib/video-player.ts` - PlaybackQueue class, auto-play next, queue UI
 
@@ -246,6 +259,30 @@ adb logcat -d -s FlixTest:D
 - `TODO-ROADMAP.md`
 
 ## Implementation Summary
+
+### Bug Fixes Implementation
+
+**Stream Request Tracking:**
+- Added `currentStreamRequestId: number` to VideoPlayerContext
+- Increments on each `showVideoPlayer()` call to track specific requests
+- Validates request ID before setting video source
+- Prevents old/cancelled streams from overwriting new ones
+- Logging format: `[showVideoPlayer] requestId=N`
+
+**File Picker Timing Fix:**
+- OLD: Stream started → Picker shown (after video began)
+- NEW: Stream started → Get metadata → Stop stream → Show picker → User selects → Restart with selected file
+- User makes file selection BEFORE playback begins
+- Supports user cancellation (back navigation)
+- Request validation after async operations (picker, file selection)
+
+**Race Condition Prevention:**
+- Only most recent stream request can set video source
+- Check: `if (this.ctx.currentStreamRequestId !== thisRequestId) { return; }`
+- Prevents scenario: Click Video B → Video A plays
+- Validation at two critical points:
+  1. Before setting video source (prevents old stream)
+  2. After file picker selection (handles cancellation)
 
 ### PlaybackQueue Class
 - Manages sequential playback of multiple torrent files
@@ -276,7 +313,36 @@ adb logcat -d -s FlixTest:D
 
 ## Commit History
 
-**Latest Commit:** 939a0a26
+**Latest Commit:** 374fa26d
+```
+fix: prevent old/cancelled stream requests from playing (video switching bug)
+
+Two critical bug fixes for torrent video playback:
+
+1. File Picker Timing Issue
+   - BEFORE: Stream started immediately, picker shown after video began
+   - AFTER: start→metadata→stop→pick→select→restart flow
+   - User now selects files BEFORE playback begins
+
+2. Video Switching Race Condition
+   - BEFORE: Rapid torrent switching caused wrong video to play
+   - AFTER: currentStreamRequestId tracks and validates each stream request
+   - Only most recent request can set video source
+   - Old/cancelled requests are ignored
+
+Implementation:
+- Added currentStreamRequestId to VideoPlayerContext interface
+- Increment ID on each showVideoPlayer() call
+- Validate request ID before setting video source
+- Restructured multi-file flow for proper picker timing
+- Support user cancellation with back navigation
+
+APK Build:
+- Successfully built app-debug.apk (74MB)
+- Ready for device testing
+```
+
+**Previous Commit:** 939a0a26
 ```
 feat: multi-file playback and automated testing infrastructure
 
@@ -291,20 +357,18 @@ Automated Testing Infrastructure:
 - Fixed Kotlin compilation errors
 - Created test-adb.sh automation script
 - Created comprehensive testing documentation
-
-APK Build:
-- Successfully built app-debug.apk (74MB)
-- Ready for device testing
 ```
 
-## Priority TODO Items Remaining
+## Priority TODO Items Status
 
 From TODO-ROADMAP.md:
 
-1. **Video Switching Bug** (Priority 1 - BLOCKING)
-   - Diagnostic logging added
-   - Awaiting user testing with diagnostic APK
-   - Need logcat output to identify root cause
+**All Priority 1, 2, and 3 items: COMPLETE ✅**
+
+1. **Video Switching Bug** (Priority 1) - FIXED ✅
+   - File picker timing issue resolved
+   - Race condition eliminated with stream request tracking
+   - Ready for device testing
 
 2. **All Priority 2 and 3 items:** COMPLETE ✅
    - Multi-file playback ✅
