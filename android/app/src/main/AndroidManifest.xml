@@ -42,6 +42,23 @@
 
         </activity>
 
+        <!-- Test Activity for automated testing via ADB -->
+        <activity
+            android:name=".TestActivity"
+            android:label="FlixCapacitor Test"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="true">
+
+            <!-- Test command intent filter -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="flixtest" />
+            </intent-filter>
+
+        </activity>
+
         <!-- Torrent Streaming Service -->
         <service
             android:name="com.popcorntime.torrent.TorrentStreamingService"
