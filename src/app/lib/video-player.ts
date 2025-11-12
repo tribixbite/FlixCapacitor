@@ -9,6 +9,104 @@ import MediaPermissions from 'capacitor-plugin-media-permissions';
 import type { Movie, Episode, LibraryItem, TorrentInfo } from '../../types/mobile-ui';
 
 /**
+ * PlaybackQueue - Manages sequential playback of multiple files in multi-file torrents
+ * Supports auto-play next, queue status tracking, and queue management
+ */
+class PlaybackQueue {
+    private queue: Array<{ index: number; name: string }> = [];
+    private currentIndex: number = 0;
+    private movie: any = null;
+    private videoFiles: any[] = [];
+
+    constructor(fileIndices: number[], videoFiles: any[], movie: any) {
+        this.videoFiles = videoFiles;
+        this.movie = movie;
+        this.queue = fileIndices.map(idx => {
+            const file = videoFiles.find(f => f.index === idx);
+            return {
+                index: idx,
+                name: file ? file.name : `File ${idx}`
+            };
+        });
+        console.log(`PlaybackQueue created with ${this.queue.length} files`);
+    }
+
+    /**
+     * Check if there are more files to play
+     */
+    hasNext(): boolean {
+        return this.currentIndex < this.queue.length - 1;
+    }
+
+    /**
+     * Move to next file in queue and return its index
+     */
+    playNext(): number | null {
+        if (this.hasNext()) {
+            this.currentIndex++;
+            console.log(`Playing next file: ${this.getCurrentFile().name} (${this.getCurrentPosition()}/${this.getTotalFiles()})`);
+            return this.queue[this.currentIndex].index;
+        }
+        console.log('No more files in queue');
+        return null;
+    }
+
+    /**
+     * Get current file info
+     */
+    getCurrentFile() {
+        return this.queue[this.currentIndex];
+    }
+
+    /**
+     * Get total number of files in queue
+     */
+    getTotalFiles(): number {
+        return this.queue.length;
+    }
+
+    /**
+     * Get current position (1-indexed for display)
+     */
+    getCurrentPosition(): number {
+        return this.currentIndex + 1;
+    }
+
+    /**
+     * Get next file info (without moving forward)
+     */
+    getNextFile() {
+        if (this.hasNext()) {
+            return this.queue[this.currentIndex + 1];
+        }
+        return null;
+    }
+
+    /**
+     * Get full queue
+     */
+    getQueue() {
+        return this.queue;
+    }
+
+    /**
+     * Clear queue
+     */
+    clear() {
+        this.queue = [];
+        this.currentIndex = 0;
+        console.log('PlaybackQueue cleared');
+    }
+
+    /**
+     * Get movie/show info
+     */
+    getMovie() {
+        return this.movie;
+    }
+}
+
+/**
  * Context interface - provides access to controller state and methods
  * This allows the VideoPlayer module to interact with the main controller
  */
@@ -41,6 +139,7 @@ export interface VideoPlayerContext {
  */
 export class VideoPlayer {
     private ctx: VideoPlayerContext;
+    private playbackQueue: PlaybackQueue | null = null;
 
     constructor(context: VideoPlayerContext) {
         this.ctx = context;
@@ -121,6 +220,44 @@ export class VideoPlayer {
             return positions[movieId] || 0;
         } catch (e) {
             return 0;
+        }
+    }
+
+    /**
+     * Update queue status UI to show current and next files
+     */
+    updateQueueStatusUI(): void {
+        const queueStatus = document.getElementById('queue-status');
+        const queueCurrent = document.getElementById('queue-current');
+        const queueNext = document.getElementById('queue-next');
+
+        if (!queueStatus || !queueCurrent || !queueNext) {
+            return;
+        }
+
+        if (this.playbackQueue && this.playbackQueue.getTotalFiles() > 1) {
+            const currentFile = this.playbackQueue.getCurrentFile();
+            const nextFile = this.playbackQueue.getNextFile();
+            const position = this.playbackQueue.getCurrentPosition();
+            const total = this.playbackQueue.getTotalFiles();
+
+            // Show queue status
+            queueStatus.style.display = 'block';
+
+            // Update current file text
+            queueCurrent.textContent = `Playing: ${currentFile.name} (${position}/${total})`;
+
+            // Update next file text
+            if (nextFile) {
+                queueNext.textContent = `Next: ${nextFile.name}`;
+            } else {
+                queueNext.textContent = 'Last video in queue';
+            }
+
+            console.log(`Queue UI updated: ${position}/${total}`);
+        } else {
+            // Hide queue status if no queue or single file
+            queueStatus.style.display = 'none';
         }
     }
 
@@ -312,8 +449,9 @@ export class VideoPlayer {
     /**
      * Show file picker modal for multi-file torrents
      * Displays list of video files with checkbox selection and star/favorite support
+     * Returns array of selected file indices for queue playback, or null if cancelled
      */
-    async showFilePickerModal(videoFiles: any[], movie: any): Promise<number | null> {
+    async showFilePickerModal(videoFiles: any[], movie: any): Promise<number[] | null> {
         return new Promise((resolve) => {
             const mainRegion = document.querySelector('.main-window-region');
             const modal = document.createElement('div');
@@ -598,11 +736,10 @@ export class VideoPlayer {
 
             // Handle play button
             playButton.addEventListener('click', () => {
-                const indices = Array.from(selectedIndices);
+                const indices = Array.from(selectedIndices) as number[];
                 modal.remove();
-                // For now, return first selected index
-                // TODO: Support playing multiple files in sequence
-                resolve(indices[0]);
+                // Return all selected indices for queue playback
+                resolve(indices.sort((a, b) => a - b)); // Sort by file index
             });
 
             // Handle overlay click
@@ -765,6 +902,12 @@ export class VideoPlayer {
                     <div class="speed-option" data-speed="1.25" style="padding: 0.6rem 1.25rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; font-size: 0.85rem;">1.25x</div>
                     <div class="speed-option" data-speed="1.5" style="padding: 0.6rem 1.25rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; font-size: 0.85rem;">1.5x</div>
                     <div class="speed-option" data-speed="2" style="padding: 0.6rem 1.25rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; font-size: 0.85rem;">2x</div>
+                </div>
+
+                <!-- Playback queue status indicator -->
+                <div id="queue-status" style="display: none; position: absolute; top: 0.75rem; left: 1rem; z-index: 101; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.5rem 0.75rem; max-width: 280px;">
+                    <div id="queue-current" style="font-size: 0.75rem; font-weight: 600; color: #3b82f6; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+                    <div id="queue-next" style="font-size: 0.7rem; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
                 </div>
 
                 <!-- Clean loading state with minimal info -->
@@ -1057,12 +1200,20 @@ export class VideoPlayer {
                             console.log(`Found ${videoFiles.length} video files - showing file picker`);
 
                             // Show file picker modal
-                            const selectedIndex = await this.showFilePickerModal(videoFiles, movie);
-                            if (selectedIndex !== null) {
-                                console.log(`User selected file index: ${selectedIndex}`);
-                                // File selection will be used for playback
-                                // Note: For now, file is already selected by native code
-                                // Future: restart stream with selected file
+                            const selectedIndices = await this.showFilePickerModal(videoFiles, movie);
+                            if (selectedIndices && selectedIndices.length > 0) {
+                                console.log(`User selected ${selectedIndices.length} file(s):`, selectedIndices);
+
+                                // Create playback queue for sequential playback
+                                this.playbackQueue = new PlaybackQueue(selectedIndices, videoFiles, movie);
+                                console.log(`Created playback queue: ${this.playbackQueue.getCurrentPosition()}/${this.playbackQueue.getTotalFiles()}`);
+
+                                // Update queue UI (will show when video metadata loads)
+                                // Note: UI elements may not exist yet, updateQueueStatusUI will be called again in loadedmetadata handler
+                                this.updateQueueStatusUI();
+
+                                // Note: First file is already selected by native code
+                                // Queue will be used for auto-play next when current video ends
                             } else {
                                 console.log('User cancelled file selection, using default (largest file)');
                             }
@@ -1323,6 +1474,9 @@ export class VideoPlayer {
                     if (fullscreenBtn && document.fullscreenEnabled) {
                         fullscreenBtn.style.display = 'flex';
                     }
+
+                    // Update queue status UI if queue exists
+                    this.updateQueueStatusUI();
                 };
                 addTrackedListener(videoElement, 'loadedmetadata', metadataHandler);
 
@@ -1400,6 +1554,62 @@ export class VideoPlayer {
                     }
                 };
                 addTrackedListener(videoElement, 'play', playHandler);
+
+                // Handle video ended - auto-play next file in queue
+                const endedHandler = async () => {
+                    console.log('Video playback ended');
+
+                    if (this.playbackQueue && this.playbackQueue.hasNext()) {
+                        const nextFileIndex = this.playbackQueue.playNext();
+                        const nextFile = this.playbackQueue.getCurrentFile();
+
+                        console.log(`Auto-playing next file: ${nextFile.name} (${this.playbackQueue.getCurrentPosition()}/${this.playbackQueue.getTotalFiles()})`);
+
+                        // Show loading UI for next file
+                        if (loadingContent) {
+                            loadingContent.style.display = 'flex';
+                            loadingContent.style.opacity = '1';
+                        }
+                        if (loadingTitle) loadingTitle.textContent = 'Loading Next Video';
+                        if (loadingSubtitle) loadingSubtitle.textContent = `Playing ${nextFile.name}...`;
+
+                        try {
+                            // Stop current stream
+                            await window.NativeTorrentClient.stopStream();
+
+                            // Start stream for next file
+                            const movieData = this.playbackQueue.getMovie();
+                            const torrent = movieData.torrents?.[movieData.quality] || movieData.torrent;
+
+                            // Start new stream with selected file index
+                            const streamInfo = await window.NativeTorrentClient.startStream({
+                                magnetLink: torrent.magnet,
+                                fileIndex: nextFileIndex
+                            });
+
+                            // Set new video source
+                            if (videoElement && streamInfo.streamUrl) {
+                                videoElement.src = streamInfo.streamUrl;
+                                await videoElement.play();
+                            }
+
+                            // Update queue UI for new file
+                            this.updateQueueStatusUI();
+                        } catch (error) {
+                            console.error('Error playing next file:', error);
+                            if (loadingTitle) loadingTitle.textContent = 'Failed to Play Next Video';
+                            if (loadingSubtitle) loadingSubtitle.textContent = error.message;
+                        }
+                    } else {
+                        console.log('Playback queue finished or empty');
+                        // Clear queue after finishing all videos
+                        if (this.playbackQueue) {
+                            this.playbackQueue.clear();
+                            this.playbackQueue = null;
+                        }
+                    }
+                };
+                addTrackedListener(videoElement, 'ended', endedHandler);
 
                 // Subtitle selection
                 const subtitleBtn = document.getElementById('subtitle-btn');
