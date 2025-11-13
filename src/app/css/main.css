@@ -1,0 +1,306 @@
+/* Import existing animations first */
+@import './animation.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom component classes */
+@layer components {
+  /* Card component */
+  .card {
+    @apply bg-dark-card rounded-lg border border-dark-border overflow-hidden;
+  }
+
+  /* Button variants */
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 active:scale-95;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-600 active:bg-primary-700;
+  }
+
+  .btn-secondary {
+    @apply btn bg-dark-lighter text-gray-300 hover:bg-gray-700 active:bg-gray-800;
+  }
+
+  .btn-ghost {
+    @apply btn text-gray-400 hover:text-white hover:bg-white/10 active:bg-white/20;
+  }
+
+  .btn-icon {
+    @apply p-2 rounded-lg hover:bg-white/10 active:bg-white/20 transition-colors tap-target;
+  }
+
+  /* Input fields */
+  .input {
+    @apply w-full px-4 py-3 bg-dark-lighter border border-dark-border rounded-lg text-white placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors;
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+  }
+
+  .modal-content {
+    @apply bg-dark-card rounded-2xl border border-dark-border max-w-lg w-full max-h-[90vh] overflow-y-auto;
+  }
+
+  .modal-header {
+    @apply flex items-center justify-between mb-4 pb-4 border-b border-dark-border;
+  }
+
+  .modal-title {
+    @apply text-xl font-semibold text-white;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    @apply w-8 h-8 border-4 border-gray-700 border-t-primary rounded-full animate-spin;
+  }
+
+  .spinner-large {
+    @apply w-12 h-12 border-4 border-gray-700 border-t-primary rounded-full animate-spin;
+  }
+
+  /* Content grid */
+  .content-grid {
+    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-4 pb-20;
+  }
+
+  /* Poster card */
+  .poster-card {
+    @apply aspect-[2/3] relative rounded-lg overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95;
+  }
+
+  .poster-card img {
+    @apply w-full h-full object-cover;
+  }
+
+  .poster-card-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200;
+  }
+
+  /* Navigation tabs */
+  .nav-tabs {
+    @apply flex gap-1 overflow-x-auto smooth-scroll;
+  }
+
+  .nav-tab {
+    @apply px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap tap-target;
+  }
+
+  .nav-tab-active {
+    @apply nav-tab bg-primary text-white;
+  }
+
+  .nav-tab-inactive {
+    @apply nav-tab text-gray-400 hover:text-white hover:bg-white/10;
+  }
+
+  /* Bottom navigation */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 pb-safe bg-dark-lighter border-t border-dark-border z-40;
+  }
+
+  .bottom-nav-items {
+    @apply flex justify-around items-center h-16;
+  }
+
+  .bottom-nav-item {
+    @apply flex flex-col items-center gap-1 tap-target transition-colors;
+  }
+
+  .bottom-nav-item-active {
+    @apply bottom-nav-item text-primary;
+  }
+
+  .bottom-nav-item-inactive {
+    @apply bottom-nav-item text-gray-400 hover:text-gray-300;
+  }
+
+  /* Search bar */
+  .search-bar {
+    @apply sticky top-0 z-10 bg-dark-lighter/95 backdrop-blur-sm border-b border-dark-border pt-safe;
+  }
+
+  /* Filter tabs */
+  .filter-tabs {
+    @apply flex gap-2 overflow-x-auto smooth-scroll p-4;
+  }
+
+  .filter-tab {
+    @apply px-4 py-2 rounded-full font-medium transition-colors whitespace-nowrap tap-target;
+  }
+
+  .filter-tab-active {
+    @apply filter-tab bg-primary text-white;
+  }
+
+  .filter-tab-inactive {
+    @apply filter-tab bg-dark-card text-gray-400 hover:text-white hover:bg-dark-lighter;
+  }
+
+  /* Detail page hero */
+  .detail-hero {
+    @apply relative h-[40vh] overflow-hidden;
+  }
+
+  .detail-backdrop {
+    @apply w-full h-full object-cover;
+  }
+
+  .detail-hero-gradient {
+    @apply absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-dark via-dark/80 to-transparent;
+  }
+
+  /* Loading states */
+  .loading-container {
+    @apply flex flex-col items-center justify-center min-h-[50vh] gap-4;
+  }
+
+  .loading-text {
+    @apply text-gray-400 text-sm;
+  }
+
+  /* Empty states */
+  .empty-state {
+    @apply flex flex-col items-center justify-center min-h-[50vh] gap-4 p-8 text-center;
+  }
+
+  .empty-state-icon {
+    @apply text-6xl opacity-50;
+  }
+
+  .empty-state-title {
+    @apply text-xl font-semibold text-white;
+  }
+
+  .empty-state-description {
+    @apply text-gray-400 max-w-md;
+  }
+
+  /* Toast notifications */
+  .toast {
+    @apply fixed bottom-20 left-4 right-4 bg-dark-card border border-dark-border rounded-lg p-4 shadow-lg animate-slide-up z-50;
+  }
+
+  .toast-success {
+    @apply toast border-green-500/50 bg-green-500/10;
+  }
+
+  .toast-error {
+    @apply toast border-red-500/50 bg-red-500/10;
+  }
+
+  .toast-info {
+    @apply toast border-blue-500/50 bg-blue-500/10;
+  }
+
+  /* Video player controls */
+  .player-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/90 opacity-0 transition-opacity duration-300;
+  }
+
+  .player-overlay-visible {
+    @apply player-overlay opacity-100;
+  }
+
+  /* Queue status UI */
+  .queue-status {
+    @apply fixed top-4 left-4 bg-black/80 backdrop-blur-sm rounded-lg px-4 py-2 text-sm z-30;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  /* Safe area padding */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .pl-safe {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .pr-safe {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .p-safe {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Touch-friendly tap targets (minimum 44x44px) */
+  .tap-target {
+    @apply min-w-[44px] min-h-[44px];
+  }
+
+  /* Smooth scrolling */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Truncate text with ellipsis */
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Animations */
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
