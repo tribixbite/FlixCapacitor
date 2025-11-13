@@ -37,7 +37,7 @@
 - **CSS Framework:** Tailwind CSS 3.4.17 (35.10 kB production bundle)
 - **Build Tool:** Vite 7.1.9
 - **Torrent Engine:** jlibtorrent 2.0.11 (native Android)
-- **HTTP Server:** NanoHTTPD (port 8888 for local streaming)
+- **HTTP Server:** NanoHTTPD (dynamic port allocation, ephemeral ports 49152-65535)
 - **Database:** SQLite via @capacitor-community/sqlite
 
 ### Key Metrics
@@ -68,7 +68,7 @@
 │                  Native Android Layer                        │
 │  - TorrentStreamer Plugin (jlibtorrent wrapper)             │
 │  - TorrentStreamingService (background service)             │
-│  - StreamingServer (NanoHTTPD on port 8888)                 │
+│  - StreamingServer (NanoHTTPD, dynamic port allocation)     │
 │  - DirectoryPicker Plugin (SAF integration)                 │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -89,6 +89,15 @@
 - ✅ Vite production optimizations
 - ⏸️ Critical CSS inlining (optional, deferred)
 - ⏸️ Code splitting (optional, deferred)
+
+### Phase 8: CRITICAL Bug Fixes ✅ COMPLETE (2025-11-13)
+- ✅ InputStream.skip() loop fix (video seeking failures)
+- ✅ Dynamic port allocation (app restart crashes resolved)
+- ✅ 26 passing JUnit tests (StreamingServerTest + TorrentStreamingServiceTest)
+- ✅ Comprehensive device testing procedures documented
+- ✅ NATIVE-TORRENT-STREAMING.md spec updated to v1.1.0
+- **Identified by:** Gemini 2.5 Pro code review
+- **See:** SESSION-SUMMARY-2025-11-13.md and MANUAL-TESTING-GUIDE.md Priority 0
 
 ### Next Phase: Manual Testing ⏳ PENDING
 - ⏳ DirectoryPicker functionality (Library → Add Folder)
