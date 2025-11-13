@@ -64,6 +64,7 @@
         #app {
             width: 100%;
             height: 100%;
+            max-width: 100vw;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -76,6 +77,8 @@
             flex-direction: column;
             overflow: hidden;
             position: relative;
+            width: 100%;
+            max-width: 100vw;
         }
 
         /* Loading Screen */
@@ -192,7 +195,9 @@
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom));
+            padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom) + 1rem); /* Added extra padding */
+            width: 100%;
+            max-width: 100vw; /* Prevent horizontal overflow */
         }
 
         /* Bottom Navigation */
@@ -206,11 +211,13 @@
             background: var(--bg-secondary);
             border-top: 1px solid var(--border-color);
             display: flex;
-            justify-content: space-around;
-            align-items: center;
+            justify-content: space-evenly; /* Changed from space-around for better distribution */
+            align-items: stretch; /* Changed to stretch for consistent height */
             z-index: 100;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
+            padding-left: var(--safe-area-left);
+            padding-right: var(--safe-area-right);
         }
 
         .nav-item {
@@ -219,12 +226,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem;
+            padding: 0.5rem 0.25rem;
             color: var(--text-tertiary);
             text-decoration: none;
             transition: color 0.2s;
             cursor: pointer;
             user-select: none;
+            min-width: 0; /* Allow flex items to shrink below content size */
+            position: relative;
         }
 
         .nav-item.active {
@@ -234,11 +243,20 @@
         .nav-icon {
             font-size: 1.5rem;
             margin-bottom: 0.25rem;
+            line-height: 1;
+            text-align: center;
+            width: 100%;
         }
 
         .nav-label {
             font-size: 0.7rem;
             font-weight: 500;
+            text-align: center;
+            width: 100%;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Browse Dropdown */
