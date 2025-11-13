@@ -1,7 +1,25 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-12
-**Status:** Critical bug fixes completed, ready for device testing
+**Status:** TypeScript + Tailwind CSS Overhaul Required (BLOCKING)
+
+## CRITICAL: Testing Blocked Until Overhaul Complete
+
+**No device testing or new features until TypeScript strict mode + Tailwind CSS migration is complete.**
+
+See: `TYPESCRIPT-TAILWIND-OVERHAUL.md` for full implementation plan.
+
+**Why This is Critical:**
+- Current codebase has `strict: false` (type safety disabled)
+- 25 files using `any` types extensively
+- 67 inline `.style.` usages (unmaintainable)
+- No CSS framework or design system
+- Technical debt blocking future development
+
+**Estimated Effort:** 6 weeks (~150 hours)
+**Priority:** BLOCKING - Must complete before any testing or new features
+
+---
 
 ## Current State
 
@@ -33,17 +51,140 @@
    - Includes all new features and testing infrastructure
    - Build completed using ./build-and-install.sh on Termux ARM64
 
-### ⏳ Pending
-1. **Device Connection**
-   - ADB device is currently not connected
-   - APK likely auto-installed via termux-open (manual installation prompt)
-   - Need to connect ADB for automated testing
+### 🚫 Blocked (Pending Overhaul)
+1. **Device Testing**
+   - BLOCKED until TypeScript + Tailwind overhaul complete
+   - APK likely auto-installed via termux-open
+   - ADB device not connected
+   - Test suite ready but cannot proceed
 
-2. **Test Execution**
-   - Full test suite ready to run once ADB is connected
-   - Test coverage: multi-file playback, favorites, library scan, subtitle detection
+2. **New Features**
+   - BLOCKED until codebase quality improved
+   - All new development paused
 
-## Next Steps
+---
+
+## Immediate Priority: TypeScript + Tailwind Overhaul
+
+### Overview
+
+Complete refactor of codebase for:
+1. **TypeScript strict mode** with full type safety
+2. **Tailwind CSS** for maintainable styling
+3. **Mobile-first responsive design**
+
+### Current Technical Debt
+
+**TypeScript Issues:**
+- ❌ `strict: false` in tsconfig.json
+- ❌ 25 files using `any` types
+- ❌ No type safety enforcement
+- ❌ IDE autocomplete broken in many places
+- ❌ Runtime type errors possible
+
+**Styling Issues:**
+- ❌ 67 inline `.style.` usages
+- ❌ Only 1 CSS file (animation.css - 905 bytes)
+- ❌ No Tailwind CSS installed
+- ❌ No design system or component library
+- ❌ Unmaintainable string template styling
+
+**Impact:**
+- Hard to add new features safely
+- Difficult to maintain existing code
+- Poor developer experience
+- Technical debt accumulating
+- Cannot safely test without type safety
+
+### Implementation Plan
+
+See `TYPESCRIPT-TAILWIND-OVERHAUL.md` for complete 7-phase plan:
+
+**Phase 1: TypeScript Strict Mode (Week 1-2)**
+- Enable strict mode in tsconfig.json
+- Fix all `any` types with proper interfaces
+- Add type guards and null checks
+- Estimated: 20 hours
+
+**Phase 2: Tailwind Installation (Week 1)**
+- Install Tailwind + plugins
+- Create tailwind.config.js
+- Create main.css with custom components
+- Update Vite configuration
+- Estimated: 4 hours
+
+**Phase 3: Convert Inline Styles (Week 2-3)**
+- Remove all `.style.` usages (67 instances)
+- Replace with Tailwind utility classes
+- Convert templates to use Tailwind
+- Estimated: 30 hours
+
+**Phase 4: Mobile-First Design (Week 3-4)**
+- Responsive grid system
+- Touch-friendly components (44x44px min)
+- Safe area inset handling
+- Estimated: 20 hours
+
+**Phase 5: Dark Mode & Theming (Week 4)**
+- Implement dark mode toggle
+- Consistent color system
+- Estimated: 8 hours
+
+**Phase 6: File-by-File Migration (Week 1-5)**
+- 25 TypeScript files to migrate
+- One file at a time with testing
+- Estimated: 40 hours
+
+**Phase 7: Performance Optimization (Week 5)**
+- Purge unused CSS
+- Critical CSS inlining
+- Estimated: 8 hours
+
+**Total: ~150 hours over 6 weeks**
+
+### Success Criteria
+
+All criteria must be met before resuming testing:
+
+✅ TypeScript `strict: true` with ZERO errors
+✅ ZERO `any` types in codebase
+✅ ZERO inline `.style.` usages
+✅ All styling via Tailwind utilities
+✅ Responsive on all mobile screen sizes
+✅ Touch-friendly (44x44px minimum tap targets)
+✅ Safe area insets properly handled
+✅ Dark mode fully functional
+✅ Production CSS bundle < 50KB
+✅ All typechecks passing
+✅ APK builds successfully
+✅ No visual regressions
+
+### Getting Started
+
+**Step 1: Install Tailwind**
+```bash
+npm install -D tailwindcss postcss autoprefixer @tailwindcss/forms @tailwindcss/typography
+npx tailwindcss init -p
+```
+
+**Step 2: Create Configuration**
+- Copy tailwind.config.js from TYPESCRIPT-TAILWIND-OVERHAUL.md
+- Create src/app/css/main.css
+- Update vite.config.ts
+
+**Step 3: Enable TypeScript Strict Mode Incrementally**
+- Start with one file
+- Fix all errors
+- Move to next file
+
+**Step 4: Convert Styles File-by-File**
+- Remove inline styles
+- Add Tailwind classes
+- Test visually
+
+---
+
+## Next Steps (AFTER Overhaul)
 
 ### Step 1: Connect ADB Device
 
