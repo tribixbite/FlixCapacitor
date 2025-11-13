@@ -1062,6 +1062,16 @@ export class MobileUIController {
             return;
         }
 
+        // Theme Toggle Button
+        const themeToggleBtn = document.querySelector('#theme-toggle-btn');
+        if (themeToggleBtn && window.ThemeManager) {
+            themeToggleBtn.addEventListener('click', () => {
+                const newTheme = window.ThemeManager.toggle();
+                themeToggleBtn.textContent = newTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
+                console.log('Theme toggled to:', newTheme);
+            });
+        }
+
         // Streaming Server URL
         const serverInput = document.querySelector('#setting-server-url input');
         if (serverInput) {

@@ -430,13 +430,30 @@ export const UITemplates = {
         const tmdbApiKey = settings.get('tmdbApiKey') || '';
         const omdbApiKey = settings.get('omdbApiKey') || '';
 
+        // Get current theme
+        const currentTheme = window.ThemeManager?.getCurrentTheme?.() || 'dark';
+
         return `
-            
+
             <div class="settings-view">
                 <div class="settings-header">
                     <h1 class="settings-title">Settings</h1>
                 </div>
                 <div class="settings-content">
+                    <!-- Theme Section -->
+                    <div class="settings-section">
+                        <div class="settings-section-title">Appearance</div>
+                        <div class="settings-item" id="setting-theme-toggle">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Theme</div>
+                                <div class="settings-item-description">Choose light or dark mode</div>
+                            </div>
+                            <button id="theme-toggle-btn" class="btn-secondary tap-target">
+                                ${currentTheme === 'dark' ? '🌙 Dark' : '☀️ Light'}
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="settings-section">
                         <div class="settings-section-title">Streaming</div>
                         <div class="settings-item" id="setting-server-url">

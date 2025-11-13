@@ -4,10 +4,14 @@
  */
 
 // ============================================================================
-// STYLES
+// STYLES & THEMING
 // ============================================================================
 
 import './app/css/main.css';
+import { ThemeManager } from './app/lib/theme-manager';
+
+// Initialize theme system (must be early to prevent flash)
+ThemeManager.initialize();
 
 // ============================================================================
 // GLOBAL ERROR HANDLING

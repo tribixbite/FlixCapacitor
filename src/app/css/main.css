@@ -5,6 +5,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme-specific base styles */
+@layer base {
+  /* Light mode colors (when html.light is set) */
+  html.light {
+    --bg-dark: #ffffff;
+    --bg-dark-lighter: #f5f5f5;
+    --bg-dark-card: #ffffff;
+    --bg-dark-border: #e5e5e5;
+  }
+
+  /* Ensure body uses proper background in both themes */
+  html.dark body {
+    @apply bg-dark text-white;
+  }
+
+  html.light body {
+    @apply bg-white text-gray-900;
+  }
+}
+
 /* Custom component classes */
 @layer components {
   /* Card component */

@@ -4,6 +4,7 @@
 
 import type { LibraryService } from '../app/lib/library-service';
 import type { SQLiteService } from '../app/lib/sqlite-service';
+import type { ThemeManager } from '../app/lib/theme-manager';
 
 declare global {
   interface Window {
@@ -20,6 +21,9 @@ declare global {
     LearningService?: any;
     Database?: any;
     FilenameParser?: any;
+
+    // Theme system
+    ThemeManager?: typeof ThemeManager;
 
     // Mobile compatibility shims
     win?: any;
