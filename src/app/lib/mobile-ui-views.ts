@@ -78,7 +78,7 @@ export class MobileUIController {
 
         // Make available globally for back button handler
         if (window.App) {
-            window.App.UI = this;
+            window.App.UI = this as any;
         }
     }
 
@@ -132,7 +132,7 @@ export class MobileUIController {
         // Handle bottom navigation
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', async (e) => {
-                const nav = item.dataset.nav;
+                const nav = (item as HTMLElement).dataset.nav;
 
                 // Conference Polish: Add haptic feedback on navigation
                 if (Haptics) {
@@ -159,7 +159,7 @@ export class MobileUIController {
                 }
 
                 e.preventDefault();
-                this.navigateTo(nav);
+                this.navigateTo(nav!);
 
                 // Update active state
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -182,8 +182,8 @@ export class MobileUIController {
                     }
                 }
 
-                const nav = item.dataset.nav;
-                this.navigateTo(nav);
+                const nav = (item as HTMLElement).dataset.nav;
+                this.navigateTo(nav!);
 
                 // Update dropdown active state
                 document.querySelectorAll('.browse-dropdown-item').forEach(n => n.classList.remove('active'));
@@ -286,13 +286,13 @@ export class MobileUIController {
             if (searchBar) {
                 const continueSection = document.createElement('div');
                 continueSection.innerHTML = UITemplates.continueWatchingSection(continueItems);
-                searchBar.insertAdjacentElement('afterend', continueSection.firstElementChild);
+                searchBar.insertAdjacentElement('afterend', continueSection.firstElementChild!);
 
                 // Add click handlers for continue watching cards
                 document.querySelectorAll('.continue-card').forEach(card => {
                     card.addEventListener('click', () => {
                         const id = (card as HTMLElement).dataset.id;
-                        this.showDetail(id);
+                        this.showDetail(id!);
                     });
                 });
             }
@@ -390,7 +390,7 @@ export class MobileUIController {
         // Setup tab switching
         document.querySelectorAll('[data-favorites-tab]').forEach(tabBtn => {
             tabBtn.addEventListener('click', () => {
-                const selectedTab = tabBtn.dataset.favoritesTab;
+                const selectedTab = (tabBtn as HTMLElement).dataset.favoritesTab;
                 this.showFavorites(selectedTab);
             });
         });
@@ -398,9 +398,9 @@ export class MobileUIController {
         const contentGrid = document.querySelector('.content-grid');
 
         if (tab === 'favorites') {
-            await this.renderFavoritesTab(contentGrid);
+            await this.renderFavoritesTab(contentGrid as HTMLElement);
         } else {
-            await this.renderWatchlistTab(contentGrid);
+            await this.renderWatchlistTab(contentGrid as HTMLElement);
         }
     }
 
@@ -522,10 +522,10 @@ export class MobileUIController {
                     tab.classList.add('active');
 
                     // Get filter value
-                    const folder = tab.dataset.filter;
+                    const folder = (tab as HTMLElement).dataset.filter;
 
                     // Reload library with folder filter
-                    await this.showLibraryFiltered(folder);
+                    await this.showLibraryFiltered(folder!);
                 });
             });
         }
@@ -627,9 +627,9 @@ export class MobileUIController {
                     'videos': '/Videos/'
                 };
 
-                const pathPattern = folderPaths[folder];
+                const pathPattern = (folderPaths as any)[folder];
                 if (pathPattern) {
-                    filteredItems = allItems.filter(item =>
+                    filteredItems = allItems.filter((item: any) =>
                         item.file_path && item.file_path.includes(pathPattern)
                     );
                 }
@@ -648,7 +648,7 @@ export class MobileUIController {
             }
 
             // Transform library items to content card format
-            const itemsFormatted = filteredItems.map(item => ({
+            const itemsFormatted = filteredItems.map((item: any) => ({
                 imdb_id: item.imdb_id || `local_${item.media_id}`,
                 title: item.title,
                 year: item.year || 'Unknown',
@@ -903,7 +903,7 @@ export class MobileUIController {
             console.log('[Library] Folder added to settings:', result.displayName);
 
             // Scan the selected folder
-            await this.scanLibraryFolder(result.uri, result.displayName);
+            await this.scanLibraryFolder(result.uri, result.displayName!);
 
         } catch (error: any) {
             console.error('[Library] Failed to pick folder:', error);
@@ -1033,10 +1033,10 @@ export class MobileUIController {
                     tab.classList.add('active');
 
                     // Get filter value
-                    const provider = tab.dataset.filter === 'all' ? null : tab.dataset.filter;
+                    const provider = (tab as HTMLElement).dataset.filter === 'all' ? null : (tab as HTMLElement).dataset.filter;
 
                     // Reload courses with filter
-                    await this.renderRealCourses(provider);
+                    await this.renderRealCourses(provider as any);
                 });
             });
         }
@@ -1065,7 +1065,7 @@ export class MobileUIController {
         const themeToggleBtn = document.querySelector('#theme-toggle-btn');
         if (themeToggleBtn && window.ThemeManager) {
             themeToggleBtn.addEventListener('click', () => {
-                const newTheme = window.ThemeManager.toggle();
+                const newTheme = window.ThemeManager!.toggle();
                 themeToggleBtn.textContent = newTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
                 console.log('Theme toggled to:', newTheme);
             });
@@ -1084,7 +1084,7 @@ export class MobileUIController {
         }
 
         // TMDB API Key
-        const tmdbInput = document.querySelector('#setting-tmdb-key input');
+        const tmdbInput = document.querySelector('#setting-tmdb-key input') as HTMLInputElement;
         if (tmdbInput) {
             tmdbInput.addEventListener('blur', () => {
                 const key = tmdbInput.value.trim();
@@ -1094,7 +1094,7 @@ export class MobileUIController {
         }
 
         // OMDB API Key
-        const omdbInput = document.querySelector('#setting-omdb-key input');
+        const omdbInput = document.querySelector('#setting-omdb-key input') as HTMLInputElement;
         if (omdbInput) {
             omdbInput.addEventListener('blur', () => {
                 const key = omdbInput.value.trim();
@@ -1104,7 +1104,7 @@ export class MobileUIController {
         }
 
         // Provider Selection
-        const providerSelect = document.querySelector('#setting-provider select');
+        const providerSelect = document.querySelector('#setting-provider select') as HTMLSelectElement;
         if (providerSelect) {
             providerSelect.addEventListener('change', () => {
                 settings.set('movieProvider', providerSelect.value);
@@ -1117,7 +1117,7 @@ export class MobileUIController {
         }
 
         // Quality Selection
-        const qualitySelect = document.querySelector('#setting-quality select');
+        const qualitySelect = document.querySelector('#setting-quality select') as HTMLSelectElement;
         if (qualitySelect) {
             qualitySelect.addEventListener('change', () => {
                 settings.set('quality', qualitySelect.value);
@@ -1195,27 +1195,27 @@ export class MobileUIController {
         // Apply saved values to UI
         const proxyToggle = document.getElementById('proxy-toggle');
         const proxySettings = document.getElementById('proxy-settings');
-        const proxyTypeSelect = document.getElementById('proxy-type-select');
+        const proxyTypeSelect = document.getElementById('proxy-type-select') as HTMLSelectElement;
         const proxyHostInput = document.getElementById('proxy-host-input') as HTMLInputElement;
         const proxyPortInput = document.getElementById('proxy-port-input') as HTMLInputElement;
         const proxyUsernameInput = document.getElementById('proxy-username-input') as HTMLInputElement;
         const proxyPasswordInput = document.getElementById('proxy-password-input') as HTMLInputElement;
-        const testProxyBtn = document.getElementById('test-proxy-btn');
-        const saveProxyBtn = document.getElementById('save-proxy-btn');
+        const testProxyBtn = document.getElementById('test-proxy-btn') as HTMLButtonElement;
+        const saveProxyBtn = document.getElementById('save-proxy-btn') as HTMLButtonElement;
         const proxyStatus = document.getElementById('proxy-status');
 
         if (proxyEnabled) {
-            proxyToggle.classList.add('active');
-            proxySettings.classList.remove('hidden');
+            proxyToggle!.classList.add('active');
+            proxySettings!.classList.remove('hidden');
         }
-        if (proxyTypeSelect) proxyTypeSelect.value = proxyType;
-        if (proxyHostInput) proxyHostInput.value = proxyHost;
-        if (proxyPortInput) proxyPortInput.value = proxyPort;
-        if (proxyUsernameInput) proxyUsernameInput.value = proxyUsername;
-        if (proxyPasswordInput) proxyPasswordInput.value = proxyPassword;
+        if (proxyTypeSelect) (proxyTypeSelect as HTMLSelectElement).value = proxyType;
+        if (proxyHostInput) (proxyHostInput as HTMLInputElement).value = proxyHost;
+        if (proxyPortInput) (proxyPortInput as HTMLInputElement).value = proxyPort;
+        if (proxyUsernameInput) (proxyUsernameInput as HTMLInputElement).value = proxyUsername;
+        if (proxyPasswordInput) (proxyPasswordInput as HTMLInputElement).value = proxyPassword;
 
         // Helper to show status messages
-        const showStatus = (message, type = 'info') => {
+        const showStatus = (message: string, type = 'info') => {
             if (!proxyStatus) return;
             // Remove all status classes
             proxyStatus.classList.remove('hidden', 'bg-green-500/15', 'border-green-500/30', 'text-green-500', 'bg-red-500/15', 'border-red-500/30', 'text-red-500', 'bg-blue-500/15', 'border-blue-500/30', 'text-blue-500', 'bg-yellow-500/15', 'border-yellow-500/30', 'text-yellow-500');
@@ -1227,7 +1227,7 @@ export class MobileUIController {
                 info: ['bg-blue-500/15', 'border-blue-500/30', 'text-blue-500'],
                 warning: ['bg-yellow-500/15', 'border-yellow-500/30', 'text-yellow-500']
             };
-            proxyStatus.classList.add(...statusClasses[type]);
+            proxyStatus.classList.add(...(statusClasses as any)[type]);
             proxyStatus.textContent = message;
         };
 
@@ -1245,7 +1245,7 @@ export class MobileUIController {
             proxyToggle.addEventListener('click', async () => {
                 const isActive = proxyToggle.classList.toggle('active');
                 await Preferences.set({ key: 'proxy_enabled', value: String(isActive) });
-                proxySettings.classList.toggle('hidden', !isActive);
+                proxySettings!.classList.toggle('hidden', !isActive);
                 console.log('Proxy enabled:', isActive);
 
                 // Update status
@@ -1344,7 +1344,7 @@ export class MobileUIController {
                     // Reload proxy settings in the torrent service
                     try {
                         const { TorrentStreamer } = await import('capacitor-plugin-torrent-streamer');
-                        await TorrentStreamer.reloadProxySettings();
+                        await (TorrentStreamer as any).reloadProxySettings();
                         console.log('✅ Proxy settings reloaded in torrent service');
                         showStatus('✅ Settings saved and applied! Proxy is now active.', 'success');
                     } catch (error: any) {
@@ -1394,7 +1394,7 @@ export class MobileUIController {
 
             // Store movies for detail view
             this.moviesCache = movies;
-            movies.forEach(movie => {
+            movies.forEach((movie: any) => {
                 this.currentMovieData.set(movie.imdb_id, movie);
             });
 
@@ -1473,7 +1473,7 @@ export class MobileUIController {
 
             // Transform courses to match content card format
             const coursesFormatted = courses.map((course: any) => {
-                const providerInfo = providerLogos[course.provider] || { color: '1f1f1f', text: course.provider || 'Course' };
+                const providerInfo = (providerLogos as any)[course.provider] || { color: '1f1f1f', text: course.provider || 'Course' };
                 const logoUrl = `https://placehold.co/300x450/${providerInfo.color}/ffffff?text=${encodeURIComponent(providerInfo.text)}`;
 
                 return {
@@ -1568,7 +1568,7 @@ export class MobileUIController {
                     return;
                 }
                 const id = (card as HTMLElement).dataset.id;
-                this.showDetail(id);
+                this.showDetail(id!);
             });
         });
 
@@ -1600,7 +1600,7 @@ export class MobileUIController {
                         // Remove from favorites
                         await favoritesService.removeFavorite(id);
                         button.classList.remove('favorited');
-                        button.title = 'Add to Favorites';
+                        (button as HTMLElement).title = 'Add to Favorites';
 
                         // If we're on the favorites page, refresh the view
                         if (window.location.hash === '#favorites') {
@@ -1608,11 +1608,11 @@ export class MobileUIController {
                         }
                     } else {
                         // Add to favorites
-                        const item = this.currentMovieData.get(id);
+                        const item = this.currentMovieData.get(id!);
                         if (item) {
                             await favoritesService.addFavorite(item);
                             button.classList.add('favorited');
-                            button.title = 'Remove from Favorites';
+                            (button as HTMLElement).title = 'Remove from Favorites';
                         }
                     }
                 } catch (error: any) {
@@ -1636,10 +1636,10 @@ export class MobileUIController {
 
             if (isFavorited) {
                 button.classList.add('favorited');
-                button.title = 'Remove from Favorites';
+                (button as HTMLElement).title = 'Remove from Favorites';
             } else {
                 button.classList.remove('favorited');
-                button.title = 'Add to Favorites';
+                (button as HTMLElement).title = 'Add to Favorites';
             }
         }
     }
@@ -1682,7 +1682,7 @@ export class MobileUIController {
         this.renderDetailView(movie);
     }
 
-    renderDetailView(movie) {
+    renderDetailView(movie: any) {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion!.innerHTML = UITemplates.detailView(movie);
 
@@ -1703,9 +1703,10 @@ export class MobileUIController {
         });
 
         document.getElementById('bookmark-btn')?.addEventListener('click', (e) => {
-            e.currentTarget.classList.toggle('bookmarked');
-            e.currentTarget.querySelector('span').textContent =
-                e.currentTarget.classList.contains('bookmarked') ? '★' : '☆';
+            const target = e.currentTarget as HTMLElement;
+            target!.classList.toggle('bookmarked');
+            target!.querySelector('span')!.textContent =
+                target!.classList.contains('bookmarked') ? '★' : '☆';
         });
     }
 
@@ -1717,7 +1718,7 @@ export class MobileUIController {
      * @returns {Promise<number|null>} Selected file index or null if cancelled
      */
     async showFilePickerModal(videoFiles: any[], movie: any): Promise<number | null> {
-        return this.videoPlayer.showFilePickerModal(videoFiles, movie);
+        return this.videoPlayer.showFilePickerModal(videoFiles, movie) as Promise<number | null>;
     }
 
 
