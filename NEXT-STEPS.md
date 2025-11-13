@@ -1,11 +1,42 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-13
-**Status:** 🎉 TypeScript + Tailwind CSS Overhaul COMPLETE! 2 CRITICAL Bugs Fixed! Ready for Device Testing 🎉
+**Status:** 🎉 Phase 8 COMPLETE! Phase 9A UX Enhancements IN PROGRESS 🎉
 
 ---
 
-## 🚨 LATEST UPDATE: CRITICAL Bug Fixes (2025-11-13) ✅
+## 🚀 CURRENT: Phase 9A - UX Enhancements (2025-11-13) 🔄
+
+**Started:** 2025-11-13 | **Target:** v1.2.0-alpha
+
+### 9A.1: Playback Queue Enhancements ✅ COMPLETE
+- **Commit:** 3736ef22
+- **Features Implemented:**
+  - ✅ Queue reordering (for drag-and-drop UI)
+  - ✅ Remove items from queue (for swipe-to-remove UI)
+  - ✅ Pause/resume queue auto-advance
+  - ✅ Add Next / Add to End functionality
+  - ✅ Shuffle mode (Fisher-Yates algorithm)
+  - ✅ M3U playlist export
+  - ✅ SQLite persistence service
+  - ✅ State serialization (getState/restoreState)
+- **Files:**
+  - `src/app/lib/video-player.ts` - 10 new PlaybackQueue methods
+  - `src/app/lib/queue-persistence.ts` - New persistence service
+- **Status:** Backend complete, ready for UI integration
+
+### Next Phase 9A Tasks
+- 9A.2: Library Folder Scanning (in progress)
+- 9A.3: Subtitle System Enhancements
+- 9A.4: Error Handling & User Feedback
+- 9A.5: Loading State Improvements
+- 9A.6: Search Experience Enhancement
+
+**Full Phase 9 Plan:** See `PHASE-9-ENHANCEMENT-PLAN.md` (717 lines)
+
+---
+
+## 🚨 Phase 8: CRITICAL Bug Fixes (2025-11-13) ✅ COMPLETE
 
 ### Gemini 2.5 Pro Code Review Completed
 
