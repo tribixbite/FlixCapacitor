@@ -124,8 +124,8 @@ export async function getEnhancedMovieMetadata(imdbId: string): Promise<Enhanced
         return {
             // Basic info
             title: tmdbDetails.title,
-            year: TMDBClient.getReleaseYear(tmdbDetails),
-            runtime: TMDBClient.formatRuntime(tmdbDetails.runtime),
+            year: TMDBClient.getReleaseYear(tmdbDetails) ?? 0,
+            runtime: TMDBClient.formatRuntime(tmdbDetails.runtime) ?? '',
             overview: tmdbDetails.overview,
             tagline: tmdbDetails.tagline,
 
@@ -134,15 +134,15 @@ export async function getEnhancedMovieMetadata(imdbId: string): Promise<Enhanced
             tmdbId: tmdbDetails.id,
 
             // Images
-            poster: TMDBClient.getBestPoster(tmdbDetails),
-            backdrop: TMDBClient.getBestBackdrop(tmdbDetails),
+            poster: TMDBClient.getBestPoster(tmdbDetails) ?? '',
+            backdrop: TMDBClient.getBestBackdrop(tmdbDetails) ?? '',
 
             // Genres
             genres: tmdbDetails.genres.map((g: any) => g.name),
 
             // Ratings from multiple sources
             ratings: {
-                tmdb: TMDBClient.getRating(tmdbDetails),
+                tmdb: TMDBClient.getRating(tmdbDetails) ?? 0,
                 imdb: ratings.imdb,
                 rottenTomatoes: ratings.rottenTomatoes,
                 metacritic: ratings.metacritic

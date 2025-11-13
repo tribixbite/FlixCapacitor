@@ -191,7 +191,7 @@ async function initCapacitorPlugins(): Promise<void> {
             // Handle magnet links
             if (url.startsWith('magnet:')) {
                 if (app?.vent) {
-                    window.Settings.droppedMagnet = url;
+                    (window.Settings as any).droppedMagnet = url;
                     handleTorrent(url);
                 } else {
                     // App not ready yet, queue for later
@@ -209,7 +209,7 @@ async function initCapacitorPlugins(): Promise<void> {
             // Handle video files
             else if (isVideoFile(url)) {
                 if (app?.vent) {
-                    const fileName = url.split('/').pop();
+                    const fileName = url.split('/').pop() || url;
                     handleVideoFile({
                         path: url,
                         name: fileName
@@ -295,14 +295,14 @@ function handleVideoFile(file: { path: string; name: string }): void {
     if (spinner) spinner.classList.remove('hidden');
 
     // Check for local subtitles
-    const checkSubs = () => {
+    const checkSubs = async () => {
         if (!window.path || !window.fs) {
             return null;
         }
         const ext = window.path.extname(file.name);
         const toFind = file.path.replace(ext, '.srt');
 
-        if (window.fs.existsSync(window.path.join(toFind))) {
+        if (await window.fs.existsSync(window.path.join(toFind))) {
             return { local: window.path.join(toFind) };
         }
         return null;
@@ -384,8 +384,8 @@ function handleVideoFile(file: { path: string; name: string }): void {
 
                 return getSubtitles(sub_data);
             })
-            .then((subs: any) => {
-                const localSub = checkSubs();
+            .then(async (subs: any) => {
+                const localSub = await checkSubs();
                 if (localSub) {
                     playObj.defaultSubtitle = localSub.local;
                 } else if (subs) {
@@ -434,8 +434,11 @@ function handleTorrent(torrent: string): void {
         console.warn('No player to close');
     }
 
-    if (app?.Config) {
-        app.Config.getProviderForType('torrentCache').resolve(torrent);
+    if (app?.Config?.getProviderForType) {
+        const torrentCache = app.Config.getProviderForType('torrentCache');
+        if (torrentCache) {
+            torrentCache.resolve(torrent);
+        }
     } else {
         console.error('App.Config not available for torrent handling');
     }
@@ -524,7 +527,7 @@ function initMarionette(): any {
                     if (url.startsWith('magnet:') || url.endsWith('.torrent')) {
                         handleTorrent(url);
                     } else if (isVideoFile(url)) {
-                        const fileName = url.split('/').pop();
+                        const fileName = url.split('/').pop() || url;
                         handleVideoFile({ path: url, name: fileName });
                     } else if (url.startsWith('flixcapacitor://') || url.includes('flixcapacitor.app')) {
                         handleContentDeepLink(url);

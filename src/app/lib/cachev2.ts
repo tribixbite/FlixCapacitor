@@ -14,9 +14,9 @@ interface CacheOptions {
 }
 
 interface CacheData {
-    _id: string;
-    _ttl: number;
-    _lastModified: number;
+    _id?: string;
+    _ttl?: number;
+    _lastModified?: number;
     [key: string]: any;
 }
 
@@ -45,18 +45,18 @@ function WrapRequest(
     }
 
     const existingSuccess = req.onsuccess;
-    req.onsuccess = function (this: IDBRequestWithResult) {
+    req.onsuccess = function (this: IDBRequestWithResult, ev: Event) {
         deferred.resolve(this.result);
         if (existingSuccess !== null) {
-            existingSuccess.call(req);
+            existingSuccess.call(req, ev);
         }
     };
 
     const existingError = req.onerror;
-    req.onerror = function (this: IDBRequestWithResult) {
+    req.onerror = function (this: IDBRequestWithResult, ev: Event) {
         deferred.reject(this.error);
         if (existingError !== null) {
-            existingError.call(req);
+            existingError.call(req, ev);
         }
     };
 

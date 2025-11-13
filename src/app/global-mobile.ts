@@ -183,14 +183,15 @@ window.ScreenResolution = ScreenResolution;
 // Q promises library - use native Promises
 window.Q = {
     defer: () => {
-        let resolve, reject;
+        let resolve: (value?: any) => void;
+        let reject: (reason?: any) => void;
         const promise = new Promise((res, rej) => {
             resolve = res;
             reject = rej;
         });
-        return { promise, resolve, reject };
+        return { promise, resolve: resolve!, reject: reject! };
     },
-    Promise: (fn) => new Promise(fn),
+    Promise: (fn: any) => new Promise(fn),
     all: Promise.all.bind(Promise),
     when: Promise.resolve.bind(Promise)
 };

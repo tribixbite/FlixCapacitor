@@ -132,7 +132,7 @@ const Database: any = {
         const offset = page * byPage;
 
         let where = null;
-        let params = [];
+        let params: any[] = [];
 
         if (data.type) {
             where = 'type = ?';
@@ -282,8 +282,8 @@ const Database: any = {
             await db.insert('watched_episodes', {
                 tvdb_id: data.tvdb_id.toString(),
                 imdb_id: data.imdb_id.toString(),
-                season: parseInt(data.season, 10),
-                episode: parseInt(data.episode, 10)
+                season: data.season ?? 0,
+                episode: data.episode ?? 0
             });
 
             // Trigger event
@@ -310,8 +310,8 @@ const Database: any = {
             params: [
                 item.tvdb_id.toString(),
                 item.imdb_id.toString(),
-                parseInt(item.season, 10),
-                parseInt(item.episode, 10),
+                item.season ?? 0,
+                item.episode ?? 0,
                 item.date || new Date().toISOString()
             ]
         }));
@@ -325,8 +325,8 @@ const Database: any = {
             // Remove the episode
             await db.delete('watched_episodes', 'tvdb_id = ? AND season = ? AND episode = ?', [
                 data.tvdb_id.toString(),
-                parseInt(data.season, 10),
-                parseInt(data.episode, 10)
+                data.season ?? 0,
+                data.episode ?? 0
             ]);
 
             // Check if there are any remaining watched episodes for this show
@@ -357,8 +357,8 @@ const Database: any = {
             'tvdb_id = ? AND season = ? AND episode = ?',
             [
                 data.tvdb_id.toString(),
-                parseInt(data.season, 10),
-                parseInt(data.episode, 10)
+                data.season ?? 0,
+                data.episode ?? 0
             ]
         );
 
@@ -507,8 +507,8 @@ const Database: any = {
             }
 
             // Set app language (from Preferences)
-            if (window.Settings && window.Settings.language) {
-                window.setLanguage(window.Settings.language);
+            if (window.Settings && (window.Settings as any).language) {
+                window.setLanguage((window.Settings as any).language);
             }
 
             // Setup advanced settings
