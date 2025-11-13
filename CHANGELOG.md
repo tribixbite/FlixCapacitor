@@ -7,7 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+#### CRITICAL Bug Fixes (2025-11-13)
+
+**Identified by Gemini 2.5 Pro code review, validated with 26 passing JUnit tests**
+
+- **CRITICAL: Video seeking failures with HTTP Range requests**
+  - **Problem**: `InputStream.skip()` single call without verification caused corrupted frames during seek
+  - **Solution**: Implemented loop that continues calling `skip()` until all bytes skipped or error
+  - **Impact**: Video seeking now works correctly for all file sizes and seek positions
+  - **Location**: `StreamingServer.kt:252-261`
+  - **Test Coverage**: `StreamingServerTest.kt:159-185` validates skip loop with 1MB test file
+  - **Commit**: 18a1f2eb
+
+- **CRITICAL: App restart crashes due to hardcoded port 8888**
+  - **Problem**: `java.net.BindException` when restarting app with port still in use
+  - **Solution**: Dynamic port allocation using port 0 (OS assigns ephemeral port automatically)
+  - **Impact**: No more restart crashes, supports multiple simultaneous servers
+  - **Implementation**: `NanoHTTPD("127.0.0.1", 0)` → OS assigns from range 49152-65535
+  - **Test Coverage**: `StreamingServerTest.kt:54-105` validates dynamic allocation
+  - **Commit**: 18a1f2eb
+
 ### Added
+
+#### Testing Infrastructure (2025-11-13)
+- 18 comprehensive tests for `StreamingServer` (dynamic ports, HTTP Range, MIME types, edge cases)
+- 8 tests for `TorrentStreamingService` static methods (null-safety validation)
+- Complete JUnit test suite with BUILD SUCCESSFUL (0 failures, 0 errors)
+- Manual device testing procedures in `MANUAL-TESTING-GUIDE.md` Priority 0 section
+- Session documentation: `SESSION-SUMMARY-2025-11-13.md` and `SESSION-SUMMARY-2025-11-13-tests.md`
+
+#### Documentation Updates (2025-11-13)
+- `NATIVE-TORRENT-STREAMING.md` updated to version 1.1.0 with CRITICAL bug fixes section
+- `docs/specs/README.md` added Phase 8: CRITICAL Bug Fixes
+- `ARCHITECTURE.md` updated with dynamic port allocation in data flows
+- `MULTI-FILE-PLAYBACK.md` updated with dynamic port URL format
+- `README.md` comprehensive update with CRITICAL fix details
+- `docs/archive/README.md` historical note on port 8888 → dynamic transition
+- All specifications now consistently document dynamic port allocation
+
 - TODO audit document cataloging 20 code comments for future development
 - Phase 7 performance optimization plan with code splitting strategies
 - Comprehensive production readiness checklist
@@ -17,8 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automated verification results documentation
 
 ### Changed
-- Updated NEXT-STEPS.md with Phase 7 optimization plan reference
-- Updated README.md with comprehensive current status
+- Updated NEXT-STEPS.md with Phase 7 optimization plan reference and CRITICAL bug status
+- Updated README.md with comprehensive current status and dynamic port allocation
 
 ## [1.0.0] - 2025-11-13
 
