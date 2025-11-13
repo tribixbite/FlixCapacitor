@@ -11,12 +11,14 @@ import type { LibraryItem } from '../../types/library';
 /**
  * PlaybackQueue - Manages sequential playback of multiple files in multi-file torrents
  * Supports auto-play next, queue status tracking, and queue management
+ * Phase 9A.1: Enhanced with reordering, removal, shuffle, and pause/resume
  */
 class PlaybackQueue {
     private queue: Array<{ index: number; name: string }> = [];
     private currentIndex: number = 0;
     private movie: any = null;
     private videoFiles: any[] = [];
+    private isPaused: boolean = false; // Phase 9A.1: Pause/resume state
 
     constructor(fileIndices: number[], videoFiles: any[], movie: any) {
         this.videoFiles = videoFiles;
@@ -40,8 +42,15 @@ class PlaybackQueue {
 
     /**
      * Move to next file in queue and return its index
+     * Phase 9A.1: Respects pause state
      */
     playNext(): number | null {
+        // Check if queue is paused
+        if (this.isPaused) {
+            console.log('Queue is paused - not auto-advancing to next file');
+            return null;
+        }
+
         if (this.hasNext()) {
             this.currentIndex++;
             console.log(`Playing next file: ${this.getCurrentFile().name} (${this.getCurrentPosition()}/${this.getTotalFiles()})`);
@@ -103,6 +112,196 @@ class PlaybackQueue {
      */
     getMovie() {
         return this.movie;
+    }
+
+    // ===== PHASE 9A.1: QUEUE MANAGEMENT ENHANCEMENTS =====
+
+    /**
+     * Reorder queue items (for drag-and-drop UI)
+     * @param fromIndex Source index in queue
+     * @param toIndex Destination index in queue
+     */
+    reorder(fromIndex: number, toIndex: number): void {
+        if (fromIndex < 0 || fromIndex >= this.queue.length ||
+            toIndex < 0 || toIndex >= this.queue.length) {
+            console.error(`Invalid reorder indices: from=${fromIndex}, to=${toIndex}`);
+            return;
+        }
+
+        const [item] = this.queue.splice(fromIndex, 1);
+        this.queue.splice(toIndex, 0, item);
+
+        // Adjust currentIndex if needed
+        if (fromIndex === this.currentIndex) {
+            this.currentIndex = toIndex;
+        } else if (fromIndex < this.currentIndex && toIndex >= this.currentIndex) {
+            this.currentIndex--;
+        } else if (fromIndex > this.currentIndex && toIndex <= this.currentIndex) {
+            this.currentIndex++;
+        }
+
+        console.log(`Queue reordered: moved item from ${fromIndex} to ${toIndex}`);
+    }
+
+    /**
+     * Remove item from queue (for swipe-to-remove UI)
+     * @param index Index to remove
+     * @returns true if successful, false if trying to remove current file
+     */
+    remove(index: number): boolean {
+        if (index < 0 || index >= this.queue.length) {
+            console.error(`Invalid remove index: ${index}`);
+            return false;
+        }
+
+        // Don't allow removing the currently playing file
+        if (index === this.currentIndex) {
+            console.warn('Cannot remove currently playing file');
+            return false;
+        }
+
+        this.queue.splice(index, 1);
+
+        // Adjust currentIndex if needed
+        if (index < this.currentIndex) {
+            this.currentIndex--;
+        }
+
+        console.log(`Removed item at index ${index}, queue length now ${this.queue.length}`);
+        return true;
+    }
+
+    /**
+     * Add file to play next (after current file)
+     * @param fileIndex Video file index
+     */
+    addNext(fileIndex: number): void {
+        const file = this.videoFiles.find(f => f.index === fileIndex);
+        if (!file) {
+            console.error(`File with index ${fileIndex} not found`);
+            return;
+        }
+
+        const insertPosition = this.currentIndex + 1;
+        this.queue.splice(insertPosition, 0, {
+            index: fileIndex,
+            name: file.name
+        });
+
+        console.log(`Added file "${file.name}" to play next at position ${insertPosition}`);
+    }
+
+    /**
+     * Add file to end of queue
+     * @param fileIndex Video file index
+     */
+    addToEnd(fileIndex: number): void {
+        const file = this.videoFiles.find(f => f.index === fileIndex);
+        if (!file) {
+            console.error(`File with index ${fileIndex} not found`);
+            return;
+        }
+
+        this.queue.push({
+            index: fileIndex,
+            name: file.name
+        });
+
+        console.log(`Added file "${file.name}" to end of queue`);
+    }
+
+    /**
+     * Shuffle queue (randomize order, preserving current file)
+     */
+    shuffle(): void {
+        if (this.queue.length <= 1) {
+            return;
+        }
+
+        // Save current file
+        const currentFile = this.queue[this.currentIndex];
+
+        // Remove current file from queue
+        this.queue.splice(this.currentIndex, 1);
+
+        // Fisher-Yates shuffle
+        for (let i = this.queue.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.queue[i], this.queue[j]] = [this.queue[j], this.queue[i]];
+        }
+
+        // Put current file back at start
+        this.queue.unshift(currentFile);
+        this.currentIndex = 0;
+
+        console.log(`Queue shuffled, ${this.queue.length} files`);
+    }
+
+    /**
+     * Pause queue auto-advance (finish current file, but don't auto-play next)
+     */
+    pause(): void {
+        this.isPaused = true;
+        console.log('Queue paused - will not auto-advance after current file');
+    }
+
+    /**
+     * Resume queue auto-advance
+     */
+    resume(): void {
+        this.isPaused = false;
+        console.log('Queue resumed - will auto-advance to next file');
+    }
+
+    /**
+     * Check if queue is paused
+     */
+    isPausedState(): boolean {
+        return this.isPaused;
+    }
+
+    /**
+     * Export queue to M3U playlist format
+     * @returns M3U playlist string
+     */
+    exportToM3U(): string {
+        let m3u = '#EXTM3U\n';
+        m3u += `#PLAYLIST:${this.movie.title || 'Playback Queue'}\n\n`;
+
+        for (const item of this.queue) {
+            m3u += `#EXTINF:-1,${item.name}\n`;
+            m3u += `file:///${item.index}\n`;
+        }
+
+        return m3u;
+    }
+
+    /**
+     * Get queue state for persistence
+     * @returns Serializable queue state
+     */
+    getState() {
+        return {
+            queue: this.queue,
+            currentIndex: this.currentIndex,
+            isPaused: this.isPaused,
+            movie: {
+                id: this.movie.id,
+                title: this.movie.title,
+                imdb_id: this.movie.imdb_id
+            }
+        };
+    }
+
+    /**
+     * Restore queue state from persistence
+     * @param state Saved queue state
+     */
+    restoreState(state: any): void {
+        this.queue = state.queue || [];
+        this.currentIndex = state.currentIndex || 0;
+        this.isPaused = state.isPaused || false;
+        console.log(`Queue state restored: ${this.queue.length} files, current position ${this.currentIndex + 1}`);
     }
 }
 
