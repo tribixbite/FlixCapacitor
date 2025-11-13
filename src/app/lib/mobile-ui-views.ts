@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * FlixCapacitor - Beautiful UI View Components
  * Gorgeous, modern, mobile-first interface design
@@ -90,7 +89,7 @@ export class MobileUIController {
         if (this.Haptics) {
             try {
                 await this.Haptics.impact({ style });
-            } catch (err) {
+            } catch (err: any) {
                 // Silently ignore
             }
         }
@@ -116,7 +115,7 @@ export class MobileUIController {
 
         try {
             await this.StatusBar.setBackgroundColor({ color });
-        } catch (err) {
+        } catch (err: any) {
             // Silently ignore
         }
     }
@@ -139,7 +138,7 @@ export class MobileUIController {
                 if (Haptics) {
                     try {
                         await Haptics.impact({ style: 'light' });
-                    } catch (err) {
+                    } catch (err: any) {
                         // Silently ignore haptic errors
                     }
                 }
@@ -178,7 +177,7 @@ export class MobileUIController {
                 if (Haptics) {
                     try {
                         await Haptics.impact({ style: 'light' });
-                    } catch (err) {
+                    } catch (err: any) {
                         // Silently ignore haptic errors
                     }
                 }
@@ -332,7 +331,7 @@ export class MobileUIController {
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to load TV shows:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -374,7 +373,7 @@ export class MobileUIController {
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to load anime:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -443,7 +442,7 @@ export class MobileUIController {
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to load favorites:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -491,7 +490,7 @@ export class MobileUIController {
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to load watchlist:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -583,7 +582,7 @@ export class MobileUIController {
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to load library:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -673,7 +672,7 @@ export class MobileUIController {
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to filter library:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -793,7 +792,7 @@ export class MobileUIController {
             }
 
             console.log('[Library] Media permissions granted, starting scan...');
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to request permissions:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -847,7 +846,7 @@ export class MobileUIController {
                 await this.showLibrary();
             }, 1500);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Library scan failed:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -906,7 +905,7 @@ export class MobileUIController {
             // Scan the selected folder
             await this.scanLibraryFolder(result.uri, result.displayName);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('[Library] Failed to pick folder:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -982,7 +981,7 @@ export class MobileUIController {
                         folderName: folderName,
                         relativePath: file.relativePath
                     });
-                } catch (error) {
+                } catch (error: any) {
                     console.error(`[Library] Failed to add file ${file.name}:`, error);
                 }
             }
@@ -999,7 +998,7 @@ export class MobileUIController {
                 await this.showLibrary();
             }, 1500);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('[Library] Failed to scan folder:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -1348,7 +1347,7 @@ export class MobileUIController {
                         await TorrentStreamer.reloadProxySettings();
                         console.log('✅ Proxy settings reloaded in torrent service');
                         showStatus('✅ Settings saved and applied! Proxy is now active.', 'success');
-                    } catch (error) {
+                    } catch (error: any) {
                         console.warn('Failed to reload proxy settings (service may not be running):', error);
                         showStatus('✅ Settings saved! Will take effect when streaming starts.', 'success');
                     }
@@ -1363,7 +1362,7 @@ export class MobileUIController {
                         saveProxyBtn.classList.add('bg-green-500/10');
                         saveProxyBtn.classList.remove('bg-green-500/20');
                     }, 2000);
-                } catch (error) {
+                } catch (error: any) {
                     console.error('Failed to save proxy settings:', error);
                     showStatus('❌ Failed to save settings. Please try again.', 'error');
                     saveProxyBtn.disabled = false;
@@ -1405,7 +1404,7 @@ export class MobileUIController {
             // Add click handlers
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to load movies:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -1521,7 +1520,7 @@ export class MobileUIController {
                     'Course database is being populated. Please try again later.'
                 );
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to load courses:', error);
             contentGrid.innerHTML = UITemplates.emptyState(
                 '⚠️',
@@ -1616,7 +1615,7 @@ export class MobileUIController {
                             button.title = 'Remove from Favorites';
                         }
                     }
-                } catch (error) {
+                } catch (error: any) {
                     console.error('Failed to toggle favorite:', error);
                 }
             });
