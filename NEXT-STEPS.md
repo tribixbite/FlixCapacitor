@@ -25,9 +25,24 @@
   - `src/app/lib/queue-persistence.ts` - New persistence service
 - **Status:** Backend complete, ready for UI integration
 
+### 9A.2: Library Folder Scanning ✅ COMPLETE
+- **Commit:** b046b212
+- **Features Implemented:**
+  - ✅ Incremental scanning (10x+ faster on unchanged folders)
+  - ✅ Detailed progress tracking (4 phases with ETA)
+  - ✅ Cancellable scans with immediate response
+  - ✅ Folder scan state tracking for optimization
+  - ✅ Quick folder check (skip unchanged folders)
+  - ✅ Background scanning with Android WorkManager
+  - ✅ Progress notifications during background scan
+  - ✅ Battery-aware constraints
+- **Files:**
+  - `src/app/lib/library-scanner-enhanced.ts` - Enhanced scanner (620 lines)
+  - `android/app/src/main/java/app/flixcapacitor/mobile/workers/LibraryScanWorker.kt` - WorkManager integration
+- **Status:** Backend complete, ready for UI integration
+
 ### Next Phase 9A Tasks
-- 9A.2: Library Folder Scanning (in progress)
-- 9A.3: Subtitle System Enhancements
+- 9A.3: Subtitle System Enhancements (next)
 - 9A.4: Error Handling & User Feedback
 - 9A.5: Loading State Improvements
 - 9A.6: Search Experience Enhancement
