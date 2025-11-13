@@ -9,7 +9,7 @@
 
 **All 10 priority features are complete**: video switching bug fix with request tracking, multi-file torrent playback with auto-queue, file-level favorites, library folder picker with SAF, automatic subtitle detection, TMDB/OMDB API integration, deep linking (flixcapacitor://), browser integration, app exit cleanup, and DirectoryPicker plugin initialization fix. The app is built and ready for device testing. Automated testing via ADB confirms successful APK installation, app launch, and zero plugin errors.
 
-**Production Readiness**: Comprehensive production readiness checklist created (see PRODUCTION-READINESS.md). Development phase 100% complete. Pre-production security, performance, and stability checks documented. Production build and signing procedures ready. Post-production roadmap defined (Phases 7-9).
+**Production Readiness**: Comprehensive production readiness checklist created (see PRODUCTION-READINESS.md). Development phase 100% complete. Pre-production security, performance, and stability checks documented. Production build and signing procedures ready. Post-production roadmap defined (Phases 7-9). Phase 7 performance optimization plan documented (see PHASE-7-OPTIMIZATION-PLAN.md) - addresses Vite bundle size warnings, code splitting strategies, and optional performance improvements.
 
 **Manual testing required**: Navigate to Library tab → Click "Add Folder" → Verify picker works. See MANUAL-TESTING-GUIDE.md for complete test procedures and PRODUCTION-READINESS.md for production deployment checklist.
 
