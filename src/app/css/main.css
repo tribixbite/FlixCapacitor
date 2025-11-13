@@ -211,6 +211,34 @@
   .queue-status {
     @apply fixed top-4 left-4 bg-black/80 backdrop-blur-sm rounded-lg px-4 py-2 text-sm z-30;
   }
+
+  /* Pull-to-refresh indicator */
+  .ptr-indicator {
+    @apply absolute -top-[60px] left-0 right-0 h-[60px] flex flex-col items-center justify-center text-gray-400 text-sm opacity-0 transition-opacity duration-200 z-50;
+  }
+
+  .ptr-indicator.visible {
+    @apply opacity-100;
+  }
+
+  .ptr-spinner {
+    @apply w-6 h-6 border-[3px] border-white/10 rounded-full mb-2 transition-transform duration-200;
+    border-top-color: var(--accent-primary);
+  }
+
+  .ptr-spinner.spin {
+    animation: ptr-spin 1s linear infinite;
+  }
+
+  .ptr-text {
+    @apply font-medium;
+  }
+
+  @keyframes ptr-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 }
 
 /* Custom utilities */

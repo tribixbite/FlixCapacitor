@@ -54,61 +54,10 @@ class PullToRefresh {
             <div class="ptr-text">Pull to refresh</div>
         `;
 
-        // Add styles if not already added
-        if (!document.getElementById('ptr-styles')) {
-            const style = document.createElement('style');
-            style.id = 'ptr-styles';
-            style.textContent = `
-                .ptr-indicator {
-                    position: absolute;
-                    top: -60px;
-                    left: 0;
-                    right: 0;
-                    height: 60px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    color: var(--text-secondary);
-                    font-size: 0.875rem;
-                    opacity: 0;
-                    transition: opacity 0.2s;
-                    z-index: 50;
-                }
-
-                .ptr-indicator.visible {
-                    opacity: 1;
-                }
-
-                .ptr-spinner {
-                    width: 24px;
-                    height: 24px;
-                    border: 3px solid rgba(255, 255, 255, 0.1);
-                    border-top-color: ${this.options.indicatorColor};
-                    border-radius: 50%;
-                    margin-bottom: 8px;
-                    transition: transform 0.2s;
-                }
-
-                .ptr-spinner.spin {
-                    animation: ptr-spin 1s linear infinite;
-                }
-
-                .ptr-text {
-                    font-weight: 500;
-                }
-
-                @keyframes ptr-spin {
-                    to { transform: rotate(360deg); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
         // Ensure element has position context
         const position = window.getComputedStyle(this.element).position;
         if (position === 'static') {
-            this.element.style.position = 'relative';
+            this.element.classList.add('relative');
         }
 
         this.element.appendChild(this.indicator);
@@ -156,14 +105,16 @@ class PullToRefresh {
             const spinner = this.indicator.querySelector('.ptr-spinner') as HTMLElement;
             spinner.style.transform = `rotate(${rotation}deg)`;
 
-            // Update text
+            // Update text and color
             const textEl = this.indicator.querySelector('.ptr-text') as HTMLElement;
             if (this.state.pullDistance >= this.options.threshold) {
                 textEl.textContent = 'Release to refresh';
-                textEl.style.color = this.options.indicatorColor;
+                textEl.classList.add('text-primary');
+                textEl.classList.remove('text-gray-400');
             } else {
                 textEl.textContent = 'Pull to refresh';
-                textEl.style.color = 'var(--text-secondary)';
+                textEl.classList.add('text-gray-400');
+                textEl.classList.remove('text-primary');
             }
 
             // Move indicator with pull (damped)
@@ -197,7 +148,7 @@ class PullToRefresh {
         // Start spinning animation
         const spinner = this.indicator.querySelector('.ptr-spinner') as HTMLElement;
         spinner.classList.add('spin');
-        spinner.style.transform = '';
+        spinner.style.removeProperty('transform');
 
         // Update text
         const textEl = this.indicator.querySelector('.ptr-text') as HTMLElement;
@@ -221,16 +172,16 @@ class PullToRefresh {
         const spinner = this.indicator.querySelector('.ptr-spinner') as HTMLElement;
         spinner.classList.remove('spin');
 
-        // Hide indicator
+        // Hide indicator with animation
         this.indicator.style.transition = 'opacity 0.3s, transform 0.3s';
         this.indicator.style.opacity = '0';
         this.indicator.style.transform = 'translateY(-60px)';
 
         setTimeout(() => {
             this.indicator.classList.remove('visible');
-            this.indicator.style.transition = '';
-            this.indicator.style.opacity = '';
-            this.indicator.style.transform = '';
+            this.indicator.style.removeProperty('transition');
+            this.indicator.style.removeProperty('opacity');
+            this.indicator.style.removeProperty('transform');
         }, 300);
     }
 

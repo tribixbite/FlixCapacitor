@@ -1197,7 +1197,7 @@ export class MobileUIController {
 
         if (proxyEnabled) {
             proxyToggle.classList.add('active');
-            proxySettings.style.display = 'block';
+            proxySettings.classList.remove('hidden');
         }
         if (proxyTypeSelect) proxyTypeSelect.value = proxyType;
         if (proxyHostInput) proxyHostInput.value = proxyHost;
@@ -1208,17 +1208,17 @@ export class MobileUIController {
         // Helper to show status messages
         const showStatus = (message, type = 'info') => {
             if (!proxyStatus) return;
-            const colors = {
-                success: { bg: 'rgba(34, 197, 94, 0.15)', border: 'rgba(34, 197, 94, 0.3)', text: '#22c55e' },
-                error: { bg: 'rgba(239, 68, 68, 0.15)', border: 'rgba(239, 68, 68, 0.3)', text: '#ef4444' },
-                info: { bg: 'rgba(59, 130, 246, 0.15)', border: 'rgba(59, 130, 246, 0.3)', text: '#3b82f6' },
-                warning: { bg: 'rgba(251, 191, 36, 0.15)', border: 'rgba(251, 191, 36, 0.3)', text: '#fbbf24' }
+            // Remove all status classes
+            proxyStatus.classList.remove('hidden', 'bg-green-500/15', 'border-green-500/30', 'text-green-500', 'bg-red-500/15', 'border-red-500/30', 'text-red-500', 'bg-blue-500/15', 'border-blue-500/30', 'text-blue-500', 'bg-yellow-500/15', 'border-yellow-500/30', 'text-yellow-500');
+
+            // Add appropriate status classes based on type
+            const statusClasses = {
+                success: ['bg-green-500/15', 'border-green-500/30', 'text-green-500'],
+                error: ['bg-red-500/15', 'border-red-500/30', 'text-red-500'],
+                info: ['bg-blue-500/15', 'border-blue-500/30', 'text-blue-500'],
+                warning: ['bg-yellow-500/15', 'border-yellow-500/30', 'text-yellow-500']
             };
-            const color = colors[type];
-            proxyStatus.style.display = 'block';
-            proxyStatus.style.background = color.bg;
-            proxyStatus.style.border = `1px solid ${color.border}`;
-            proxyStatus.style.color = color.text;
+            proxyStatus.classList.add(...statusClasses[type]);
             proxyStatus.textContent = message;
         };
 
@@ -1236,7 +1236,7 @@ export class MobileUIController {
             proxyToggle.addEventListener('click', async () => {
                 const isActive = proxyToggle.classList.toggle('active');
                 await Preferences.set({ key: 'proxy_enabled', value: String(isActive) });
-                proxySettings.style.display = isActive ? 'block' : 'none';
+                proxySettings.classList.toggle('hidden', !isActive);
                 console.log('Proxy enabled:', isActive);
 
                 // Update status
@@ -1345,11 +1345,13 @@ export class MobileUIController {
 
                     // Show success on button
                     saveProxyBtn.textContent = '✅ Saved!';
-                    saveProxyBtn.style.background = 'rgba(34, 197, 94, 0.2)';
+                    saveProxyBtn.classList.add('bg-green-500/20');
+                    saveProxyBtn.classList.remove('bg-green-500/10');
                     setTimeout(() => {
                         saveProxyBtn.disabled = false;
                         saveProxyBtn.textContent = '💾 Save Settings';
-                        saveProxyBtn.style.background = 'rgba(34, 197, 94, 0.1)';
+                        saveProxyBtn.classList.add('bg-green-500/10');
+                        saveProxyBtn.classList.remove('bg-green-500/20');
                     }, 2000);
                 } catch (error) {
                     console.error('Failed to save proxy settings:', error);

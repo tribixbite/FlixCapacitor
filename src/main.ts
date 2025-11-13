@@ -61,23 +61,13 @@ function showErrorNotification(message: string): void {
 
             if (title) title.textContent = 'Error';
             if (subtitle) subtitle.textContent = message;
-            if (spinner) spinner.style.display = 'none';
+            if (spinner) spinner.classList.add('hidden');
 
             // Add retry button
             if (!loadingScreen.querySelector('.retry-button')) {
                 const retryBtn = document.createElement('button');
-                retryBtn.className = 'retry-button';
+                retryBtn.className = 'retry-button mt-8 px-8 py-3 btn-primary text-base cursor-pointer';
                 retryBtn.textContent = 'Retry';
-                retryBtn.style.cssText = `
-                    margin-top: 2rem;
-                    padding: 0.75rem 2rem;
-                    background: var(--accent-primary);
-                    color: white;
-                    border: none;
-                    border-radius: var(--radius-sm);
-                    font-size: 1rem;
-                    cursor: pointer;
-                `;
                 retryBtn.onclick = () => window.location.reload();
                 loadingScreen.appendChild(retryBtn);
             }
@@ -301,7 +291,7 @@ function handleVideoFile(file: { path: string; name: string }): void {
 
     // Show loading spinner
     const spinner = document.querySelector<HTMLElement>('.spinner');
-    if (spinner) spinner.style.display = 'block';
+    if (spinner) spinner.classList.remove('hidden');
 
     // Check for local subtitles
     const checkSubs = () => {
@@ -396,7 +386,7 @@ function handleVideoFile(file: { path: string; name: string }): void {
                     app.vent.trigger('stream:ready', localVideo);
                 }
 
-                if (spinner) spinner.style.display = 'none';
+                if (spinner) spinner.classList.add('hidden');
             })
             .catch((err: any) => {
                 console.warn('Trakt match failed, playing without metadata:', err);
@@ -406,7 +396,7 @@ function handleVideoFile(file: { path: string; name: string }): void {
                     app.vent.trigger('stream:ready', localVideo);
                 }
 
-                if (spinner) spinner.style.display = 'none';
+                if (spinner) spinner.classList.add('hidden');
             });
     } else {
         // No Trakt, play directly
@@ -415,7 +405,7 @@ function handleVideoFile(file: { path: string; name: string }): void {
             app.vent.trigger('stream:ready', localVideo);
         }
 
-        if (spinner) spinner.style.display = 'none';
+        if (spinner) spinner.classList.add('hidden');
     }
 }
 
