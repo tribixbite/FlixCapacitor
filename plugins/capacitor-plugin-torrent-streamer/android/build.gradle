@@ -88,6 +88,8 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
 
     testImplementation "junit:junit:$junitVersion"
+    // Note: Robolectric removed - TorrentStreamingService requires native libraries (jlibtorrent)
+    // Full service testing requires instrumented tests on device (see MANUAL-TESTING-GUIDE.md)
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
 }
