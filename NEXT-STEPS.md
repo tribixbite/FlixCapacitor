@@ -34,12 +34,19 @@
 - Each TODO includes: enhancements list, known limitations, testing requirements, priority/complexity/impact ratings
 - **Commit:** a2229c47
 
-### Build Verification ✅
+### Build Verification ✅ UPDATED (2025-11-13 15:20)
 
-Both builds completed successfully with CRITICAL fixes included:
+**IMPORTANT:** APK rebuilt to include CRITICAL bug fixes!
+
+**Previous APK (07:02):** Built BEFORE fixes (excluded InputStream.skip() loop + dynamic port allocation)
+**Current APK (15:20):** Built AFTER fixes (includes both CRITICAL fixes) ✅
+
 - **APK Location:** `android/app/build/outputs/apk/debug/app-debug.apk` (74 MB)
+- **Also at:** `/sdcard/FlixCapacitor/latest-debug.apk`
+- **Build Time:** 2025-11-13 15:20:40 (3 hours after commit 18a1f2eb at 12:16)
 - **Build Stats:** CSS 35.10 kB (6.17 kB gzipped), JS 568.47 kB (170.18 kB gzipped)
-- **Status:** Ready for device testing with production-ready reliability
+- **Build Type:** Clean build with custom ARM64 AAPT2 (BUILD SUCCESSFUL in 53s, 422 tasks)
+- **Status:** ✅ READY FOR DEVICE TESTING with CRITICAL bug fixes included
 
 ### Comprehensive JUnit Test Suite ✅ COMPLETE (2025-11-13)
 
@@ -239,14 +246,15 @@ Created comprehensive specifications in `docs/specs/` directory (2,701 lines tot
    - Mobile-first responsive design
    - Production CSS: 34.94 kB (6.14 kB gzipped)
 
-4. **APK Build with Full Overhaul** ✅ COMPLETE
-   - Built: 2025-11-13 13:57 (latest fresh build)
+4. **APK Build with CRITICAL Bug Fixes** ✅ COMPLETE
+   - Built: 2025-11-13 15:20 (latest build with CRITICAL fixes)
    - Location: android/app/build/outputs/apk/debug/app-debug.apk (74MB)
    - Also copied to: /sdcard/FlixCapacitor/latest-debug.apk
-   - Includes: All TS strict mode fixes, Tailwind CSS, dark mode, provider init fix
+   - Includes: CRITICAL fixes (InputStream.skip() loop + dynamic port), All TS strict mode fixes, Tailwind CSS, dark mode, provider init fix
    - Build stats: CSS 35.10 kB, JS 568.47 kB (gzipped: 6.17 kB, 170.18 kB)
+   - Build type: Clean build with custom ARM64 AAPT2 (BUILD SUCCESSFUL in 53s)
    - Auto-installation: Package installer opened via termux-open
-   - Status: Ready for device testing
+   - Status: ✅ READY FOR DEVICE TESTING with all fixes included
 
 8. **Automated Verification** ✅ COMPLETE (2025-11-13 13:57)
    - App running: PID 19313 on device 192.168.1.247:41407
