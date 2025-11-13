@@ -150,11 +150,11 @@ See `TYPESCRIPT-TAILWIND-OVERHAUL.md` for complete 7-phase plan:
 - Completed: 2025-11-13
 
 **Phase 6: File-by-File Migration (Week 1-5)** 🚧 IN PROGRESS
-- ✅ ui-templates.ts: Fixed all type errors (20+ fixed)
+- ✅ ui-templates.ts: Fixed all type errors (20+ fixed) → ZERO errors
 - ✅ video-player.ts: Fixed 80 errors → ZERO errors (2011 lines)
-- 🚧 mobile-ui-views.ts: Fixed 10 errors → 129 remaining (1812 lines)
+- 🚧 mobile-ui-views.ts: Fixed 82 errors → 57 remaining (1812 lines)
 - ⏳ jquery.plugins.ts: Not yet started
-- Progress: 2/4 files complete (50% of @ts-nocheck removals)
+- Progress: 2/4 files complete, 3rd at 59% (139→57 errors)
 - Estimated: 40 hours
 
 **Phase 7: Performance Optimization (Week 5)**
