@@ -22,6 +22,23 @@ Complete guide to all project documentation and development tools.
 
 ---
 
+## 🏗️ **Technical Specifications**
+
+### Architecture & Design Documents
+- **[docs/specs/README.md](docs/specs/README.md)** - Complete technical specifications index
+  - System architecture and component design
+  - Feature specifications with implementation details
+  - Database schema and API documentation
+  - 15 detailed specification documents
+
+**Key Specifications:**
+- **[ARCHITECTURE.md](docs/specs/ARCHITECTURE.md)** - System architecture overview
+- **[NATIVE-TORRENT-STREAMING.md](docs/specs/NATIVE-TORRENT-STREAMING.md)** - P2P streaming implementation
+- **[MULTI-FILE-PLAYBACK.md](docs/specs/MULTI-FILE-PLAYBACK.md)** - Sequential video queue feature
+- **[DATABASE-SCHEMA.md](docs/specs/DATABASE-SCHEMA.md)** - SQLite schema and services
+
+---
+
 ## 📖 **Core Documentation**
 
 ### Project Status & Planning
