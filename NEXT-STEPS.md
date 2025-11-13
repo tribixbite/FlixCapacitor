@@ -84,12 +84,14 @@ Both builds completed successfully with CRITICAL fixes included:
 - `MANUAL-TESTING-GUIDE.md` - Priority 0 section with CRITICAL bug validation procedures
 - `docs/specs/NATIVE-TORRENT-STREAMING.md` - Version 1.1.0 updated with CRITICAL bug fix documentation
 
-**Spec Documentation:** ✅ COMPLETE
-- Native torrent streaming spec updated to version 1.1.0
-- All references to port 8888 replaced with dynamic port allocation
-- InputStream.skip() loop documented with explanation
-- "Port 8888 Conflict" marked as ✅ RESOLVED
-- Comprehensive CRITICAL bug fixes section added
+**Spec Documentation:** ✅ COMPLETE (All 3 core specs updated)
+- ✅ NATIVE-TORRENT-STREAMING.md updated to version 1.1.0 (comprehensive CRITICAL bug fixes section)
+- ✅ docs/specs/README.md updated (Phase 8 added, dynamic port in tech stack)
+- ✅ ARCHITECTURE.md updated (data flow, code examples, plugin architecture)
+- All port 8888 references replaced with dynamic port allocation across all specs
+- InputStream.skip() loop documented with explanation and test references
+- "Port 8888 Conflict" marked as ✅ RESOLVED in Known Limitations
+- Gemini 2.5 Pro code review credited in all updated specs
 
 ---
 
