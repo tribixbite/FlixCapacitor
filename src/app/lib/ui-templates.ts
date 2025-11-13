@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * FlixCapacitor - UI Template Module
  *
@@ -16,7 +15,7 @@
 // UI Component Templates
 export const UITemplates = {
     // Movies/Shows Browser
-    browserView: (title, category = 'movies') => `
+    browserView: (title: string, category = 'movies') => `
         
         <div class="browser-container">
             <div class="search-bar">
@@ -65,17 +64,18 @@ export const UITemplates = {
     `,
 
     // Content Card
-    contentCard: (item) => {
+    contentCard: (item: any) => {
         // Get torrent health from best available quality
         const torrents = item.torrents || {};
         const qualities = ['1080p', '720p', '480p'];
-        let torrentHealth = null;
+        let torrentHealth: { seeds: number; peers: number } | null = null;
 
         for (const quality of qualities) {
-            if (torrents[quality]) {
+            const torrent = torrents[quality];
+            if (torrent) {
                 torrentHealth = {
-                    seeds: torrents[quality].seed || 0,
-                    peers: torrents[quality].peer || 0
+                    seeds: (torrent as any).seed || 0,
+                    peers: (torrent as any).peer || 0
                 };
                 break;
             }
@@ -124,9 +124,9 @@ export const UITemplates = {
     },
 
     // Grid of Content
-    contentGrid: (items) => `
+    contentGrid: (items: any[]) => `
         <div class="grid">
-            ${items.map(item => UITemplates.contentCard(item)).join('')}
+            ${items.map((item: any) => UITemplates.contentCard(item)).join('')}
         </div>
     `,
 
@@ -139,14 +139,14 @@ export const UITemplates = {
     `,
 
     // Continue Watching Section
-    continueWatchingSection: (items) => {
+    continueWatchingSection: (items: any[]) => {
         if (!items || items.length === 0) return '';
 
         return `
             <div class="continue-watching-section" style="padding: 1rem; padding-top: 0.5rem;">
                 <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Continue Watching</h2>
                 <div class="continue-watching-scroll" style="display: flex; gap: 1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 1rem; scrollbar-width: none;">
-                    ${items.map(item => {
+                    ${items.map((item: any) => {
                         const progress = item.continuePosition && item.runtime ?
                             (item.continuePosition / (item.runtime * 60)) * 100 : 0;
 
@@ -179,7 +179,7 @@ export const UITemplates = {
     },
 
     // Empty State
-    emptyState: (icon, title, message) => `
+    emptyState: (icon: string, title: string, message: string) => `
         <div class="content-empty">
             <div class="empty-icon">${icon}</div>
             <div class="empty-title">${title}</div>
@@ -241,7 +241,7 @@ export const UITemplates = {
     `,
 
     // Library Scanning State
-    libraryScanningState: (current, total) => `
+    libraryScanningState: (current: number, total: number) => `
         <div class="content-empty">
             <div class="empty-icon">🔍</div>
             <div class="empty-title">Scanning Library</div>
@@ -284,7 +284,7 @@ export const UITemplates = {
     `,
 
     // Detail View
-    detailView: (item) => `
+    detailView: (item: any) => `
         
         <div class="detail-view">
             <div class="detail-header">
@@ -386,7 +386,7 @@ export const UITemplates = {
                     <div class="detail-section">
                         <h2 class="detail-section-title">Available Torrents</h2>
                         <div class="torrent-options" style="display: grid; gap: 0.75rem;">
-                            ${Object.entries(item.torrents).map(([quality, torrent]) => {
+                            ${Object.entries(item.torrents).map(([quality, torrent]: [string, any]) => {
                                 const seedHealth = torrent.seed > 100 ? 'excellent' : torrent.seed > 50 ? 'good' : torrent.seed > 20 ? 'fair' : 'poor';
                                 const healthColor = seedHealth === 'excellent' ? '#10b981' : seedHealth === 'good' ? '#22c55e' : seedHealth === 'fair' ? '#f59e0b' : '#ef4444';
 
@@ -509,7 +509,7 @@ export const UITemplates = {
                     <div class="settings-section">
                         <div class="settings-section-title">Custom API Endpoints</div>
                         <div id="custom-endpoints-list" style="margin-bottom: 1rem;">
-                            ${customEndpoints.map(ep => `
+                            ${customEndpoints.map((ep: any) => `
                                 <div class="settings-item" data-endpoint-id="${ep.id}" style="position: relative;">
                                     <div class="settings-item-content">
                                         <div class="settings-item-label">${ep.name}</div>
