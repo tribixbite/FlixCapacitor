@@ -74,9 +74,30 @@
   - `src/app/lib/error-handler.ts` - Complete error handler service (636 lines)
 - **Status:** Backend complete, ready for UI integration
 
+### 9A.5: Loading State Improvements ✅ COMPLETE
+- **Commit:** 1070b1b3
+- **Features Implemented:**
+  - ✅ Multi-stage loading state machine (7 stages: idle, fetching_metadata, connecting_peers, buffering, ready, error, cancelled)
+  - ✅ Progress tracking with percentage and elapsed time
+  - ✅ ETA calculation based on torrent health analysis
+  - ✅ Torrent health metrics (seeds, peers, ratio, quality levels)
+  - ✅ Cancellation token system for cancellable operations
+  - ✅ Metadata caching with configurable TTL (1 hour default)
+  - ✅ Background prefetching for next queue item
+  - ✅ Optimistic UI with cached data
+  - ✅ Automatic cache cleanup (removes old/unused entries)
+  - ✅ Cache statistics tracking
+  - ✅ Skeleton screen components (4 types: movie-card, list-item, detail-header, search-result)
+  - ✅ Shimmer animation for loading indication
+  - ✅ Responsive skeleton UI (mobile-first)
+  - ✅ Complete CSS with keyframe animations
+- **Files:**
+  - `src/app/lib/loading-state-manager.ts` - Loading state manager (576 lines)
+  - `src/app/views/skeleton-view.ts` - Skeleton UI components (349 lines)
+- **Status:** Backend complete, ready for UI integration
+
 ### Next Phase 9A Tasks
-- 9A.5: Loading State Improvements (next)
-- 9A.6: Search Experience Enhancement
+- 9A.6: Search Experience Enhancement (next)
 
 **Full Phase 9 Plan:** See `PHASE-9-ENHANCEMENT-PLAN.md` (717 lines)
 
