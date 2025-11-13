@@ -274,7 +274,7 @@ export class MobileUIController {
 
     async showMovies(): Promise<void> {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.browserView('Movies', 'movies');
+        mainRegion!.innerHTML = UITemplates.browserView('Movies', 'movies');
 
         // Load real public domain movies
         await this.renderRealMovies();
@@ -316,7 +316,7 @@ export class MobileUIController {
             }
 
             // Show loading state
-            contentGrid.innerHTML = UITemplates.loadingState('Loading TV shows...');
+            contentGrid!.innerHTML = UITemplates.loadingState('Loading TV shows...');
 
             // Fetch TV shows
             const shows = await tvShowsProvider.getPopular();
@@ -327,13 +327,13 @@ export class MobileUIController {
             });
 
             // Render TV shows
-            contentGrid.innerHTML = UITemplates.contentGrid(shows);
+            contentGrid!.innerHTML = UITemplates.contentGrid(shows);
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
         } catch (error: any) {
             console.error('Failed to load TV shows:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Failed to Load TV Shows',
                 error.message || 'Please try again'
@@ -358,7 +358,7 @@ export class MobileUIController {
             }
 
             // Show loading state
-            contentGrid.innerHTML = UITemplates.loadingState('Loading anime...');
+            contentGrid!.innerHTML = UITemplates.loadingState('Loading anime...');
 
             // Fetch anime
             const anime = await animeProvider.getPopular();
@@ -369,13 +369,13 @@ export class MobileUIController {
             });
 
             // Render anime
-            contentGrid.innerHTML = UITemplates.contentGrid(anime);
+            contentGrid!.innerHTML = UITemplates.contentGrid(anime);
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
         } catch (error: any) {
             console.error('Failed to load anime:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Failed to Load Anime',
                 error.message || 'Please try again'
@@ -385,7 +385,7 @@ export class MobileUIController {
 
     async showFavorites(tab = 'favorites') {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.favoritesView(tab);
+        mainRegion!.innerHTML = UITemplates.favoritesView(tab);
 
         // Setup tab switching
         document.querySelectorAll('[data-favorites-tab]').forEach(tabBtn => {
@@ -409,7 +409,7 @@ export class MobileUIController {
             const favoritesService = window.FavoritesService;
             if (!favoritesService) {
                 console.error('FavoritesService not loaded');
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '⚠️',
                     'Service Error',
                     'Favorites service failed to load'
@@ -418,13 +418,13 @@ export class MobileUIController {
             }
 
             // Show loading state
-            contentGrid.innerHTML = UITemplates.loadingState('Loading favorites...');
+            contentGrid!.innerHTML = UITemplates.loadingState('Loading favorites...');
 
             // Fetch favorites
             const favorites = await favoritesService.getFavorites();
 
             if (favorites.length === 0) {
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '❤️',
                     'No Favorites Yet',
                     'Mark movies and shows as favorites to see them here'
@@ -438,13 +438,13 @@ export class MobileUIController {
             });
 
             // Render favorites grid
-            contentGrid.innerHTML = UITemplates.contentGrid(favorites);
+            contentGrid!.innerHTML = UITemplates.contentGrid(favorites);
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
         } catch (error: any) {
             console.error('Failed to load favorites:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Failed to Load Favorites',
                 error.message || 'Please try again'
@@ -457,7 +457,7 @@ export class MobileUIController {
             const watchlistService = window.WatchlistService;
             if (!watchlistService) {
                 console.error('WatchlistService not loaded');
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '⚠️',
                     'Service Error',
                     'Watchlist service failed to load'
@@ -466,13 +466,13 @@ export class MobileUIController {
             }
 
             // Show loading state
-            contentGrid.innerHTML = UITemplates.loadingState('Loading watchlist...');
+            contentGrid!.innerHTML = UITemplates.loadingState('Loading watchlist...');
 
             // Fetch watchlist items
             const watchlistItems = await watchlistService.getWatchlist();
 
             if (watchlistItems.length === 0) {
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '⭐',
                     'Your Watchlist is Empty',
                     'Add movies and shows to keep track of what you want to watch'
@@ -486,13 +486,13 @@ export class MobileUIController {
             });
 
             // Render watchlist items
-            contentGrid.innerHTML = UITemplates.contentGrid(watchlistItems);
+            contentGrid!.innerHTML = UITemplates.contentGrid(watchlistItems);
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
         } catch (error: any) {
             console.error('Failed to load watchlist:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Failed to Load Watchlist',
                 error.message || 'Please try again'
@@ -536,7 +536,7 @@ export class MobileUIController {
             const libraryService = window.LibraryService;
             if (!libraryService) {
                 console.error('LibraryService not loaded');
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '⚠️',
                     'Service Error',
                     'Library service failed to load'
@@ -545,14 +545,14 @@ export class MobileUIController {
             }
 
             // Show loading state
-            contentGrid.innerHTML = UITemplates.loadingState('Loading library...');
+            contentGrid!.innerHTML = UITemplates.loadingState('Loading library...');
 
             // Fetch library items
             const libraryItems = await libraryService.getMedia({ limit: 100 });
 
             if (libraryItems.length === 0) {
                 // Show empty state with scan button
-                contentGrid.innerHTML = UITemplates.libraryEmptyState();
+                contentGrid!.innerHTML = UITemplates.libraryEmptyState();
                 this.attachLibraryScanHandler();
                 return;
             }
@@ -578,13 +578,13 @@ export class MobileUIController {
             });
 
             // Render library items
-            contentGrid.innerHTML = UITemplates.contentGrid(itemsFormatted);
+            contentGrid!.innerHTML = UITemplates.contentGrid(itemsFormatted);
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
         } catch (error: any) {
             console.error('Failed to load library:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Failed to Load Library',
                 error.message || 'Please try again'
@@ -603,7 +603,7 @@ export class MobileUIController {
             const libraryService = window.LibraryService;
             if (!libraryService) {
                 console.error('LibraryService not loaded');
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '⚠️',
                     'Service Error',
                     'Library service failed to load'
@@ -612,7 +612,7 @@ export class MobileUIController {
             }
 
             // Show loading state
-            contentGrid.innerHTML = UITemplates.loadingState('Loading library...');
+            contentGrid!.innerHTML = UITemplates.loadingState('Loading library...');
 
             // Fetch all library items
             const allItems = await libraryService.getMedia({ limit: 1000 });
@@ -636,7 +636,7 @@ export class MobileUIController {
             }
 
             if (filteredItems.length === 0) {
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '📁',
                     folder === 'all' ? 'No Library Items' : `No Items in ${folder.charAt(0).toUpperCase() + folder.slice(1)}`,
                     folder === 'all' ? 'Scan your device to add media to your library' : 'No media files found in this folder'
@@ -668,13 +668,13 @@ export class MobileUIController {
             });
 
             // Render filtered library items
-            contentGrid.innerHTML = UITemplates.contentGrid(itemsFormatted);
+            contentGrid!.innerHTML = UITemplates.contentGrid(itemsFormatted);
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
 
         } catch (error: any) {
             console.error('Failed to filter library:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Failed to Load Library',
                 error.message || 'Please try again'
@@ -720,7 +720,7 @@ export class MobileUIController {
             if (!granted) {
                 if (permanentlyDenied) {
                     // Permissions permanently denied - must go to settings
-                    contentGrid.innerHTML = `
+                    contentGrid!.innerHTML = `
                         <div class="content-empty">
                             <div class="empty-icon">🔐</div>
                             <div class="empty-title">Media Access Required</div>
@@ -757,7 +757,7 @@ export class MobileUIController {
                 }
 
                 // User denied but can be prompted again - show enable button
-                contentGrid.innerHTML = `
+                contentGrid!.innerHTML = `
                     <div class="content-empty">
                         <div class="empty-icon">🔐</div>
                         <div class="empty-title">Media Access Required</div>
@@ -794,7 +794,7 @@ export class MobileUIController {
             console.log('[Library] Media permissions granted, starting scan...');
         } catch (error: any) {
             console.error('Failed to request permissions:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Permission Error',
                 `Failed to check permissions. Please try again.`
@@ -812,7 +812,7 @@ export class MobileUIController {
 
         try {
             // Show scanning UI
-            contentGrid.innerHTML = UITemplates.libraryScanningState(0, 0);
+            contentGrid!.innerHTML = UITemplates.libraryScanningState(0, 0);
 
             let totalFiles = 0;
             let currentFile = 0;
@@ -835,7 +835,7 @@ export class MobileUIController {
             console.log('Scan complete:', results);
 
             // Show completion message briefly
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '✅',
                 'Scan Complete',
                 `Found ${results?.itemsMatched || 0} media files`
@@ -848,7 +848,7 @@ export class MobileUIController {
 
         } catch (error: any) {
             console.error('Library scan failed:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Scan Failed',
                 error.message || 'Failed to scan media folders. Please check storage permissions.'
@@ -881,7 +881,7 @@ export class MobileUIController {
 
             // Check if folder already added
             if (libraryFolders.some(f => f.uri === result.uri)) {
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     'ℹ️',
                     'Folder Already Added',
                     `"${result.displayName}" is already in your library`
@@ -907,7 +907,7 @@ export class MobileUIController {
 
         } catch (error: any) {
             console.error('[Library] Failed to pick folder:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Folder Picker Error',
                 error.message || 'Failed to open folder picker. Please try again.'
@@ -929,7 +929,7 @@ export class MobileUIController {
 
         try {
             // Show scanning UI
-            contentGrid.innerHTML = UITemplates.libraryScanningState(0, 0);
+            contentGrid!.innerHTML = UITemplates.libraryScanningState(0, 0);
 
             console.log('[Library] Scanning folder:', folderName, folderUri);
 
@@ -944,7 +944,7 @@ export class MobileUIController {
             console.log('[Library] Found files:', filesResult.files.length);
 
             if (filesResult.files.length === 0) {
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '📁',
                     'No Videos Found',
                     `No video files found in "${folderName}"`
@@ -987,7 +987,7 @@ export class MobileUIController {
             }
 
             // Show completion
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '✅',
                 'Folder Scanned',
                 `Added ${processedCount} videos from "${folderName}"`
@@ -1000,7 +1000,7 @@ export class MobileUIController {
 
         } catch (error: any) {
             console.error('[Library] Failed to scan folder:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Scan Failed',
                 error.message || 'Failed to scan folder. Please try again.'
@@ -1072,7 +1072,7 @@ export class MobileUIController {
         }
 
         // Streaming Server URL
-        const serverInput = document.querySelector('#setting-server-url input');
+        const serverInput = document.querySelector('#setting-server-url input') as HTMLInputElement;
         if (serverInput) {
             serverInput.addEventListener('blur', () => {
                 const url = serverInput.value.trim();
@@ -1196,10 +1196,10 @@ export class MobileUIController {
         const proxyToggle = document.getElementById('proxy-toggle');
         const proxySettings = document.getElementById('proxy-settings');
         const proxyTypeSelect = document.getElementById('proxy-type-select');
-        const proxyHostInput = document.getElementById('proxy-host-input');
-        const proxyPortInput = document.getElementById('proxy-port-input');
-        const proxyUsernameInput = document.getElementById('proxy-username-input');
-        const proxyPasswordInput = document.getElementById('proxy-password-input');
+        const proxyHostInput = document.getElementById('proxy-host-input') as HTMLInputElement;
+        const proxyPortInput = document.getElementById('proxy-port-input') as HTMLInputElement;
+        const proxyUsernameInput = document.getElementById('proxy-username-input') as HTMLInputElement;
+        const proxyPasswordInput = document.getElementById('proxy-password-input') as HTMLInputElement;
         const testProxyBtn = document.getElementById('test-proxy-btn');
         const saveProxyBtn = document.getElementById('save-proxy-btn');
         const proxyStatus = document.getElementById('proxy-status');
@@ -1380,7 +1380,7 @@ export class MobileUIController {
             const provider = window.PublicDomainProvider;
             if (!provider) {
                 console.error('PublicDomainProvider not loaded');
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '⚠️',
                     'Provider Error',
                     'Movie provider failed to load'
@@ -1399,14 +1399,14 @@ export class MobileUIController {
             });
 
             // Render movies
-            contentGrid.innerHTML = UITemplates.contentGrid(movies);
+            contentGrid!.innerHTML = UITemplates.contentGrid(movies);
 
             // Add click handlers
             this.attachCardHandlers();
             await this.updateFavoriteButtonStates();
         } catch (error: any) {
             console.error('Failed to load movies:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Failed to Load Movies',
                 'Please check your connection and try again'
@@ -1422,7 +1422,7 @@ export class MobileUIController {
             const learningService = window.LearningService;
             if (!learningService) {
                 console.error('LearningService not loaded');
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '⚠️',
                     'Service Error',
                     'Learning service failed to load'
@@ -1431,7 +1431,7 @@ export class MobileUIController {
             }
 
             // Show loading state
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⏳',
                 'Loading Courses',
                 'Fetching educational content from Academic Torrents...'
@@ -1441,7 +1441,7 @@ export class MobileUIController {
             const courseCount = await learningService.getCachedCourseCount();
             if (courseCount === 0) {
                 console.log('No courses in database, syncing from Academic Torrents...');
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '⏳',
                     'First Time Setup',
                     'Downloading course catalog from Academic Torrents... This may take a minute.'
@@ -1510,11 +1510,11 @@ export class MobileUIController {
 
             // Render courses
             if (coursesFormatted.length > 0) {
-                contentGrid.innerHTML = UITemplates.contentGrid(coursesFormatted);
+                contentGrid!.innerHTML = UITemplates.contentGrid(coursesFormatted);
                 this.attachCardHandlers();
                 await this.updateFavoriteButtonStates();
             } else {
-                contentGrid.innerHTML = UITemplates.emptyState(
+                contentGrid!.innerHTML = UITemplates.emptyState(
                     '📚',
                     'No Courses Available',
                     'Course database is being populated. Please try again later.'
@@ -1522,7 +1522,7 @@ export class MobileUIController {
             }
         } catch (error: any) {
             console.error('Failed to load courses:', error);
-            contentGrid.innerHTML = UITemplates.emptyState(
+            contentGrid!.innerHTML = UITemplates.emptyState(
                 '⚠️',
                 'Failed to Load Courses',
                 error.message || 'Please check your connection and try again'
@@ -1534,7 +1534,7 @@ export class MobileUIController {
         // Fallback to mock data if needed
         const mockMovies = this.getMockMovies();
         const contentGrid = document.querySelector('.content-grid');
-        contentGrid.innerHTML = UITemplates.contentGrid(mockMovies);
+        contentGrid!.innerHTML = UITemplates.contentGrid(mockMovies);
 
         // Add click handlers
         this.attachCardHandlers();
@@ -1544,7 +1544,7 @@ export class MobileUIController {
     async renderMockShows() {
         const mockShows = this.getMockShows();
         const contentGrid = document.querySelector('.content-grid');
-        contentGrid.innerHTML = UITemplates.contentGrid(mockShows);
+        contentGrid!.innerHTML = UITemplates.contentGrid(mockShows);
 
         this.attachCardHandlers();
         await this.updateFavoriteButtonStates();
@@ -1553,7 +1553,7 @@ export class MobileUIController {
     async renderMockAnime() {
         const mockAnime = this.getMockAnime();
         const contentGrid = document.querySelector('.content-grid');
-        contentGrid.innerHTML = UITemplates.contentGrid(mockAnime);
+        contentGrid!.innerHTML = UITemplates.contentGrid(mockAnime);
 
         this.attachCardHandlers();
         await this.updateFavoriteButtonStates();
@@ -1684,7 +1684,7 @@ export class MobileUIController {
 
     renderDetailView(movie) {
         const mainRegion = document.querySelector('.main-window-region');
-        mainRegion.innerHTML = UITemplates.detailView(movie);
+        mainRegion!.innerHTML = UITemplates.detailView(movie);
 
         // Add event listeners
         document.getElementById('detail-back')?.addEventListener('click', () => {
