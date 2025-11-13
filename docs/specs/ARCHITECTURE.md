@@ -155,9 +155,11 @@ TorrentStreamingService.startTorrent(...)
   ↓
 TorrentSession creates jlibtorrent session
   ↓
-StreamingServer starts NanoHTTPD on port 8888
+StreamingServer starts NanoHTTPD with dynamic port allocation
   ↓
-[Returns stream URL: http://127.0.0.1:8888/video]
+OS assigns free ephemeral port (e.g., 52413)
+  ↓
+[Returns stream URL: http://127.0.0.1:<dynamic-port>/video]
   ↓
 VideoPlayer sets video.src = streamUrl
   ↓
@@ -202,9 +204,11 @@ fun startStream(call: PluginCall) {
   val fileIndex = call.getInt("fileIndex") ?: 0
 
   // ... native logic ...
+  // CRITICAL FIX (2025-11-13): Dynamic port allocation resolves restart crashes
+  val streamUrl = streamingServer.getStreamUrl() // Returns http://127.0.0.1:<assigned-port>/video
 
   val result = JSObject()
-  result.put("streamUrl", "http://127.0.0.1:8888/video")
+  result.put("streamUrl", streamUrl)
   call.resolve(result)
 }
 ```
@@ -230,7 +234,8 @@ TorrentSession.kt (jlibtorrent session manager)
   ↓
 StreamingServer.kt (NanoHTTPD HTTP server)
   ├─ Serve video chunks via HTTP Range requests
-  ├─ Port 8888 binding with retry logic
+  ├─ Dynamic port allocation (port 0 → OS-assigned ephemeral port)
+  ├─ InputStream.skip() loop for reliable seeking (CRITICAL FIX 2025-11-13)
   └─ Handle HEAD/GET requests for HTML5 video compatibility
 ```
 
