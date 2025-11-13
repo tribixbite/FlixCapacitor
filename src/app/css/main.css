@@ -66,20 +66,71 @@
 
   /* Content grid */
   .content-grid {
-    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-4 pb-20;
+    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-4 pb-[calc(theme(spacing.20)+env(safe-area-inset-bottom))];
   }
 
-  /* Poster card */
+  /* Content card (movie/show poster) */
+  .content-card {
+    @apply aspect-[2/3] relative rounded-lg overflow-hidden cursor-pointer transition-transform duration-200 active:scale-95;
+  }
+
+  .content-card-poster {
+    @apply w-full h-full object-cover bg-gradient-to-br from-dark-card to-dark-lighter;
+  }
+
+  .content-card-overlay {
+    @apply absolute bottom-0 left-0 right-0 px-3 py-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent;
+  }
+
+  .content-card-title {
+    @apply text-sm font-semibold leading-tight mb-1 text-white truncate-2;
+  }
+
+  .content-card-meta {
+    @apply text-xs text-gray-400 flex items-center gap-2;
+  }
+
+  .content-card-rating {
+    @apply flex items-center gap-1;
+  }
+
+  .content-card-badge {
+    @apply absolute top-2 right-2 px-2 py-1 bg-black/80 backdrop-blur-sm rounded text-xs font-semibold text-white;
+  }
+
+  .content-card-badge.hd {
+    @apply bg-gradient-to-br from-primary to-primary-600;
+  }
+
+  /* Favorite button */
+  .content-card-favorite {
+    @apply absolute top-2 left-2 tap-target w-11 h-11 bg-black/70 backdrop-blur-sm border-none rounded-full flex items-center justify-center cursor-pointer z-10 transition-all active:scale-90;
+  }
+
+  .content-card-favorite:active {
+    @apply bg-black/90;
+  }
+
+  .content-card-favorite svg {
+    @apply w-6 h-6;
+  }
+
+  /* Loading states for content */
+  .content-loading {
+    @apply col-span-full flex flex-col items-center justify-center min-h-[50vh] gap-4;
+  }
+
+  /* Poster card (legacy alias) */
   .poster-card {
-    @apply aspect-[2/3] relative rounded-lg overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95;
+    @apply content-card;
   }
 
   .poster-card img {
-    @apply w-full h-full object-cover;
+    @apply content-card-poster;
   }
 
   .poster-card-overlay {
-    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200;
+    @apply content-card-overlay;
   }
 
   /* Navigation tabs */
@@ -120,26 +171,52 @@
     @apply bottom-nav-item text-gray-400 hover:text-gray-300;
   }
 
+  /* Browser container */
+  .browser-container {
+    @apply flex flex-col h-full min-h-screen-safe bg-dark;
+  }
+
   /* Search bar */
   .search-bar {
-    @apply sticky top-0 z-10 bg-dark-lighter/95 backdrop-blur-sm border-b border-dark-border pt-safe;
+    @apply sticky top-0 z-10 bg-dark-lighter/95 backdrop-blur-sm border-b border-dark-border pt-safe px-4 py-4;
+  }
+
+  /* Search input with icon */
+  .search-input {
+    @apply w-full px-4 py-3 pl-11 bg-dark-card border border-dark-border rounded-lg text-white placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23808080' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 1rem center;
+    background-size: 20px;
+  }
+
+  .search-input:focus {
+    @apply bg-dark-lighter;
   }
 
   /* Filter tabs */
   .filter-tabs {
-    @apply flex gap-2 overflow-x-auto smooth-scroll p-4;
+    @apply flex gap-2 overflow-x-auto smooth-scroll scrollbar-hide px-4 py-3;
   }
 
   .filter-tab {
-    @apply px-4 py-2 rounded-full font-medium transition-colors whitespace-nowrap tap-target;
+    @apply px-4 py-2 rounded-full font-medium transition-all whitespace-nowrap tap-target bg-dark-card text-gray-400 border border-dark-border active:scale-95 cursor-pointer select-none;
+  }
+
+  .filter-tab:hover {
+    @apply text-white bg-dark-lighter;
+  }
+
+  .filter-tab.active {
+    @apply bg-primary border-primary text-white;
   }
 
   .filter-tab-active {
-    @apply filter-tab bg-primary text-white;
+    @apply filter-tab bg-primary border-primary text-white;
   }
 
   .filter-tab-inactive {
-    @apply filter-tab bg-dark-card text-gray-400 hover:text-white hover:bg-dark-lighter;
+    @apply filter-tab;
   }
 
   /* Detail page hero */
