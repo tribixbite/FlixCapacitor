@@ -1,8 +1,28 @@
 # Native Torrent Streaming Architecture
 
-**Document Version:** 1.0.0
+**Document Version:** 1.1.0
 **Last Updated:** 2025-11-13
-**Status:** Production Ready
+**Status:** Production Ready (CRITICAL Bugs Fixed)
+
+## ⚠️ CRITICAL Bug Fixes (2025-11-13)
+
+**This specification has been updated to reflect 2 CRITICAL production-blocking bugs that were identified by Gemini 2.5 Pro code review and fixed with comprehensive test coverage.**
+
+### CRITICAL Fix #1: InputStream.skip() Loop for Video Seeking
+- **Issue:** Single `skip()` call without verification caused video seeking failures and corrupted frames
+- **Fix:** Implemented loop that continues calling `skip()` until all bytes skipped (lines 252-261)
+- **Impact:** Video seeking now works correctly for all file sizes and seek positions
+- **Test Coverage:** `StreamingServerTest.kt:159-185` validates skip loop with 1MB test file
+
+### CRITICAL Fix #2: Dynamic Port Allocation (App Restart Crashes)
+- **Issue:** Hardcoded port 8888 caused `java.net.BindException` on app restart
+- **Fix:** Dynamic port allocation using port 0 - OS assigns free ephemeral port automatically (lines 304-355)
+- **Impact:** App no longer crashes on restart, supports multiple simultaneous servers
+- **Test Coverage:** `StreamingServerTest.kt:54-105` validates dynamic allocation with 3 tests
+
+**Both fixes validated with 26 passing JUnit tests. See `SESSION-SUMMARY-2025-11-13.md` and `SESSION-SUMMARY-2025-11-13-tests.md` for complete details.**
+
+---
 
 ## Overview
 
@@ -83,7 +103,8 @@ FlixCapacitor Mobile's core feature is native P2P torrent streaming, enabling us
 │  ┌──────────────────────────────────────────────────────────┐ │
 │  │  StreamingServer.kt (NanoHTTPD)                          │ │
 │  │                                                           │ │
-│  │  - HTTP server on 127.0.0.1:8888                         │ │
+│  │  - HTTP server on 127.0.0.1:<dynamic-port>               │ │
+│  │  - Dynamic port allocation (OS-assigned ephemeral port)  │ │
 │  │  - Serves /video endpoint with Range request support     │ │
 │  │  - Returns video chunks from downloaded torrent pieces   │ │
 │  │  - Proper MIME types (video/mp4, video/x-matroska)       │ │
@@ -93,7 +114,7 @@ FlixCapacitor Mobile's core feature is native P2P torrent streaming, enabling us
 ┌────────────────────────────────────────────────────────────────┐
 │                    HTML5 Video Player                          │
 │                                                                │
-│  <video src="http://127.0.0.1:8888/video">                    │
+│  <video src="http://127.0.0.1:<dynamic-port>/video">          │
 │                                                                │
 │  - Fetches video chunks via HTTP GET with Range headers       │
 │  - Browser handles codec decoding and rendering               │
@@ -246,8 +267,17 @@ override fun serve(session: IHTTPSession): Response {
         val rangeHeader = session.headers["range"]
         val (start, end) = parseRangeHeader(rangeHeader, totalSize)
 
-        val inputStream = FileInputStream(file).apply {
-            skip(start)
+        val inputStream = FileInputStream(file)
+
+        // CRITICAL FIX (2025-11-13): InputStream.skip() may not skip all bytes in one call
+        // Must loop until all bytes are skipped or EOF/error occurs
+        var remaining = start
+        while (remaining > 0) {
+            val skipped = inputStream.skip(remaining)
+            if (skipped <= 0) {
+                throw IOException("Failed to skip to position $start (remaining: $remaining)")
+            }
+            remaining -= skipped
         }
 
         val response = newFixedLengthResponse(
@@ -268,6 +298,13 @@ override fun serve(session: IHTTPSession): Response {
 }
 ```
 
+**Why the skip() Loop is Critical:**
+- `InputStream.skip()` does NOT guarantee skipping all requested bytes in a single call
+- May skip fewer bytes due to buffering, OS scheduling, or file system characteristics
+- Without the loop, video seeking would fail or show corrupted frames
+- This bug was identified by Gemini 2.5 Pro code review (2025-11-13)
+- Automated test coverage: `StreamingServerTest.kt:159-185` validates skip loop with 1MB test file
+
 **MIME Type Detection:**
 ```kotlin
 fun getMimeType(filename: String): String {
@@ -284,35 +321,58 @@ fun getMimeType(filename: String): String {
 }
 ```
 
-**Port Binding with Retry:**
+**Dynamic Port Allocation:**
 ```kotlin
-fun start(port: Int = 8888, maxRetries: Int = 5) {
-    var attempt = 0
-    var lastException: Exception? = null
+class StreamingServer(
+    private val context: Context
+) : NanoHTTPD("127.0.0.1", 0) { // Port 0 = OS assigns free ephemeral port
 
-    while (attempt < maxRetries) {
+    private var videoFile: File? = null
+
+    fun start() {
         try {
-            super.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false)
-            Log.d(TAG, "StreamingServer started on port $port")
-            return
+            super.start(SOCKET_READ_TIMEOUT, false)
+            val assignedPort = listeningPort // Get OS-assigned port
+            Log.d(TAG, "StreamingServer started on port: $assignedPort")
         } catch (e: IOException) {
-            lastException = e
-            attempt++
-            if (attempt < maxRetries) {
-                Thread.sleep(500) // 500ms delay between retries
-            }
+            Log.e(TAG, "Failed to start StreamingServer", e)
+            throw e
         }
     }
 
-    throw IOException("Failed to start server after $maxRetries attempts", lastException)
+    fun getStreamUrl(): String {
+        val port = listeningPort
+        return "http://127.0.0.1:$port/video"
+    }
+
+    // ... serve() implementation ...
 }
 ```
 
-**Why Port 8888?**
-- Above 1024 (no root required)
-- Not commonly used by other apps
-- Easy to remember for debugging
-- Hardcoded in video player: `http://127.0.0.1:8888/video`
+**Why Dynamic Port Allocation (Port 0)?**
+
+**CRITICAL FIX (2025-11-13):** Previous implementation used hardcoded port 8888, causing app restart crashes.
+
+**Problems with Hardcoded Port 8888:**
+- **BindException on app restart:** Port 8888 still in use from previous instance
+- **Port conflicts:** Another app might use port 8888
+- **Required force-stop:** User had to manually kill app to free the port
+- **No multi-instance support:** Could not run multiple servers simultaneously
+
+**Benefits of Dynamic Allocation:**
+- **OS assigns free port automatically:** Port 0 parameter tells NanoHTTPD to use any available ephemeral port
+- **Ephemeral port range:** OS typically assigns ports 49152-65535 (IANA standard)
+- **No restart crashes:** Each app instance gets its own unique port
+- **Multi-server support:** Can run multiple streaming servers concurrently for multi-file playback
+- **Zero configuration:** No manual port management or conflict resolution needed
+
+**Implementation Details:**
+- Constructor parameter: `NanoHTTPD("127.0.0.1", 0)` (port 0 = dynamic allocation)
+- Get assigned port: `listeningPort` property returns actual port number after `start()`
+- Return URL to client: `"http://127.0.0.1:$listeningPort/video"`
+- Automated test coverage: `StreamingServerTest.kt:54-105` validates dynamic allocation with 3 tests
+
+**This fix was identified by Gemini 2.5 Pro code review and validated with 26 passing JUnit tests.**
 
 ### 4. NativeTorrentClient.ts - TypeScript Wrapper
 
@@ -343,7 +403,7 @@ interface TorrentStatus {
 }
 
 interface StreamResponse {
-    streamUrl: string;      // "http://127.0.0.1:8888/video"
+    streamUrl: string;      // "http://127.0.0.1:<dynamic-port>/video" (e.g., "http://127.0.0.1:52413/video")
     success: boolean;
     error?: string;
 }
@@ -448,19 +508,21 @@ private extractLanguage(filename: string): string {
    ↓
 9. TorrentSession starts sequential download
    ↓
-10. Service starts StreamingServer on port 8888
+10. Service starts StreamingServer with dynamic port allocation (port 0)
    ↓
-11. Plugin returns streamUrl: "http://127.0.0.1:8888/video"
+11. OS assigns free ephemeral port (e.g., 52413)
    ↓
-12. VideoPlayer sets video.src = streamUrl
+12. Plugin returns streamUrl: "http://127.0.0.1:<assigned-port>/video"
    ↓
-13. HTML5 video element sends GET /video with Range header
+13. VideoPlayer sets video.src = streamUrl
    ↓
-14. StreamingServer reads torrent file and returns chunk
+14. HTML5 video element sends GET /video with Range header
    ↓
-15. Video element receives data and begins playback
+15. StreamingServer reads torrent file and returns chunk
    ↓
-16. User sees video playing (5-60 seconds from click)
+16. Video element receives data and begins playback
+   ↓
+17. User sees video playing (5-60 seconds from click)
 ```
 
 ### Flow 2: Seeking in Video
@@ -500,7 +562,7 @@ private extractLanguage(filename: string): string {
    ↓
 5. Plugin sends STOP_TORRENT intent to service
    ↓
-6. Service stops StreamingServer (closes port 8888)
+6. Service stops StreamingServer (closes assigned ephemeral port)
    ↓
 7. Service destroys TorrentSession (removes handle)
    ↓
@@ -571,18 +633,25 @@ private extractLanguage(filename: string): string {
 - Use popular torrents with many seeds
 - Increase timeout to 180 seconds
 
-### 2. Port 8888 Conflict
-**Issue:** "Failed to start server after 5 attempts"
+### 2. Port Conflict ✅ RESOLVED (2025-11-13)
 
-**Causes:**
-- Another app using port 8888
-- Previous instance didn't cleanup properly
-- Android security policy blocking localhost server
+**Previous Issue:** "Failed to start server after 5 attempts" - app crashed on restart due to hardcoded port 8888
 
-**Workarounds:**
-- Retry logic with 500ms delay (implemented)
-- Kill and restart app
-- Change port to 8889, 8890, etc. (requires code change)
+**Resolution:** Implemented dynamic port allocation (port 0) - OS assigns free ephemeral port automatically
+
+**How It Was Fixed:**
+- Changed `NanoHTTPD("127.0.0.1", 8888)` to `NanoHTTPD("127.0.0.1", 0)`
+- OS assigns unique port from ephemeral range (49152-65535)
+- Each app instance gets its own port - no conflicts possible
+- Plugin returns actual assigned port in streamUrl
+- **This CRITICAL fix was identified by Gemini 2.5 Pro code review**
+- **Validated with 26 passing JUnit tests (StreamingServerTest.kt:54-105)**
+
+**Benefits:**
+- No more restart crashes or BindException errors
+- Supports multiple simultaneous streaming servers
+- Zero configuration - works out of the box
+- No manual port management required
 
 ### 3. Seeking Lag
 **Issue:** 10-30 second delay when seeking to unwatched position
@@ -597,18 +666,29 @@ private extractLanguage(filename: string): string {
 - Download full file first (defeats instant playback purpose)
 - Implement "download next N pieces after seek" strategy
 
-### 4. Single Torrent Limitation
+### 4. Single Torrent Limitation (Partially Improved)
 **Issue:** Can only stream one torrent at a time
 
 **Causes:**
-- StreamingServer hardcoded to single file
-- TorrentSession assumes single active torrent
-- Port 8888 can only serve one file
+- StreamingServer serves single file per instance
+- TorrentSession manages single active torrent
+- ~~Port 8888 can only serve one file~~ ✅ RESOLVED with dynamic port allocation
 
-**Workarounds:**
-- Queue system (download one, queue others)
-- Multiple ports (8888, 8889, 8890) for parallel streams
-- Playlist support (switch torrents, stop previous)
+**Recent Improvements (2025-11-13):**
+- ✅ Dynamic port allocation enables multiple StreamingServer instances
+- ✅ Each server gets its own unique port automatically
+- ✅ Multi-file playback now supported (PlaybackQueue class)
+- ✅ Can theoretically run multiple torrents with multiple service instances
+
+**Remaining Limitations:**
+- TorrentStreamingService currently designed for single active torrent
+- Would require service refactoring to support parallel torrent downloads
+- Memory constraints on mobile devices limit practical concurrent torrents
+
+**Future Enhancements:**
+- Queue system for sequential torrent downloads
+- Multiple TorrentSession instances with independent servers
+- Priority-based torrent scheduling
 
 ## Security Considerations
 
@@ -646,10 +726,13 @@ private extractLanguage(filename: string): string {
 
 ### Manual Tests
 - Start stream with popular torrent → Verify playback starts
-- Seek to 50% position → Verify video resumes at new position
+- Check logcat for assigned port → Verify port is in ephemeral range (49152-65535)
+- Seek to 50% position → Verify video resumes at new position (tests skip() loop fix)
+- Restart app and start new stream → Verify no BindException (tests dynamic port allocation)
 - Background app → Verify notification persists, stream continues
-- Stop stream → Verify notification disappears, port 8888 released
+- Stop stream → Verify notification disappears, assigned port released
 - Try invalid magnet → Verify error message displayed
+- See `MANUAL-TESTING-GUIDE.md` Priority 0 section for complete CRITICAL bug validation procedures
 
 ### Performance Tests
 - Measure time to first byte (magnet → HTTP response)
@@ -672,10 +755,11 @@ private extractLanguage(filename: string): string {
 - Seamless quality switching during playback
 
 ### 3. Subtitle Streaming
-- Serve subtitle files via HTTP (http://127.0.0.1:8888/subtitle?index=N)
+- Serve subtitle files via HTTP (http://127.0.0.1:<dynamic-port>/subtitle?index=N)
 - Add subtitle tracks to video element dynamically
 - Support external .srt file upload
 - Auto-sync subtitle timing adjustments
+- Leverage dynamic port allocation for subtitle server endpoint
 
 ### 4. Chromecast Support
 - Cast stream URL to Chromecast device
