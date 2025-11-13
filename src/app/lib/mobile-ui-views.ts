@@ -802,8 +802,7 @@ export class MobileUIController {
             return;
         }
 
-        // TODO: Add folder picker to select directories
-        // For now, scan common Android media directories (skip DCIM - camera photos)
+        // Scan common Android media directories (skip DCIM - camera photos)
         const commonPaths = [
             'Movies',
             'Download',

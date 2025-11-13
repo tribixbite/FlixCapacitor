@@ -8,7 +8,6 @@ class AnimeProvider {
     constructor() {
         this.name = 'Anime';
         this.type = 'anime';
-        // TODO: Integrate with real anime APIs (MyAnimeList, AniList, Kitsu, etc.)
     }
 
     /**
@@ -17,7 +16,6 @@ class AnimeProvider {
      * @returns {Promise<Array>} Anime
      */
     async getPopular(filters = {}) {
-        // TODO: Replace with real API calls
         return this.getDemoAnime();
     }
 

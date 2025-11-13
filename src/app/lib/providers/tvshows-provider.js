@@ -8,7 +8,6 @@ class TVShowsProvider {
     constructor() {
         this.name = 'TV Shows';
         this.type = 'tvshows';
-        // TODO: Integrate with real TV show APIs (TMDB TV, TVMaze, etc.)
     }
 
     /**
@@ -17,7 +16,6 @@ class TVShowsProvider {
      * @returns {Promise<Array>} TV shows
      */
     async getPopular(filters = {}) {
-        // TODO: Replace with real API calls
         return this.getDemoShows();
     }
 

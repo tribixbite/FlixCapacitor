@@ -66,7 +66,6 @@
         },
 
         onScanCustom: function() {
-            // # TODO: Implement folder picker
             win.info('Folder picker not yet implemented. Use default folders for now.');
         },
 
