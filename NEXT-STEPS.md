@@ -41,13 +41,46 @@ Both builds completed successfully with CRITICAL fixes included:
 - **Build Stats:** CSS 35.10 kB (6.17 kB gzipped), JS 568.47 kB (170.18 kB gzipped)
 - **Status:** Ready for device testing with production-ready reliability
 
+### Comprehensive JUnit Test Suite ✅ COMPLETE (2025-11-13)
+
+**26 passing tests implemented** (0 failures, 0 errors):
+
+**StreamingServerTest.kt** (18 tests):
+- ✅ Dynamic port allocation validation (3 tests)
+- ✅ HTTP Range requests with InputStream.skip() loop validation (5 tests)
+- ✅ Full file streaming and CORS headers (2 tests)
+- ✅ MIME type detection for 9 video formats (1 test)
+- ✅ Error handling - HTTP 404/416 status codes (2 tests)
+- ✅ Edge cases - concurrent requests, single/last byte (5 tests)
+
+**TorrentStreamingServiceTest.kt** (8 tests):
+- ✅ Static method null-safety validation (7 tests)
+- ✅ Timeout configuration constants (1 test)
+
+**Key Achievement:** Both CRITICAL bug fixes now have automated regression protection through comprehensive unit tests.
+
+**Build Status:** All tests passing, BUILD SUCCESSFUL, APK includes all fixes and tests
+
+**Full Test Documentation:** See `SESSION-SUMMARY-2025-11-13-tests.md` for complete details
+
 ### Next Priority (Gemini Recommendation)
 
-1. **Test CRITICAL fixes on device** - Verify video seeking and app restart reliability
-2. **Write JUnit tests** - StreamingServer Range requests, TorrentStreamingService lifecycle
-3. **Focus on reliability** over new features until core functionality is rock-solid
+1. **Test CRITICAL fixes on device** ⏳ AWAITING MANUAL TESTING
+   - ✅ Device testing guide complete (MANUAL-TESTING-GUIDE.md Priority 0 section)
+   - ⏳ Video seeking validation (5 test scenarios documented)
+   - ⏳ App restart validation (7 test scenarios documented)
+   - ⏳ Confirm no crashes or regressions
+   - **See:** MANUAL-TESTING-GUIDE.md lines 20-252 for complete test procedures
 
-**Full Session Documentation:** See `SESSION-SUMMARY-2025-11-13.md` for complete details
+2. ✅ **Write JUnit tests** - COMPLETE (26 passing tests)
+
+3. ✅ **Device testing procedures** - COMPLETE (comprehensive guide with troubleshooting)
+
+4. **Focus on reliability** over new features until core functionality is verified on device
+
+**Full Session Documentation:**
+- `SESSION-SUMMARY-2025-11-13.md` - Gemini code review and bug fixes
+- `SESSION-SUMMARY-2025-11-13-tests.md` - Test suite implementation
 
 ---
 
