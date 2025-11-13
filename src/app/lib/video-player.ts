@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Video Player Module
  * Handles torrent streaming, local file playback, and video player UI
@@ -6,7 +5,8 @@
  */
 
 import MediaPermissions from 'capacitor-plugin-media-permissions';
-import type { Movie, Episode, LibraryItem, TorrentInfo } from '../../types/mobile-ui';
+import type { Movie, Episode, TorrentInfo } from '../../types/mobile-ui';
+import type { LibraryItem } from '../../types/library';
 
 /**
  * PlaybackQueue - Manages sequential playback of multiple files in multi-file torrents
@@ -202,7 +202,7 @@ export class VideoPlayer {
             const positions = JSON.parse(localStorage.getItem('playbackPositions') || '{}');
             positions[movieId] = position;
             localStorage.setItem('playbackPositions', JSON.stringify(positions));
-        } catch (e) {
+        } catch (e: any) {
             console.warn('Failed to save playback position to localStorage:', e);
         }
     }
@@ -219,7 +219,7 @@ export class VideoPlayer {
         try {
             const positions = JSON.parse(localStorage.getItem('playbackPositions') || '{}');
             return positions[movieId] || 0;
-        } catch (e) {
+        } catch (e: any) {
             return 0;
         }
     }
@@ -286,7 +286,7 @@ export class VideoPlayer {
 
             // Sort by most recently watched (we'll need to track timestamps later)
             return items.slice(0, 10); // Max 10 items
-        } catch (e) {
+        } catch (e: any) {
             console.warn('Failed to get Continue Watching items:', e);
             return [];
         }
@@ -307,7 +307,7 @@ export class VideoPlayer {
         try {
             const { App } = await import('@capacitor/app');
             this.ctx.backButtonListener = await App.addListener('backButton', callback);
-        } catch (e) {
+        } catch (e: any) {
             console.warn('Back button handler not available (web platform?):', e);
         }
     }
@@ -419,7 +419,7 @@ export class VideoPlayer {
 
             console.log('File URI:', fileUri.uri);
             videoElement.src = fileUri.uri;
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to load local file:', error);
             alert('Failed to load video file. File may have been moved or deleted.');
             return;
@@ -441,7 +441,7 @@ export class VideoPlayer {
             const { KeepAwake } = await import('@capacitor-community/keep-awake');
             await KeepAwake.keepAwake();
             console.log('Screen will stay awake during playback');
-        } catch (e) {
+        } catch (e: any) {
             console.warn('KeepAwake failed:', (e as Error).message);
         }
     }
@@ -679,7 +679,7 @@ export class VideoPlayer {
             // Load starred state for all files
             const torrentHash = this.getTorrentHash(movie, videoFiles);
             if (torrentHash && window.FavoritesService) {
-                window.FavoritesService.getFavoriteTorrentFiles(torrentHash).then(favoriteIndices => {
+                window.FavoritesService.getFavoriteTorrentFiles(torrentHash).then((favoriteIndices: number[]) => {
                     videoFiles.forEach((file, idx) => {
                         if (favoriteIndices.includes(file.index)) {
                             const star = modal.querySelector(`.file-picker-item-star[data-index="${file.index}"]`);
@@ -774,7 +774,7 @@ export class VideoPlayer {
                 try {
                     await window.NativeTorrentClient.stopStream();
                     console.log('Stopped previous stream');
-                } catch (e) {
+                } catch (e: any) {
                     console.warn('Failed to stop previous stream:', e);
                 }
             }
@@ -1017,7 +1017,7 @@ export class VideoPlayer {
                 try {
                     await window.NativeTorrentClient.stopStream();
                     console.log('Native torrent stream stopped');
-                } catch (e) {
+                } catch (e: any) {
                     console.warn('Failed to stop native torrent stream:', e);
                 }
             }
@@ -1030,7 +1030,7 @@ export class VideoPlayer {
                 const { KeepAwake } = await import('@capacitor-community/keep-awake');
                 await KeepAwake.allowSleep();
                 console.log('Screen sleep re-enabled');
-            } catch (e) {
+            } catch (e: any) {
                 // Keep awake not available (web)
             }
 
@@ -1045,7 +1045,7 @@ export class VideoPlayer {
         };
 
         // Helper to track event listeners for cleanup
-        const addTrackedListener = (element, event, handler) => {
+        const addTrackedListener = (element: any, event: string, handler: any) => {
             if (element) {
                 element.addEventListener(event, handler);
                 this.ctx.videoPlayerCleanup.listeners.push({ element, event, handler });
@@ -1053,8 +1053,8 @@ export class VideoPlayer {
         };
 
         // Helper to track intervals for cleanup
-        const addTrackedInterval = (callback, delay) => {
-            const intervalId = setInterval(callback, delay);
+        const addTrackedInterval = (callback: () => void, delay: number) => {
+            const intervalId = setInterval(callback, delay) as unknown as number;
             this.ctx.videoPlayerCleanup.intervals.push(intervalId);
             return intervalId;
         };
@@ -1071,7 +1071,7 @@ export class VideoPlayer {
             const { KeepAwake } = await import('@capacitor-community/keep-awake');
             await KeepAwake.keepAwake();
             console.log('Screen will stay awake during playback');
-        } catch (e) {
+        } catch (e: any) {
             console.warn('KeepAwake failed:', e.message);
             // Non-critical, continue anyway
         }
@@ -1092,7 +1092,7 @@ export class VideoPlayer {
                 await window.NativeTorrentClient.stopStream();
                 // Wait a bit for the port to be released
                 await new Promise(resolve => setTimeout(resolve, 500));
-            } catch (e) {
+            } catch (e: any) {
                 console.log('No existing stream to stop or stop failed:', e.message);
             }
 
@@ -1119,7 +1119,7 @@ export class VideoPlayer {
                     window.NativeTorrentClient.startStream(
                         torrent.url,
                         { quality: quality },
-                        (status) => {
+                        (status: any) => {
                             // Progress callback - update UI with torrent status
                             console.log('Native torrent status:', status);
 
@@ -1246,7 +1246,7 @@ export class VideoPlayer {
                                     window.NativeTorrentClient.startStream(
                                         torrent.url,
                                         { quality: quality },
-                                        (status) => {
+                                        (status: any) => {
                                             // Same progress callback as before
                                             if (hasVideoError) return;
 
@@ -1300,12 +1300,12 @@ export class VideoPlayer {
                                 return;
                             }
                         }
-                    } catch (error) {
+                    } catch (error: any) {
                         console.error('Error handling multi-file torrent:', error);
                         // Continue with default file if error occurs
                     }
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Error starting stream:', error);
 
                 // Show error in UI
@@ -1336,7 +1336,7 @@ export class VideoPlayer {
             // Stream is ready - update loading UI to show buffering in progress
             const loadingContent = document.querySelector('.player-content');
             const videoContainer = document.getElementById('video-container');
-            const videoElement = document.getElementById('torrent-video');
+            const videoElement = document.getElementById('torrent-video') as HTMLVideoElement | null;
 
             // Update status to show stream is buffering
             if (loadingTitle) loadingTitle.textContent = 'Buffering Video';
@@ -1364,7 +1364,7 @@ export class VideoPlayer {
 
             // Handle video errors
             if (videoElement) {
-                const errorHandler = (e) => {
+                const errorHandler = (e: Event) => {
                     console.error('Video playback error event:', e.type, e);
 
                     // CRITICAL: Set error flag to prevent progress updates from overwriting this UI
@@ -1452,7 +1452,7 @@ export class VideoPlayer {
                                                 </span>
                                             `;
                                         }
-                                    } catch (err) {
+                                    } catch (err: any) {
                                         console.error('Failed to open external player:', err);
 
                                         // Show error with stream URL as fallback
@@ -1543,7 +1543,7 @@ export class VideoPlayer {
                                 resumeDialog.remove();
                                 console.log('Auto-resumed after timeout');
                             }
-                        }, 10000);
+                        }, 10000) as unknown as number;
                         this.ctx.videoPlayerCleanup.intervals.push(autoResumeTimeout);
                     }
 
@@ -1611,7 +1611,7 @@ export class VideoPlayer {
                     if (window.NativeTorrentClient) {
                         try {
                             await window.NativeTorrentClient.pauseStream();
-                        } catch (e) {
+                        } catch (e: any) {
                             console.warn('Failed to pause torrent stream:', e);
                             // Non-critical - video pause still works
                         }
@@ -1623,7 +1623,7 @@ export class VideoPlayer {
                     if (window.NativeTorrentClient) {
                         try {
                             await window.NativeTorrentClient.resumeStream();
-                        } catch (e) {
+                        } catch (e: any) {
                             console.warn('Failed to resume torrent stream:', e);
                             // Non-critical - video play still works
                         }
@@ -1671,7 +1671,7 @@ export class VideoPlayer {
 
                             // Update queue UI for new file
                             this.updateQueueStatusUI();
-                        } catch (error) {
+                        } catch (error: any) {
                             console.error('Error playing next file:', error);
                             if (loadingTitle) loadingTitle.textContent = 'Failed to Play Next Video';
                             if (loadingSubtitle) loadingSubtitle.textContent = error.message;
@@ -1783,8 +1783,8 @@ export class VideoPlayer {
                     });
 
                     // Close selector when clicking outside - CRITICAL: Document-level listener
-                    const documentClickHandler = (e) => {
-                        if (!speedBtn.contains(e.target) && !speedSelector.contains(e.target)) {
+                    const documentClickHandler = (e: MouseEvent) => {
+                        if (!speedBtn.contains(e.target as Node) && !speedSelector.contains(e.target as Node)) {
                             speedSelector.classList.add('hidden');
                         }
                     };
@@ -1803,7 +1803,7 @@ export class VideoPlayer {
                             } else {
                                 await videoElement.requestPictureInPicture();
                             }
-                        } catch (e) {
+                        } catch (e: any) {
                             console.warn('PiP not available:', e);
                         }
                     };
@@ -1830,7 +1830,7 @@ export class VideoPlayer {
                             try {
                                 await container.requestFullscreen();
                                 fullscreenBtn.textContent = '⛶';
-                            } catch (e) {
+                            } catch (e: any) {
                                 console.warn('Fullscreen not available:', e);
                             }
                         } else {
@@ -1847,7 +1847,7 @@ export class VideoPlayer {
                 let isVerticalGesture = false;
                 let isLeftSide = false;
 
-                const touchstartHandler = (e) => {
+                const touchstartHandler = (e: TouchEvent) => {
                     if (e.touches.length === 1) {
                         const touch = e.touches[0];
                         startY = touch.clientY;
@@ -1857,7 +1857,7 @@ export class VideoPlayer {
                 };
                 addTrackedListener(videoElement, 'touchstart', touchstartHandler);
 
-                const touchmoveHandler = (e) => {
+                const touchmoveHandler = (e: TouchEvent) => {
                     if (e.touches.length === 1) {
                         const touch = e.touches[0];
                         const deltaY = startY - touch.clientY;
@@ -1893,9 +1893,9 @@ export class VideoPlayer {
 
                 // Double-tap to skip (10s forward/backward)
                 let lastTapTime = 0;
-                let lastTapSide = null;
+                let lastTapSide: string | null = null;
 
-                const showSkipIndicator = (direction, seconds) => {
+                const showSkipIndicator = (direction: string, seconds: number) => {
                     const indicator = document.createElement('div');
                     // Base classes for skip indicator
                     indicator.className = `absolute top-1/2 -translate-y-1/2 bg-black/80 text-white px-8 py-6 rounded-full text-2xl z-[150] animate-skip-fade pointer-events-none ${direction === 'forward' ? 'right-[20%]' : 'left-[20%]'}`;
@@ -1905,7 +1905,7 @@ export class VideoPlayer {
                     setTimeout(() => indicator.remove(), 600);
                 };
 
-                const videoClickHandler = (e) => {
+                const videoClickHandler = (e: MouseEvent) => {
                     const now = Date.now();
                     const tapDelay = now - lastTapTime;
                     const clickX = e.clientX || (e.touches && e.touches[0].clientX);
@@ -1946,7 +1946,7 @@ export class VideoPlayer {
                 addTrackedListener(videoElement, 'click', videoClickHandler);
             }
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Native torrent streaming failed:', error);
 
             // Show error message
@@ -1981,7 +1981,7 @@ export class VideoPlayer {
             // Reset loading flag on error - user needs to retry
             this.ctx.isLoadingStream = false;
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error('Video player error:', error);
 
         // Show error in UI without triggering global handler
