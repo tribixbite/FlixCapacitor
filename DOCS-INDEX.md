@@ -78,11 +78,19 @@ Complete guide to all project documentation and development tools.
   - Future roadmap (Phases 7-9)
 
 ### Future Development
-- **[FEATURE-TODO-LISTS.md](FEATURE-TODO-LISTS.md)** - **NEW:** Comprehensive enhancement catalog (1,322 lines)
+- **[PHASE-9-ENHANCEMENT-PLAN.md](PHASE-9-ENHANCEMENT-PLAN.md)** - **NEW:** Comprehensive Phase 9 roadmap (8-13 weeks)
+  - 4 sub-phases: 9A (UX Enhancements), 9B (Architecture), 9C (Features), 9D (Polish)
+  - Organized by priority: 8 high, 13 medium, 6 low priority areas
+  - Detailed implementation plans with success metrics and risk assessment
+  - Target: v1.1.0 → v1.2.0 with major UX and architectural improvements
+  - Ready for execution pending v1.1.0 device testing validation
+
+- **[FEATURE-TODO-LISTS.md](FEATURE-TODO-LISTS.md)** - Comprehensive enhancement catalog (1,322 lines)
   - 10 Feature TODOs (130+ items): Video Switching, Multi-File Playback, Favorites, etc.
   - 5 Application Flow TODOs (71+ items): Architecture, Navigation, State Management
   - 11 UI Section TODOs (143+ items): Every screen from Home to File Picker Modal
   - Each TODO includes: enhancements list, known limitations, testing requirements, priority/complexity/impact ratings
+  - Source material for PHASE-9-ENHANCEMENT-PLAN.md
 
 - **[TODO-AUDIT.md](TODO-AUDIT.md)** - Analysis of 20 code comments
   - 6 already complete (remove in cleanup)
