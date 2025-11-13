@@ -149,9 +149,12 @@ See `TYPESCRIPT-TAILWIND-OVERHAUL.md` for complete 7-phase plan:
 - ✅ Only +1 KB for full theme system
 - Completed: 2025-11-13
 
-**Phase 6: File-by-File Migration (Week 1-5)**
-- 25 TypeScript files to migrate
-- One file at a time with testing
+**Phase 6: File-by-File Migration (Week 1-5)** 🚧 IN PROGRESS
+- ✅ ui-templates.ts: Fixed all type errors (20+ fixed)
+- ✅ video-player.ts: Fixed 80 errors → ZERO errors (2011 lines)
+- 🚧 mobile-ui-views.ts: Fixed 10 errors → 129 remaining (1812 lines)
+- ⏳ jquery.plugins.ts: Not yet started
+- Progress: 2/4 files complete (50% of @ts-nocheck removals)
 - Estimated: 40 hours
 
 **Phase 7: Performance Optimization (Week 5)**
