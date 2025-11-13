@@ -8,6 +8,29 @@ import sqliteService from './lib/sqlite-service.ts';
 
 const db = sqliteService;
 
+// Type definitions
+interface MovieData {
+    imdb_id: string;
+    title?: string;
+    year?: number;
+    rating?: number;
+    runtime?: number;
+    synopsis?: string;
+    poster?: string;
+    backdrop?: string;
+    genres?: string[];
+    trailer?: string;
+    [key: string]: any; // Allow additional properties
+}
+
+interface WatchedData {
+    imdb_id: string;
+    season?: number;
+    episode?: number;
+    from_browser?: boolean;
+    [key: string]: any;
+}
+
 // Helper to access App with proper typing
 const getApp = (): any => (window as any).App;
 
@@ -27,7 +50,7 @@ const Database: any = {
     /**
      * MOVIES
      */
-    addMovie: async function (data) {
+    addMovie: async function (data: MovieData) {
         try {
             await db.insert('movies', {
                 imdb_id: data.imdb_id,
@@ -49,11 +72,11 @@ const Database: any = {
         }
     },
 
-    deleteMovie: async function (imdb_id) {
+    deleteMovie: async function (imdb_id: string) {
         return await db.delete('movies', 'imdb_id = ?', [imdb_id]);
     },
 
-    getMovie: async function (imdb_id) {
+    getMovie: async function (imdb_id: string) {
         const movie = await db.findOne('movies', 'imdb_id = ?', [imdb_id]);
         if (movie && movie.metadata) {
             return JSON.parse(movie.metadata);
@@ -64,7 +87,7 @@ const Database: any = {
     /**
      * BOOKMARKS
      */
-    addBookmark: async function (imdb_id, type) {
+    addBookmark: async function (imdb_id: string, type: string) {
         const App = getApp();
         if (App && App.userBookmarks) {
             App.userBookmarks.push(imdb_id);
@@ -87,7 +110,7 @@ const Database: any = {
         }
     },
 
-    deleteBookmark: async function (imdb_id) {
+    deleteBookmark: async function (imdb_id: string) {
         const App = getApp();
         if (App && App.userBookmarks) {
             const index = App.userBookmarks.indexOf(imdb_id);
@@ -103,7 +126,7 @@ const Database: any = {
         return await db.truncate('bookmarks');
     },
 
-    getBookmarks: async function (data) {
+    getBookmarks: async function (data: { page?: number; type?: string }) {
         const page = (data.page || 1) - 1;
         const byPage = 50;
         const offset = page * byPage;
@@ -131,7 +154,7 @@ const Database: any = {
     /**
      * WATCHED MOVIES
      */
-    markMovieAsWatched: async function (data) {
+    markMovieAsWatched: async function (data: WatchedData) {
         if (!data.imdb_id) {
             console.warn('markMovieAsWatched called without imdb_id');
             return;
@@ -153,7 +176,7 @@ const Database: any = {
         }
     },
 
-    markMovieAsNotWatched: async function (data) {
+    markMovieAsNotWatched: async function (data: WatchedData) {
         const App = getApp();
         if (App && App.watchedMovies) {
             while (App.watchedMovies.indexOf(data.imdb_id) !== -1) {
@@ -168,8 +191,8 @@ const Database: any = {
         return await db.find('watched_movies');
     },
 
-    markMoviesWatched: async function (data) {
-        const statements = data.map(item => ({
+    markMoviesWatched: async function (data: WatchedData[]) {
+        const statements = data.map((item: WatchedData) => ({
             sql: 'INSERT INTO watched_movies (movie_id, watched_at) VALUES (?, ?)',
             params: [item.movie_id || item.imdb_id, item.date || new Date().toISOString()]
         }));
@@ -181,7 +204,7 @@ const Database: any = {
     /**
      * TV SHOWS
      */
-    addTVShow: async function (data) {
+    addTVShow: async function (data: any) {
         try {
             await db.insert('tvshows', {
                 imdb_id: data.imdb_id,
@@ -204,7 +227,7 @@ const Database: any = {
         }
     },
 
-    updateTVShow: async function (data) {
+    updateTVShow: async function (data: any) {
         return await db.update('tvshows', {
             tvdb_id: data.tvdb_id,
             title: data.title || null,
@@ -221,11 +244,11 @@ const Database: any = {
         }, 'imdb_id = ?', [data.imdb_id]);
     },
 
-    deleteTVShow: async function (imdb_id) {
+    deleteTVShow: async function (imdb_id: string) {
         return await db.delete('tvshows', 'imdb_id = ?', [imdb_id]);
     },
 
-    getTVShowByImdb: async function (imdb_id) {
+    getTVShowByImdb: async function (imdb_id: string) {
         const show = await db.findOne('tvshows', 'imdb_id = ?', [imdb_id]);
         if (show && show.metadata) {
             return JSON.parse(show.metadata);
@@ -233,7 +256,7 @@ const Database: any = {
         return show;
     },
 
-    getTVShow: async function (data) {
+    getTVShow: async function (data: { tvdb_id: string }) {
         console.warn('getTVShow is deprecated');
         const show = await db.findOne('tvshows', 'tvdb_id = ?', [data.tvdb_id]);
         if (show && show.metadata) {
@@ -245,7 +268,7 @@ const Database: any = {
     /**
      * WATCHED EPISODES
      */
-    markEpisodeAsWatched: async function (data) {
+    markEpisodeAsWatched: async function (data: WatchedData) {
         try {
             // Check if this is the first episode watched for this show
             const existingEpisodes = await db.find('watched_episodes', 'tvdb_id = ?', [data.tvdb_id.toString()]);
@@ -281,8 +304,8 @@ const Database: any = {
         }
     },
 
-    markEpisodesWatched: async function (data) {
-        const statements = data.map(item => ({
+    markEpisodesWatched: async function (data: WatchedData[]) {
+        const statements = data.map((item: WatchedData) => ({
             sql: 'INSERT OR IGNORE INTO watched_episodes (tvdb_id, imdb_id, season, episode, watched_at) VALUES (?, ?, ?, ?, ?)',
             params: [
                 item.tvdb_id.toString(),
@@ -297,7 +320,7 @@ const Database: any = {
         return data;
     },
 
-    markEpisodeAsNotWatched: async function (data) {
+    markEpisodeAsNotWatched: async function (data: WatchedData) {
         try {
             // Remove the episode
             await db.delete('watched_episodes', 'tvdb_id = ? AND season = ? AND episode = ?', [
@@ -329,7 +352,7 @@ const Database: any = {
         }
     },
 
-    checkEpisodeWatched: async function (data) {
+    checkEpisodeWatched: async function (data: WatchedData) {
         const episode = await db.findOne('watched_episodes',
             'tvdb_id = ? AND season = ? AND episode = ?',
             [
@@ -342,7 +365,7 @@ const Database: any = {
         return episode !== null;
     },
 
-    getEpisodesWatched: async function (tvdb_id) {
+    getEpisodesWatched: async function (tvdb_id: string | number) {
         return await db.find('watched_episodes', 'tvdb_id = ?', [tvdb_id.toString()]);
     },
 
@@ -358,7 +381,7 @@ const Database: any = {
     /**
      * SETTINGS (deprecated - using Capacitor Preferences)
      */
-    getSetting: async function (data) {
+    getSetting: async function (data: any) {
         console.warn('Settings are now handled by Capacitor Preferences');
         return null;
     },
@@ -368,7 +391,7 @@ const Database: any = {
         return [];
     },
 
-    writeSetting: async function (data) {
+    writeSetting: async function (data: any) {
         console.warn('Settings are now handled by Capacitor Preferences');
         return;
     },
@@ -506,7 +529,7 @@ const Database: any = {
             // Check for updates
             if (App && App.Updater) {
                 const updater = new App.Updater();
-                updater.update().catch(function (err) {
+                updater.update().catch(function (err: Error) {
                     console.error('updater.update()', err);
                 });
             }

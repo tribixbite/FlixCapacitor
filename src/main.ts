@@ -306,14 +306,14 @@ function handleVideoFile(file: { path: string; name: string }): void {
     };
 
     // Get subtitles from provider
-    const getSubtitles = (subdata) => {
-        return window.Q.Promise((resolve, reject) => {
+    const getSubtitles = (subdata: any) => {
+        return window.Q.Promise((resolve: (value: any) => void, reject: (reason?: any) => void) => {
             console.log('Subtitles data request:', subdata);
 
             const app = window.App as MobileApp | undefined;
             const subtitleProvider = app?.Config?.getProviderForType?.('subtitle');
 
-            subtitleProvider.fetch(subdata).then((subs) => {
+            subtitleProvider.fetch(subdata).then((subs: any) => {
                 if (subs && Object.keys(subs).length > 0) {
                     console.info(Object.keys(subs).length + ' subtitles found');
                     resolve(subs);
@@ -353,7 +353,7 @@ function handleVideoFile(file: { path: string; name: string }): void {
     // Attempt to match with Trakt for metadata
     if (app?.Trakt?.client) {
         app.Trakt.client.matcher.match({ path: file.path })
-            .then((res) => {
+            .then((res: any) => {
                 // Enrich playObj with Trakt metadata
                 if (res.type === 'movie') {
                     playObj.title = res.movie.title;
@@ -373,7 +373,7 @@ function handleVideoFile(file: { path: string; name: string }): void {
 
                 return getSubtitles(sub_data);
             })
-            .then((subs) => {
+            .then((subs: any) => {
                 const localSub = checkSubs();
                 if (localSub) {
                     playObj.defaultSubtitle = localSub.local;

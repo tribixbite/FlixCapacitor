@@ -11,16 +11,16 @@ import { Browser } from '@capacitor/browser';
 export const win = {
     // Logging functions - use console directly
     log: console.log.bind(console),
-    debug: (...args) => {
+    debug: (...args: any[]) => {
         console.debug('[DEBUG]', ...args);
     },
-    info: (...args) => {
+    info: (...args: any[]) => {
         console.info('[INFO]', ...args);
     },
-    warn: (...args) => {
+    warn: (...args: any[]) => {
         console.warn('[WARNING]', ...args);
     },
-    error: async (...args) => {
+    error: async (...args: any[]) => {
         console.error('[ERROR]', ...args);
         // Log errors to file using Capacitor Filesystem
         try {
@@ -43,7 +43,7 @@ export const win = {
     moveTo: () => console.warn('win.moveTo not supported on mobile'),
     show: () => console.log('win.show - app already visible'),
     hide: () => console.warn('win.hide not supported on mobile'),
-    close: async (force) => {
+    close: async (force?: boolean) => {
         console.log('win.close called');
         // Perform cleanup here if needed
         if (force) {
@@ -54,7 +54,7 @@ export const win = {
     minimize: () => console.warn('win.minimize not supported on mobile'),
 
     // Event listeners - map to Capacitor equivalents
-    on: (event, callback) => {
+    on: (event: string, callback: () => void) => {
         console.warn(`win.on('${event}') not fully implemented`);
         if (event === 'close') {
             // Proper cleanup on app exit
@@ -128,11 +128,11 @@ export const win = {
 
     // Cookies API - # TODO: implement with Capacitor plugin if needed
     cookies: {
-        getAll: (filter, callback) => {
+        getAll: (filter: any, callback: (cookies: any[]) => void) => {
             console.warn('win.cookies.getAll not implemented');
             callback([]);
         },
-        remove: (details, callback) => {
+        remove: (details: any, callback: (result: any) => void) => {
             console.warn('win.cookies.remove not implemented');
             callback(null);
         }
@@ -146,7 +146,7 @@ export const nw = {
         fullArgv: [], // No command line args on mobile
         argv: [],
 
-        on: (event, callback) => {
+        on: (event: string, callback: (url: string) => void) => {
             console.warn(`nw.App.on('${event}') - using Capacitor App listeners instead`);
             if (event === 'open') {
                 /**
@@ -201,7 +201,7 @@ export const nw = {
     },
 
     Menu: class {
-        constructor(options) {
+        constructor(options?: any) {
             console.warn('nw.Menu not supported on mobile');
         }
         createMacBuiltin() {}
@@ -209,13 +209,13 @@ export const nw = {
     },
 
     MenuItem: class {
-        constructor(options) {
+        constructor(options?: any) {
             console.warn('nw.MenuItem not supported on mobile');
         }
     },
 
     Tray: class {
-        constructor(options) {
+        constructor(options?: any) {
             console.warn('nw.Tray not supported on mobile');
         }
         remove() {}
