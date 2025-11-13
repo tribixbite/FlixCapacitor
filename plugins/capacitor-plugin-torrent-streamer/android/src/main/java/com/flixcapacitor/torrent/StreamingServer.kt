@@ -8,15 +8,14 @@ import java.io.IOException
 /**
  * StreamingServer - HTTP server for streaming torrent video files
  * Implements HTTP Range requests for video seeking support
+ *
+ * CRITICAL FIX: Uses dynamic port allocation (port 0) to prevent port conflicts
+ * The OS assigns a free ephemeral port, retrieved via listeningPort after start()
  */
-class StreamingServer(private val port: Int = 8888) : NanoHTTPD(port) {
+class StreamingServer(port: Int = 0) : NanoHTTPD(port) {
 
     private var videoFile: File? = null
     private var videoSize: Long = 0
-
-    companion object {
-        private const val BUFFER_SIZE = 8192 // 8 KB chunks
-    }
 
     /**
      * Set video file to stream
@@ -28,9 +27,10 @@ class StreamingServer(private val port: Int = 8888) : NanoHTTPD(port) {
 
     /**
      * Get streaming URL for video player
+     * Uses listeningPort to get the actual port assigned by the OS
      */
     fun getStreamUrl(): String {
-        return "http://127.0.0.1:$port/video"
+        return "http://127.0.0.1:$listeningPort/video"
     }
 
     /**
@@ -132,7 +132,23 @@ class StreamingServer(private val port: Int = 8888) : NanoHTTPD(port) {
 
         // Open file and skip to start position
         val fis = FileInputStream(file)
-        fis.skip(start)
+
+        // CRITICAL FIX: InputStream.skip() doesn't guarantee skipping all bytes in one call
+        // Must loop until all bytes are skipped or error occurs
+        var bytesToSkip = start
+        while (bytesToSkip > 0) {
+            val skipped = fis.skip(bytesToSkip)
+            if (skipped <= 0) {
+                // Failed to skip - close stream and return error
+                fis.close()
+                return newFixedLengthResponse(
+                    Response.Status.INTERNAL_ERROR,
+                    "text/plain",
+                    "Failed to seek to byte position $start in video file"
+                )
+            }
+            bytesToSkip -= skipped
+        }
 
         // Create response with partial content
         val response = newFixedLengthResponse(

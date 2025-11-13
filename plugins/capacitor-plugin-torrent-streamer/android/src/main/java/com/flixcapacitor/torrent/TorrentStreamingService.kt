@@ -293,9 +293,10 @@ class TorrentStreamingService : Service() {
             LogHelper.i("Service", "📝 Log file: ${LogHelper.getLogPath()}")
             showErrorToast("Log: ${LogHelper.getLogPath()}")
 
-            // Start streaming server
-            LogHelper.i("Service", "🌐 Starting HTTP StreamingServer on port 8888...")
-            android.util.Log.d("TorrentStreamingService", "Starting StreamingServer...")
+            // Start streaming server with dynamic port allocation
+            // CRITICAL FIX: Use port 0 to let OS assign a free port (prevents conflicts)
+            LogHelper.i("Service", "🌐 Starting HTTP StreamingServer with dynamic port allocation...")
+            android.util.Log.d("TorrentStreamingService", "Starting StreamingServer with port 0 (dynamic allocation)...")
             showErrorToast("Starting HTTP server...")
 
             // Stop any existing server first (cleanup from previous session)
@@ -311,30 +312,19 @@ class TorrentStreamingService : Service() {
             }
 
             try {
-                streamingServer = StreamingServer()
-                LogHelper.d("Service", "  - StreamingServer instance created")
-                streamingServer?.start()
-                LogHelper.i("Service", "✅ StreamingServer started successfully on port 8888")
-                android.util.Log.d("TorrentStreamingService", "StreamingServer started on port 8888")
-                showErrorToast("HTTP server started on port 8888")
-            } catch (e: java.net.BindException) {
-                // Port still in use - try to force kill and restart
-                LogHelper.e("Service", "💥 Port 8888 already in use - attempting recovery...", e)
-                android.util.Log.e("TorrentStreamingService", "Port 8888 in use, retrying...", e)
-                showErrorToast("Port 8888 busy, retrying...")
+                // Create server with port 0 (OS assigns free port)
+                streamingServer = StreamingServer(0)
+                LogHelper.d("Service", "  - StreamingServer instance created with port 0")
 
-                try {
-                    // Wait a bit longer for OS to release port
-                    Thread.sleep(500)
-                    streamingServer = StreamingServer()
-                    streamingServer?.start()
-                    LogHelper.i("Service", "✅ StreamingServer started on retry")
-                    showErrorToast("HTTP server started (retry)")
-                } catch (retryException: Exception) {
-                    LogHelper.e("Service", "💥 Failed to start server after retry", retryException)
-                    showErrorToast("FATAL: Port 8888 locked. Restart app.")
-                    throw RuntimeException("Port 8888 is locked from previous session. Please force-stop and restart the app.", retryException)
-                }
+                // Start server
+                streamingServer?.start()
+
+                // Get the actual port assigned by the OS
+                val actualPort = streamingServer?.listeningPort ?: 0
+                LogHelper.i("Service", "✅ StreamingServer started successfully on port $actualPort")
+                android.util.Log.d("TorrentStreamingService", "StreamingServer started on dynamically assigned port: $actualPort")
+                showErrorToast("HTTP server started on port $actualPort")
+
             } catch (e: Exception) {
                 LogHelper.e("Service", "💥 Failed to start StreamingServer", e)
                 android.util.Log.e("TorrentStreamingService", "Failed to start StreamingServer", e)
