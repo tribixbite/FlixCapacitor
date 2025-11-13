@@ -135,7 +135,8 @@ async function initCapacitorPlugins(): Promise<void> {
         try {
             await StatusBar.setStyle({ style: Style.Dark });
         } catch (e) {
-            console.log('Status bar style not set (may be Android):', e.message);
+            const error = e as Error;
+            console.log('Status bar style not set (may be Android):', error.message);
         }
 
         // Handle app state changes
@@ -519,7 +520,8 @@ function initMarionette(): any {
                     }
                 }, 1000);
             }
-        } catch (error) {
+        } catch (e) {
+            const error = e as Error;
             console.error('!!! Error in App.onStart !!!');
             console.error('Error:', error);
             console.error('Stack:', error.stack);
@@ -571,7 +573,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('✓ Application started');
 
         console.log('=== FlixCapacitor Ready ==='); // Wait 2 seconds for UI to settle
-    } catch (error) {
+    } catch (e) {
+        const error = e as Error;
         console.error('!!! Failed to initialize application !!!');
         console.error('Error:', error);
         console.error('Stack:', error.stack);

@@ -76,7 +76,8 @@ const Database: any = {
                 type: type
             });
             return { imdb_id, type };
-        } catch (error) {
+        } catch (e) {
+            const error = e as Error;
             // Handle unique constraint violation
             if (error.message && error.message.includes('UNIQUE')) {
                 console.warn('Bookmark already exists:', imdb_id);
@@ -268,7 +269,8 @@ const Database: any = {
             }
 
             return data;
-        } catch (error) {
+        } catch (e) {
+            const error = e as Error;
             // Handle unique constraint (episode already marked)
             if (error.message && error.message.includes('UNIQUE')) {
                 console.warn('Episode already marked as watched');

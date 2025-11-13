@@ -17,7 +17,8 @@ try {
     localStorage.setItem('_mobile_init', Date.now().toString());
     console.log('localStorage is available');
 } catch (e) {
-    console.warn('localStorage not available:', e.message);
+    const error = e as Error;
+    console.warn('localStorage not available:', error.message);
 }
 
 // Platform detection
