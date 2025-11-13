@@ -41,9 +41,23 @@
   - `android/app/src/main/java/app/flixcapacitor/mobile/workers/LibraryScanWorker.kt` - WorkManager integration
 - **Status:** Backend complete, ready for UI integration
 
+### 9A.3: Subtitle System Enhancements ✅ COMPLETE
+- **Commit:** 978be336
+- **Features Implemented:**
+  - ✅ OpenSubtitles.org API integration (search & download)
+  - ✅ Subtitle format parsing (SRT, VTT, ASS/SSA)
+  - ✅ Format conversion (SRT ↔ VTT)
+  - ✅ Subtitle sync adjustment (+/- milliseconds)
+  - ✅ Customizable styling (font, color, position, outline)
+  - ✅ Language auto-detection (heuristic patterns)
+  - ✅ CSS generation for styled subtitles
+  - ✅ Persistent style preferences
+- **Files:**
+  - `src/app/lib/subtitle-service.ts` - Complete subtitle service (683 lines)
+- **Status:** Backend complete, ready for UI integration
+
 ### Next Phase 9A Tasks
-- 9A.3: Subtitle System Enhancements (next)
-- 9A.4: Error Handling & User Feedback
+- 9A.4: Error Handling & User Feedback (next)
 - 9A.5: Loading State Improvements
 - 9A.6: Search Experience Enhancement
 
