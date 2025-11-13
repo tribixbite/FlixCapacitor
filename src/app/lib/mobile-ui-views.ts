@@ -152,7 +152,7 @@ export class MobileUIController {
                     item.classList.add('active');
 
                     // If already open, close it; if closed, open it
-                    if (isActive && !e.target.closest('.browse-dropdown-item')) {
+                    if (isActive && !(e.target as HTMLElement).closest('.browse-dropdown-item')) {
                         item.classList.remove('active');
                     }
                     return;
@@ -291,7 +291,7 @@ export class MobileUIController {
                 // Add click handlers for continue watching cards
                 document.querySelectorAll('.continue-card').forEach(card => {
                     card.addEventListener('click', () => {
-                        const id = card.dataset.id;
+                        const id = (card as HTMLElement).dataset.id;
                         this.showDetail(id);
                     });
                 });
@@ -322,7 +322,7 @@ export class MobileUIController {
             const shows = await tvShowsProvider.getPopular();
 
             // Store shows for detail view
-            shows.forEach(show => {
+            shows.forEach((show: any) => {
                 this.currentMovieData.set(show.tvdb_id || show.imdb_id, show);
             });
 
@@ -364,7 +364,7 @@ export class MobileUIController {
             const anime = await animeProvider.getPopular();
 
             // Store anime for detail view
-            anime.forEach(item => {
+            anime.forEach((item: any) => {
                 this.currentMovieData.set(item.tvdb_id || item.imdb_id, item);
             });
 
@@ -404,7 +404,7 @@ export class MobileUIController {
         }
     }
 
-    async renderFavoritesTab(contentGrid) {
+    async renderFavoritesTab(contentGrid: HTMLElement) {
         try {
             const favoritesService = window.FavoritesService;
             if (!favoritesService) {
@@ -452,7 +452,7 @@ export class MobileUIController {
         }
     }
 
-    async renderWatchlistTab(contentGrid) {
+    async renderWatchlistTab(contentGrid: HTMLElement) {
         try {
             const watchlistService = window.WatchlistService;
             if (!watchlistService) {
@@ -558,7 +558,7 @@ export class MobileUIController {
             }
 
             // Transform library items to content card format
-            const itemsFormatted = libraryItems.map(item => ({
+            const itemsFormatted = libraryItems.map((item: any) => ({
                 imdb_id: item.imdb_id || `local_${item.media_id}`,
                 title: item.title,
                 year: item.year || 'Unknown',
@@ -817,7 +817,7 @@ export class MobileUIController {
             let totalFiles = 0;
             let currentFile = 0;
 
-            const results = await libraryService.scanFolders(commonPaths, (current, total, filename) => {
+            const results = await libraryService.scanFolders(commonPaths, (current: number, total: number, filename: string) => {
                 currentFile = current;
                 totalFiles = total || currentFile;
 
@@ -828,7 +828,7 @@ export class MobileUIController {
                 const currentFileText = document.querySelector('.scan-current-file');
 
                 if (progressText) progressText.textContent = `${currentFile} / ${totalFiles} files`;
-                if (progressBar) progressBar.style.width = `${progress}%`;
+                if (progressBar) (progressBar as HTMLElement).style.width = `${progress}%`;
                 if (currentFileText) currentFileText.textContent = filename || 'Scanning...';
             });
 
@@ -967,7 +967,7 @@ export class MobileUIController {
                 const currentFileText = document.querySelector('.scan-current-file');
 
                 if (progressText) progressText.textContent = `${processedCount} / ${filesResult.files.length} files`;
-                if (progressBar) progressBar.style.width = `${progress}%`;
+                if (progressBar) (progressBar as HTMLElement).style.width = `${progress}%`;
                 if (currentFileText) currentFileText.textContent = file.name;
 
                 // Add file to library
@@ -1472,7 +1472,7 @@ export class MobileUIController {
             };
 
             // Transform courses to match content card format
-            const coursesFormatted = courses.map(course => {
+            const coursesFormatted = courses.map((course: any) => {
                 const providerInfo = providerLogos[course.provider] || { color: '1f1f1f', text: course.provider || 'Course' };
                 const logoUrl = `https://placehold.co/300x450/${providerInfo.color}/ffffff?text=${encodeURIComponent(providerInfo.text)}`;
 
@@ -1504,7 +1504,7 @@ export class MobileUIController {
             });
 
             // Store courses for detail view
-            coursesFormatted.forEach(course => {
+            coursesFormatted.forEach((course: any) => {
                 this.currentMovieData.set(course.imdb_id, course);
             });
 
@@ -1564,10 +1564,10 @@ export class MobileUIController {
         document.querySelectorAll('.content-card').forEach(card => {
             card.addEventListener('click', (e) => {
                 // Don't open detail if clicking favorite button
-                if (e.target.closest('.content-card-favorite')) {
+                if ((e.target as HTMLElement).closest('.content-card-favorite')) {
                     return;
                 }
-                const id = card.dataset.id;
+                const id = (card as HTMLElement).dataset.id;
                 this.showDetail(id);
             });
         });
@@ -1585,7 +1585,7 @@ export class MobileUIController {
                 e.stopPropagation();
                 e.preventDefault();
 
-                const id = button.dataset.id;
+                const id = (button as HTMLElement).dataset.id;
                 const favoritesService = window.FavoritesService;
 
                 if (!favoritesService) {
@@ -1631,7 +1631,7 @@ export class MobileUIController {
 
         const buttons = document.querySelectorAll('.content-card-favorite');
         for (const button of buttons) {
-            const id = button.dataset.id;
+            const id = (button as HTMLElement).dataset.id;
             const isFavorited = await favoritesService.isFavorite(id);
 
             if (isFavorited) {
@@ -1644,7 +1644,7 @@ export class MobileUIController {
         }
     }
 
-    showDetail(id) {
+    showDetail(id: string) {
         // Track navigation history
         if (this.currentView && this.currentView !== `detail-${id}`) {
             this.navigationHistory.push(this.currentView);
