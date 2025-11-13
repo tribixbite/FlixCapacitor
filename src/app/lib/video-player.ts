@@ -243,7 +243,7 @@ export class VideoPlayer {
             const total = this.playbackQueue.getTotalFiles();
 
             // Show queue status
-            queueStatus.style.display = 'block';
+            queueStatus.classList.remove('hidden');
 
             // Update current file text
             queueCurrent.textContent = `Playing: ${currentFile.name} (${position}/${total})`;
@@ -258,7 +258,7 @@ export class VideoPlayer {
             console.log(`Queue UI updated: ${position}/${total}`);
         } else {
             // Hide queue status if no queue or single file
-            queueStatus.style.display = 'none';
+            queueStatus.classList.add('hidden');
         }
     }
 
@@ -1146,7 +1146,7 @@ export class VideoPlayer {
 
                             // Show progress stats box once downloading starts
                             if (status.progress !== undefined && torrentStatus) {
-                                torrentStatus.style.display = 'block';
+                                torrentStatus.classList.remove('hidden');
 
                                 // Update progress percentage
                                 if (progressText) {
@@ -1263,7 +1263,7 @@ export class VideoPlayer {
                                             }
 
                                             if (status.progress !== undefined && torrentStatus) {
-                                                torrentStatus.style.display = 'block';
+                                                torrentStatus.classList.remove('hidden');
                                                 if (progressText) progressText.textContent = `${Math.round(status.progress * 100)}%`;
                                                 const dlProgress = document.getElementById('dl-progress');
                                                 if (dlProgress) dlProgress.textContent = `${Math.round(status.progress * 100)}%`;
@@ -1324,10 +1324,10 @@ export class VideoPlayer {
                 }
                 // Hide spinner
                 const spinner = document.querySelector('.loading-spinner-large');
-                if (spinner) spinner.style.display = 'none';
+                if (spinner) spinner.classList.add('hidden');
 
                 // Hide progress stats box if shown
-                if (torrentStatus) torrentStatus.style.display = 'none';
+                if (torrentStatus) torrentStatus.classList.add('hidden');
 
                 // Stop here - don't continue to video player
                 return;
@@ -1343,7 +1343,7 @@ export class VideoPlayer {
             if (loadingSubtitle) loadingSubtitle.textContent = 'Stream ready, loading video...';
 
             // Show video container (but keep loading UI visible until video loads)
-            if (videoContainer) videoContainer.style.display = 'block';
+            if (videoContainer) videoContainer.classList.remove('hidden');
 
             // CRITICAL FIX: Check if this is still the current stream request
             // Prevents old/cancelled streams from playing when user switches videos quickly
@@ -1475,7 +1475,7 @@ export class VideoPlayer {
 
                     // Hide spinner
                     const spinner = document.querySelector('.loading-spinner-large');
-                    if (spinner) spinner.style.display = 'none';
+                    if (spinner) spinner.classList.add('hidden');
                 };
                 addTrackedListener(videoElement, 'error', errorHandler);
 
@@ -1495,31 +1495,18 @@ export class VideoPlayer {
                         // Show resume confirmation dialog
                         const resumeDialog = document.createElement('div');
                         resumeDialog.id = 'resume-dialog';
-                        resumeDialog.style.cssText = `
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                            background: rgba(0,0,0,0.95);
-                            padding: 2rem;
-                            border-radius: var(--radius-lg);
-                            z-index: 200;
-                            text-align: center;
-                            min-width: 300px;
-                            backdrop-filter: blur(20px);
-                            border: 1px solid rgba(255,255,255,0.1);
-                        `;
+                        resumeDialog.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/95 p-8 rounded-2xl z-[200] text-center min-w-[300px] backdrop-blur-xl border border-white/10';
 
                         const minutes = Math.floor(savedPosition / 60);
                         const seconds = Math.floor(savedPosition % 60);
                         const timeStr = `${minutes}:${String(seconds).padStart(2, '0')}`;
 
                         resumeDialog.innerHTML = `
-                            <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">Resume Playback?</div>
-                            <div style="color: rgba(255,255,255,0.7); margin-bottom: 2rem;">Continue from ${timeStr}</div>
-                            <div style="display: flex; gap: 1rem; justify-content: center;">
-                                <button id="resume-start-over" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.75rem 1.5rem; border-radius: var(--radius-md); cursor: pointer; font-weight: 500;">Start Over</button>
-                                <button id="resume-continue" style="flex: 1; background: var(--accent-primary); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: var(--radius-md); cursor: pointer; font-weight: 600;">Resume</button>
+                            <div class="text-lg font-semibold mb-4">Resume Playback?</div>
+                            <div class="text-white/70 mb-8">Continue from ${timeStr}</div>
+                            <div class="flex gap-4 justify-center">
+                                <button id="resume-start-over" class="flex-1 bg-white/10 border border-white/20 text-white px-6 py-3 rounded-lg cursor-pointer font-medium hover:bg-white/20 transition-colors">Start Over</button>
+                                <button id="resume-continue" class="flex-1 btn-primary">Resume</button>
                             </div>
                         `;
 
@@ -1563,7 +1550,7 @@ export class VideoPlayer {
                     // Show fullscreen button
                     const fullscreenBtn = document.getElementById('fullscreen-btn');
                     if (fullscreenBtn && document.fullscreenEnabled) {
-                        fullscreenBtn.style.display = 'flex';
+                        fullscreenBtn.classList.remove('hidden');
                     }
 
                     // Update queue status UI if queue exists
@@ -1577,33 +1564,31 @@ export class VideoPlayer {
 
                     // Fade out loading UI
                     if (loadingContent) {
-                        loadingContent.style.transition = 'opacity 0.3s ease';
-                        loadingContent.style.opacity = '0';
+                        loadingContent.classList.add('transition-opacity', 'duration-300', 'opacity-0');
                         setTimeout(() => {
-                            loadingContent.style.display = 'none';
+                            loadingContent.classList.add('hidden');
                         }, 300);
                     }
 
                     // Show playback controls (speed and subtitle buttons)
                     const playbackControls = document.getElementById('playback-controls');
                     if (playbackControls) {
-                        playbackControls.style.display = 'flex';
+                        playbackControls.classList.remove('hidden');
                     }
 
                     // Show download overlay during playback (hide when download complete)
                     const downloadOverlay = document.getElementById('download-overlay');
                     if (downloadOverlay) {
-                        downloadOverlay.style.display = 'block';
+                        downloadOverlay.classList.remove('hidden');
 
                         // Hide overlay when download is complete (100%) - BUG-002 FIX: Track interval
                         addTrackedInterval(() => {
                             const dlProgress = document.getElementById('dl-progress');
                             if (dlProgress && dlProgress.textContent.includes('100%')) {
                                 setTimeout(() => {
-                                    downloadOverlay.style.transition = 'opacity 0.3s ease';
-                                    downloadOverlay.style.opacity = '0';
+                                    downloadOverlay.classList.add('transition-opacity', 'duration-300', 'opacity-0');
                                     setTimeout(() => {
-                                        downloadOverlay.style.display = 'none';
+                                        downloadOverlay.classList.add('hidden');
                                     }, 300);
                                 }, 2000); // Keep visible for 2s after completion
                                 // Note: Interval will be cleared when player exits via cleanup
@@ -1658,8 +1643,8 @@ export class VideoPlayer {
 
                         // Show loading UI for next file
                         if (loadingContent) {
-                            loadingContent.style.display = 'flex';
-                            loadingContent.style.opacity = '1';
+                            loadingContent.classList.remove('hidden', 'opacity-0');
+                            loadingContent.classList.add('opacity-100');
                         }
                         if (loadingTitle) loadingTitle.textContent = 'Loading Next Video';
                         if (loadingSubtitle) loadingSubtitle.textContent = `Playing ${nextFile.name}...`;
@@ -1707,12 +1692,12 @@ export class VideoPlayer {
                 const subtitleSelector = document.getElementById('subtitle-selector');
 
                 if (subtitleBtn && subtitleSelector) {
-                    subtitleBtn.style.display = 'flex';
+                    subtitleBtn.classList.remove('hidden');
 
                     const subtitleBtnHandler = async () => {
-                        if (subtitleSelector.style.display === 'none') {
+                        if (subtitleSelector.classList.contains('hidden')) {
                             subtitleSelector.innerHTML = '<div class="loading-spinner-large"></div>';
-                            subtitleSelector.style.display = 'block';
+                            subtitleSelector.classList.remove('hidden');
 
                             const subtitles = await window.NativeTorrentClient.downloadSubtitles({ imdbId: movie.imdb_id });
 
@@ -1741,7 +1726,7 @@ export class VideoPlayer {
                                         if (videoElement.textTracks && videoElement.textTracks.length > 0) {
                                             videoElement.textTracks[0].mode = 'showing';
                                         }
-                                        subtitleSelector.style.display = 'none';
+                                        subtitleSelector.classList.add('hidden');
                                     };
                                     addTrackedListener(option, 'click', optionClickHandler);
                                     subtitleSelector.appendChild(option);
@@ -1750,7 +1735,7 @@ export class VideoPlayer {
                                 subtitleSelector.innerHTML = '<div>No subtitles found</div>';
                             }
                         } else {
-                            subtitleSelector.style.display = 'none';
+                            subtitleSelector.classList.add('hidden');
                         }
                     };
                     addTrackedListener(subtitleBtn, 'click', subtitleBtnHandler);
@@ -1758,10 +1743,10 @@ export class VideoPlayer {
                 const speedBtn = document.getElementById('speed-btn');
                 const speedSelector = document.getElementById('speed-selector');
                 if (speedBtn && speedSelector) {
-                    speedBtn.style.display = 'flex';
+                    speedBtn.classList.remove('hidden');
 
                     const speedBtnHandler = () => {
-                        speedSelector.style.display = speedSelector.style.display === 'none' ? 'block' : 'none';
+                        speedSelector.classList.toggle('hidden');
                     };
                     addTrackedListener(speedBtn, 'click', speedBtnHandler);
 
@@ -1773,27 +1758,25 @@ export class VideoPlayer {
 
                             // Update active state
                             document.querySelectorAll('.speed-option').forEach(opt => {
-                                opt.style.background = 'transparent';
-                                opt.classList.remove('active');
+                                opt.classList.remove('bg-primary', 'active');
                             });
-                            option.style.background = 'var(--accent-primary)';
-                            option.classList.add('active');
+                            option.classList.add('bg-primary', 'active');
 
-                            speedSelector.style.display = 'none';
+                            speedSelector.classList.add('hidden');
                         };
                         addTrackedListener(option, 'click', speedClickHandler);
 
                         // Hover effect
                         const mouseenterHandler = () => {
                             if (!option.classList.contains('active')) {
-                                option.style.background = 'rgba(255,255,255,0.1)';
+                                option.classList.add('bg-white/10');
                             }
                         };
                         addTrackedListener(option, 'mouseenter', mouseenterHandler);
 
                         const mouseleaveHandler = () => {
                             if (!option.classList.contains('active')) {
-                                option.style.background = 'transparent';
+                                option.classList.remove('bg-white/10');
                             }
                         };
                         addTrackedListener(option, 'mouseleave', mouseleaveHandler);
@@ -1802,7 +1785,7 @@ export class VideoPlayer {
                     // Close selector when clicking outside - CRITICAL: Document-level listener
                     const documentClickHandler = (e) => {
                         if (!speedBtn.contains(e.target) && !speedSelector.contains(e.target)) {
-                            speedSelector.style.display = 'none';
+                            speedSelector.classList.add('hidden');
                         }
                     };
                     addTrackedListener(document, 'click', documentClickHandler);
@@ -1811,7 +1794,7 @@ export class VideoPlayer {
                 // Picture-in-Picture toggle
                 const pipBtn = document.getElementById('pip-btn');
                 if (pipBtn && document.pictureInPictureEnabled) {
-                    pipBtn.style.display = 'flex';
+                    pipBtn.classList.remove('hidden');
 
                     const pipClickHandler = async () => {
                         try {
@@ -1828,12 +1811,12 @@ export class VideoPlayer {
 
                     // Update button when PiP state changes
                     const pipEnterHandler = () => {
-                        pipBtn.style.background = 'var(--accent-primary)';
+                        pipBtn.classList.add('bg-primary');
                     };
                     addTrackedListener(videoElement, 'enterpictureinpicture', pipEnterHandler);
 
                     const pipLeaveHandler = () => {
-                        pipBtn.style.background = 'rgba(255,255,255,0.1)';
+                        pipBtn.classList.remove('bg-primary');
                     };
                     addTrackedListener(videoElement, 'leavepictureinpicture', pipLeaveHandler);
                 }
@@ -1914,35 +1897,9 @@ export class VideoPlayer {
 
                 const showSkipIndicator = (direction, seconds) => {
                     const indicator = document.createElement('div');
-                    indicator.style.cssText = `
-                        position: absolute;
-                        top: 50%;
-                        ${direction === 'forward' ? 'right: 20%;' : 'left: 20%;'}
-                        transform: translateY(-50%);
-                        background: rgba(0,0,0,0.8);
-                        color: white;
-                        padding: 1.5rem 2rem;
-                        border-radius: 50%;
-                        font-size: 1.5rem;
-                        z-index: 150;
-                        animation: skipFade 0.6s ease-out;
-                        pointer-events: none;
-                    `;
-                    indicator.innerHTML = direction === 'forward' ? `⏩<br><small style="font-size: 0.8rem;">${seconds}s</small>` : `⏪<br><small style="font-size: 0.8rem;">${seconds}s</small>`;
-
-                    // Add animation keyframes if not already added
-                    if (!document.getElementById('skip-animation-styles')) {
-                        const style = document.createElement('style');
-                        style.id = 'skip-animation-styles';
-                        style.textContent = `
-                            @keyframes skipFade {
-                                0% { opacity: 0; transform: translateY(-50%) scale(0.8); }
-                                50% { opacity: 1; transform: translateY(-50%) scale(1); }
-                                100% { opacity: 0; transform: translateY(-50%) scale(0.8); }
-                            }
-                        `;
-                        document.head.appendChild(style);
-                    }
+                    // Base classes for skip indicator
+                    indicator.className = `absolute top-1/2 -translate-y-1/2 bg-black/80 text-white px-8 py-6 rounded-full text-2xl z-[150] animate-skip-fade pointer-events-none ${direction === 'forward' ? 'right-[20%]' : 'left-[20%]'}`;
+                    indicator.innerHTML = direction === 'forward' ? `⏩<br><small class="text-xs">${seconds}s</small>` : `⏪<br><small class="text-xs">${seconds}s</small>`;
 
                     document.querySelector('.video-player-container').appendChild(indicator);
                     setTimeout(() => indicator.remove(), 600);
@@ -1999,7 +1956,7 @@ export class VideoPlayer {
 
             if (statusText) {
                 statusText.textContent = 'Error';
-                statusText.style.color = '#ef4444';
+                statusText.classList.add('text-red-500');
             }
 
             if (loadingTitle) {
@@ -2019,7 +1976,7 @@ export class VideoPlayer {
 
             // Hide spinner
             const spinner = document.querySelector('.loading-spinner-large');
-            if (spinner) spinner.style.display = 'none';
+            if (spinner) spinner.classList.add('hidden');
 
             // Reset loading flag on error - user needs to retry
             this.ctx.isLoadingStream = false;
@@ -2043,7 +2000,7 @@ export class VideoPlayer {
                 </span>
             `;
         }
-        if (spinner) spinner.style.display = 'none';
+        if (spinner) spinner.classList.add('hidden');
 
         // Reset loading flag on error - user needs to retry
         this.ctx.isLoadingStream = false;
