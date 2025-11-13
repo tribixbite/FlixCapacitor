@@ -433,7 +433,7 @@ export class MobileUIController {
             }
 
             // Store favorites for detail view
-            favorites.forEach(item => {
+            favorites.forEach((item: any) => {
                 this.currentMovieData.set(item.imdb_id || item.id, item);
             });
 
@@ -481,7 +481,7 @@ export class MobileUIController {
             }
 
             // Store items for detail view
-            watchlistItems.forEach(item => {
+            watchlistItems.forEach((item: any) => {
                 this.currentMovieData.set(item.imdb_id || item.id, item);
             });
 
@@ -573,7 +573,7 @@ export class MobileUIController {
             }));
 
             // Store items for detail view
-            itemsFormatted.forEach(item => {
+            itemsFormatted.forEach((item: any) => {
                 this.currentMovieData.set(item.imdb_id, item);
             });
 
@@ -663,7 +663,7 @@ export class MobileUIController {
             }));
 
             // Store items for detail view
-            itemsFormatted.forEach(item => {
+            itemsFormatted.forEach((item: any) => {
                 this.currentMovieData.set(item.imdb_id, item);
             });
 
@@ -880,7 +880,7 @@ export class MobileUIController {
             const libraryFolders = settings.get('libraryFolders') || [];
 
             // Check if folder already added
-            if (libraryFolders.some(f => f.uri === result.uri)) {
+            if (libraryFolders.some((f: any) => f.uri === result.uri)) {
                 contentGrid!.innerHTML = UITemplates.emptyState(
                     'ℹ️',
                     'Folder Already Added',
