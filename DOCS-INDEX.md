@@ -7,6 +7,14 @@ Complete guide to all project documentation and development tools.
 ## 🚀 **Quick Start** (Start Here!)
 
 ### Project Status
+- **[PROJECT-STATUS-REPORT.md](PROJECT-STATUS-REPORT.md)** - **NEW:** Complete project metrics and v1.1.0 status
+  - Executive summary with current state
+  - Code quality metrics (TypeScript 0 errors, 26/26 tests passing)
+  - Complete development timeline (Phases 1-8)
+  - CRITICAL bug fixes section with before/after code
+  - Test coverage summary and risk assessment
+  - Ready for v1.1.0 release pending device testing
+
 - **[PROJECT-STATUS.md](PROJECT-STATUS.md)** - Complete project overview and current status
   - Executive summary
   - All 10 completed features
@@ -70,6 +78,12 @@ Complete guide to all project documentation and development tools.
   - Future roadmap (Phases 7-9)
 
 ### Future Development
+- **[FEATURE-TODO-LISTS.md](FEATURE-TODO-LISTS.md)** - **NEW:** Comprehensive enhancement catalog (1,322 lines)
+  - 10 Feature TODOs (130+ items): Video Switching, Multi-File Playback, Favorites, etc.
+  - 5 Application Flow TODOs (71+ items): Architecture, Navigation, State Management
+  - 11 UI Section TODOs (143+ items): Every screen from Home to File Picker Modal
+  - Each TODO includes: enhancements list, known limitations, testing requirements, priority/complexity/impact ratings
+
 - **[TODO-AUDIT.md](TODO-AUDIT.md)** - Analysis of 20 code comments
   - 6 already complete (remove in cleanup)
   - 8 future enhancements (Phase 8-9)
@@ -92,8 +106,24 @@ Complete guide to all project documentation and development tools.
 
 ## 🧪 **Testing & Quality Assurance**
 
+### Testing Readiness
+- **[PRE-TESTING-CHECKLIST.md](PRE-TESTING-CHECKLIST.md)** - **NEW:** Comprehensive pre-testing verification (330 lines)
+  - Development Phase Checklist (Phases 1-8: all complete)
+  - Code Quality Checklist (TypeScript 0 errors, 26/26 tests passing, BUILD SUCCESSFUL)
+  - Documentation Checklist (11 files updated, 3 session summaries)
+  - Build Verification Checklist (APK ready at 74 MB)
+  - Device Testing Preparation Checklist
+  - Device Testing Priority Order (Priority 0: CRITICAL bug validation, Priority 1-3: Features)
+  - Post-Testing Actions
+  - Risk Assessment and Success Criteria
+  - **Status:** ✅ READY FOR DEVICE TESTING
+
 ### Manual Testing
-- **[MANUAL-TESTING-GUIDE.md](MANUAL-TESTING-GUIDE.md)** - 4 priority manual test procedures
+- **[MANUAL-TESTING-GUIDE.md](MANUAL-TESTING-GUIDE.md)** - Manual test procedures with CRITICAL bug validation
+  - **Priority 0:** CRITICAL Bug Fix Validation (video seeking + app restart) - 234 lines
+    - 12 video seeking test scenarios (small/large offsets, rapid seeking, different formats)
+    - 7 app restart test scenarios (back button, force stop, rapid restart cycle)
+    - Success criteria, troubleshooting guides, logcat monitoring commands
   - Priority 1: DirectoryPicker Testing (Critical)
   - Priority 2: UI/UX Verification
   - Priority 3: Dark Mode Testing
@@ -117,6 +147,28 @@ Complete guide to all project documentation and development tools.
   - Custom AAPT2 configuration
   - Multi-tier APK installation
   - Testing procedures
+
+### Session Documentation (2025-11-13)
+- **[SESSION-SUMMARY-2025-11-13.md](SESSION-SUMMARY-2025-11-13.md)** - **NEW:** Gemini 2.5 Pro code review session
+  - Expert code review of proxy/network streaming architecture
+  - 2 CRITICAL production-blocking bugs identified
+  - InputStream.skip() loop implementation
+  - Dynamic port allocation implementation
+  - Both bugs fixed and committed (18a1f2eb)
+
+- **[SESSION-SUMMARY-2025-11-13-tests.md](SESSION-SUMMARY-2025-11-13-tests.md)** - **NEW:** JUnit test suite implementation
+  - 26 comprehensive tests implemented (0 failures, 0 errors)
+  - StreamingServerTest.kt (18 tests): dynamic ports, HTTP Range, MIME types, edge cases
+  - TorrentStreamingServiceTest.kt (8 tests): static methods, null-safety validation
+  - BUILD SUCCESSFUL, all tests passing, comprehensive regression protection
+
+- **[SESSION-SUMMARY-2025-11-13-documentation.md](SESSION-SUMMARY-2025-11-13-documentation.md)** - **NEW:** Documentation update session (529 lines)
+  - 13 commits across 11 documentation files
+  - 500+ lines added/modified
+  - Complete cross-reference network between all docs
+  - NATIVE-TORRENT-STREAMING.md updated to v1.1.0
+  - All port 8888 references replaced with dynamic allocation
+  - Complete session trilogy documenting all work on 2025-11-13
 
 ---
 
@@ -212,7 +264,9 @@ Legacy documentation unrelated to the current mobile architecture has been archi
 - BUN-TERMUX-NOTES.md (project uses npm, not Bun)
 - PUBLIC_DOMAIN_PROCESSING.md (historical processing log)
 
-**Why Archived:** The mobile app uses a native Android architecture with jlibtorrent (Java torrent client) and NanoHTTPD (Java HTTP server on port 8888) for local streaming. No Node.js/Express server is required or used.
+**Why Archived:** The mobile app uses a native Android architecture with jlibtorrent (Java torrent client) and NanoHTTPD (Java HTTP server with dynamic port allocation) for local streaming. No Node.js/Express server is required or used.
+
+**Historical Note (2025-11-13):** Original implementation used hardcoded port 8888, which caused app restart crashes (BindException). Gemini 2.5 Pro code review identified this CRITICAL bug. Now uses dynamic port allocation (port 0 parameter → OS assigns ephemeral ports 49152-65535). See NATIVE-TORRENT-STREAMING.md v1.1.0 for complete details.
 
 ---
 
@@ -235,16 +289,28 @@ Legacy documentation unrelated to the current mobile architecture has been archi
 ### Phase 1-6: Development (COMPLETE) ✅
 All core development documentation complete. See [TYPESCRIPT-TAILWIND-OVERHAUL.md](TYPESCRIPT-TAILWIND-OVERHAUL.md) for full details.
 
-### Current Phase: Manual Testing ⏸️
-Awaiting physical device testing. See [MANUAL-TESTING-GUIDE.md](MANUAL-TESTING-GUIDE.md) for test procedures.
+### Phase 7: Performance Optimization (COMPLETE) ✅
+CSS bundle optimization complete (35.10 kB, 30% under 50KB target). Optional optimizations documented in [PHASE-7-OPTIMIZATION-PLAN.md](PHASE-7-OPTIMIZATION-PLAN.md) for future consideration.
 
-### Phase 7: Performance Optimization (OPTIONAL)
-See [PHASE-7-OPTIMIZATION-PLAN.md](PHASE-7-OPTIMIZATION-PLAN.md) - Wait for manual testing results before starting.
+### Phase 8: CRITICAL Bug Fixes (COMPLETE) ✅ 2025-11-13
+**Gemini 2.5 Pro code review identified and resolved 2 CRITICAL production-blocking bugs:**
+- InputStream.skip() loop fix (video seeking failures)
+- Dynamic port allocation (app restart crashes)
+- 26 passing JUnit tests (comprehensive regression protection)
+- All documentation updated (11 files + 3 session summaries)
+- See [SESSION-SUMMARY-2025-11-13.md](SESSION-SUMMARY-2025-11-13.md) and [PRE-TESTING-CHECKLIST.md](PRE-TESTING-CHECKLIST.md)
 
-### Phase 8: Feature Enhancements (FUTURE)
-See [TODO-AUDIT.md](TODO-AUDIT.md) - Touch gestures, magnet link UI, settings reset, etc.
+### Current Phase: Manual Device Testing ⏳ PENDING
+**Status:** ✅ READY FOR DEVICE TESTING
+- All preparation work complete (code, tests, documentation)
+- APK ready at 74 MB
+- Priority 0 test procedures documented (video seeking + app restart validation)
+- See [MANUAL-TESTING-GUIDE.md](MANUAL-TESTING-GUIDE.md) Priority 0 section
 
-### Phase 9: Platform Expansion (FUTURE)
+### Phase 9: Feature Enhancements (FUTURE)
+See [FEATURE-TODO-LISTS.md](FEATURE-TODO-LISTS.md) (1,322 lines, 500+ items) and [TODO-AUDIT.md](TODO-AUDIT.md) - Touch gestures, magnet link UI, settings reset, etc.
+
+### Phase 10: Platform Expansion (FUTURE)
 - iOS version (requires Mac/Xcode)
 - Desktop app (Electron or Tauri)
 - Web version (PWA)
@@ -284,9 +350,10 @@ npm install
 - **Frontend:** Vite 7.1.9, TypeScript 5.9.3 (strict), Tailwind CSS 3.4.17
 - **Mobile Bridge:** Capacitor 7.x (12 plugins)
 - **Torrent Streaming:** jlibtorrent (Java P2P client)
-- **HTTP Streaming:** NanoHTTPD (port 8888)
+- **HTTP Streaming:** NanoHTTPD (dynamic port allocation, ephemeral ports 49152-65535)
 - **Storage:** SQLite, Android SAF
 - **Build:** Gradle 8.x, Custom ARM64 AAPT2
+- **Testing:** JUnit 4.13.2 (26 passing tests)
 
 ---
 
@@ -310,7 +377,9 @@ npm install
 ---
 
 **Last Updated:** 2025-11-13
-**Version:** 1.0.0
-**Status:** Ready for manual device testing
+**Version:** 1.1.0 (pending device testing)
+**Status:** ✅ READY FOR DEVICE TESTING - All CRITICAL bug fixes complete
 
-For the most up-to-date project status, see [NEXT-STEPS.md](NEXT-STEPS.md).
+**Phase 8 Complete:** 2 CRITICAL bugs fixed, 26 tests passing, all documentation updated (11 files + 3 session summaries)
+
+For the most up-to-date project status, see [PROJECT-STATUS-REPORT.md](PROJECT-STATUS-REPORT.md) and [NEXT-STEPS.md](NEXT-STEPS.md).
