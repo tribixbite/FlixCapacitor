@@ -6,6 +6,8 @@ A modern, mobile-first streaming app built with Capacitor and native torrent sup
 **Version:** 1.0.0
 **Last Updated:** 2025-11-13
 
+> **📖 [Complete Documentation Index](DOCS-INDEX.md)** - Navigate all 14 docs + 6 automation scripts
+
 ## 🎯 Features
 
 ### Core Functionality
