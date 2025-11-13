@@ -34,27 +34,29 @@ function WrapRequest(
 ): { promise: Promise<any>; resolve: (value: any) => void; reject: (error: any) => void } {
     const Q: any = (window as any).Q;
     let deferred: any;
+    let req: IDBRequest;
 
     if (request === undefined) {
-        request = deferredOrRequest;
+        req = deferredOrRequest;
         deferred = Q.defer();
     } else {
+        req = request;
         deferred = deferredOrRequest;
     }
 
-    const existingSuccess = request.onsuccess;
-    request.onsuccess = function (this: IDBRequestWithResult) {
+    const existingSuccess = req.onsuccess;
+    req.onsuccess = function (this: IDBRequestWithResult) {
         deferred.resolve(this.result);
         if (existingSuccess !== null) {
-            existingSuccess.call(request);
+            existingSuccess.call(req);
         }
     };
 
-    const existingError = request.onerror;
-    request.onerror = function (this: IDBRequestWithResult) {
+    const existingError = req.onerror;
+    req.onerror = function (this: IDBRequestWithResult) {
         deferred.reject(this.error);
         if (existingError !== null) {
-            existingError.call(request);
+            existingError.call(req);
         }
     };
 

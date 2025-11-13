@@ -296,6 +296,9 @@ function handleVideoFile(file: { path: string; name: string }): void {
 
     // Check for local subtitles
     const checkSubs = () => {
+        if (!window.path || !window.fs) {
+            return null;
+        }
         const ext = window.path.extname(file.name);
         const toFind = file.path.replace(ext, '.srt');
 
@@ -307,6 +310,9 @@ function handleVideoFile(file: { path: string; name: string }): void {
 
     // Get subtitles from provider
     const getSubtitles = (subdata: any) => {
+        if (!window.Q) {
+            return Promise.reject(new Error('Q library not initialized'));
+        }
         return window.Q.Promise((resolve: (value: any) => void, reject: (reason?: any) => void) => {
             console.log('Subtitles data request:', subdata);
 
@@ -336,6 +342,11 @@ function handleVideoFile(file: { path: string; name: string }): void {
     }
 
     // Prepare playback object
+    if (!window.path) {
+        console.error('Path module not initialized');
+        return;
+    }
+
     const playObj: any = {
         src: 'file://' + window.path.join(file.path),
         type: 'video/mp4',
