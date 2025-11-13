@@ -56,13 +56,21 @@ See: `TYPESCRIPT-TAILWIND-OVERHAUL.md` for full implementation plan.
    - Production CSS: 34.94 kB (6.14 kB gzipped)
 
 4. **APK Build with Full Overhaul** ✅ COMPLETE
-   - Built: 2025-11-13 02:21
+   - Built: 2025-11-13 08:30
    - Location: android/app/build/outputs/apk/debug/app-debug.apk (74MB)
    - Also copied to: /sdcard/FlixCapacitor/latest-debug.apk
-   - Includes: All TS strict mode fixes, Tailwind CSS, dark mode
-   - Build stats: CSS 34.94 kB, JS 568.15 kB (gzipped: 6.14 kB, 170.10 kB)
+   - Includes: All TS strict mode fixes, Tailwind CSS, dark mode, provider init fix
+   - Build stats: CSS 34.94 kB, JS 568.47 kB (gzipped: 6.14 kB, 170.17 kB)
    - Auto-installation: Package installer opened via termux-open
    - Status: Ready for device testing
+
+5. **Provider Initialization Fix** ✅ COMPLETE
+   - Fixed: window.PublicDomainProvider was undefined at runtime
+   - Changed from side-effect imports to explicit initialization
+   - All 3 providers (PublicDomain, TVShows, Anime) explicitly instantiated
+   - Browse tab will now load 12 curated public domain movies
+   - Build: 2025-11-13 08:30
+   - Commit: b8e71fac
 
 ### 🎯 Next: Device Testing
 
