@@ -102,9 +102,11 @@ import './app/lib/provider-loader.ts';
 import './app/lib/settings-manager.ts';
 // Import native torrent client (replaces WebTorrent)
 import './app/lib/native-torrent-client.ts';
-import './app/lib/providers/public-domain-provider.js';
-import './app/lib/providers/tvshows-provider.js';
-import './app/lib/providers/anime-provider.js';
+// Import provider classes (need named imports for explicit initialization)
+import { PublicDomainProvider } from './app/lib/providers/public-domain-provider.js';
+import { TVShowsProvider } from './app/lib/providers/tvshows-provider.js';
+import { AnimeProvider } from './app/lib/providers/anime-provider.js';
+
 import './app/lib/learning-service.ts';
 import './app/lib/favorites-service.ts';
 import './app/lib/library-service.ts';
@@ -131,6 +133,21 @@ console.log('FlixCapacitor starting...');
 console.log('jQuery version:', $.fn.jquery);
 console.log('Backbone version:', (Backbone as any).VERSION);
 console.log('Marionette version:', (Marionette as any).VERSION);
+
+// Explicitly initialize providers and make globally available
+// This ensures they're ready before UI components try to use them
+if (!window.PublicDomainProvider) {
+    window.PublicDomainProvider = new PublicDomainProvider();
+    console.log('✓ PublicDomainProvider initialized');
+}
+if (!window.TVShowsProvider) {
+    window.TVShowsProvider = new TVShowsProvider();
+    console.log('✓ TVShowsProvider initialized');
+}
+if (!window.AnimeProvider) {
+    window.AnimeProvider = new AnimeProvider();
+    console.log('✓ AnimeProvider initialized');
+}
 
 // Initialize Capacitor plugins
 async function initCapacitorPlugins(): Promise<void> {
