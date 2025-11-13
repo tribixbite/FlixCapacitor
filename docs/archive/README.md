@@ -10,7 +10,9 @@ This directory contains legacy documentation that is no longer relevant to the c
 - **STREAMING_SERVER_API.md** - Express API endpoints
 - **ANDROID_SETUP.md** - Setup instructions for Express server
 
-**Why Archived:** The mobile app uses a native Android architecture with jlibtorrent (Java torrent client) and NanoHTTPD (Java HTTP server on port 8888) for local streaming. No Node.js/Express server is required or used.
+**Why Archived:** The mobile app uses a native Android architecture with jlibtorrent (Java torrent client) and NanoHTTPD (Java HTTP server with dynamic port allocation) for local streaming. No Node.js/Express server is required or used.
+
+**Historical Note:** Original implementation used hardcoded port 8888, which was replaced with dynamic port allocation (port 0, OS-assigned ephemeral ports) in 2025-11-13 to resolve app restart crashes. See `NATIVE-TORRENT-STREAMING.md` v1.1.0 for current implementation.
 
 ### Temporary Notes
 

@@ -484,7 +484,7 @@ private updateQueueStatusUI(): void {
    ↓
 9. Start stream for next file (index 1)
    ↓
-10. Stream URL returned: http://127.0.0.1:8888/video
+10. Stream URL returned: http://127.0.0.1:<dynamic-port>/video (e.g., 52413)
    ↓
 11. Set video.src = streamUrl
    ↓
