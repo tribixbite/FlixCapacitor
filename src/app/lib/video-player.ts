@@ -172,7 +172,7 @@ export class VideoPlayer {
      */
     getTorrentHash(movie: any, videoFiles: any[]): string {
         // Try to get movie/show ID
-        const movieId = movie.imdb_id || movie.id || 'unknown';
+        const movieId = (movie as any).imdb_id || movie.id || 'unknown';
 
         // Try to extract infohash from magnet link if available
         const torrent = movie.torrents?.[movie.quality] || movie.torrent;
@@ -368,7 +368,7 @@ export class VideoPlayer {
         };
 
         // Create a basic video player view
-        this.showVideoPlayer(movie, selectedTorrent, selectedQuality);
+        this.showVideoPlayer(movie, selectedTorrent, selectedQuality!);
     }
 
     // ===== LOCAL FILE PLAYBACK =====
@@ -389,7 +389,7 @@ export class VideoPlayer {
                     <button id="player-back" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer; flex-shrink: 0;">←</button>
                     <div style="flex: 1; min-width: 0; overflow: hidden;">
                         <div style="font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${displayTitle}</div>
-                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px;">Local File${movie.year ? ' • ' + movie.year : ''}</div>
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px;">Local File${(movie as any).year ? ' • ' + (movie as any).year : ''}</div>
                     </div>
                 </div>
 
@@ -705,7 +705,7 @@ export class VideoPlayer {
                     const fileIndex = parseInt(star.getAttribute('data-index')!);
                     const file = videoFiles.find(f => f.index === fileIndex);
                     const fileName = file ? file.name : `File ${fileIndex}`;
-                    const movieId = movie.imdb_id || movie.id;
+                    const movieId = (movie as any).imdb_id || movie.id;
 
                     if (star.classList.contains('starred')) {
                         // Remove from favorites
@@ -802,7 +802,7 @@ export class VideoPlayer {
 
                 if (permanentlyDenied) {
                     // Must go to settings
-                    mainRegion.innerHTML = `
+                    mainRegion!.innerHTML = `
                         <div class="content-empty">
                             <div class="empty-icon">🔒</div>
                             <div class="empty-title">Media Access Required</div>
@@ -836,7 +836,7 @@ export class VideoPlayer {
                     });
                 } else {
                     // User denied but can be prompted again
-                    mainRegion.innerHTML = `
+                    mainRegion!.innerHTML = `
                         <div class="content-empty">
                             <div class="empty-icon">🔒</div>
                             <div class="empty-title">Media Access Required</div>
@@ -878,14 +878,14 @@ export class VideoPlayer {
             const displayTitle = movie.title.length > 50 ? movie.title.substring(0, 50) + '...' : movie.title;
 
         // Create initial loading UI with clean, non-overlapping layout
-        mainRegion.innerHTML = `
+        mainRegion!.innerHTML = `
             <div class="video-player-container" style="background: #000; min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-top: env(safe-area-inset-top, 0); padding-bottom: env(safe-area-inset-bottom, 0);">
                 <!-- Compact header - only back button and truncated title -->
                 <div class="player-header" style="position: relative; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem; background: rgba(0,0,0,0.9); z-index: 100; min-height: 56px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     <button id="player-back" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer; flex-shrink: 0;">←</button>
                     <div style="flex: 1; min-width: 0; overflow: hidden;">
                         <div style="font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${displayTitle}</div>
-                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px;">${quality}${movie.year ? ' • ' + movie.year : ''}</div>
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px;">${quality}${(movie as any).year ? ' • ' + (movie as any).year : ''}</div>
                     </div>
                 </div>
 
@@ -917,9 +917,9 @@ export class VideoPlayer {
                 <!-- Clean loading state with minimal info -->
                 <div class="player-content" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem;">
                     <!-- Poster/logo if available -->
-                    ${movie.images?.poster ? `
+                    ${(movie as any).images?.poster ? `
                         <div style="width: 120px; height: 180px; border-radius: 8px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
-                            <img src="${movie.images.poster}" alt="${movie.title}" style="width: 100%; height: 100%; object-fit: cover;" />
+                            <img src="${(movie as any).images.poster}" alt="${movie.title}" style="width: 100%; height: 100%; object-fit: cover;" />
                         </div>
                     ` : ''}
 
@@ -943,7 +943,7 @@ export class VideoPlayer {
                             </div>
                             <div style="display: flex; justify-content: space-between;">
                                 <span style="color: rgba(255,255,255,0.6);">Peers</span>
-                                <span id="peers-text" style="color: rgba(255,255,255,0.8);">${torrent.peer || 0}</span>
+                                <span id="peers-text" style="color: rgba(255,255,255,0.8);">${torrent!.peer || 0}</span>
                             </div>
                         </div>
                     </div>
@@ -957,7 +957,7 @@ export class VideoPlayer {
                            playsinline
                            crossorigin="anonymous"
                            style="width: 100%; height: 100%; background: #000;"
-                           poster="${movie.images?.fanart || movie.images?.poster || ''}">
+                           poster="${(movie as any).images?.fanart || (movie as any).images?.poster || ''}">
                         Your browser doesn't support HTML5 video.
                     </video>
 
@@ -993,7 +993,7 @@ export class VideoPlayer {
         const exitVideoPlayer = async () => {
             // Save current playback position
             if (this.ctx.currentVideoElement && !this.ctx.currentVideoElement.paused) {
-                this.savePlaybackPosition(movie.imdb_id, this.ctx.currentVideoElement.currentTime);
+                this.savePlaybackPosition((movie as any).imdb_id, this.ctx.currentVideoElement.currentTime);
             }
 
             // CRITICAL: Clean up all event listeners to prevent memory leaks
@@ -1041,7 +1041,7 @@ export class VideoPlayer {
             this.ctx.isLoadingStream = false;
 
             // Return to detail view
-            this.ctx.showDetail(movie.imdb_id);
+            this.ctx.showDetail((movie as any).imdb_id);
         };
 
         // Helper to track event listeners for cleanup
@@ -1117,7 +1117,7 @@ export class VideoPlayer {
             try {
                 streamInfo = await Promise.race([
                     window.NativeTorrentClient.startStream(
-                        torrent.url,
+                        torrent!.url,
                         { quality: quality },
                         (status: any) => {
                             // Progress callback - update UI with torrent status
@@ -1244,7 +1244,7 @@ export class VideoPlayer {
                                 console.log('Restarting stream with selected file...');
                                 streamInfo = await Promise.race([
                                     window.NativeTorrentClient.startStream(
-                                        torrent.url,
+                                        torrent!.url,
                                         { quality: quality },
                                         (status: any) => {
                                             // Same progress callback as before
@@ -1373,7 +1373,7 @@ export class VideoPlayer {
                     let errorMsg = '';
                     let errorCode = 'N/A';
                     if (videoElement.error) {
-                        errorCode = videoElement.error.code;
+                        errorCode = String(videoElement.error.code);
                         switch (videoElement.error.code) {
                             case 1: errorMsg = 'Video loading was aborted.'; break;
                             case 2: errorMsg = 'A network error caused the video download to fail part-way.'; break;
@@ -1490,7 +1490,7 @@ export class VideoPlayer {
                     }
 
                     // Resume from saved position with confirmation
-                    const savedPosition = this.getPlaybackPosition(movie.imdb_id);
+                    const savedPosition = this.getPlaybackPosition((movie as any).imdb_id);
                     if (savedPosition > 10 && savedPosition < videoElement.duration - 10) {
                         // Show resume confirmation dialog
                         const resumeDialog = document.createElement('div');
@@ -1510,7 +1510,7 @@ export class VideoPlayer {
                             </div>
                         `;
 
-                        document.querySelector('.video-player-container').appendChild(resumeDialog);
+                        document.querySelector('.video-player-container')!.appendChild(resumeDialog);
 
                         // Pause video until user decides
                         videoElement.pause();
@@ -1601,7 +1601,7 @@ export class VideoPlayer {
                 // Save playback position periodically
                 const timeupdateHandler = () => {
                     if (!videoElement.paused && videoElement.currentTime > 10) {
-                        this.savePlaybackPosition(movie.imdb_id, videoElement.currentTime);
+                        this.savePlaybackPosition((movie as any).imdb_id, videoElement.currentTime);
                     }
                 };
                 addTrackedListener(videoElement, 'timeupdate', timeupdateHandler);
@@ -1699,7 +1699,7 @@ export class VideoPlayer {
                             subtitleSelector.innerHTML = '<div class="loading-spinner-large"></div>';
                             subtitleSelector.classList.remove('hidden');
 
-                            const subtitles = await window.NativeTorrentClient.downloadSubtitles({ imdbId: movie.imdb_id });
+                            const subtitles = await window.NativeTorrentClient.downloadSubtitles({ imdbId: (movie as any).imdb_id });
 
                             subtitleSelector.innerHTML = '';
 
@@ -1752,7 +1752,7 @@ export class VideoPlayer {
 
                     document.querySelectorAll('.speed-option').forEach(option => {
                         const speedClickHandler = () => {
-                            const speed = parseFloat(option.dataset.speed);
+                            const speed = parseFloat((option as HTMLElement).dataset.speed!);
                             videoElement.playbackRate = speed;
                             speedBtn.textContent = `${speed}x`;
 
@@ -1828,7 +1828,7 @@ export class VideoPlayer {
                         const container = document.querySelector('.video-player-container');
                         if (!document.fullscreenElement) {
                             try {
-                                await container.requestFullscreen();
+                                await container!.requestFullscreen();
                                 fullscreenBtn.textContent = '⛶';
                             } catch (e: any) {
                                 console.warn('Fullscreen not available:', e);
@@ -1901,14 +1901,14 @@ export class VideoPlayer {
                     indicator.className = `absolute top-1/2 -translate-y-1/2 bg-black/80 text-white px-8 py-6 rounded-full text-2xl z-[150] animate-skip-fade pointer-events-none ${direction === 'forward' ? 'right-[20%]' : 'left-[20%]'}`;
                     indicator.innerHTML = direction === 'forward' ? `⏩<br><small class="text-xs">${seconds}s</small>` : `⏪<br><small class="text-xs">${seconds}s</small>`;
 
-                    document.querySelector('.video-player-container').appendChild(indicator);
+                    document.querySelector('.video-player-container')!.appendChild(indicator);
                     setTimeout(() => indicator.remove(), 600);
                 };
 
                 const videoClickHandler = (e: MouseEvent) => {
                     const now = Date.now();
                     const tapDelay = now - lastTapTime;
-                    const clickX = e.clientX || (e.touches && e.touches[0].clientX);
+                    const clickX = e.clientX;
                     const tapSide = clickX < window.innerWidth / 2 ? 'left' : 'right';
 
                     // Double-tap detected (within 300ms and same side)
