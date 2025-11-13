@@ -43,7 +43,7 @@ A modern, mobile-first streaming app built with Capacitor and native torrent sup
 - **Build Tool**: Vite 7.1.9
 - **Torrent Engine**: jlibtorrent (native Android via custom plugin)
 - **Database**: SQLite (via @capacitor-community/sqlite)
-- **HTTP Streaming**: NanoHTTPD server on port 8888
+- **HTTP Streaming**: NanoHTTPD server with dynamic port allocation (ephemeral ports)
 - **Runtime**: Android 11+ (API level 30+)
 
 ## Quick Start
@@ -102,8 +102,9 @@ npm run preview
 ### Native Torrent Streaming
 - `capacitor-plugin-torrent-streamer`: Custom Capacitor plugin wrapping jlibtorrent
 - `TorrentStreamingService`: Background Android service managing torrent lifecycle
-- `StreamingServer`: Local HTTP server (NanoHTTPD) serving video chunks
-- Stream URL: `http://127.0.0.1:8888/video`
+- `StreamingServer`: Local HTTP server (NanoHTTPD) with dynamic port allocation
+- Stream URL format: `http://127.0.0.1:<dynamic-port>/video` (e.g., `http://127.0.0.1:52413/video`)
+- Each server instance gets OS-assigned ephemeral port (49152-65535)
 
 ### File Storage
 - **Torrents**: `/sdcard/Android/data/app.flixcapacitor.mobile/files/Movies/FlixCapacitor/`
@@ -160,10 +161,14 @@ npm run preview
 - Green button UI with clear error messaging
 - Stream URL display for manual copying
 
-### ✅ Port 8888 Conflict Resolution (2025-11-13)
-- Retry logic with 500ms delay for port binding
-- Graceful handling of locked ports
-- Enhanced logging for debugging
+### ✅ Dynamic Port Allocation (2025-11-13) - CRITICAL FIX
+- **Problem**: Hardcoded port 8888 caused `BindException` crashes on app restart
+- **Solution**: Dynamic port allocation using port 0 parameter (OS-assigned ephemeral ports)
+- **Benefits**: No restart crashes, supports multiple simultaneous servers, zero configuration
+- **Implementation**: `NanoHTTPD("127.0.0.1", 0)` → OS assigns unique port automatically
+- **Identified by**: Gemini 2.5 Pro code review
+- **Test Coverage**: 26 passing JUnit tests validate both CRITICAL bug fixes
+- **See**: `NATIVE-TORRENT-STREAMING.md` v1.1.0 for complete technical details
 
 ### ✅ JNI Handle Fix (2025-11-13)
 - Architectural solution: never store `TorrentHandle`
