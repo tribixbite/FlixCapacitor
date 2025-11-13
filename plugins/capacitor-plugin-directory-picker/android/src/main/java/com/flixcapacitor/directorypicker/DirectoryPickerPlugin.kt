@@ -19,11 +19,14 @@ class DirectoryPickerPlugin : Plugin() {
     /**
      * Activity result launcher for directory picker
      * Uses Android Storage Access Framework (SAF)
+     * Lazy initialization to avoid issues with bridge availability during plugin construction
      */
-    private val directoryPicker = bridge.registerForActivityResult(
-        ActivityResultContracts.OpenDocumentTree()
-    ) { uri ->
-        handleDirectoryPickerResult(uri)
+    private val directoryPicker by lazy {
+        bridge.registerForActivityResult(
+            ActivityResultContracts.OpenDocumentTree()
+        ) { uri ->
+            handleDirectoryPickerResult(uri)
+        }
     }
 
     /**
