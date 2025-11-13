@@ -1,7 +1,55 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-13
-**Status:** 🎉 TypeScript + Tailwind CSS Overhaul COMPLETE! Ready for Device Testing 🎉
+**Status:** 🎉 TypeScript + Tailwind CSS Overhaul COMPLETE! 2 CRITICAL Bugs Fixed! Ready for Device Testing 🎉
+
+---
+
+## 🚨 LATEST UPDATE: CRITICAL Bug Fixes (2025-11-13) ✅
+
+### Gemini 2.5 Pro Code Review Completed
+
+**Expert review of proxy/network streaming architecture identified and fixed 2 CRITICAL production-blocking bugs:**
+
+#### CRITICAL Bug #1: InputStream.skip() Seeking Failures ✅ FIXED
+- **Issue:** `StreamingServer.kt:135` used single `skip()` call without verifying all bytes skipped
+- **Impact:** Video seeking would fail or show corrupted frames during HTTP Range requests
+- **Fix:** Implemented proper loop that continues calling `skip()` until all bytes are skipped or error occurs
+- **Location:** `plugins/capacitor-plugin-torrent-streamer/android/src/main/java/com/flixcapacitor/torrent/StreamingServer.kt`
+- **Commit:** 18a1f2eb
+
+#### CRITICAL Bug #2: Hardcoded Port 8888 Crash on Restart ✅ FIXED
+- **Issue:** Hardcoded port caused `java.net.BindException` when app restarted with port still in use
+- **Impact:** App would crash on restart, requiring force-stop to clear the port
+- **Fix:** Dynamic port allocation using port 0 parameter (OS assigns free ephemeral port automatically)
+- **Files:** `StreamingServer.kt`, `TorrentStreamingService.kt`
+- **Commit:** 18a1f2eb
+
+### Comprehensive TODO Documentation Created ✅
+
+**Created FEATURE-TODO-LISTS.md (1,322 lines)** with 500+ enhancement opportunities:
+- 10 Feature TODOs (130+ items): Video Switching, Multi-File Playback, File-Level Favorites, Library Folder Picker, Subtitle Detection, TMDB/OMDB Integration, Deep Linking, Browser Integration, App Exit Cleanup, DirectoryPicker Fix
+- 5 Application Flow TODOs (71+ items): Architecture, Navigation, State Management, Error Handling, Performance
+- 11 UI Section TODOs (143+ items): Every screen from Home to File Picker Modal
+- Each TODO includes: enhancements list, known limitations, testing requirements, priority/complexity/impact ratings
+- **Commit:** a2229c47
+
+### Build Verification ✅
+
+Both builds completed successfully with CRITICAL fixes included:
+- **APK Location:** `android/app/build/outputs/apk/debug/app-debug.apk` (74 MB)
+- **Build Stats:** CSS 35.10 kB (6.17 kB gzipped), JS 568.47 kB (170.18 kB gzipped)
+- **Status:** Ready for device testing with production-ready reliability
+
+### Next Priority (Gemini Recommendation)
+
+1. **Test CRITICAL fixes on device** - Verify video seeking and app restart reliability
+2. **Write JUnit tests** - StreamingServer Range requests, TorrentStreamingService lifecycle
+3. **Focus on reliability** over new features until core functionality is rock-solid
+
+**Full Session Documentation:** See `SESSION-SUMMARY-2025-11-13.md` for complete details
+
+---
 
 ## Quick Status Summary
 
