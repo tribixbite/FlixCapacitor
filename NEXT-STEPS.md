@@ -93,6 +93,8 @@ See: `TYPESCRIPT-TAILWIND-OVERHAUL.md` for full implementation plan.
    - Features: pickDirectory(), listFiles(), getPersistedDirectories(), releaseDirectory()
    - Build: 2025-11-13 12:02
    - Commit: fa0ffe9d
+   - **Automated Testing**: ✅ APK installed via ADB, app launched, no plugin initialization errors in logcat
+   - **Manual Testing Required**: Navigate to Library tab → Click "Add Folder" button → Verify picker works
 
 ### 🎯 Next: Device Testing
 
@@ -102,26 +104,36 @@ See: `TYPESCRIPT-TAILWIND-OVERHAUL.md` for full implementation plan.
 - Fresh build includes all Phase 1-6 improvements
 
 **Testing Checklist:**
-1. **Installation & Launch**
-   - ✅ APK installer opened
-   - ⏳ Complete installation via UI
-   - ⏳ Verify app launches without errors
+1. **Installation & Launch** ✅ AUTOMATED
+   - ✅ APK installed via ADB (wireless connection: 192.168.1.247:41407)
+   - ✅ App launched successfully via `adb shell am start`
+   - ✅ No DirectoryPicker initialization errors in logcat
+   - ✅ Capacitor plugins loaded (12 plugins including DirectoryPicker)
 
-2. **UI/UX Verification**
+2. **DirectoryPicker Plugin Testing** ⏳ REQUIRES MANUAL TESTING
+   - ⏳ Navigate to Library tab
+   - ⏳ Click "+" or "Add Folder" button
+   - ⏳ Verify system folder picker appears (no "plugin is not implemented" error)
+   - ⏳ Select a folder with video files
+   - ⏳ Verify files are scanned and listed
+   - ⏳ Test getPersistedDirectories() function
+   - ⏳ Test releaseDirectory() function
+
+3. **UI/UX Verification**
    - ⏳ All screens render correctly with Tailwind styles
    - ⏳ Content grids are responsive (2→3→4→5→6 cols)
    - ⏳ Touch targets are 44x44px minimum (easy to tap)
    - ⏳ Safe area insets properly handled (no notch overlap)
    - ⏳ No visual regressions from inline style → Tailwind conversion
 
-3. **Dark Mode Testing**
+4. **Dark Mode Testing**
    - ⏳ Navigate to Settings
    - ⏳ Toggle dark mode (🌙/☀️ button)
    - ⏳ Verify theme switches correctly
    - ⏳ Verify persistence (close/reopen app)
    - ⏳ Verify all screens look good in dark mode
 
-4. **Core Functionality**
+5. **Core Functionality**
    - ⏳ Browse movies, shows, anime, courses
    - ⏳ Search functionality
    - ⏳ Video playback
@@ -129,7 +141,7 @@ See: `TYPESCRIPT-TAILWIND-OVERHAUL.md` for full implementation plan.
    - ⏳ Library scanning
    - ⏳ Favorites & Watchlist
 
-5. **Performance**
+6. **Performance**
    - ⏳ App feels snappy and responsive
    - ⏳ No TypeScript errors in console
    - ⏳ CSS loads quickly (34.94 kB)
