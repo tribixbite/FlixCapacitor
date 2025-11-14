@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Beta Tester Application
+    url: https://forms.gle/YOUR_FORM_ID
+    about: Apply to become a beta tester for FlixCapacitor
+  - name: Support & Questions
+    url: mailto:support@flixcapacitor.app
+    about: Get help with using FlixCapacitor
+  - name: Documentation
+    url: https://github.com/tribixbite/FlixCapacitor/blob/main/USER-GUIDE.md
+    about: Read the user guide and documentation

@@ -1,0 +1,136 @@
+name: Bug Report
+description: Report a bug or issue with FlixCapacitor
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug! Please fill out the form below to help us understand and fix the issue.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How severe is this issue?
+      options:
+        - P0 - Critical (App crashes, data loss, security issue)
+        - P1 - High (Core feature broken, no workaround)
+        - P2 - Medium (Feature partially broken, workaround available)
+        - P3 - Low (UI glitch, cosmetic issue, edge case)
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: App Version
+      description: What version of FlixCapacitor are you using? (Check in Settings > About)
+      placeholder: "e.g., 1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device Model
+      description: What device are you using?
+      placeholder: "e.g., Samsung Galaxy S24, Google Pixel 8, OnePlus 12"
+    validations:
+      required: true
+
+  - type: input
+    id: android-version
+    attributes:
+      label: Android Version
+      description: What Android version is your device running?
+      placeholder: "e.g., Android 14, Android 13"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the bug
+      placeholder: Describe what went wrong
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen?
+      placeholder: Describe what you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Describe what actually happened
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Videos
+      description: If applicable, add screenshots or videos to help explain the problem
+      placeholder: Drag and drop images or paste URLs here
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (if available)
+      description: |
+        If you can access logcat logs, please paste them here (remove any sensitive information)
+        To get logs: Connect device via ADB and run `adb logcat -d -s FlixCapacitor:D AndroidRuntime:E`
+      render: shell
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often does this happen?
+      options:
+        - Always (100%)
+        - Often (50-99%)
+        - Sometimes (10-49%)
+        - Rare (< 10%)
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: Any other relevant information
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have provided all required information above
+          required: true
+        - label: I am using the latest version of FlixCapacitor
+          required: false
