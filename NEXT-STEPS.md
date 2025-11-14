@@ -45,12 +45,13 @@
 
 ---
 
-### Phase 12B: Backend Integration ⚠️ IN PROGRESS (75%)
+### Phase 12B: Backend Integration ⚠️ IN PROGRESS (90%)
 
-**Status:** API client complete, authentication UI complete, favorites sync complete
-**Commits:** 47c7c824 (API client), 8cd267cc (auth + favorites)
+**Status:** API client complete, authentication UI complete, favorites & settings sync complete, UI integration complete
+**Commits:** 47c7c824 (API client), 8cd267cc (auth + favorites), 605e1cd2 (settings sync), e6929844 (UI integration)
 **Date:** 2025-11-14
 **Planning Document:** `PHASE-12B-PLANNING.md`
+**Summary Document:** `PHASE-12B-SUMMARY.md`
 
 **Completed ✅:**
 - ✅ Supabase SDK installed (@supabase/supabase-js)
@@ -79,22 +80,35 @@
   - syncToCloud() and syncFromCloud() methods
   - Automatic sync on add/remove
   - Graceful handling of missing configuration
+- ✅ Settings cloud sync (settings-manager.ts - +129 lines)
+  - syncToCloud() and syncFromCloud() methods
+  - autoSync() on settings changes
+  - Merge strategy for cloud settings
+- ✅ Cloud Account & Sync UI (ui-templates.ts + mobile-ui-views.ts)
+  - setupCloudSyncSettings() method (+198 lines)
+  - Sign in/sign out buttons
+  - User profile display
+  - Sync Favorites button
+  - Sync Settings button
+  - Restore from Cloud button
+  - Dynamic UI based on auth state
+  - Toast notifications and loading states
 
-**In Progress ⏳:**
-- Day 5-6: UI Integration (Part 2)
-  - Add cloud sync to settings manager
-  - Update collection sharing to use Supabase API
-  - Add user profile view to settings
-  - Test authentication flow
+**Deferred ⏳:**
+- Collection sharing UI (API methods ready, UI implementation deferred to future phase)
+  - Collection creation UI
+  - Share code generation and display
+  - Collection import UI
+  - Deep linking
 
 **Pending 📋:**
 - User needs to create Supabase project at https://supabase.com
 - Run supabase-schema.sql in Supabase SQL editor
 - Get API credentials (URL + anon key)
 - Create .env file from .env.example
-- Day 7: Testing & Polish
+- Day 7: Testing requires Supabase project setup
 
-**Progress:** API infrastructure complete (Day 1-4), UI integration in progress (Day 5 - 50% complete)
+**Progress:** API infrastructure complete (Day 1-4), UI integration complete (Day 5-6), testing requires Supabase project
 
 ---
 
