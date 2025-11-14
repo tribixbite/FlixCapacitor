@@ -307,6 +307,124 @@ class FavoritesService {
   }
 
   /**
+   * Get all favorite torrent files across all torrents
+   */
+  async getAllFavoriteTorrentFiles(options: { sortBy?: 'name' | 'added_at'; sortOrder?: 'ASC' | 'DESC'; limit?: number; offset?: number } = {}): Promise<Array<{ id: string; torrentHash: string; fileIndex: number; fileName: string; movieId?: string; addedAt: number }>> {
+    try {
+      const {
+        sortBy = 'added_at',
+        sortOrder = 'DESC',
+        limit = 100,
+        offset = 0
+      } = options;
+
+      const orderColumn = sortBy === 'name' ? 'file_name' : 'added_at';
+      const results = await this.db.all(
+        `SELECT * FROM favorite_torrent_files ORDER BY ${orderColumn} ${sortOrder} LIMIT ? OFFSET ?`,
+        [limit, offset]
+      );
+
+      return results.map((row: any) => ({
+        id: row.id,
+        torrentHash: row.torrent_hash,
+        fileIndex: row.file_index,
+        fileName: row.file_name,
+        movieId: row.movie_id || undefined,
+        addedAt: row.added_at
+      }));
+    } catch (error) {
+      console.error('Failed to get all favorite torrent files:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get count of favorite torrent files
+   */
+  async getFavoriteTorrentFilesCount(): Promise<number> {
+    try {
+      const result = await this.db.get('SELECT COUNT(*) as count FROM favorite_torrent_files');
+      return result?.count || 0;
+    } catch (error) {
+      console.error('Failed to get favorite torrent files count:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Remove multiple favorite torrent files in batch
+   */
+  async removeFavoriteTorrentFilesBatch(ids: string[]): Promise<boolean> {
+    try {
+      if (ids.length === 0) return true;
+
+      const placeholders = ids.map(() => '?').join(',');
+      await this.db.run(
+        `DELETE FROM favorite_torrent_files WHERE id IN (${placeholders})`,
+        ids
+      );
+
+      console.log(`Removed ${ids.length} torrent files from favorites`);
+      return true;
+    } catch (error) {
+      console.error('Failed to remove favorite torrent files in batch:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Export all favorites to JSON
+   */
+  async exportFavorites(): Promise<{ movies: FavoriteItem[]; files: any[] }> {
+    try {
+      const movies = await this.getFavorites();
+      const files = await this.getAllFavoriteTorrentFiles({ limit: 1000 });
+
+      return { movies, files };
+    } catch (error) {
+      console.error('Failed to export favorites:', error);
+      return { movies: [], files: [] };
+    }
+  }
+
+  /**
+   * Import favorites from JSON
+   */
+  async importFavorites(data: { movies?: FavoriteItem[]; files?: any[] }): Promise<{ moviesImported: number; filesImported: number }> {
+    try {
+      let moviesImported = 0;
+      let filesImported = 0;
+
+      // Import movies/shows
+      if (data.movies && Array.isArray(data.movies)) {
+        for (const movie of data.movies) {
+          const success = await this.addFavorite(movie);
+          if (success) moviesImported++;
+        }
+      }
+
+      // Import torrent files
+      if (data.files && Array.isArray(data.files)) {
+        for (const file of data.files) {
+          const success = await this.addFavoriteTorrentFile(
+            file.torrentHash,
+            file.fileIndex,
+            file.fileName,
+            file.movieId
+          );
+          if (success) filesImported++;
+        }
+      }
+
+      console.log(`Imported ${moviesImported} movies and ${filesImported} files`);
+      return { moviesImported, filesImported };
+    } catch (error) {
+      console.error('Failed to import favorites:', error);
+      return { moviesImported: 0, filesImported: 0 };
+    }
+  }
+
+  /**
    * Detect content type from item structure
    */
   private detectType(item: FavoriteItem): ContentType {

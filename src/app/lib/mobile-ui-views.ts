@@ -20,6 +20,7 @@ import { DirectoryPicker } from 'capacitor-plugin-directory-picker';
 import { VideoPlayer, type VideoPlayerContext } from './video-player';
 import { UITemplates } from './ui-templates';
 import { showLibraryManagement, type LibraryManagementView } from '../views/library-management-view'; // Phase 11B
+import { showFavoriteFiles, FavoriteFilesView } from '../views/favorite-files-view'; // Phase 11C
 
 
 // UI Controller
@@ -395,6 +396,32 @@ export class MobileUIController {
                 this.showFavorites(selectedTab);
             });
         });
+
+        // Add "Favorite Files" button to favorites tab (Phase 11C)
+        if (tab === 'favorites') {
+            const contentGridParent = document.querySelector('.content-grid')?.parentElement;
+            if (contentGridParent) {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'flex justify-end mb-4 px-4';
+                buttonContainer.innerHTML = `
+                    <button id="favorite-files-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center gap-2 shadow-lg">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">Favorite Files</span>
+                    </button>
+                `;
+                contentGridParent.insertBefore(buttonContainer, contentGridParent.firstChild);
+
+                // Attach event handler
+                const favoriteFilesBtn = document.getElementById('favorite-files-btn');
+                if (favoriteFilesBtn) {
+                    favoriteFilesBtn.addEventListener('click', () => {
+                        this.showFavoriteFiles();
+                    });
+                }
+            }
+        }
 
         const contentGrid = document.querySelector('.content-grid');
 
@@ -1094,6 +1121,83 @@ export class MobileUIController {
 
                 // Refresh library view to show updated content
                 this.showLibrary();
+            }
+        });
+    }
+
+    /**
+     * Show favorite files modal (Phase 11C)
+     */
+    showFavoriteFiles(): void {
+        console.log('[Favorites] Opening favorite files view');
+
+        // Create modal container
+        const modalContainer = document.createElement('div');
+        modalContainer.id = 'favorite-files-modal';
+        document.body.appendChild(modalContainer);
+
+        // Show favorite files view with callbacks
+        const favoriteFilesView = showFavoriteFiles(modalContainer, {
+            onPlay: async (file) => {
+                console.log('[Favorites] Play favorite file:', file);
+
+                try {
+                    // Close modal
+                    favoriteFilesView.remove();
+                    modalContainer.remove();
+
+                    // Check if we have the torrent info in currentMovieData (from recently played content)
+                    const movieId = file.movieId;
+                    if (!movieId) {
+                        alert('Cannot play this file: Associated movie/torrent not found.\n\nTo play favorite files, you need to access them from their original movie/show page.');
+                        return;
+                    }
+
+                    // Try to find movie data
+                    const movieData = this.currentMovieData.get(movieId) as any;
+                    if (!movieData) {
+                        alert('Cannot play this file: Movie data not available.\n\nPlease re-open the movie/show page first, then try playing from favorites.');
+                        return;
+                    }
+
+                    // Get torrent magnet link
+                    const torrent = movieData.torrents?.[movieData.quality] || movieData.torrent;
+                    if (!torrent || !torrent.magnet) {
+                        alert('Cannot play this file: Torrent information not available.');
+                        return;
+                    }
+
+                    // Import necessary services
+                    const NativeTorrentClient = (await import('./native-torrent-client')).default;
+
+                    // Show the movie detail page with video player
+                    await this.showDetail(movieData);
+
+                    // Start streaming the specific file
+                    const streamInfo = await (NativeTorrentClient as any).startStream({
+                        magnetLink: torrent.magnet,
+                        fileIndex: file.fileIndex
+                    });
+
+                    console.log('[Favorites] Started stream for favorite file:', streamInfo);
+
+                } catch (error: any) {
+                    console.error('[Favorites] Failed to play favorite file:', error);
+                    alert(`Failed to play file: ${error.message}`);
+                }
+            },
+            onRemove: async (file) => {
+                console.log('[Favorites] Remove favorite file:', file);
+                // Removal is handled by the view itself
+                // No additional action needed here
+            },
+            onClose: () => {
+                console.log('[Favorites] Favorite files modal closed');
+                favoriteFilesView.remove();
+                modalContainer.remove();
+
+                // Refresh favorites view to show updated content
+                this.showFavorites('favorites');
             }
         });
     }

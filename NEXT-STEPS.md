@@ -1,7 +1,7 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-14
-**Status:** 🎉 Phases 8-10 COMPLETE! Phase 11 UI Polish & Integration - IN PROGRESS (11A-11B COMPLETE) 🎉
+**Status:** 🎉 Phases 8-10 COMPLETE! Phase 11 UI Polish & Integration - IN PROGRESS (11A-11C COMPLETE) 🎉
 
 ---
 
@@ -1046,15 +1046,39 @@ Phase 11 focuses on **UI polish and feature integration** to complete the user-f
 
 **TypeScript:** 0 errors (fixed logger signatures across codebase)
 
-### 11C: Favorites UI 🔄 PENDING
+### 11C: Favorites UI ✅ COMPLETE
 - **Priority:** MEDIUM | **Impact:** Moderate UX improvement
-- **Features:**
-  - Dedicated favorite files view
-  - Grid layout with thumbnails
-  - Sort and search favorites
-  - Export/import JSON
-  - Batch operations
-- **Estimated Lines:** ~500 lines
+- **Implementation:** ~670 lines added
+- **Commits:** [current]
+
+**Backend Features (FavoritesService):**
+- ✅ getAllFavoriteTorrentFiles() method with sort/filter options
+- ✅ getFavoriteTorrentFilesCount() for stats
+- ✅ removeFavoriteTorrentFilesBatch() for batch operations
+- ✅ exportFavorites() - JSON export with movies + files
+- ✅ importFavorites() - JSON import with movies + files
+
+**UI Features (FavoriteFilesView):**
+- ✅ Grid layout with file cards (responsive 1-3 columns)
+- ✅ Search functionality (filter by file name)
+- ✅ Sort by name or date (with toggle ASC/DESC)
+- ✅ Select all / batch selection checkboxes
+- ✅ Remove single file with confirmation
+- ✅ Remove multiple files (batch) with confirmation
+- ✅ Export to JSON (downloads file)
+- ✅ Import from JSON (file picker)
+- ✅ Empty state and no results state
+- ✅ File metadata display (hash, index, added date)
+- ✅ Play button integration (requires movie data)
+
+**Mobile UI Integration:**
+- ✅ "Favorite Files" button in Favorites tab (red heart icon)
+- ✅ showFavoriteFiles() method integration
+- ✅ onPlay callback with movie data lookup
+- ✅ onRemove callback handled by view
+- ✅ onClose callback with favorites view refresh
+
+**TypeScript:** 0 errors (strict mode)
 
 ### 11D: Settings Integration 🔄 PENDING
 - **Priority:** HIGH | **Impact:** Major feature accessibility
