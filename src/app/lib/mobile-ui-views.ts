@@ -1398,6 +1398,212 @@ export class MobileUIController {
 
         // Proxy Settings
         this.setupProxySettings();
+
+        // Phase 12B: Cloud Account & Sync Settings
+        this.setupCloudSyncSettings();
+    }
+
+    /**
+     * Setup Cloud Account & Sync Settings (Phase 12B)
+     */
+    async setupCloudSyncSettings(): Promise<void> {
+        try {
+            // Check if Supabase is configured
+            if (!import.meta.env.VITE_SUPABASE_URL) {
+                console.log('Supabase not configured, hiding cloud sync section');
+                const cloudSection = document.getElementById('cloud-account-section');
+                if (cloudSection) {
+                    cloudSection.innerHTML = `
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-description" style="font-size: 0.85rem; color: rgba(255,255,255,0.5);">
+                                    Cloud sync is not configured. Contact the developer to enable cloud features.
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
+            // Dynamically import API client
+            const { getApiClient } = await import('./api-client');
+            const apiClient = getApiClient();
+
+            // Check if user is signed in
+            const { user, error } = await apiClient.getUser();
+
+            const userInfoSection = document.getElementById('cloud-user-info');
+            const signInSection = document.getElementById('cloud-sign-in-section');
+            const userEmailEl = document.getElementById('cloud-user-email');
+
+            if (error || !user) {
+                // User not signed in - show sign in button
+                if (userInfoSection) userInfoSection.style.display = 'none';
+                if (signInSection) signInSection.style.display = 'block';
+            } else {
+                // User is signed in - show user info and sync buttons
+                if (userInfoSection) userInfoSection.style.display = 'block';
+                if (signInSection) signInSection.style.display = 'none';
+                if (userEmailEl) userEmailEl.textContent = user.email || 'Unknown';
+            }
+
+            // Sign In button
+            const signInBtn = document.getElementById('sign-in-btn');
+            if (signInBtn) {
+                signInBtn.addEventListener('click', async () => {
+                    const { default: AuthModalView } = await import('../views/auth-modal-view');
+                    const authModal = new AuthModalView({
+                        mode: 'signin',
+                        onSuccess: (user: any) => {
+                            console.log('User signed in:', user.email);
+                            this.showToast(`Welcome, ${user.email}!`, 'success');
+                            // Refresh settings view to show user info
+                            this.showSettings();
+                        },
+                        onCancel: () => {
+                            console.log('Auth cancelled');
+                        }
+                    });
+                    authModal.render();
+                    document.body.appendChild(authModal.el);
+                });
+            }
+
+            // Sign Out button
+            const signOutBtn = document.getElementById('sign-out-btn');
+            if (signOutBtn) {
+                signOutBtn.addEventListener('click', async () => {
+                    const confirmed = confirm('Are you sure you want to sign out?');
+                    if (!confirmed) return;
+
+                    const { error } = await apiClient.signOut();
+                    if (error) {
+                        this.showToast('Failed to sign out', 'error');
+                        console.error('Sign out error:', error);
+                        return;
+                    }
+
+                    this.showToast('Signed out successfully', 'success');
+                    // Refresh settings view
+                    this.showSettings();
+                });
+            }
+
+            // Sync Favorites button
+            const syncFavoritesBtn = document.getElementById('sync-favorites-btn');
+            if (syncFavoritesBtn) {
+                syncFavoritesBtn.addEventListener('click', async () => {
+                    const btn = syncFavoritesBtn as HTMLButtonElement;
+                    btn.disabled = true;
+                    btn.textContent = '⏳ Syncing...';
+
+                    const favoritesService = window.FavoritesService;
+                    if (!favoritesService) {
+                        this.showToast('Favorites service not available', 'error');
+                        btn.disabled = false;
+                        btn.textContent = '☁️ Sync Now';
+                        return;
+                    }
+
+                    const result = await favoritesService.syncToCloud();
+                    btn.disabled = false;
+                    btn.textContent = '☁️ Sync Now';
+
+                    if (result.success) {
+                        this.showToast(`Synced ${result.synced} favorites to cloud`, 'success');
+                    } else {
+                        this.showToast(result.error || 'Failed to sync favorites', 'error');
+                    }
+                });
+            }
+
+            // Sync Settings button
+            const syncSettingsBtn = document.getElementById('sync-settings-btn');
+            if (syncSettingsBtn) {
+                syncSettingsBtn.addEventListener('click', async () => {
+                    const btn = syncSettingsBtn as HTMLButtonElement;
+                    btn.disabled = true;
+                    btn.textContent = '⏳ Syncing...';
+
+                    const settings = window.SettingsManager;
+                    if (!settings) {
+                        this.showToast('Settings manager not available', 'error');
+                        btn.disabled = false;
+                        btn.textContent = '☁️ Sync Now';
+                        return;
+                    }
+
+                    const result = await settings.syncToCloud();
+                    btn.disabled = false;
+                    btn.textContent = '☁️ Sync Now';
+
+                    if (result.success) {
+                        this.showToast('Settings synced to cloud', 'success');
+                    } else {
+                        this.showToast(result.error || 'Failed to sync settings', 'error');
+                    }
+                });
+            }
+
+            // Restore from Cloud button
+            const restoreBtn = document.getElementById('restore-from-cloud-btn');
+            if (restoreBtn) {
+                restoreBtn.addEventListener('click', async () => {
+                    const confirmed = confirm(
+                        'This will restore favorites and settings from cloud, overwriting local data. Continue?'
+                    );
+                    if (!confirmed) return;
+
+                    const btn = restoreBtn as HTMLButtonElement;
+                    btn.disabled = true;
+                    btn.textContent = '⏳ Restoring...';
+
+                    const favoritesService = window.FavoritesService;
+                    const settings = window.SettingsManager;
+
+                    let favoritesResult = { success: false, synced: 0, error: '' };
+                    let settingsResult = { success: false, error: '' };
+
+                    if (favoritesService) {
+                        favoritesResult = await favoritesService.syncFromCloud();
+                    }
+
+                    if (settings) {
+                        settingsResult = await settings.syncFromCloud();
+                    }
+
+                    btn.disabled = false;
+                    btn.textContent = '📥 Restore';
+
+                    if (favoritesResult.success && settingsResult.success) {
+                        this.showToast(
+                            `Restored ${favoritesResult.synced} favorites and settings from cloud`,
+                            'success'
+                        );
+                        // Refresh settings view to reflect updated settings
+                        this.showSettings();
+                    } else if (favoritesResult.success) {
+                        this.showToast(
+                            `Restored ${favoritesResult.synced} favorites. Settings restore failed: ${settingsResult.error}`,
+                            'info'
+                        );
+                    } else if (settingsResult.success) {
+                        this.showToast(
+                            `Restored settings. Favorites restore failed: ${favoritesResult.error}`,
+                            'info'
+                        );
+                    } else {
+                        this.showToast(
+                            `Failed to restore: ${favoritesResult.error || settingsResult.error}`,
+                            'error'
+                        );
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error setting up cloud sync:', error);
+        }
     }
 
     /**

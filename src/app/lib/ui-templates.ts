@@ -813,6 +813,71 @@ export const UITemplates = {
                         </div>
                     </div>
 
+                    <!-- Phase 12B: Cloud Account & Sync Section -->
+                    <div class="settings-section">
+                        <div class="settings-section-title">Cloud Account & Sync</div>
+                        <div id="cloud-account-section">
+                            <!-- User info section (shown when signed in) -->
+                            <div id="cloud-user-info" style="display: none;">
+                                <div class="settings-item">
+                                    <div class="settings-item-content">
+                                        <div class="settings-item-label">Account</div>
+                                        <div class="settings-item-description" id="cloud-user-email">Loading...</div>
+                                    </div>
+                                    <button id="sign-out-btn" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                                        Sign Out
+                                    </button>
+                                </div>
+                                <div class="settings-item">
+                                    <div class="settings-item-content">
+                                        <div class="settings-item-label">Sync Favorites</div>
+                                        <div class="settings-item-description">Backup favorites to cloud</div>
+                                    </div>
+                                    <button id="sync-favorites-btn" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                                        ☁️ Sync Now
+                                    </button>
+                                </div>
+                                <div class="settings-item">
+                                    <div class="settings-item-content">
+                                        <div class="settings-item-label">Sync Settings</div>
+                                        <div class="settings-item-description">Backup settings to cloud</div>
+                                    </div>
+                                    <button id="sync-settings-btn" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                                        ☁️ Sync Now
+                                    </button>
+                                </div>
+                                <div class="settings-item">
+                                    <div class="settings-item-content">
+                                        <div class="settings-item-label">Restore from Cloud</div>
+                                        <div class="settings-item-description">Pull favorites & settings from cloud</div>
+                                    </div>
+                                    <button id="restore-from-cloud-btn" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                                        📥 Restore
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Sign in button (shown when not signed in) -->
+                            <div id="cloud-sign-in-section" style="display: block;">
+                                <div class="settings-item">
+                                    <div class="settings-item-content">
+                                        <div class="settings-item-label">Sign In</div>
+                                        <div class="settings-item-description">Cloud backup for favorites & settings</div>
+                                    </div>
+                                    <button id="sign-in-btn" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                        🔐 Sign In
+                                    </button>
+                                </div>
+                                <div class="settings-item">
+                                    <div class="settings-item-content">
+                                        <div class="settings-item-description" style="font-size: 0.85rem; color: rgba(255,255,255,0.5);">
+                                            Sign in to enable cloud backup, cross-device sync, and collection sharing.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="settings-section">
                         <div class="settings-section-title">About</div>
                         <div class="settings-item">
