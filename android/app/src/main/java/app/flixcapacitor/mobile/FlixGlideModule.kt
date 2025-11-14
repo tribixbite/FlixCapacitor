@@ -64,12 +64,8 @@ class FlixGlideModule : AppGlideModule() {
                 .disallowHardwareConfig() // Safer for older devices
         )
 
-        // Set log level based on build type
-        if (BuildConfig.DEBUG) {
-            builder.setLogLevel(Log.DEBUG)
-        } else {
-            builder.setLogLevel(Log.ERROR)
-        }
+        // Set log level to ERROR for production efficiency
+        builder.setLogLevel(Log.ERROR)
 
         Log.i(TAG, "Glide configured - Memory: ${memoryCacheSize / (1024 * 1024)}MB, " +
                 "Disk: ${DISK_CACHE_SIZE / (1024 * 1024)}MB")

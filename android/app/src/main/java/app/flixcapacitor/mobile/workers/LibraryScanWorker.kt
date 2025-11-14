@@ -1,6 +1,7 @@
 package app.flixcapacitor.mobile.workers
 
 import android.content.Context
+import androidx.core.app.NotificationCompat
 import androidx.work.*
 import java.util.concurrent.TimeUnit
 
@@ -104,7 +105,7 @@ class LibraryScanWorker(
      * Create foreground notification info
      */
     private fun createForegroundInfo(): ForegroundInfo {
-        val notification = android.app.NotificationCompat.Builder(
+        val notification = NotificationCompat.Builder(
             applicationContext,
             "library_scan_channel"
         )

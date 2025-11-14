@@ -10,7 +10,7 @@ import android.os.BatteryManager as AndroidBatteryManager
 import android.os.Build
 import android.os.PowerManager
 import android.util.Log
-import org.json.JSONObject
+import com.getcapacitor.JSObject
 
 /**
  * Battery management service for FlixCapacitor (Phase 10D.2: Battery Management)
@@ -65,8 +65,8 @@ class BatteryManager(private val context: Context) {
         val shouldThrottle: Boolean,
         val shouldPauseDownloads: Boolean
     ) {
-        fun toJSON(): JSONObject {
-            return JSONObject().apply {
+        fun toJSON(): JSObject {
+            return JSObject().apply {
                 put("level", level)
                 put("isCharging", isCharging)
                 put("powerState", powerState)
