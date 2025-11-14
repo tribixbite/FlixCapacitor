@@ -23,3 +23,13 @@ npm-debug.log*
 .env
 .env.local
 .bun-cache/
+
+# Android Release Security (CRITICAL - DO NOT COMMIT!)
+*.keystore
+*.jks
+*.p12
+*.pem
+keystore.properties
+release-signing.properties
+google-services.json
+key.properties

@@ -17,10 +17,37 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
-    buildTypes {
+    // Release signing configuration
+    // Passwords should be set via environment variables:
+    // export KEYSTORE_PASSWORD="your_password"
+    // export KEY_PASSWORD="your_password"
+    signingConfigs {
         release {
+            storeFile file('flixcapacitor-release.keystore')
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "FlixCapacitor2025Release!"
+            keyAlias "flixcapacitor"
+            keyPassword System.getenv("KEY_PASSWORD") ?: "FlixCapacitor2025Release!"
+        }
+    }
+
+    buildTypes {
+        debug {
+            // Debug builds - no optimization, no signing
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources false
+            debuggable true
+        }
+        release {
+            // Production release build configuration
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            debuggable false
+
+            // Additional optimizations
+            crunchPngs true
+            zipAlignEnabled true
         }
     }
 }
