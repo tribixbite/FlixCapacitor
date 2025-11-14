@@ -1,7 +1,65 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-14
-**Status:** 🎉 Phases 8-10 COMPLETE! Phase 11 UI Polish & Integration - IN PROGRESS (11A-11D COMPLETE) 🎉
+**Status:** 🎉 Phases 8-10 COMPLETE! Phase 11 UI Polish & Integration - IN PROGRESS (11A-11F COMPLETE) 🎉
+
+---
+
+## 🚀 Phase 11E - Navigation & Deep Linking (2025-11-14) ✅ COMPLETE
+
+**Commit:** f4aec081 | **Lines:** ~260
+
+### Features Implemented:
+- ✅ Comprehensive deep link URL handling (7 patterns)
+  - `flixcapacitor://movie/:id` - Open movie detail
+  - `flixcapacitor://show/:id` - Open show detail
+  - `flixcapacitor://play/:magnetUri` - Play torrent
+  - `flixcapacitor://search/:query` - Perform search
+  - `flixcapacitor://library` - Open library tab
+  - `flixcapacitor://favorites` - Open favorites tab
+  - `flixcapacitor://collection/:shareCode` - Import shared collection
+- ✅ Share functionality (movies, shows, torrents, collections)
+- ✅ Collection import with preview dialog
+- ✅ AndroidManifest intent filters (magnet://, .torrent, video files)
+- ✅ URL normalization (app:// and https:// schemes)
+
+### Files Modified:
+- `src/main.ts` - Expanded handleContentDeepLink() with 7 URL patterns
+- `src/app/lib/mobile-ui-views.ts` - 6 share/navigation methods
+- `android/app/src/main/AndroidManifest.xml` - 3 intent filters
+
+### Dependencies Added:
+- `@capacitor/share` - Native share functionality
+
+---
+
+## 🚀 Phase 11F - UI Polish & Animations (2025-11-14) ✅ COMPLETE
+
+**Commit:** df8c85f8 | **Lines:** ~340
+
+### Features Implemented:
+- ✅ Toast notification system with animations (slide, bounce, shake)
+- ✅ Loading overlay with animated spinner
+- ✅ Modal animations (fade/slide/scale transitions)
+- ✅ Button ripple effects with haptic feedback
+- ✅ Skeleton screen loading states (grid/list/detail)
+- ✅ Swipe gesture support with visual feedback
+- ✅ Long press gesture with haptic feedback
+- ✅ Respects reduced motion preference
+- ✅ Stagger animations for lists
+
+### Methods Added (mobile-ui-views.ts):
+- `showToast(message, type, duration)` - Animated toast notifications
+- `showLoadingOverlay(message)` / `hideLoadingOverlay()` - Loading states
+- `showModalAnimated(element, type)` / `hideModalAnimated()` - Modal transitions
+- `addRippleEffect(button)` / `addRippleEffectsToButtons()` - Button interactions
+- `createSkeletonScreen(container, type)` / `removeSkeletonScreen()` - Loading skeletons
+- `addSwipeGesture(element, onLeft, onRight)` - Swipe gestures
+- `addLongPressGesture(element, onLongPress)` - Long press gestures
+
+### Files Modified:
+- `src/app/lib/mobile-ui-views.ts` - Animation integration (~340 lines)
+- `src/app/lib/animation-service.ts` - Already exists from Phase 9D
 
 ---
 
