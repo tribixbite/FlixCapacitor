@@ -1,7 +1,7 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-13
-**Status:** 🎉 Phase 8 COMPLETE! Phase 9A & 9B COMPLETE! 🎉
+**Status:** 🎉 Phase 8 COMPLETE! Phase 9A & 9B COMPLETE! Phase 9A UI Integration: IN PROGRESS (1/6) 🎉
 
 ---
 
@@ -311,6 +311,120 @@
 - Device testing and APK build
 
 **Full Phase 9 Plan:** See `PHASE-9-ENHANCEMENT-PLAN.md` (717 lines)
+
+---
+
+## 🚀 Phase 9A UI Integration (2025-11-13) 🔄 IN PROGRESS
+
+**Started:** 2025-11-13 | **Target:** v1.2.0-alpha
+
+Integrating Phase 9A backend services with user-facing UI components using Backbone.marionette views, Tailwind CSS, and modern TypeScript patterns.
+
+### 9A-UI.1: Playback Queue Status Overlay ✅ COMPLETE
+- **Commit:** 7558feef
+- **Features Implemented:**
+  - ✅ Queue status overlay with fixed positioning (top-4 left-4 z-50)
+  - ✅ Current position display (X of Y files)
+  - ✅ Next file preview
+  - ✅ Drag-and-drop reordering with HTML5 Drag API
+  - ✅ Shuffle button with Fisher-Yates algorithm integration
+  - ✅ Remove from queue functionality
+  - ✅ Close button with view cleanup
+  - ✅ Responsive Tailwind CSS styling with backdrop blur
+  - ✅ Analytics integration (queue_opened, queue_shuffled, queue_reordered, queue_item_removed, queue_closed)
+  - ✅ Logger integration (structured logging with playback category)
+  - ✅ XSS protection with HTML escaping
+  - ✅ Pause status indicator (⏸ Queue Paused)
+- **Files:**
+  - `src/app/views/playback-queue-view.ts` - PlaybackQueue overlay UI (340 lines)
+  - `src/app/lib/video-player.ts` - Exported PlaybackQueue class (1 line change)
+- **TypeScript:** 0 errors (strict mode)
+- **Status:** Complete, ready for integration with video player
+
+### 9A-UI.2: Library Scan Progress Bar ⏳ IN PROGRESS
+- **Target Features:**
+  - 4-phase progress tracking (discovery, processing, metadata, complete)
+  - Cancellation button with immediate response
+  - ETA calculation and file count display
+  - Responsive progress bar with percentage
+  - Integration with library-scanner-enhanced.ts service
+  - Tailwind CSS styling
+  - Analytics and logging integration
+- **Files:**
+  - `src/app/views/library-scan-progress-view.ts` - To be created
+- **Status:** Next task
+
+### 9A-UI.3: Subtitle Picker Modal ⏳ PENDING
+- **Target Features:**
+  - Search functionality with OpenSubtitles integration
+  - Sync adjustment controls (+/- milliseconds)
+  - Style customization (font, color, position, outline)
+  - Language auto-detection display
+  - Format conversion UI (SRT ↔ VTT)
+  - Persistent preferences
+- **Files:**
+  - `src/app/views/subtitle-picker-view.ts` - To be created
+- **Status:** Pending
+
+### 9A-UI.4: Error Recovery Screens ⏳ PENDING
+- **Target Features:**
+  - User-friendly error messages with context
+  - Retry button with exponential backoff
+  - Go Home action
+  - Clear Cache action
+  - Technical details toggle
+  - Network status indicator
+  - Error category display
+- **Files:**
+  - `src/app/views/error-recovery-view.ts` - Already exists (409 lines)
+  - May need integration updates for Phase 9A error handler
+- **Status:** Pending
+
+### 9A-UI.5: Skeleton Screens ⏳ PENDING
+- **Target Features:**
+  - Loading states with shimmer animation
+  - 4 skeleton types (movie-card, list-item, detail-header, search-result)
+  - Responsive design (mobile-first)
+  - Integration with loading-state-manager.ts
+  - Optimistic UI with cached data
+- **Files:**
+  - `src/app/views/skeleton-view.ts` - Already exists (349 lines)
+  - May need integration updates for Phase 9A loading states
+- **Status:** Pending
+
+### 9A-UI.6: Advanced Search Filters ⏳ PENDING
+- **Target Features:**
+  - Genre, year range, rating, quality, language filters
+  - Voice search using Web Speech API
+  - TMDB autocomplete suggestions
+  - Search history display
+  - "Did you mean?" spelling suggestions
+  - Search within results filtering
+  - Search statistics display
+- **Files:**
+  - `src/app/views/search-filters-view.ts` - To be created
+- **Status:** Pending
+
+### Phase 9A UI Integration Summary: 🔄 IN PROGRESS (1/6 tasks)
+
+**Progress:**
+1. ✅ Playback Queue Status Overlay (commit 7558feef) - 340 lines
+2. ⏳ Library Scan Progress Bar (in progress)
+3. ⏳ Subtitle Picker Modal (pending)
+4. ⏳ Error Recovery Screens (pending)
+5. ⏳ Skeleton Screens (pending)
+6. ⏳ Advanced Search Filters (pending)
+
+**Implementation Stats So Far:**
+- Total Lines: 340 lines of production TypeScript
+- Views Created: 1 (PlaybackQueueView)
+- All TypeScript: 0 errors (strict mode)
+
+**Next Steps:**
+- Complete library scan progress bar UI
+- Then continue with subtitle picker, error recovery, skeleton screens, and search filters
+- Final integration testing of all UI components
+- Phase 9D: Polish & Accessibility (i18n, a11y, animations)
 
 ---
 
