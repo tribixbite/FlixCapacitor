@@ -1,7 +1,7 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-13
-**Status:** 🎉 Phase 8 COMPLETE! Phase 9A & 9B COMPLETE! Phase 9A UI Integration: COMPLETE (6/6) 🎉
+**Status:** 🎉 Phase 8 COMPLETE! Phase 9A & 9B COMPLETE! Phase 9A UI Integration: COMPLETE! Phase 9C: IN PROGRESS (1/4) 🎉
 
 ---
 
@@ -489,6 +489,77 @@ Integrating Phase 9A backend services with user-facing UI components using Backb
 - Final integration testing of all UI components
 - Phase 9D: Polish & Accessibility (i18n, a11y, animations)
 - Build and device testing
+
+---
+
+## 🚀 Phase 9C - Feature Expansion (2025-11-13) 🔄 IN PROGRESS
+
+**Started:** 2025-11-13 | **Target:** v1.2.0-rc1
+
+Expanding feature set with user-requested capabilities and integrations.
+
+### 9C.1: Watchlist & Collections System ✅ COMPLETE
+- **Commit (Backend):** 8882e2c8
+- **Commit (UI):** 78cfa6e7
+- **Features Implemented:**
+  - ✅ SQLite database schema (collections, collection_items tables)
+  - ✅ Three collection types (WATCHLIST, CUSTOM, SMART)
+  - ✅ Default watchlists auto-creation (To Watch, Watching, Completed)
+  - ✅ Create/read/update/delete collections
+  - ✅ Add/remove items from collections
+  - ✅ Reorder collection items (drag-drop ready)
+  - ✅ Collection sharing via share codes (8-char codes)
+  - ✅ Import/export collections (JSON format)
+  - ✅ Smart collection rules (genre, year, rating, release_date)
+  - ✅ Three-tab UI (Watchlists, Custom, Smart)
+  - ✅ Responsive grid layout (2→3→4→5 columns)
+  - ✅ Collection cards with hover actions
+  - ✅ Share via deep links (flixcapacitor://collection/CODE)
+  - ✅ Export to JSON download
+  - ✅ Delete with confirmation
+  - ✅ Empty states for each tab
+  - ✅ Loading spinner during initialization
+- **Files:**
+  - `src/app/lib/collection-service.ts` - Collection backend (572 lines)
+  - `src/app/views/collections-view.ts` - Collections UI (506 lines)
+- **TypeScript:** 0 errors (strict mode)
+- **Status:** Complete (backend + UI = 1,078 lines)
+
+### 9C.2: Trakt.tv Integration ⏳ IN PROGRESS
+- **Target Features:**
+  - Trakt.tv OAuth authentication with PKCE
+  - Scrobble playback to Trakt
+  - Sync watch history from Trakt
+  - Recommendations from Trakt
+  - Show progress tracking
+  - Calendar view for upcoming episodes
+- **Status:** Starting next
+
+### 9C.3: Download Manager ⏳ PENDING
+- **Status:** Not started
+
+### 9C.4: Chromecast Support ⏳ PENDING
+- **Status:** Not started
+
+### Phase 9C Summary: 🔄 IN PROGRESS (1/4 tasks)
+
+**Progress:**
+1. ✅ Watchlist & Collections (commits 8882e2c8, 78cfa6e7) - 1,078 lines
+2. ⏳ Trakt.tv Integration (in progress)
+3. ⏳ Download Manager (pending)
+4. ⏳ Chromecast Support (pending)
+
+**Implementation Stats So Far:**
+- Total Lines: 1,078 lines of production TypeScript
+- Services Created: 1 (CollectionService)
+- Views Created: 1 (CollectionsView)
+- All TypeScript: 0 errors (strict mode)
+- Progress: 25% complete (1/4 tasks)
+
+**Next Steps:**
+- Implement Trakt.tv OAuth and scrobbling
+- Create download manager for offline viewing
+- Add Chromecast support for TV casting
 
 ---
 
