@@ -104,32 +104,39 @@ CREATE TABLE analytics_events (
 ## Implementation Plan
 
 ### Day 1-2: Supabase Setup ⏳
-- [ ] Create Supabase project
-- [ ] Set up database schema (run SQL migrations)
-- [ ] Configure Row-Level Security (RLS) policies
-- [ ] Test database operations in SQL editor
-- [ ] Document API endpoints and schema
+- [ ] Create Supabase project (requires user to sign up)
+- [x] Set up database schema (SQL file created)
+- [x] Configure Row-Level Security (RLS) policies
+- [ ] Test database operations in SQL editor (after project setup)
+- [x] Document API endpoints and schema
 
-### Day 3-4: API Client Implementation ⏳
-- [ ] Install @supabase/supabase-js dependency
-- [ ] Create src/app/lib/api-client.ts
-- [ ] Implement authentication methods
+### Day 3-4: API Client Implementation ✅
+- [x] Install @supabase/supabase-js dependency
+- [x] Create src/app/lib/api-client.ts (686 lines)
+- [x] Implement authentication methods
   - signUp(email, password)
   - signIn(email, password)
   - signOut()
   - getUser()
-- [ ] Implement collection CRUD operations
-  - createCollection(items)
+  - getSession()
+  - onAuthStateChange()
+- [x] Implement collection CRUD operations
+  - createCollection(items, title, description, expiresAt)
   - getCollection(shareCode)
-- [ ] Implement favorites sync
+  - updateCollection(shareCode, updates)
+  - deleteCollection(shareCode)
+  - listMyCollections()
+- [x] Implement favorites sync
   - syncFavorites(favorites)
   - getFavorites()
-- [ ] Implement settings sync
+  - addFavorite(item)
+  - removeFavorite(movieId)
+- [x] Implement settings sync
   - syncSettings(settings)
   - getSettings()
-- [ ] Add analytics logging
+- [x] Add analytics logging
   - logEvent(type, data)
-- [ ] Add unit tests for API client
+- [ ] Add unit tests for API client (deferred to Day 7)
 
 ### Day 5-6: UI Integration ⏳
 - [ ] Create auth modal (sign in/sign up)
