@@ -2122,6 +2122,170 @@ export class VideoPlayer {
                                             }
                                         }, 100);
                                     },
+                                    // Phase 11A: New queue controls
+                                    onSkipPrevious: async () => {
+                                        console.log('Skip to previous file');
+                                        const fileIndex = this.playbackQueue?.playPrevious();
+                                        if (fileIndex !== null && this.playbackQueue) {
+                                            const file = this.playbackQueue.getCurrentFile();
+                                            console.log(`Skipping to previous: ${file.name}`);
+
+                                            // Show loading UI
+                                            if (loadingContent) {
+                                                loadingContent.classList.remove('hidden', 'opacity-0');
+                                                loadingContent.classList.add('opacity-100');
+                                            }
+                                            if (loadingTitle) loadingTitle.textContent = 'Loading Previous Video';
+                                            if (loadingSubtitle) loadingSubtitle.textContent = `Playing ${file.name}...`;
+
+                                            try {
+                                                // Stop current stream
+                                                await window.NativeTorrentClient.stopStream();
+
+                                                // Start stream for previous file
+                                                const movieData = this.playbackQueue.getMovie();
+                                                const torrent = movieData.torrents?.[movieData.quality] || movieData.torrent;
+
+                                                const streamInfo = await window.NativeTorrentClient.startStream({
+                                                    magnetLink: torrent.magnet,
+                                                    fileIndex
+                                                });
+
+                                                // Set new video source
+                                                if (videoElement && streamInfo.streamUrl) {
+                                                    videoElement.src = streamInfo.streamUrl;
+                                                    await videoElement.play();
+                                                }
+
+                                                this.updateQueueStatusUI();
+                                            } catch (error: any) {
+                                                console.error('Error skipping to previous:', error);
+                                                if (loadingTitle) loadingTitle.textContent = 'Failed to Load Previous Video';
+                                                if (loadingSubtitle) loadingSubtitle.textContent = error.message;
+                                            }
+                                        }
+                                    },
+                                    onSkipNext: async () => {
+                                        console.log('Skip to next file');
+                                        const fileIndex = this.playbackQueue?.playNext();
+                                        if (fileIndex !== null && this.playbackQueue) {
+                                            const file = this.playbackQueue.getCurrentFile();
+                                            console.log(`Skipping to next: ${file.name}`);
+
+                                            // Show loading UI
+                                            if (loadingContent) {
+                                                loadingContent.classList.remove('hidden', 'opacity-0');
+                                                loadingContent.classList.add('opacity-100');
+                                            }
+                                            if (loadingTitle) loadingTitle.textContent = 'Loading Next Video';
+                                            if (loadingSubtitle) loadingSubtitle.textContent = `Playing ${file.name}...`;
+
+                                            try {
+                                                // Stop current stream
+                                                await window.NativeTorrentClient.stopStream();
+
+                                                // Start stream for next file
+                                                const movieData = this.playbackQueue.getMovie();
+                                                const torrent = movieData.torrents?.[movieData.quality] || movieData.torrent;
+
+                                                const streamInfo = await window.NativeTorrentClient.startStream({
+                                                    magnetLink: torrent.magnet,
+                                                    fileIndex
+                                                });
+
+                                                // Set new video source
+                                                if (videoElement && streamInfo.streamUrl) {
+                                                    videoElement.src = streamInfo.streamUrl;
+                                                    await videoElement.play();
+                                                }
+
+                                                this.updateQueueStatusUI();
+                                            } catch (error: any) {
+                                                console.error('Error skipping to next:', error);
+                                                if (loadingTitle) loadingTitle.textContent = 'Failed to Load Next Video';
+                                                if (loadingSubtitle) loadingSubtitle.textContent = error.message;
+                                            }
+                                        }
+                                    },
+                                    onRepeatMode: (mode: 'off' | 'all' | 'one') => {
+                                        console.log(`Setting repeat mode to: ${mode}`);
+                                        this.playbackQueue?.setRepeatMode(mode);
+                                        this.updateQueueStatusUI();
+                                        // Refresh queue view to show new repeat mode
+                                        queueView?.updateQueue();
+                                    },
+                                    onClearQueue: async () => {
+                                        console.log('Clearing queue');
+                                        try {
+                                            // Stop current playback
+                                            await window.NativeTorrentClient.stopStream();
+                                        } catch (error) {
+                                            console.warn('Error stopping stream:', error);
+                                        }
+
+                                        // Clear the queue
+                                        this.playbackQueue?.clear();
+                                        this.playbackQueue = null;
+
+                                        // Hide queue UI
+                                        queueOverlayContainer.style.display = 'none';
+                                        queueBtn.style.display = 'none';
+                                        queueView = null;
+                                        this.updateQueueStatusUI();
+
+                                        // Close video player - trigger back button behavior
+                                        if (videoContainer) {
+                                            videoContainer.style.display = 'none';
+                                        }
+                                        // Trigger back navigation
+                                        window.history.back();
+                                    },
+                                    onJumpTo: async (index: number) => {
+                                        console.log(`Jumping to file at index ${index}`);
+                                        const fileIndex = this.playbackQueue?.jumpTo(index);
+                                        if (fileIndex !== null && this.playbackQueue) {
+                                            const file = this.playbackQueue.getCurrentFile();
+                                            console.log(`Jumping to: ${file.name}`);
+
+                                            // Show loading UI
+                                            if (loadingContent) {
+                                                loadingContent.classList.remove('hidden', 'opacity-0');
+                                                loadingContent.classList.add('opacity-100');
+                                            }
+                                            if (loadingTitle) loadingTitle.textContent = 'Loading Video';
+                                            if (loadingSubtitle) loadingSubtitle.textContent = `Playing ${file.name}...`;
+
+                                            try {
+                                                // Stop current stream
+                                                await window.NativeTorrentClient.stopStream();
+
+                                                // Start stream for selected file
+                                                const movieData = this.playbackQueue.getMovie();
+                                                const torrent = movieData.torrents?.[movieData.quality] || movieData.torrent;
+
+                                                const streamInfo = await window.NativeTorrentClient.startStream({
+                                                    magnetLink: torrent.magnet,
+                                                    fileIndex
+                                                });
+
+                                                // Set new video source
+                                                if (videoElement && streamInfo.streamUrl) {
+                                                    videoElement.src = streamInfo.streamUrl;
+                                                    await videoElement.play();
+                                                }
+
+                                                this.updateQueueStatusUI();
+
+                                                // Close queue overlay after successful jump
+                                                queueOverlayContainer.style.display = 'none';
+                                                queueView = null;
+                                            } catch (error: any) {
+                                                console.error('Error jumping to file:', error);
+                                                if (loadingTitle) loadingTitle.textContent = 'Failed to Load Video';
+                                                if (loadingSubtitle) loadingSubtitle.textContent = error.message;
+                                            }
+                                        }
+                                    },
                                     onClose: () => {
                                         console.log('Closing queue overlay');
                                         queueOverlayContainer.style.display = 'none';

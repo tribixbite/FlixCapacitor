@@ -496,6 +496,11 @@ export function showPlaybackQueue(
         onRemove?: (index: number) => void;
         onShuffle?: () => void;
         onClose?: () => void;
+        onSkipPrevious?: () => void; // Phase 11A
+        onSkipNext?: () => void; // Phase 11A
+        onRepeatMode?: (mode: 'off' | 'all' | 'one') => void; // Phase 11A
+        onClearQueue?: () => void; // Phase 11A
+        onJumpTo?: (index: number) => void; // Phase 11A
     }
 ): PlaybackQueueView {
     const view = new PlaybackQueueView({

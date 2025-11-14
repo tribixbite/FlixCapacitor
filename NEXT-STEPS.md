@@ -983,24 +983,41 @@ Note: Requires Google Cast SDK (free, no API key required)
 
 Phase 11 focuses on **UI polish and feature integration** to complete the user-facing implementation of all Phase 9 and Phase 10 backend services.
 
-### 11A: Queue Management UI 🔄 IN PROGRESS (75% Complete)
+### 11A: Queue Management UI ✅ COMPLETE
 - **Priority:** HIGH | **Impact:** Major UX improvement
-- **Completed:**
-  - ✅ PlaybackQueue enhanced with skip previous/next (hasPrevious, playPrevious methods)
-  - ✅ Repeat mode support ('off' | 'all' | 'one') with setRepeatMode/getRepeatMode
-  - ✅ Jump to specific file with jumpTo(index) method
-  - ✅ PlaybackQueueView UI with skip previous/next buttons
-  - ✅ Repeat mode toggle button with visual indicator
-  - ✅ Clear queue button with confirmation dialog
-  - ✅ Jump to file by clicking queue item names
-  - ✅ Repeat mode state persistence (getState/restoreState)
-  - ✅ TypeScript: 0 errors in Phase 11A code
-- **Remaining:**
-  - ⏳ Integration with video player (wire callbacks)
-  - ⏳ Auto-play countdown timer (optional enhancement)
-  - ⏳ Background pre-buffering (future optimization)
-- **Implementation:** ~400 lines added
-- **Commits:** Pending
+- **Implementation:** ~550 lines added
+- **Commits:** 056fb4c5 (Part 1), [current] (Part 2)
+
+**Backend Features (PlaybackQueue):**
+- ✅ Skip previous with hasPrevious() and playPrevious() methods
+- ✅ Repeat mode support ('off' | 'all' | 'one') with setRepeatMode/getRepeatMode
+- ✅ Jump to specific file with jumpTo(index) method
+- ✅ Repeat mode state persistence (getState/restoreState)
+- ✅ Updated playNext() to respect repeat mode logic
+
+**UI Features (PlaybackQueueView):**
+- ✅ Skip previous/next buttons with disabled states
+- ✅ Repeat mode toggle button with visual indicator (🔂/🔁/▶️)
+- ✅ Clear queue button with confirmation dialog
+- ✅ Jump to file by clicking queue item names
+- ✅ Playback controls section showing current mode
+- ✅ Analytics tracking for all new actions
+
+**Video Player Integration:**
+- ✅ onSkipPrevious callback with full playback logic
+- ✅ onSkipNext callback with full playback logic
+- ✅ onRepeatMode callback with queue view refresh
+- ✅ onClearQueue callback with cleanup and navigation
+- ✅ onJumpTo callback with queue overlay auto-close
+- ✅ Loading UI states for all transitions
+- ✅ Error handling for stream failures
+
+**TypeScript:** 0 errors in Phase 11A code
+
+**Future Enhancements (Optional):**
+- ⏭️ Auto-play countdown timer (5 seconds before next file)
+- ⏭️ Background pre-buffering of next file
+- ⏭️ Queue thumbnails (requires FFmpeg integration - Phase 12)
 
 ### 11B: Library Management UI 🔄 PENDING
 - **Priority:** HIGH | **Impact:** Major UX improvement
