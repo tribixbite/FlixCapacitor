@@ -17,6 +17,7 @@ import type {
 import type { LibraryItem } from '@/types/library';
 import MediaPermissions from 'capacitor-plugin-media-permissions';
 import { DirectoryPicker } from 'capacitor-plugin-directory-picker';
+import { Share } from '@capacitor/share';
 import { VideoPlayer, type VideoPlayerContext } from './video-player';
 import { UITemplates } from './ui-templates';
 import { showLibraryManagement, type LibraryManagementView } from '../views/library-management-view'; // Phase 11B
@@ -2259,6 +2260,256 @@ export class MobileUIController {
 
     async showVideoPlayer(movie: Movie | Episode | LibraryItem, torrent: TorrentInfo | null, quality: string): Promise<void> {
         return this.videoPlayer.showVideoPlayer(movie, torrent, quality);
+    }
+
+    // Phase 11E: Share functionality
+    /**
+     * Share a movie with others
+     */
+    async shareMovie(movie: Movie): Promise<void> {
+        try {
+            const url = `flixcapacitor://movie/${movie.imdb_id}`;
+            const webUrl = `https://flixcapacitor.app/movie/${movie.imdb_id}`;
+
+            await Share.share({
+                title: `Check out ${movie.title}`,
+                text: `${movie.title} (${movie.year}) - ${movie.synopsis || 'Watch this movie on FlixCapacitor'}`,
+                url: webUrl,
+                dialogTitle: 'Share Movie'
+            });
+
+            console.log('Shared movie:', movie.title);
+        } catch (error) {
+            console.error('Failed to share movie:', error);
+        }
+    }
+
+    /**
+     * Share a TV show with others
+     */
+    async shareShow(show: TVShow): Promise<void> {
+        try {
+            const url = `flixcapacitor://show/${show.imdb_id}`;
+            const webUrl = `https://flixcapacitor.app/show/${show.imdb_id}`;
+
+            await Share.share({
+                title: `Check out ${show.title}`,
+                text: `${show.title} - ${show.synopsis || 'Watch this show on FlixCapacitor'}`,
+                url: webUrl,
+                dialogTitle: 'Share TV Show'
+            });
+
+            console.log('Shared show:', show.title);
+        } catch (error) {
+            console.error('Failed to share show:', error);
+        }
+    }
+
+    /**
+     * Share a torrent magnet link
+     */
+    async shareTorrent(magnetLink: string, title?: string): Promise<void> {
+        try {
+            const encodedMagnet = encodeURIComponent(magnetLink);
+            const url = `flixcapacitor://play/${encodedMagnet}`;
+
+            await Share.share({
+                title: title ? `Watch: ${title}` : 'Watch on FlixCapacitor',
+                text: title ? `${title} - Click to watch` : 'Click to watch on FlixCapacitor',
+                url: url,
+                dialogTitle: 'Share Torrent'
+            });
+
+            console.log('Shared torrent:', title || magnetLink.substring(0, 50));
+        } catch (error) {
+            console.error('Failed to share torrent:', error);
+        }
+    }
+
+    /**
+     * Share a collection of favorites
+     */
+    async shareCollection(items: Array<Movie | TVShow>): Promise<void> {
+        try {
+            const { default: favoritesService } = await import('./favorites-service');
+
+            // Generate a share code (could be stored on a backend in production)
+            const shareCode = `collection_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+            // Export favorites data
+            const exportData = {
+                shareCode,
+                items: items.map(item => ({
+                    id: item.imdb_id,
+                    type: (item as any).num_seasons ? 'show' : 'movie',
+                    title: item.title,
+                    year: item.year,
+                    poster: item.images?.poster
+                })),
+                createdAt: Date.now()
+            };
+
+            // In production, this would upload to a backend
+            // For now, store locally with share code
+            localStorage.setItem(`share_${shareCode}`, JSON.stringify(exportData));
+
+            const url = `flixcapacitor://collection/${shareCode}`;
+            const webUrl = `https://flixcapacitor.app/collection/${shareCode}`;
+
+            await Share.share({
+                title: 'Check out my collection',
+                text: `I've shared ${items.length} movies/shows with you on FlixCapacitor`,
+                url: webUrl,
+                dialogTitle: 'Share Collection'
+            });
+
+            console.log('Shared collection with', items.length, 'items');
+        } catch (error) {
+            console.error('Failed to share collection:', error);
+        }
+    }
+
+    /**
+     * Import a shared collection
+     */
+    async importSharedCollection(shareCode: string): Promise<void> {
+        try {
+            const { default: favoritesService } = await import('./favorites-service');
+
+            // In production, this would fetch from a backend
+            // For now, load from localStorage
+            const shareDataStr = localStorage.getItem(`share_${shareCode}`);
+
+            if (!shareDataStr) {
+                console.error('Collection not found:', shareCode);
+                // Show error message
+                const modalContainer = document.createElement('div');
+                modalContainer.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]';
+                modalContainer.innerHTML = `
+                    <div class="bg-gray-800 rounded-lg p-6 m-4 max-w-md">
+                        <div class="text-xl font-bold mb-4 text-white">Collection Not Found</div>
+                        <div class="text-gray-300 mb-6">The shared collection could not be found. The link may be expired or invalid.</div>
+                        <button class="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold text-white">
+                            OK
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(modalContainer);
+                modalContainer.querySelector('button')?.addEventListener('click', () => {
+                    modalContainer.remove();
+                });
+                return;
+            }
+
+            const shareData = JSON.parse(shareDataStr);
+
+            // Show confirmation dialog
+            const modalContainer = document.createElement('div');
+            modalContainer.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]';
+            modalContainer.innerHTML = `
+                <div class="bg-gray-800 rounded-lg p-6 m-4 max-w-md">
+                    <div class="text-xl font-bold mb-4 text-white">Import Collection</div>
+                    <div class="text-gray-300 mb-4">
+                        Import ${shareData.items.length} items to your favorites?
+                    </div>
+                    <div class="max-h-48 overflow-y-auto mb-6 space-y-2">
+                        ${shareData.items.map((item: any) => `
+                            <div class="flex items-center gap-3 p-2 bg-gray-700/50 rounded">
+                                <img src="${item.poster || 'https://via.placeholder.com/50x75'}"
+                                     class="w-12 h-18 object-cover rounded" />
+                                <div>
+                                    <div class="text-white font-medium">${item.title}</div>
+                                    <div class="text-gray-400 text-sm">${item.year}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="import-cancel-btn" class="flex-1 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-semibold text-white">
+                            Cancel
+                        </button>
+                        <button id="import-confirm-btn" class="flex-1 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold text-white">
+                            Import
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modalContainer);
+
+            modalContainer.querySelector('#import-cancel-btn')?.addEventListener('click', () => {
+                modalContainer.remove();
+            });
+
+            modalContainer.querySelector('#import-confirm-btn')?.addEventListener('click', async () => {
+                let imported = 0;
+
+                // Import each item as a favorite
+                for (const item of shareData.items) {
+                    const favoriteItem = {
+                        id: item.id,
+                        type: item.type,
+                        title: item.title,
+                        year: item.year,
+                        images: { poster: item.poster }
+                    };
+
+                    const success = await favoritesService.addFavorite(favoriteItem);
+                    if (success) imported++;
+                }
+
+                modalContainer.remove();
+
+                // Show success message
+                const successModal = document.createElement('div');
+                successModal.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]';
+                successModal.innerHTML = `
+                    <div class="bg-gray-800 rounded-lg p-6 m-4 max-w-md">
+                        <div class="text-xl font-bold mb-4 text-white">Success!</div>
+                        <div class="text-gray-300 mb-6">Imported ${imported} of ${shareData.items.length} items to your favorites.</div>
+                        <button class="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold text-white">
+                            View Favorites
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(successModal);
+
+                successModal.querySelector('button')?.addEventListener('click', () => {
+                    successModal.remove();
+                    this.showFavorites('favorites');
+                });
+
+                console.log('Imported collection:', imported, 'items');
+            });
+
+        } catch (error) {
+            console.error('Failed to import collection:', error);
+        }
+    }
+
+    /**
+     * Perform search with query
+     */
+    async performSearch(query: string): Promise<void> {
+        try {
+            console.log('Performing search:', query);
+
+            // Navigate to movies view (which has search)
+            await this.showMovies();
+
+            // Set search input value and trigger search
+            const searchInput = document.querySelector<HTMLInputElement>('#search-input');
+            if (searchInput) {
+                searchInput.value = query;
+
+                // Trigger search by clicking search button
+                const searchBtn = document.querySelector('#search-btn');
+                if (searchBtn) {
+                    (searchBtn as HTMLElement).click();
+                }
+            }
+        } catch (error) {
+            console.error('Failed to perform search:', error);
+        }
     }
 
     // Mock data generators

@@ -341,44 +341,95 @@ async function handleOAuthCallback(url: string): Promise<void> {
 }
 
 /**
- * Handle content deep links (movies/shows)
+ * Handle content deep links (movies/shows/navigation)
  * Supports formats:
- * - flixcapacitor://movie/tt1234567
- * - flixcapacitor://show/tt7654321
- * - https://flixcapacitor.app/movie/tt1234567
- * - https://flixcapacitor.app/show/tt7654321
+ * - flixcapacitor://movie/tt1234567 - Open movie detail
+ * - flixcapacitor://show/tt7654321 - Open show detail
+ * - flixcapacitor://play/:magnetUri - Play torrent from magnet
+ * - flixcapacitor://search/:query - Search for content
+ * - flixcapacitor://library - Open library tab
+ * - flixcapacitor://favorites - Open favorites tab
+ * - flixcapacitor://collection/:shareCode - Import shared collection
+ * - https://flixcapacitor.app/* - Web URLs mirror app:// schemes
  */
 function handleContentDeepLink(url: string): void {
     console.log('Handling content deep link:', url);
 
     try {
-        // Parse the URL to extract type and ID
-        let match: RegExpMatchArray | null = null;
-
-        // Try flixcapacitor:// scheme
-        if (url.startsWith('flixcapacitor://')) {
-            match = url.match(/flixcapacitor:\/\/(movie|show)\/(.+)/);
-        }
-        // Try https://flixcapacitor.app/ scheme
-        else if (url.includes('flixcapacitor.app')) {
-            match = url.match(/flixcapacitor\.app\/(movie|show)\/(.+)/);
-        }
-
-        if (!match) {
-            console.warn('Invalid content deep link format:', url);
+        const app = window.App as MobileApp | undefined;
+        if (!app?.UI) {
+            console.error('App.UI not available');
             return;
         }
 
-        const [, type, id] = match;
-        console.log('Deep link parsed - Type:', type, 'ID:', id);
+        // Normalize URL for parsing (handle both schemes)
+        const normalizedUrl = url.includes('flixcapacitor.app')
+            ? url.replace(/https?:\/\/flixcapacitor\.app/, 'flixcapacitor://')
+            : url;
 
-        const app = window.App as MobileApp | undefined;
-        if (app?.UI && typeof app.UI.showDetail === 'function') {
-            // Navigate to detail view for the content
-            app.UI.showDetail(id);
-            console.log(`Navigated to ${type} detail: ${id}`);
-        } else {
-            console.error('App.UI.showDetail not available');
+        // Parse different URL patterns
+        let match: RegExpMatchArray | null = null;
+
+        // Movie/Show detail: flixcapacitor://movie/tt1234567 or flixcapacitor://show/tt7654321
+        if ((match = normalizedUrl.match(/flixcapacitor:\/\/(movie|show)\/(.+)/))) {
+            const [, type, id] = match;
+            console.log(`Deep link: ${type} detail - ${id}`);
+            if (typeof app.UI.showDetail === 'function') {
+                app.UI.showDetail(id);
+            } else {
+                console.error('App.UI.showDetail not available');
+            }
+        }
+        // Play torrent: flixcapacitor://play/:magnetUri (URL encoded)
+        else if ((match = normalizedUrl.match(/flixcapacitor:\/\/play\/(.+)/))) {
+            const magnetUri = decodeURIComponent(match[1]);
+            console.log('Deep link: Play torrent -', magnetUri.substring(0, 50) + '...');
+            if (typeof app.UI.showTorrentFiles === 'function') {
+                app.UI.showTorrentFiles(magnetUri);
+            } else {
+                console.error('App.UI.showTorrentFiles not available');
+            }
+        }
+        // Search: flixcapacitor://search/:query
+        else if ((match = normalizedUrl.match(/flixcapacitor:\/\/search\/(.+)/))) {
+            const query = decodeURIComponent(match[1]);
+            console.log('Deep link: Search -', query);
+            if (typeof app.UI.performSearch === 'function') {
+                app.UI.performSearch(query);
+            } else {
+                console.error('App.UI.performSearch not available');
+            }
+        }
+        // Library: flixcapacitor://library
+        else if (normalizedUrl === 'flixcapacitor://library') {
+            console.log('Deep link: Open library');
+            if (typeof app.UI.showLibrary === 'function') {
+                app.UI.showLibrary();
+            } else {
+                console.error('App.UI.showLibrary not available');
+            }
+        }
+        // Favorites: flixcapacitor://favorites
+        else if (normalizedUrl === 'flixcapacitor://favorites') {
+            console.log('Deep link: Open favorites');
+            if (typeof app.UI.showFavorites === 'function') {
+                app.UI.showFavorites('favorites');
+            } else {
+                console.error('App.UI.showFavorites not available');
+            }
+        }
+        // Collection import: flixcapacitor://collection/:shareCode
+        else if ((match = normalizedUrl.match(/flixcapacitor:\/\/collection\/(.+)/))) {
+            const shareCode = match[1];
+            console.log('Deep link: Import collection -', shareCode);
+            if (typeof app.UI.importSharedCollection === 'function') {
+                app.UI.importSharedCollection(shareCode);
+            } else {
+                console.error('App.UI.importSharedCollection not available');
+            }
+        }
+        else {
+            console.warn('Invalid content deep link format:', url);
         }
     } catch (error) {
         console.error('Failed to handle content deep link:', error);

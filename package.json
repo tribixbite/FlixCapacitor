@@ -71,6 +71,7 @@
     "@capacitor/haptics": "^7.0.2",
     "@capacitor/ios": "^7.4.3",
     "@capacitor/preferences": "^7.0.2",
+    "@capacitor/share": "^7.0.2",
     "@capacitor/status-bar": "^7.0.3",
     "backbone": "^1.6.1",
     "backbone.marionette": "^4.1.3",
