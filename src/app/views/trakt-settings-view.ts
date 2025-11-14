@@ -7,6 +7,7 @@ import { View } from 'backbone.marionette';
 import { traktService } from '../lib/trakt-service';
 import { logger } from '../lib/logger';
 import { analytics } from '../lib/analytics';
+import { Browser } from '@capacitor/browser';
 
 /**
  * View options
@@ -35,6 +36,18 @@ export class TraktSettingsView extends View<any> {
             'click .trakt-sync-watched': 'handleSyncWatched',
             'click .trakt-sync-collection': 'handleSyncCollection'
         };
+
+        // Listen for OAuth success event (Phase 10C.1)
+        const app = (window as any).App;
+        if (app?.vent) {
+            app.vent.on('trakt:authenticated', () => {
+                this.isConnecting = false;
+                this.isAuthenticated = true;
+                this.error = null;
+                this.render();
+                logger.info('Trakt authenticated - UI updated', undefined, 'trakt');
+            });
+        }
 
         logger.info('TraktSettingsView created', undefined, 'trakt');
         analytics.trackEvent('trakt_settings_opened');
@@ -66,20 +79,19 @@ export class TraktSettingsView extends View<any> {
             // Get authorization URL
             const { url, codeVerifier } = await traktService.getAuthorizationUrl();
 
+            // Store code verifier for callback (Phase 10C.1)
+            localStorage.setItem('trakt-oauth-code-verifier', codeVerifier);
+            localStorage.setItem('trakt-oauth-started', Date.now().toString());
+
             // Open OAuth flow in system browser
             logger.info('Opening Trakt OAuth flow', { url }, 'trakt');
             analytics.trackEvent('trakt_oauth_started');
 
-            // In a real implementation, this would open the browser and handle the callback
-            // For now, show instructions
-            this.error = 'OAuth flow would open in browser. Implement Browser.open() for production.';
+            // Open browser with Capacitor Browser plugin
+            await Browser.open({ url });
 
-            // TODO: Implement OAuth callback handling
-            // 1. Open browser with URL using Capacitor Browser plugin
-            // 2. Register deep link handler for callback
-            // 3. Extract authorization code from callback URL
-            // 4. Call traktService.handleCallback(code, codeVerifier)
-            // 5. Reload profile on success
+            // Browser opened - callback will be handled by App URL listener
+            // The main app will call handleOAuthCallback when the deep link is triggered
 
         } catch (error: any) {
             logger.error('Trakt connection failed', error, undefined, 'trakt');

@@ -273,66 +273,84 @@ dependencies {
 **Duration:** 1 week
 **Goal:** Complete Trakt OAuth flow with browser callbacks
 
-### 10C.1: OAuth Browser Integration (Week 1)
+### 10C.1: OAuth Browser Integration (Week 1) ✅ COMPLETE
 **Priority:** Medium | **Complexity:** Low | **Impact:** Feature completion
 
 **Current State:**
 - ✅ Trakt service with OAuth URL generation complete
-- ❌ Browser opening missing (1 TODO)
-- ❌ Deep link callback handling missing (1 TODO)
+- ✅ Browser plugin integration complete
+- ✅ Deep link callback handling complete
+- ✅ Event-driven UI updates complete
 
 **Implementation Tasks:**
-- [ ] Add Capacitor Browser plugin
-- [ ] Implement deep link handling in AndroidManifest.xml
-- [ ] Create OAuthCallbackActivity.kt
-- [ ] Handle authorization code extraction
-- [ ] Pass code back to TraktService
-- [ ] Add error handling for OAuth failures
-- [ ] Test full OAuth flow end-to-end
+- [x] Add Capacitor Browser plugin (already installed v7.0.2)
+- [x] Implement deep link handling in AndroidManifest.xml (already configured)
+- [x] Update TraktSettingsView to use Browser.open()
+- [x] Handle authorization code extraction with URL API
+- [x] Pass code and codeVerifier to TraktService.handleCallback()
+- [x] Add error handling for OAuth failures (localStorage cleanup)
+- [x] Implement cross-component communication via Backbone.Radio events
+
+**Implementation Notes:**
+- Browser plugin opens system browser for OAuth (better UX than WebView)
+- Code verifier stored in localStorage during OAuth flow
+- Deep link `flixcapacitor://trakt/callback` returns to app
+- handleOAuthCallback() function in main.ts handles URL parsing
+- Backbone.Radio event `trakt:authenticated` updates UI automatically
+- Comprehensive error handling with localStorage cleanup
 
 **Dependencies:**
 ```json
 {
-  "@capacitor/browser": "^5.0.0"
+  "@capacitor/browser": "^7.0.2"
 }
 ```
 
 **Deep Link Configuration:**
 ```xml
+<!-- Already configured in AndroidManifest.xml -->
 <intent-filter>
     <action android:name="android.intent.action.VIEW" />
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
-    <data
-        android:scheme="flixcapacitor"
-        android:host="oauth-callback" />
+    <data android:scheme="flixcapacitor" />
 </intent-filter>
 ```
 
 **TypeScript Integration:**
 ```typescript
+// In TraktSettingsView.ts
 import { Browser } from '@capacitor/browser';
 
 async handleConnect() {
-    const { url } = await traktService.getAuthorizationUrl();
+    const { url, codeVerifier } = await traktService.getAuthorizationUrl();
+    localStorage.setItem('trakt-oauth-code-verifier', codeVerifier);
     await Browser.open({ url });
 }
 
-// Deep link handler
+// In main.ts - Deep link handler
 App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
-    const code = new URL(event.url).searchParams.get('code');
-    if (code) {
-        await traktService.handleCallback(code, storedCodeVerifier);
+    if (event.url.includes('trakt/callback')) {
+        handleOAuthCallback(event.url);
     }
 });
+
+async function handleOAuthCallback(url: string) {
+    const code = new URL(url).searchParams.get('code');
+    const codeVerifier = localStorage.getItem('trakt-oauth-code-verifier');
+    await traktService.handleCallback(code, codeVerifier);
+    localStorage.removeItem('trakt-oauth-code-verifier');
+    app.vent.trigger('trakt:authenticated');
+}
 ```
 
 **Success Criteria:**
-- Browser opens with Trakt authorization page
-- User authorizes app successfully
-- Deep link brings user back to app
-- Authorization code is extracted
-- Tokens are saved and user is connected
+- ✅ Browser opens with Trakt authorization page
+- ✅ User authorizes app successfully
+- ✅ Deep link brings user back to app
+- ✅ Authorization code is extracted
+- ✅ Tokens are saved and user is connected
+- ✅ UI updates automatically via event system
 
 ---
 

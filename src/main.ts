@@ -209,6 +209,12 @@ async function initCapacitorPlugins(): Promise<void> {
             const url = data.url;
             const app = window.App as MobileApp | undefined;
 
+            // Handle OAuth callback (Phase 10C.1)
+            if (url.includes('trakt/callback')) {
+                handleOAuthCallback(url);
+                return;
+            }
+
             // Handle magnet links
             if (url.startsWith('magnet:')) {
                 if (app?.vent) {
@@ -257,6 +263,82 @@ async function initCapacitorPlugins(): Promise<void> {
 }
 
 // Helper functions for deep link handling
+
+/**
+ * Handle OAuth callback from Trakt (Phase 10C.1)
+ * URL format: flixcapacitor://oauth-callback?code=ABC123&state=xyz
+ */
+async function handleOAuthCallback(url: string): Promise<void> {
+    console.log('Handling OAuth callback:', url);
+
+    try {
+        // Parse URL to extract code
+        const urlObj = new URL(url);
+        const code = urlObj.searchParams.get('code');
+        const error = urlObj.searchParams.get('error');
+
+        // Check for OAuth errors
+        if (error) {
+            console.error('OAuth error:', error);
+            const errorDescription = urlObj.searchParams.get('error_description') || 'Unknown error';
+            alert(`OAuth failed: ${errorDescription}`);
+
+            // Clean up stored data
+            localStorage.removeItem('trakt-oauth-code-verifier');
+            localStorage.removeItem('trakt-oauth-started');
+            return;
+        }
+
+        // Validate we have an authorization code
+        if (!code) {
+            console.error('No authorization code in OAuth callback');
+            alert('OAuth callback failed: No authorization code received');
+            return;
+        }
+
+        // Retrieve the stored code verifier
+        const codeVerifier = localStorage.getItem('trakt-oauth-code-verifier');
+        if (!codeVerifier) {
+            console.error('No code verifier found in localStorage');
+            alert('OAuth failed: Session expired. Please try connecting again.');
+            return;
+        }
+
+        console.log('OAuth code received, exchanging for token...');
+
+        // Import and use traktService
+        const { traktService } = await import('./app/lib/trakt-service');
+
+        // Initialize service if needed
+        await traktService.initialize();
+
+        // Exchange code for token
+        await traktService.handleCallback(code, codeVerifier);
+
+        console.log('OAuth flow completed successfully');
+
+        // Clean up stored data
+        localStorage.removeItem('trakt-oauth-code-verifier');
+        localStorage.removeItem('trakt-oauth-started');
+
+        // Show success message
+        alert('Successfully connected to Trakt! You can now sync your watch history and scrobble content.');
+
+        // Trigger event to update UI
+        const app = window.App as MobileApp | undefined;
+        if (app?.vent) {
+            app.vent.trigger('trakt:authenticated');
+        }
+
+    } catch (error: any) {
+        console.error('OAuth callback failed:', error);
+        alert(`OAuth failed: ${error.message || 'Unknown error'}`);
+
+        // Clean up on error
+        localStorage.removeItem('trakt-oauth-code-verifier');
+        localStorage.removeItem('trakt-oauth-started');
+    }
+}
 
 /**
  * Handle content deep links (movies/shows)
