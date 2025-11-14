@@ -1019,15 +1019,22 @@ Phase 11 focuses on **UI polish and feature integration** to complete the user-f
 - ⏭️ Background pre-buffering of next file
 - ⏭️ Queue thumbnails (requires FFmpeg integration - Phase 12)
 
-### 11B: Library Management UI 🔄 PENDING
+### 11B: Library Management UI 🔄 IN PROGRESS (80% Complete)
 - **Priority:** HIGH | **Impact:** Major UX improvement
-- **Features:**
-  - Folder list with statistics
-  - Manual/auto rescan controls
-  - Folder exclusions
-  - Scan progress with cancel
-  - Remove folder functionality
-- **Estimated Lines:** ~700 lines
+- **Completed:**
+  - ✅ LibraryManagementView component (~560 lines)
+  - ✅ Folder list with statistics (files count, size, last scan)
+  - ✅ Rescan button for each folder
+  - ✅ Remove button with confirmation dialog
+  - ✅ Statistics loading from database
+  - ✅ Beautiful Tailwind CSS modal UI
+  - ✅ TypeScript: 0 errors
+- **Remaining:**
+  - ⏳ Integrate into mobile-ui-views (add "Manage Folders" button)
+  - ⏳ Wire rescan callback to scanLibraryFolder()
+  - ⏳ Wire remove callback to remove from settings + database
+- **Implementation:** ~560 lines added
+- **Commits:** Pending
 
 ### 11C: Favorites UI 🔄 PENDING
 - **Priority:** MEDIUM | **Impact:** Moderate UX improvement
