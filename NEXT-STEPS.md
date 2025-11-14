@@ -1,7 +1,7 @@
 # FlixCapacitor - Next Steps
 
-**Date:** 2025-11-13
-**Status:** 🎉 Phase 8, 9A, 9B, 9C, 9C UI, 9D, 10 (ALL) COMPLETE! ~2,250 lines in Phase 10 🎉
+**Date:** 2025-11-14
+**Status:** 🎉 Phases 8-10 COMPLETE! Phase 11 UI Polish & Integration - PLANNING 🎉
 
 ---
 
@@ -974,6 +974,95 @@ Note: Requires Google Cast SDK (free, no API key required)
 - Memory leak detection with LeakCanary during testing
 
 **Full Phase 10 Plan:** See `PHASE-10-NATIVE-INTEGRATIONS.md`
+
+---
+
+## 🚀 Phase 11 - UI Polish & Feature Integration (2025-11-14) 🔄 PLANNING
+
+**Started:** 2025-11-14 | **Target:** v1.4.0-alpha | **Duration:** 3-4 weeks
+
+Phase 11 focuses on **UI polish and feature integration** to complete the user-facing implementation of all Phase 9 and Phase 10 backend services.
+
+### 11A: Queue Management UI 🔄 PENDING
+- **Priority:** HIGH | **Impact:** Major UX improvement
+- **Features:**
+  - Full queue view modal with thumbnails
+  - Drag-and-drop reordering
+  - Queue controls (skip, previous, remove, clear)
+  - Shuffle/Repeat toggles
+  - Auto-play countdown timer
+  - Background pre-buffering
+- **Estimated Lines:** ~600 lines
+
+### 11B: Library Management UI 🔄 PENDING
+- **Priority:** HIGH | **Impact:** Major UX improvement
+- **Features:**
+  - Folder list with statistics
+  - Manual/auto rescan controls
+  - Folder exclusions
+  - Scan progress with cancel
+  - Remove folder functionality
+- **Estimated Lines:** ~700 lines
+
+### 11C: Favorites UI 🔄 PENDING
+- **Priority:** MEDIUM | **Impact:** Moderate UX improvement
+- **Features:**
+  - Dedicated favorite files view
+  - Grid layout with thumbnails
+  - Sort and search favorites
+  - Export/import JSON
+  - Batch operations
+- **Estimated Lines:** ~500 lines
+
+### 11D: Settings Integration 🔄 PENDING
+- **Priority:** HIGH | **Impact:** Major feature accessibility
+- **Features:**
+  - Battery settings (WiFi-only, pause on low battery, etc.)
+  - Network settings (cache, retry, timeout)
+  - Startup settings (service priorities, metrics)
+  - Memory settings (cache sizes, statistics)
+  - Download settings (concurrent, speed limits, storage)
+- **Estimated Lines:** ~400 lines
+
+### 11E: Navigation & Deep Linking 🔄 PENDING
+- **Priority:** MEDIUM | **Impact:** Moderate UX improvement
+- **Features:**
+  - Deep link URL handling (play, movie, show, search, library, favorites, collection)
+  - URL scheme registration
+  - Share integration
+  - External app integration (magnet: links, .torrent files)
+- **Estimated Lines:** ~300 lines
+
+### 11F: UI Polish & Animations 🔄 PENDING
+- **Priority:** MEDIUM | **Impact:** Moderate UX polish
+- **Features:**
+  - View transitions (slide, fade, scale)
+  - Loading animations with progress
+  - Success/error feedback animations
+  - Micro-interactions (ripple, hover, drag feedback)
+  - Gesture enhancements (swipe, long press, pinch zoom)
+- **Estimated Lines:** ~200 lines
+
+### 11G: Accessibility Enhancements 🔄 PENDING
+- **Priority:** MEDIUM | **Impact:** Major accessibility improvement
+- **Features:**
+  - Keyboard navigation (tab order, focus indicators)
+  - Screen reader support (ARIA labels, live regions)
+  - Contrast & sizing options
+  - Focus management (trap, return)
+- **Estimated Lines:** ~100 lines
+
+### Phase 11 Summary
+**Total Estimated Lines:** ~3,100 lines of UI code
+**Duration:** 4 weeks (20 working days)
+**Dependencies:** All Phase 9 & 10 services ✅ Complete
+
+**Week 1:** Queue + Library Management
+**Week 2:** Favorites + Settings Part 1
+**Week 3:** Settings Part 2 + Navigation + Polish Part 1
+**Week 4:** Polish Part 2 + Accessibility + Testing
+
+**Full Phase 11 Plan:** See `PHASE-11-UI-POLISH.md` (800+ lines)
 
 ---
 
