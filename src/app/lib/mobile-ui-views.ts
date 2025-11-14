@@ -23,6 +23,7 @@ import { UITemplates } from './ui-templates';
 import { showLibraryManagement, type LibraryManagementView } from '../views/library-management-view'; // Phase 11B
 import { showFavoriteFiles, FavoriteFilesView } from '../views/favorite-files-view'; // Phase 11C
 import { animationService, AnimationDuration, TransitionType } from './animation-service'; // Phase 11F
+import { accessibilityService, AriaLivePriority } from './accessibility-service'; // Phase 11G
 
 
 // UI Controller
@@ -83,6 +84,11 @@ export class MobileUIController {
         // Phase 11F: Initialize AnimationService
         animationService.initialize().catch((err) => {
             console.error('Failed to initialize animation service:', err);
+        });
+
+        // Phase 11G: Initialize AccessibilityService
+        accessibilityService.initialize().catch((err) => {
+            console.error('Failed to initialize accessibility service:', err);
         });
 
         // Make available globally for back button handler
@@ -2853,6 +2859,353 @@ export class MobileUIController {
                 pressTimer = null;
             }
         });
+    }
+
+    // Phase 11G: Accessibility Methods
+
+    /**
+     * Enhance element with ARIA attributes
+     */
+    enhanceAccessibility(element: HTMLElement, options: {
+        label?: string;
+        role?: string;
+        describedBy?: string;
+        expanded?: boolean;
+        selected?: boolean;
+        hasPopup?: boolean;
+    }): void {
+        if (options.label) {
+            accessibilityService.setAriaLabel(element, options.label);
+        }
+
+        if (options.role) {
+            accessibilityService.setAriaRole(element, options.role);
+        }
+
+        if (options.describedBy) {
+            accessibilityService.setAriaDescribedBy(element, options.describedBy);
+        }
+
+        if (options.expanded !== undefined) {
+            accessibilityService.setExpanded(element, options.expanded);
+        }
+
+        if (options.selected !== undefined) {
+            accessibilityService.setSelected(element, options.selected);
+        }
+
+        if (options.hasPopup) {
+            element.setAttribute('aria-haspopup', 'true');
+        }
+
+        // Ensure interactive elements are focusable
+        if (!element.hasAttribute('tabindex') &&
+            (options.role === 'button' || options.role === 'link')) {
+            element.setAttribute('tabindex', '0');
+        }
+    }
+
+    /**
+     * Make element keyboard navigable
+     */
+    makeKeyboardNavigable(element: HTMLElement, onClick: () => void): void {
+        // Make focusable
+        if (!element.hasAttribute('tabindex')) {
+            element.setAttribute('tabindex', '0');
+        }
+
+        // Add keyboard event handlers
+        element.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onClick();
+                this.haptic('light');
+            }
+        });
+    }
+
+    /**
+     * Announce message to screen readers
+     */
+    announceToScreenReader(message: string, priority: 'polite' | 'assertive' = 'polite'): void {
+        const ariaPriority = priority === 'assertive' ? AriaLivePriority.ASSERTIVE : AriaLivePriority.POLITE;
+        accessibilityService.announce(message, ariaPriority);
+    }
+
+    /**
+     * Set page title with screen reader announcement
+     */
+    setPageTitle(title: string): void {
+        accessibilityService.setPageTitle(title);
+    }
+
+    /**
+     * Create modal with focus trap and ARIA attributes
+     */
+    createAccessibleModal(content: string, options: {
+        title: string;
+        onClose: () => void;
+        role?: 'dialog' | 'alertdialog';
+    }): HTMLElement {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]';
+        modal.setAttribute('role', options.role || 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'modal-title');
+
+        const dialog = document.createElement('div');
+        dialog.className = 'bg-gray-800 rounded-lg p-6 m-4 max-w-2xl max-h-[80vh] overflow-y-auto';
+
+        dialog.innerHTML = `
+            <div class="flex items-start justify-between mb-4">
+                <h2 id="modal-title" class="text-xl font-bold text-white">${options.title}</h2>
+                <button id="modal-close-btn"
+                        class="text-gray-400 hover:text-white text-2xl leading-none"
+                        aria-label="Close dialog">
+                    ×
+                </button>
+            </div>
+            <div class="text-gray-300">
+                ${content}
+            </div>
+        `;
+
+        modal.appendChild(dialog);
+
+        // Set up close button
+        const closeBtn = dialog.querySelector('#modal-close-btn') as HTMLElement;
+        closeBtn.addEventListener('click', options.onClose);
+
+        // Create focus trap
+        setTimeout(() => {
+            accessibilityService.createFocusTrap(dialog);
+        }, 100);
+
+        // Announce modal opening
+        this.announceToScreenReader(`${options.title} dialog opened`, 'polite');
+
+        return modal;
+    }
+
+    /**
+     * Close accessible modal
+     */
+    async closeAccessibleModal(modal: HTMLElement, title: string): Promise<void> {
+        // Release focus trap
+        accessibilityService.releaseFocusTrap();
+
+        // Announce closing
+        this.announceToScreenReader(`${title} dialog closed`, 'polite');
+
+        // Animate out and remove
+        await this.hideModalAnimated(modal, 'scale');
+    }
+
+    /**
+     * Enhance buttons with accessibility features
+     */
+    enhanceButtonsAccessibility(container: HTMLElement = document.body): void {
+        const buttons = container.querySelectorAll<HTMLElement>('button, .btn, [role="button"]');
+
+        buttons.forEach(button => {
+            // Skip if already enhanced
+            if (button.dataset.accessibilityEnhanced) return;
+
+            // Ensure focusable
+            if (!button.hasAttribute('tabindex') && button.tagName !== 'BUTTON') {
+                button.setAttribute('tabindex', '0');
+            }
+
+            // Add aria-label if no text content
+            if (!button.textContent?.trim() && !button.getAttribute('aria-label')) {
+                // Try to infer label from icon or class
+                const icon = button.querySelector('[class*="icon"]');
+                if (icon) {
+                    const iconClass = Array.from(icon.classList).find(c => c.includes('icon'));
+                    if (iconClass) {
+                        const label = iconClass.replace('icon-', '').replace(/-/g, ' ');
+                        accessibilityService.setAriaLabel(button, label);
+                    }
+                }
+            }
+
+            // Add keyboard navigation for non-button elements
+            if (button.tagName !== 'BUTTON') {
+                button.addEventListener('keydown', (e: KeyboardEvent) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        button.click();
+                    }
+                });
+            }
+
+            button.dataset.accessibilityEnhanced = 'true';
+        });
+    }
+
+    /**
+     * Enhance links with accessibility features
+     */
+    enhanceLinksAccessibility(container: HTMLElement = document.body): void {
+        const links = container.querySelectorAll<HTMLAnchorElement>('a');
+
+        links.forEach(link => {
+            // Skip if already enhanced
+            if (link.dataset.accessibilityEnhanced) return;
+
+            // Add aria-label for links with only icons
+            if (!link.textContent?.trim() && !link.getAttribute('aria-label')) {
+                const href = link.getAttribute('href');
+                if (href) {
+                    accessibilityService.setAriaLabel(link, `Link to ${href}`);
+                }
+            }
+
+            // Mark external links
+            if (link.hostname && link.hostname !== window.location.hostname) {
+                if (!link.getAttribute('aria-label')?.includes('external')) {
+                    const currentLabel = link.getAttribute('aria-label') || link.textContent || 'Link';
+                    accessibilityService.setAriaLabel(link, `${currentLabel} (opens in new window)`);
+                }
+            }
+
+            link.dataset.accessibilityEnhanced = 'true';
+        });
+    }
+
+    /**
+     * Enhance form with accessibility features
+     */
+    enhanceFormAccessibility(form: HTMLFormElement): void {
+        // Add labels for inputs without labels
+        const inputs = form.querySelectorAll<HTMLInputElement>('input, select, textarea');
+
+        inputs.forEach(input => {
+            // Skip if already has label
+            if (input.dataset.accessibilityEnhanced) return;
+
+            // Check for associated label
+            const label = form.querySelector(`label[for="${input.id}"]`);
+            if (!label && !input.getAttribute('aria-label')) {
+                // Try to infer label from placeholder or name
+                const placeholder = input.getAttribute('placeholder');
+                const name = input.getAttribute('name');
+
+                if (placeholder) {
+                    accessibilityService.setAriaLabel(input, placeholder);
+                } else if (name) {
+                    const labelText = name.replace(/-/g, ' ').replace(/_/g, ' ');
+                    accessibilityService.setAriaLabel(input, labelText);
+                }
+            }
+
+            // Mark required fields
+            if (input.hasAttribute('required')) {
+                const currentLabel = input.getAttribute('aria-label') || '';
+                accessibilityService.setAriaLabel(input, `${currentLabel} (required)`);
+            }
+
+            input.dataset.accessibilityEnhanced = 'true';
+        });
+
+        // Add form submission feedback
+        form.addEventListener('submit', (e) => {
+            // Check for validation errors
+            const invalid = form.querySelector('[aria-invalid="true"], :invalid');
+            if (invalid) {
+                e.preventDefault();
+                accessibilityService.focusFirstInvalid(form);
+            } else {
+                this.announceToScreenReader('Form submitted successfully', 'polite');
+            }
+        });
+    }
+
+    /**
+     * Enhance content grid with accessibility
+     */
+    enhanceContentGridAccessibility(container: HTMLElement): void {
+        // Add role="list" to grid container
+        accessibilityService.setAriaRole(container, 'list');
+
+        // Enhance each card
+        const cards = container.querySelectorAll<HTMLElement>('.content-card, [data-movie-id], [data-show-id]');
+
+        cards.forEach((card, index) => {
+            // Skip if already enhanced
+            if (card.dataset.accessibilityEnhanced) return;
+
+            // Add role="listitem"
+            accessibilityService.setAriaRole(card, 'listitem');
+
+            // Add aria-label with title and metadata
+            const title = card.querySelector('.movie-title, .show-title')?.textContent?.trim();
+            const year = card.querySelector('.movie-year, .show-year')?.textContent?.trim();
+            const rating = card.querySelector('.movie-rating, .show-rating')?.textContent?.trim();
+
+            if (title) {
+                let label = title;
+                if (year) label += `, ${year}`;
+                if (rating) label += `, Rating: ${rating}`;
+                label += `. Item ${index + 1} of ${cards.length}`;
+
+                accessibilityService.setAriaLabel(card, label);
+            }
+
+            // Make card keyboard navigable
+            this.makeKeyboardNavigable(card, () => {
+                card.click();
+            });
+
+            card.dataset.accessibilityEnhanced = 'true';
+        });
+    }
+
+    /**
+     * Add keyboard shortcuts help dialog
+     */
+    showKeyboardShortcutsDialog(): void {
+        const shortcuts = `
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="font-semibold">Navigation</div>
+                    <div></div>
+
+                    <div>Tab / Shift+Tab</div>
+                    <div class="text-gray-400">Navigate forward / backward</div>
+
+                    <div>Enter / Space</div>
+                    <div class="text-gray-400">Activate button or link</div>
+
+                    <div>Escape</div>
+                    <div class="text-gray-400">Close modal or cancel</div>
+
+                    <div>Arrow Keys</div>
+                    <div class="text-gray-400">Navigate in lists</div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-700">
+                    <div class="font-semibold">Actions</div>
+                    <div></div>
+
+                    <div>?</div>
+                    <div class="text-gray-400">Show this help dialog</div>
+
+                    <div>/</div>
+                    <div class="text-gray-400">Focus search</div>
+                </div>
+            </div>
+        `;
+
+        const modal = this.createAccessibleModal(shortcuts, {
+            title: 'Keyboard Shortcuts',
+            onClose: () => {
+                this.closeAccessibleModal(modal, 'Keyboard Shortcuts');
+            },
+            role: 'dialog'
+        });
+
+        this.showModalAnimated(modal, 'scale');
     }
 
     // Mock data generators
