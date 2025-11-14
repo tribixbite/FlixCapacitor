@@ -4,6 +4,31 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx,html}",
   ],
+  // Safelist: Classes dynamically generated that shouldn't be purged
+  safelist: [
+    // Grid columns (used dynamically based on screen size)
+    'grid-cols-2',
+    'grid-cols-3',
+    'grid-cols-4',
+    'grid-cols-5',
+    'grid-cols-6',
+    // Text sizes (accessibility feature)
+    {
+      pattern: /^text-(xs|sm|base|lg|xl|2xl)$/
+    },
+    // Opacity (animations)
+    {
+      pattern: /^opacity-\d+$/
+    },
+    // Translate (animations)
+    {
+      pattern: /^(translate-x|translate-y)-/
+    },
+    // Z-index (modals, overlays)
+    {
+      pattern: /^z-\d+$/
+    }
+  ],
   darkMode: 'class', // Enable dark mode with class strategy
   theme: {
     extend: {
