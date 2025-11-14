@@ -1,7 +1,7 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-13
-**Status:** 🎉 Phase 8 COMPLETE! Phase 9A & 9B COMPLETE! Phase 9A UI Integration: IN PROGRESS (2/6) 🎉
+**Status:** 🎉 Phase 8 COMPLETE! Phase 9A & 9B COMPLETE! Phase 9A UI Integration: IN PROGRESS (3/6) 🎉
 
 ---
 
@@ -362,17 +362,33 @@ Integrating Phase 9A backend services with user-facing UI components using Backb
 - **TypeScript:** 0 errors (strict mode)
 - **Status:** Complete, ready for integration with library scanner
 
-### 9A-UI.3: Subtitle Picker Modal ⏳ PENDING
-- **Target Features:**
-  - Search functionality with OpenSubtitles integration
-  - Sync adjustment controls (+/- milliseconds)
-  - Style customization (font, color, position, outline)
-  - Language auto-detection display
-  - Format conversion UI (SRT ↔ VTT)
-  - Persistent preferences
+### 9A-UI.3: Subtitle Picker Modal ✅ COMPLETE
+- **Commit:** 7b82e6f2
+- **Features Implemented:**
+  - ✅ Three-tab interface (Search, Sync, Style)
+  - ✅ OpenSubtitles API integration with search functionality
+  - ✅ Language selector (10 languages: en, es, fr, de, it, pt, zh, ja, ko, ar)
+  - ✅ Search results with ratings and download counts
+  - ✅ Result selection with visual indication
+  - ✅ Sync adjustment controls (±1s, ±500ms, ±100ms presets + custom input)
+  - ✅ Current offset display with color coding
+  - ✅ Reset to zero functionality
+  - ✅ Font size slider (12-32px)
+  - ✅ Font color picker with hex display
+  - ✅ Background color picker with alpha preservation
+  - ✅ Position selector (top/center/bottom)
+  - ✅ Text outline toggle
+  - ✅ Live preview panel for subtitle styling
+  - ✅ Apply/Cancel actions
+  - ✅ Responsive Tailwind CSS styling with backdrop blur
+  - ✅ Analytics integration (picker_opened, tab_changed, search, selected, sync_adjusted, applied, closed)
+  - ✅ Logger integration (structured logging with subtitle category)
+  - ✅ Integration with SubtitleService singleton
+  - ✅ XSS protection with HTML escaping
 - **Files:**
-  - `src/app/views/subtitle-picker-view.ts` - To be created
-- **Status:** Pending
+  - `src/app/views/subtitle-picker-view.ts` - Subtitle picker modal UI (663 lines)
+- **TypeScript:** 0 errors (strict mode)
+- **Status:** Complete, ready for integration with video player
 
 ### 9A-UI.4: Error Recovery Screens ⏳ PENDING
 - **Target Features:**
@@ -413,24 +429,25 @@ Integrating Phase 9A backend services with user-facing UI components using Backb
   - `src/app/views/search-filters-view.ts` - To be created
 - **Status:** Pending
 
-### Phase 9A UI Integration Summary: 🔄 IN PROGRESS (2/6 tasks)
+### Phase 9A UI Integration Summary: 🔄 IN PROGRESS (3/6 tasks)
 
 **Progress:**
 1. ✅ Playback Queue Status Overlay (commit 7558feef) - 340 lines
 2. ✅ Library Scan Progress Bar (commit eed243a5) - 443 lines
-3. ⏳ Subtitle Picker Modal (in progress)
-4. ⏳ Error Recovery Screens (pending)
+3. ✅ Subtitle Picker Modal (commit 7b82e6f2) - 663 lines
+4. ⏳ Error Recovery Screens (in progress)
 5. ⏳ Skeleton Screens (pending)
 6. ⏳ Advanced Search Filters (pending)
 
 **Implementation Stats So Far:**
-- Total Lines: 783 lines of production TypeScript
-- Views Created: 2 (PlaybackQueueView, LibraryScanProgressView)
+- Total Lines: 1,446 lines of production TypeScript
+- Views Created: 3 (PlaybackQueueView, LibraryScanProgressView, SubtitlePickerView)
 - All TypeScript: 0 errors (strict mode)
+- Progress: 50% complete (3/6 tasks)
 
 **Next Steps:**
-- Complete subtitle picker modal UI
-- Then continue with error recovery, skeleton screens, and search filters
+- Complete error recovery screens UI integration
+- Then continue with skeleton screens and search filters
 - Final integration testing of all UI components
 - Phase 9D: Polish & Accessibility (i18n, a11y, animations)
 
