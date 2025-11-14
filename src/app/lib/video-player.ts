@@ -7,6 +7,7 @@
 import MediaPermissions from 'capacitor-plugin-media-permissions';
 import type { Movie, Episode, TorrentInfo } from '../../types/mobile-ui';
 import type { LibraryItem } from '../../types/library';
+import { showPlaybackQueue, type PlaybackQueueView } from '../views/playback-queue-view';
 
 /**
  * PlaybackQueue - Manages sequential playback of multiple files in multi-file torrents
@@ -1091,11 +1092,15 @@ export class VideoPlayer {
                 <!-- Video playback controls (hidden until video starts) -->
                 <div id="playback-controls" style="display: none; position: absolute; top: 0.75rem; right: 1rem; z-index: 101; gap: 0.5rem;">
                     <button id="speed-btn" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.4rem 0.75rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: all 0.2s;">1x</button>
+                    <button id="queue-btn" style="display: none; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; width: 32px; height: 32px; border-radius: 50%; align-items: center; justify-content: center; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">📋</button>
                     <button id="subtitle-btn" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">CC</button>
                 </div>
 
                 <!-- Subtitle selector overlay -->
                 <div id="subtitle-selector" style="display: none; position: absolute; top: 3rem; right: 1rem; background: rgba(20,20,20,0.95); border-radius: 8px; padding: 0.5rem; z-index: 150; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); max-height: 300px; overflow-y: auto;"></div>
+
+                <!-- Queue overlay container -->
+                <div id="queue-overlay-container" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; backdrop-filter: blur(10px);"></div>
 
                 <!-- Speed selector overlay -->
                 <div id="speed-selector" style="display: none; position: absolute; top: 3rem; right: 3.5rem; background: rgba(20,20,20,0.95); border-radius: 8px; padding: 0.5rem; z-index: 150; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
@@ -1181,7 +1186,7 @@ export class VideoPlayer {
                 .speed-option:hover {
                     background: rgba(255,255,255,0.1);
                 }
-                #speed-btn:hover, #subtitle-btn:hover {
+                #speed-btn:hover, #queue-btn:hover, #subtitle-btn:hover {
                     background: rgba(0,0,0,0.9);
                     transform: scale(1.05);
                 }
@@ -1988,6 +1993,77 @@ export class VideoPlayer {
                         }
                     };
                     addTrackedListener(document, 'click', documentClickHandler);
+                }
+
+                // Queue overlay toggle
+                const queueBtn = document.getElementById('queue-btn');
+                const queueOverlayContainer = document.getElementById('queue-overlay-container');
+                let queueView: PlaybackQueueView | null = null;
+
+                if (queueBtn && queueOverlayContainer && this.playbackQueue) {
+                    // Show queue button only if queue exists
+                    queueBtn.style.display = 'flex';
+
+                    const queueBtnHandler = () => {
+                        if (queueOverlayContainer.style.display === 'none') {
+                            // Show queue overlay
+                            queueOverlayContainer.style.display = 'block';
+                            queueOverlayContainer.innerHTML = ''; // Clear previous content
+
+                            // Create and show queue view
+                            queueView = showPlaybackQueue(
+                                this.playbackQueue!,
+                                queueOverlayContainer,
+                                {
+                                    onReorder: (fromIndex: number, toIndex: number) => {
+                                        console.log(`Reordering queue: ${fromIndex} → ${toIndex}`);
+                                        this.playbackQueue?.reorder(fromIndex, toIndex);
+                                        this.updateQueueStatusUI();
+                                    },
+                                    onRemove: (index: number) => {
+                                        console.log(`Removing queue item at index ${index}`);
+                                        this.playbackQueue?.remove(index);
+                                        this.updateQueueStatusUI();
+
+                                        // Hide queue if empty
+                                        if (this.playbackQueue && this.playbackQueue.getTotalFiles() === 0) {
+                                            queueOverlayContainer.style.display = 'none';
+                                            queueBtn.style.display = 'none';
+                                        }
+                                    },
+                                    onShuffle: () => {
+                                        console.log('Shuffling queue');
+                                        this.playbackQueue?.shuffle();
+                                        this.updateQueueStatusUI();
+
+                                        // Refresh queue view by closing and reopening
+                                        queueOverlayContainer.style.display = 'none';
+                                        queueView = null;
+
+                                        // Reopen with updated queue
+                                        setTimeout(() => {
+                                            if (queueBtn) {
+                                                queueBtn.click();
+                                            }
+                                        }, 100);
+                                    },
+                                    onClose: () => {
+                                        console.log('Closing queue overlay');
+                                        queueOverlayContainer.style.display = 'none';
+                                        queueView = null;
+                                    }
+                                }
+                            );
+
+                            console.log('Queue overlay opened');
+                        } else {
+                            // Hide queue overlay
+                            queueOverlayContainer.style.display = 'none';
+                            queueView = null;
+                            console.log('Queue overlay closed');
+                        }
+                    };
+                    addTrackedListener(queueBtn, 'click', queueBtnHandler);
                 }
 
                 // Picture-in-Picture toggle
