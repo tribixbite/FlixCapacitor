@@ -1,0 +1,38 @@
+{
+  "name": "capacitor-plugin-chromecast",
+  "version": "1.0.0",
+  "description": "Capacitor plugin for Google Cast (Chromecast) integration",
+  "main": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "author": "FlixCapacitor",
+  "license": "MIT",
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "chromecast",
+    "google-cast",
+    "cast",
+    "tv",
+    "streaming"
+  ],
+  "capacitor": {
+    "android": {
+      "src": "android"
+    }
+  },
+  "files": [
+    "dist/",
+    "android/"
+  ],
+  "peerDependencies": {
+    "@capacitor/core": "^5.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/core": "^5.0.0",
+    "typescript": "^5.0.0"
+  }
+}
