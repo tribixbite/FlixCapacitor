@@ -339,7 +339,30 @@ Integrating Phase 9A backend services with user-facing UI components using Backb
   - `src/app/views/playback-queue-view.ts` - PlaybackQueue overlay UI (340 lines)
   - `src/app/lib/video-player.ts` - Exported PlaybackQueue class (1 line change)
 - **TypeScript:** 0 errors (strict mode)
-- **Status:** Complete, ready for integration with video player
+- **Status:** ✅ UI component complete
+
+### 9A-UI.1b: Video Player Queue Integration ✅ COMPLETE (2025-11-14)
+- **Commit:** d6bd0a86
+- **Features Integrated:**
+  - ✅ Queue button (📋) in playback controls, shown only when queue exists
+  - ✅ Full-screen queue overlay container with backdrop blur
+  - ✅ Callback wiring for all queue operations:
+    - onReorder: updates queue and refreshes status UI
+    - onRemove: removes items, hides queue when empty
+    - onShuffle: shuffles and refreshes overlay
+    - onClose: hides overlay and cleans up view
+  - ✅ Auto-hide queue button when queue is emptied
+  - ✅ Integrated with existing updateQueueStatusUI
+  - ✅ Event listener cleanup via addTrackedListener
+  - ✅ Hover styles for queue button
+- **Integration Points:**
+  - `src/app/lib/video-player.ts:10` - Import PlaybackQueueView
+  - `src/app/lib/video-player.ts:1095` - Queue button in controls
+  - `src/app/lib/video-player.ts:1103` - Queue overlay container
+  - `src/app/lib/video-player.ts:1189` - Hover styles
+  - `src/app/lib/video-player.ts:2003-2067` - Event handler with callbacks
+- **TypeScript:** 0 errors (strict mode)
+- **Status:** ✅ Fully integrated into video player
 
 ### 9A-UI.2: Library Scan Progress Bar ✅ COMPLETE
 - **Commit:** eed243a5
