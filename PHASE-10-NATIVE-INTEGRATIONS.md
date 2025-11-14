@@ -418,16 +418,72 @@ annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 ```
 
-### 10D.2: Battery Management (Days 3-4)
+### 10D.2: Battery Management (Days 3-4) ✅ COMPLETE
 **Priority:** Medium | **Complexity:** Low | **Impact:** User experience
 
+**Current State:**
+- ✅ Native battery monitoring with BatteryManager.kt
+- ✅ Capacitor plugin for TypeScript integration
+- ✅ Doze mode and Battery Saver detection
+- ✅ WiFi vs cellular network detection
+- ✅ Battery-aware download throttling
+- ✅ Configurable power-saving features
+
 **Implementation Tasks:**
-- [ ] Implement Doze mode handling
-- [ ] Add battery level monitoring
-- [ ] Reduce polling frequency on low battery
-- [ ] Pause non-critical downloads on low battery
-- [ ] Implement WiFi-only download option
-- [ ] Add background restriction handling (Android 12+)
+- [x] Implement Doze mode handling (Android 6+)
+- [x] Add battery level monitoring with broadcast receiver
+- [x] Reduce polling frequency on low battery (via shouldThrottle flag)
+- [x] Pause non-critical downloads on low battery (via shouldPauseDownloads flag)
+- [x] Implement WiFi-only download option (configurable)
+- [x] Add background restriction handling (PowerManager integration)
+
+**Implementation Notes:**
+
+**BatteryManager.kt (Native Android):**
+- Monitors battery level, charging status, and power states
+- Detects Doze mode (Android 6+) via `PowerManager.isDeviceIdleMode`
+- Detects Battery Saver via `PowerManager.isPowerSaveMode`
+- Checks WiFi connectivity via `NetworkCapabilities`
+- Broadcast receiver for battery events (ACTION_BATTERY_CHANGED, ACTION_BATTERY_LOW, etc.)
+- Power state thresholds: critical (<10%), low (<20%), normal
+- Automatic throttling/pausing recommendations
+
+**BatteryPlugin.kt (Capacitor Plugin):**
+- Exposes BatteryManager to TypeScript via Capacitor
+- `getBatteryInfo()`: Returns current battery state
+- `batteryChange` event: Real-time battery updates
+- Automatic lifecycle management (register on load, unregister on destroy)
+
+**battery-service.ts (TypeScript Service):**
+- Wraps BatteryPlugin for app-wide battery awareness
+- Configurable features:
+  * WiFi-only downloads (blocks on cellular)
+  * Pause on low battery (stops downloads <10%)
+  * Throttle on battery saver (reduces speed)
+  * Quality reduction on low battery (prefers 720p/1080p)
+- Helper methods:
+  * `shouldAllowDownload()`: Check if downloads should proceed
+  * `shouldThrottleDownload()`: Check if throttling needed
+  * `getRecommendedQuality()`: Get quality based on battery
+  * `isPowerSavingMode()`: Check if in power-saving state
+- Event system for battery change notifications
+- localStorage config persistence
+- Analytics and logging integration
+
+**Battery States:**
+- `normal`: >20% battery, not in power saving
+- `low_battery`: 10-20% battery
+- `critical_battery`: <10% battery
+- `doze_mode`: Device idle mode active (Android 6+)
+- `battery_saver`: Battery saver mode enabled
+
+**Files Created:**
+- `android/app/src/main/java/app/flixcapacitor/mobile/BatteryManager.kt` (213 lines)
+- `android/app/src/main/java/app/flixcapacitor/mobile/BatteryPlugin.kt` (53 lines)
+- `src/app/lib/battery-service.ts` (370 lines)
+
+**Files Modified:**
+- `android/app/src/main/java/app/flixcapacitor/mobile/MainActivity.kt` (registered BatteryPlugin)
 
 ### 10D.3: Startup Optimization (Day 5)
 **Priority:** Low | **Complexity:** Low | **Impact:** UX polish
