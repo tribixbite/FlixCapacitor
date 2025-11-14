@@ -22,6 +22,7 @@ import { VideoPlayer, type VideoPlayerContext } from './video-player';
 import { UITemplates } from './ui-templates';
 import { showLibraryManagement, type LibraryManagementView } from '../views/library-management-view'; // Phase 11B
 import { showFavoriteFiles, FavoriteFilesView } from '../views/favorite-files-view'; // Phase 11C
+import { animationService, AnimationDuration, TransitionType } from './animation-service'; // Phase 11F
 
 
 // UI Controller
@@ -78,6 +79,11 @@ export class MobileUIController {
 
         // Initialize VideoPlayer module with context (pass controller as context)
         this.videoPlayer = new VideoPlayer(this as any as VideoPlayerContext);
+
+        // Phase 11F: Initialize AnimationService
+        animationService.initialize().catch((err) => {
+            console.error('Failed to initialize animation service:', err);
+        });
 
         // Make available globally for back button handler
         if (window.App) {
@@ -2510,6 +2516,343 @@ export class MobileUIController {
         } catch (error) {
             console.error('Failed to perform search:', error);
         }
+    }
+
+    // Phase 11F: Animation & UI Polish Methods
+
+    /**
+     * Show animated toast notification
+     */
+    showToast(message: string, type: 'success' | 'error' | 'info' = 'info', duration: number = 3000): void {
+        // Remove existing toasts
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification fixed top-20 left-1/2 -translate-x-1/2 z-[10000] px-6 py-4 rounded-lg shadow-2xl max-w-md';
+
+        // Style based on type
+        const styles = {
+            success: 'bg-green-600 text-white',
+            error: 'bg-red-600 text-white',
+            info: 'bg-gray-800 text-white border border-gray-700'
+        };
+        toast.className += ` ${styles[type]}`;
+
+        // Add icon based on type
+        const icons = {
+            success: '✓',
+            error: '✕',
+            info: 'ⓘ'
+        };
+
+        toast.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="text-2xl">${icons[type]}</div>
+                <div class="font-medium">${message}</div>
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Animate in
+        animationService.slideIn(toast, 'down', AnimationDuration.NORMAL).then(() => {
+            // Bounce for success
+            if (type === 'success') {
+                animationService.bounce(toast, 1);
+            }
+            // Shake for error
+            else if (type === 'error') {
+                animationService.shake(toast);
+            }
+
+            // Auto-hide after duration
+            setTimeout(async () => {
+                await animationService.slideOut(toast, 'up', AnimationDuration.NORMAL);
+                toast.remove();
+            }, duration);
+        });
+    }
+
+    /**
+     * Show loading overlay with spinner
+     */
+    showLoadingOverlay(message: string = 'Loading...'): HTMLElement {
+        // Remove existing overlay
+        const existing = document.querySelector('.loading-overlay');
+        if (existing) {
+            existing.remove();
+        }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'loading-overlay fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]';
+        overlay.innerHTML = `
+            <div class="bg-gray-800 rounded-lg p-8 flex flex-col items-center gap-4">
+                <div class="loading-spinner w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full"></div>
+                <div class="text-white font-medium">${message}</div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Start spinner animation
+        const spinner = overlay.querySelector('.loading-spinner') as HTMLElement;
+        if (spinner) {
+            animationService.startLoadingSpinner(spinner);
+        }
+
+        // Fade in overlay
+        animationService.fadeIn(overlay, AnimationDuration.FAST);
+
+        return overlay;
+    }
+
+    /**
+     * Hide loading overlay
+     */
+    async hideLoadingOverlay(): Promise<void> {
+        const overlay = document.querySelector('.loading-overlay') as HTMLElement;
+        if (overlay) {
+            await animationService.fadeOut(overlay, AnimationDuration.FAST);
+            overlay.remove();
+        }
+    }
+
+    /**
+     * Show modal with animation
+     */
+    async showModalAnimated(modalElement: HTMLElement, animationType: 'fade' | 'slide' | 'scale' = 'scale'): Promise<void> {
+        document.body.appendChild(modalElement);
+
+        // Animate modal in based on type
+        switch (animationType) {
+            case 'fade':
+                await animationService.fadeIn(modalElement, AnimationDuration.NORMAL);
+                break;
+            case 'slide':
+                await animationService.slideIn(modalElement, 'up', AnimationDuration.NORMAL);
+                break;
+            case 'scale':
+                await animationService.scaleIn(modalElement, AnimationDuration.NORMAL);
+                break;
+        }
+    }
+
+    /**
+     * Hide modal with animation
+     */
+    async hideModalAnimated(modalElement: HTMLElement, animationType: 'fade' | 'slide' | 'scale' = 'scale'): Promise<void> {
+        // Animate modal out based on type
+        switch (animationType) {
+            case 'fade':
+                await animationService.fadeOut(modalElement, AnimationDuration.NORMAL);
+                break;
+            case 'slide':
+                await animationService.slideOut(modalElement, 'down', AnimationDuration.NORMAL);
+                break;
+            case 'scale':
+                await animationService.scaleOut(modalElement, AnimationDuration.NORMAL);
+                break;
+        }
+
+        modalElement.remove();
+    }
+
+    /**
+     * Add ripple effect to button
+     */
+    addRippleEffect(button: HTMLElement): void {
+        button.addEventListener('click', (e: MouseEvent) => {
+            const rect = button.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            animationService.ripple(button, x, y);
+            animationService.buttonPress(button);
+
+            // Haptic feedback
+            this.haptic('light');
+        });
+    }
+
+    /**
+     * Add ripple effects to all buttons in container
+     */
+    addRippleEffectsToButtons(container: HTMLElement = document.body): void {
+        const buttons = container.querySelectorAll<HTMLElement>('button, .btn, [role="button"]');
+        buttons.forEach(button => {
+            // Only add if not already added
+            if (!button.dataset.rippleAdded) {
+                this.addRippleEffect(button);
+                button.dataset.rippleAdded = 'true';
+            }
+        });
+    }
+
+    /**
+     * Create skeleton screen for loading content
+     */
+    createSkeletonScreen(container: HTMLElement, type: 'grid' | 'list' | 'detail' = 'grid'): void {
+        let skeletonHTML = '';
+
+        if (type === 'grid') {
+            // Movie/show grid skeleton
+            skeletonHTML = `
+                <div class="grid grid-cols-3 gap-4 p-4">
+                    ${Array.from({ length: 12 }, () => `
+                        <div class="space-y-2">
+                            <div class="aspect-[2/3] bg-gray-800 rounded skeleton-shimmer"></div>
+                            <div class="h-4 bg-gray-800 rounded skeleton-shimmer"></div>
+                            <div class="h-3 bg-gray-800 rounded skeleton-shimmer w-2/3"></div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else if (type === 'list') {
+            // List skeleton
+            skeletonHTML = `
+                <div class="space-y-4 p-4">
+                    ${Array.from({ length: 8 }, () => `
+                        <div class="flex gap-4">
+                            <div class="w-24 h-36 bg-gray-800 rounded skeleton-shimmer"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-5 bg-gray-800 rounded skeleton-shimmer"></div>
+                                <div class="h-4 bg-gray-800 rounded skeleton-shimmer w-3/4"></div>
+                                <div class="h-4 bg-gray-800 rounded skeleton-shimmer w-1/2"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else if (type === 'detail') {
+            // Detail view skeleton
+            skeletonHTML = `
+                <div class="p-6 space-y-6">
+                    <div class="flex gap-6">
+                        <div class="w-48 h-72 bg-gray-800 rounded skeleton-shimmer"></div>
+                        <div class="flex-1 space-y-4">
+                            <div class="h-8 bg-gray-800 rounded skeleton-shimmer w-3/4"></div>
+                            <div class="h-4 bg-gray-800 rounded skeleton-shimmer w-1/2"></div>
+                            <div class="h-4 bg-gray-800 rounded skeleton-shimmer"></div>
+                            <div class="h-4 bg-gray-800 rounded skeleton-shimmer"></div>
+                            <div class="h-4 bg-gray-800 rounded skeleton-shimmer w-5/6"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = skeletonHTML;
+    }
+
+    /**
+     * Remove skeleton screen and fade in content
+     */
+    async removeSkeletonScreen(container: HTMLElement, content: string): Promise<void> {
+        // Fade out skeleton
+        await animationService.fadeOut(container, AnimationDuration.FAST);
+
+        // Replace with content
+        container.innerHTML = content;
+
+        // Fade in content
+        await animationService.fadeIn(container, AnimationDuration.NORMAL);
+    }
+
+    /**
+     * Add swipe gesture to element
+     */
+    addSwipeGesture(
+        element: HTMLElement,
+        onSwipeLeft?: () => void,
+        onSwipeRight?: () => void
+    ): void {
+        let startX = 0;
+        let startY = 0;
+        let isSwiping = false;
+
+        element.addEventListener('touchstart', (e: TouchEvent) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isSwiping = true;
+        });
+
+        element.addEventListener('touchmove', (e: TouchEvent) => {
+            if (!isSwiping) return;
+
+            const currentX = e.touches[0].clientX;
+            const diffX = currentX - startX;
+
+            // Visual feedback
+            element.style.transform = `translateX(${diffX}px)`;
+            element.style.opacity = `${1 - Math.abs(diffX) / 300}`;
+        });
+
+        element.addEventListener('touchend', (e: TouchEvent) => {
+            if (!isSwiping) return;
+
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            const diffX = endX - startX;
+            const diffY = endY - startY;
+
+            // Reset
+            isSwiping = false;
+
+            // Check if swipe (not vertical scroll)
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0 && onSwipeRight) {
+                    // Swipe right
+                    onSwipeRight();
+                    this.haptic('medium');
+                } else if (diffX < 0 && onSwipeLeft) {
+                    // Swipe left
+                    onSwipeLeft();
+                    this.haptic('medium');
+                }
+            }
+
+            // Animate back to position
+            element.style.transition = 'transform 0.3s, opacity 0.3s';
+            element.style.transform = '';
+            element.style.opacity = '';
+
+            setTimeout(() => {
+                element.style.transition = '';
+            }, 300);
+        });
+    }
+
+    /**
+     * Add long press gesture to element
+     */
+    addLongPressGesture(element: HTMLElement, onLongPress: () => void, duration: number = 500): void {
+        let pressTimer: number | null = null;
+
+        element.addEventListener('touchstart', () => {
+            pressTimer = window.setTimeout(() => {
+                onLongPress();
+                this.haptic('heavy');
+                animationService.pulse(element, 1);
+            }, duration);
+        });
+
+        element.addEventListener('touchend', () => {
+            if (pressTimer) {
+                clearTimeout(pressTimer);
+                pressTimer = null;
+            }
+        });
+
+        element.addEventListener('touchmove', () => {
+            if (pressTimer) {
+                clearTimeout(pressTimer);
+                pressTimer = null;
+            }
+        });
     }
 
     // Mock data generators
