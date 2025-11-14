@@ -98,20 +98,14 @@ import './app/global-mobile.ts';
 // Import mobile UI components
 import './app/lib/touch-gestures.ts';
 import './app/lib/mobile-ui.ts';
-import './app/lib/provider-loader.ts';
 import './app/lib/settings-manager.ts';
-// Import native torrent client (replaces WebTorrent)
-import './app/lib/native-torrent-client.ts';
-// Import provider classes (need named imports for explicit initialization)
-import { PublicDomainProvider } from './app/lib/providers/public-domain-provider.js';
-import { TVShowsProvider } from './app/lib/providers/tvshows-provider.js';
-import { AnimeProvider } from './app/lib/providers/anime-provider.js';
 
-import './app/lib/learning-service.ts';
-import './app/lib/favorites-service.ts';
-import './app/lib/library-service.ts';
-import './app/lib/watchlist-service.ts';
-import MobileUIController from './app/lib/mobile-ui-views.ts';
+// Dynamic imports for lazy loading (improves initial bundle size)
+// These will be loaded on-demand or during app initialization
+// Services and providers are in separate chunks thanks to vite.config.js
+
+// UI Controller (will be lazy loaded in app.onStart)
+// Services and providers (lazy loaded when needed)
 
 // Import API bridge for TMDB, OMDb, OpenSubtitles
 import { initializeAPIClients } from './app/lib/api-bridge.ts';
@@ -134,19 +128,73 @@ console.log('jQuery version:', $.fn.jquery);
 console.log('Backbone version:', (Backbone as any).VERSION);
 console.log('Marionette version:', (Marionette as any).VERSION);
 
-// Explicitly initialize providers and make globally available
-// This ensures they're ready before UI components try to use them
-if (!window.PublicDomainProvider) {
-    window.PublicDomainProvider = new PublicDomainProvider();
-    console.log('✓ PublicDomainProvider initialized');
+// ============================================================================
+// LAZY LOADING FUNCTIONS (Phase 12A: Performance Optimization)
+// ============================================================================
+
+/**
+ * Lazy load and initialize content providers
+ * This reduces initial bundle size by splitting providers into a separate chunk
+ */
+async function initializeProviders(): Promise<void> {
+    console.log('Loading content providers...');
+    try {
+        // Dynamically import provider classes
+        const [
+            { PublicDomainProvider },
+            { TVShowsProvider },
+            { AnimeProvider }
+        ] = await Promise.all([
+            import('./app/lib/providers/public-domain-provider.js'),
+            import('./app/lib/providers/tvshows-provider.js'),
+            import('./app/lib/providers/anime-provider.js')
+        ]);
+
+        // Initialize and make globally available
+        if (!window.PublicDomainProvider) {
+            window.PublicDomainProvider = new PublicDomainProvider();
+            console.log('✓ PublicDomainProvider initialized');
+        }
+        if (!window.TVShowsProvider) {
+            window.TVShowsProvider = new TVShowsProvider();
+            console.log('✓ TVShowsProvider initialized');
+        }
+        if (!window.AnimeProvider) {
+            window.AnimeProvider = new AnimeProvider();
+            console.log('✓ AnimeProvider initialized');
+        }
+
+        // Load native torrent client and provider-loader
+        await Promise.all([
+            import('./app/lib/native-torrent-client.ts'),
+            import('./app/lib/provider-loader.ts')
+        ]);
+        console.log('✓ Content providers loaded');
+    } catch (error) {
+        console.error('Failed to load content providers:', error);
+        throw error;
+    }
 }
-if (!window.TVShowsProvider) {
-    window.TVShowsProvider = new TVShowsProvider();
-    console.log('✓ TVShowsProvider initialized');
-}
-if (!window.AnimeProvider) {
-    window.AnimeProvider = new AnimeProvider();
-    console.log('✓ AnimeProvider initialized');
+
+/**
+ * Lazy load service modules (favorites, library, watchlist, learning)
+ * These services set up global state and event listeners
+ */
+async function initializeServices(): Promise<void> {
+    console.log('Loading services...');
+    try {
+        // Load all services in parallel (side-effect imports)
+        await Promise.all([
+            import('./app/lib/learning-service.ts'),
+            import('./app/lib/favorites-service.ts'),
+            import('./app/lib/library-service.ts'),
+            import('./app/lib/watchlist-service.ts')
+        ]);
+        console.log('✓ Services loaded');
+    } catch (error) {
+        console.error('Failed to load services:', error);
+        throw error;
+    }
 }
 
 // Initialize Capacitor plugins
@@ -627,8 +675,8 @@ function initMarionette(): any {
 
     console.log('Marionette App instance created');
 
-    // Basic startup handler
-    AppInstance.onStart = function () {
+    // Basic startup handler (async for lazy loading)
+    AppInstance.onStart = async function () {
         console.log('App.onStart called - starting UI initialization');
 
         // Initialize settings
@@ -641,6 +689,19 @@ function initMarionette(): any {
             initializeAPIClients();
         } catch (error) {
             console.warn('Failed to initialize API clients:', error);
+        }
+
+        // Phase 12A: Lazy load providers and services before UI initialization
+        // This enables code splitting and reduces initial bundle size
+        try {
+            await Promise.all([
+                initializeProviders(),
+                initializeServices()
+            ]);
+        } catch (error) {
+            console.error('Failed to load providers/services:', error);
+            showErrorNotification('Failed to initialize app components. Please reload.');
+            return;
         }
 
         // ALWAYS hide loading screen after brief delay
@@ -656,6 +717,10 @@ function initMarionette(): any {
         }, 500);
 
         try {
+            // Phase 12A: Dynamically import MobileUIController (largest module)
+            console.log('Loading MobileUIController...');
+            const { default: MobileUIController } = await import('./app/lib/mobile-ui-views.ts');
+
             // Initialize the beautiful mobile UI
             console.log('Creating MobileUIController...');
             const uiController = new MobileUIController(AppInstance as any);

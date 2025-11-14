@@ -42,16 +42,9 @@ export default defineConfig({
             '@capacitor/device',
             '@capacitor/preferences',
             '@capacitor/status-bar'
-          ],
-          // Services chunk: Business logic services
-          'services': [
-            './src/app/lib/playback-queue-service',
-            './src/app/lib/library-scanner-service',
-            './src/app/lib/favorites-service',
-            './src/app/lib/animation-service',
-            './src/app/lib/accessibility-service',
-            './src/app/lib/settings-manager'
           ]
+          // Note: Services and providers are now dynamically imported,
+          // so Vite will automatically create chunks for them
         }
       }
     },
