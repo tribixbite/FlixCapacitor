@@ -1,11 +1,11 @@
 /**
- * Skeleton View Components
- * Phase 9A.5: Skeleton screens for content grids
+ * Skeleton View Components (Phase 9A Integration)
+ * Updated with Tailwind CSS and Phase 9A loading state manager integration
  */
 
-import Backbone from 'backbone';
-import Marionette from 'backbone.marionette';
-import type { View } from 'backbone.marionette';
+import { View, type ViewOptions } from 'backbone.marionette';
+import { logger } from '../lib/logger';
+import { analytics } from '../lib/analytics';
 
 /**
  * Skeleton configuration
@@ -13,28 +13,55 @@ import type { View } from 'backbone.marionette';
 export interface SkeletonConfig {
     count?: number; // Number of skeleton items
     type: 'movie-card' | 'list-item' | 'detail-header' | 'search-result';
-    animated?: boolean; // Enable shimmer animation
+    animated?: boolean; // Enable shimmer animation (default: true)
+    layout?: 'grid' | 'list'; // Layout type (default: grid)
 }
 
 /**
  * Base Skeleton View
+ * Shows loading placeholders with shimmer animation
  */
-export class SkeletonView extends Marionette.View<Backbone.Model> {
+export class SkeletonView extends View<any> {
     private config: SkeletonConfig;
 
-    constructor(options: any) {
-        super(options);
-        this.config = options.config || { type: 'movie-card', count: 12, animated: true };
+    constructor(options: { config: SkeletonConfig } & ViewOptions<any> & { el?: any }) {
+        super({ el: options.el } as any);
+
+        this.config = {
+            count: 12,
+            animated: true,
+            layout: 'grid',
+            ...options.config
+        };
+
+        logger.debug(`Skeleton view created: ${this.config.type} (${this.config.count} items)`, undefined, 'ui');
+        analytics.trackEvent('skeleton_view_shown', {
+            type: this.config.type,
+            count: this.config.count,
+            animated: this.config.animated
+        });
     }
 
     template(): string {
         const items = Array.from({ length: this.config.count || 1 }, (_, i) => i);
 
         return `
-            <div class="skeleton-container ${this.config.animated ? 'skeleton-animated' : ''}">
+            <div class="${this.getContainerClass()}">
                 ${items.map(() => this.getSkeletonHTML(this.config.type)).join('')}
             </div>
         `;
+    }
+
+    /**
+     * Get container class based on layout
+     */
+    private getContainerClass(): string {
+        if (this.config.layout === 'list') {
+            return 'flex flex-col gap-4';
+        }
+
+        // Grid layout (responsive: 2→3→4→5→6 cols)
+        return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4';
     }
 
     /**
@@ -60,10 +87,15 @@ export class SkeletonView extends Marionette.View<Backbone.Model> {
      */
     private movieCardSkeleton(): string {
         return `
-            <div class="skeleton-movie-card">
-                <div class="skeleton-poster skeleton-box"></div>
-                <div class="skeleton-title skeleton-text"></div>
-                <div class="skeleton-year skeleton-text skeleton-text-short"></div>
+            <div class="flex flex-col gap-2">
+                <!-- Poster -->
+                <div class="${this.getShimmerClass()} bg-gray-800 rounded-lg aspect-[2/3] w-full"></div>
+
+                <!-- Title -->
+                <div class="${this.getShimmerClass()} bg-gray-800 rounded h-4 w-3/4"></div>
+
+                <!-- Year -->
+                <div class="${this.getShimmerClass()} bg-gray-800 rounded h-3 w-1/2"></div>
             </div>
         `;
     }
@@ -73,13 +105,21 @@ export class SkeletonView extends Marionette.View<Backbone.Model> {
      */
     private listItemSkeleton(): string {
         return `
-            <div class="skeleton-list-item">
-                <div class="skeleton-thumbnail skeleton-box"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton-title skeleton-text"></div>
-                    <div class="skeleton-subtitle skeleton-text skeleton-text-short"></div>
+            <div class="flex items-center gap-4 p-4 bg-gray-900/50 rounded-lg">
+                <!-- Thumbnail -->
+                <div class="${this.getShimmerClass()} bg-gray-800 rounded w-16 h-24 flex-shrink-0"></div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0 space-y-2">
+                    <!-- Title -->
+                    <div class="${this.getShimmerClass()} bg-gray-800 rounded h-4 w-3/4"></div>
+
+                    <!-- Subtitle -->
+                    <div class="${this.getShimmerClass()} bg-gray-800 rounded h-3 w-1/2"></div>
                 </div>
-                <div class="skeleton-action skeleton-circle"></div>
+
+                <!-- Action Icon -->
+                <div class="${this.getShimmerClass()} bg-gray-800 rounded-full w-8 h-8 flex-shrink-0"></div>
             </div>
         `;
     }
@@ -89,21 +129,38 @@ export class SkeletonView extends Marionette.View<Backbone.Model> {
      */
     private detailHeaderSkeleton(): string {
         return `
-            <div class="skeleton-detail-header">
-                <div class="skeleton-backdrop skeleton-box skeleton-wide"></div>
-                <div class="skeleton-detail-content">
-                    <div class="skeleton-poster-large skeleton-box"></div>
-                    <div class="skeleton-info">
-                        <div class="skeleton-title-large skeleton-text"></div>
-                        <div class="skeleton-meta skeleton-text skeleton-text-short"></div>
-                        <div class="skeleton-description">
-                            <div class="skeleton-text"></div>
-                            <div class="skeleton-text"></div>
-                            <div class="skeleton-text skeleton-text-short"></div>
+            <div class="space-y-6">
+                <!-- Backdrop -->
+                <div class="${this.getShimmerClass()} bg-gray-800 rounded-lg w-full h-64 sm:h-80 md:h-96"></div>
+
+                <!-- Content Section -->
+                <div class="flex flex-col sm:flex-row gap-6">
+                    <!-- Poster -->
+                    <div class="${this.getShimmerClass()} bg-gray-800 rounded-lg w-48 aspect-[2/3] flex-shrink-0"></div>
+
+                    <!-- Info -->
+                    <div class="flex-1 space-y-4">
+                        <!-- Title -->
+                        <div class="${this.getShimmerClass()} bg-gray-800 rounded h-8 w-2/3"></div>
+
+                        <!-- Meta -->
+                        <div class="flex items-center gap-4">
+                            <div class="${this.getShimmerClass()} bg-gray-800 rounded h-5 w-16"></div>
+                            <div class="${this.getShimmerClass()} bg-gray-800 rounded h-5 w-24"></div>
+                            <div class="${this.getShimmerClass()} bg-gray-800 rounded h-5 w-20"></div>
                         </div>
-                        <div class="skeleton-actions">
-                            <div class="skeleton-button skeleton-box"></div>
-                            <div class="skeleton-button skeleton-box"></div>
+
+                        <!-- Description -->
+                        <div class="space-y-2">
+                            <div class="${this.getShimmerClass()} bg-gray-800 rounded h-4 w-full"></div>
+                            <div class="${this.getShimmerClass()} bg-gray-800 rounded h-4 w-full"></div>
+                            <div class="${this.getShimmerClass()} bg-gray-800 rounded h-4 w-3/4"></div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex items-center gap-3">
+                            <div class="${this.getShimmerClass()} bg-gray-800 rounded-lg h-10 w-32"></div>
+                            <div class="${this.getShimmerClass()} bg-gray-800 rounded-lg h-10 w-32"></div>
                         </div>
                     </div>
                 </div>
@@ -116,244 +173,118 @@ export class SkeletonView extends Marionette.View<Backbone.Model> {
      */
     private searchResultSkeleton(): string {
         return `
-            <div class="skeleton-search-result">
-                <div class="skeleton-poster-small skeleton-box"></div>
-                <div class="skeleton-result-content">
-                    <div class="skeleton-title skeleton-text"></div>
-                    <div class="skeleton-meta skeleton-text skeleton-text-short"></div>
-                    <div class="skeleton-description skeleton-text"></div>
+            <div class="flex items-start gap-4 p-4 bg-gray-900/50 rounded-lg">
+                <!-- Poster -->
+                <div class="${this.getShimmerClass()} bg-gray-800 rounded w-20 aspect-[2/3] flex-shrink-0"></div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0 space-y-3">
+                    <!-- Title & Year -->
+                    <div class="space-y-2">
+                        <div class="${this.getShimmerClass()} bg-gray-800 rounded h-5 w-3/4"></div>
+                        <div class="${this.getShimmerClass()} bg-gray-800 rounded h-4 w-1/4"></div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="space-y-2">
+                        <div class="${this.getShimmerClass()} bg-gray-800 rounded h-3 w-full"></div>
+                        <div class="${this.getShimmerClass()} bg-gray-800 rounded h-3 w-full"></div>
+                        <div class="${this.getShimmerClass()} bg-gray-800 rounded h-3 w-2/3"></div>
+                    </div>
+
+                    <!-- Meta Info -->
+                    <div class="flex items-center gap-3">
+                        <div class="${this.getShimmerClass()} bg-gray-800 rounded h-4 w-16"></div>
+                        <div class="${this.getShimmerClass()} bg-gray-800 rounded h-4 w-20"></div>
+                    </div>
                 </div>
             </div>
         `;
     }
-}
 
-/**
- * Collection view for multiple skeleton items
- */
-export class SkeletonCollectionView extends Marionette.CollectionView<Backbone.Model, View<Backbone.Model>> {
-    private config: SkeletonConfig;
+    /**
+     * Get shimmer animation class
+     */
+    private getShimmerClass(): string {
+        if (!this.config.animated) {
+            return '';
+        }
 
-    constructor(options: any) {
-        super(options);
-        this.config = options.config || { type: 'movie-card', count: 12, animated: true };
+        // Shimmer animation will be defined in Tailwind config or CSS
+        return 'animate-pulse';
+    }
 
-        // Set Marionette properties
-        (this as any).childView = SkeletonView;
-        (this as any).childViewOptions = {
-            config: { ...this.config, count: 1 }
-        };
-        (this as any).className = `skeleton-collection ${this.config.animated ? 'skeleton-animated' : ''}`;
-
-        // Create fake collection for skeleton items
-        const items = Array.from({ length: this.config.count || 12 }, (_, i) => ({ id: i }));
-        this.collection = new Backbone.Collection(items);
+    /**
+     * Clean up
+     */
+    override onDestroy(): void {
+        logger.debug('SkeletonView destroyed', undefined, 'ui');
+        analytics.trackEvent('skeleton_view_destroyed');
     }
 }
 
 /**
- * Generate skeleton CSS (to be added to main stylesheet)
+ * Helper function to show skeleton loading
  */
-export function getSkeletonCSS(): string {
-    return `
-        /* Base skeleton styles */
-        .skeleton-box,
-        .skeleton-text,
-        .skeleton-circle {
-            background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
-            background-size: 200% 100%;
-            border-radius: 4px;
-        }
+export function showSkeleton(
+    container: HTMLElement,
+    config: SkeletonConfig
+): SkeletonView {
+    const view = new SkeletonView({ config });
 
-        .skeleton-animated .skeleton-box,
-        .skeleton-animated .skeleton-text,
-        .skeleton-animated .skeleton-circle {
-            animation: skeleton-shimmer 1.5s ease-in-out infinite;
-        }
+    view.setElement(container);
+    view.render();
 
-        @keyframes skeleton-shimmer {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
-        }
+    logger.debug(`Skeleton shown: ${config.type}`, {
+        count: config.count,
+        animated: config.animated
+    }, 'ui');
 
-        .skeleton-circle {
-            border-radius: 50%;
-        }
-
-        .skeleton-text {
-            height: 16px;
-            margin: 8px 0;
-        }
-
-        .skeleton-text-short {
-            width: 60%;
-        }
-
-        /* Movie card skeleton */
-        .skeleton-movie-card {
-            width: 150px;
-            margin: 8px;
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        .skeleton-poster {
-            width: 150px;
-            height: 225px;
-            margin-bottom: 8px;
-        }
-
-        /* List item skeleton */
-        .skeleton-list-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            gap: 12px;
-        }
-
-        .skeleton-thumbnail {
-            width: 60px;
-            height: 90px;
-            flex-shrink: 0;
-        }
-
-        .skeleton-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .skeleton-action {
-            width: 40px;
-            height: 40px;
-            flex-shrink: 0;
-        }
-
-        /* Detail header skeleton */
-        .skeleton-detail-header {
-            position: relative;
-        }
-
-        .skeleton-backdrop {
-            width: 100%;
-            height: 200px;
-            margin-bottom: 16px;
-        }
-
-        .skeleton-detail-content {
-            display: flex;
-            gap: 16px;
-            padding: 16px;
-        }
-
-        .skeleton-poster-large {
-            width: 200px;
-            height: 300px;
-            flex-shrink: 0;
-        }
-
-        .skeleton-info {
-            flex: 1;
-        }
-
-        .skeleton-title-large {
-            height: 32px;
-            margin-bottom: 16px;
-        }
-
-        .skeleton-meta {
-            height: 20px;
-            width: 200px;
-            margin-bottom: 16px;
-        }
-
-        .skeleton-description {
-            margin-bottom: 24px;
-        }
-
-        .skeleton-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .skeleton-button {
-            width: 120px;
-            height: 44px;
-        }
-
-        /* Search result skeleton */
-        .skeleton-search-result {
-            display: flex;
-            gap: 12px;
-            padding: 12px;
-            border-bottom: 1px solid #333;
-        }
-
-        .skeleton-poster-small {
-            width: 80px;
-            height: 120px;
-            flex-shrink: 0;
-        }
-
-        .skeleton-result-content {
-            flex: 1;
-        }
-
-        /* Skeleton container */
-        .skeleton-container {
-            padding: 16px;
-        }
-
-        .skeleton-collection {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .skeleton-movie-card {
-                width: calc(50% - 16px);
-            }
-
-            .skeleton-poster {
-                width: 100%;
-                height: auto;
-                aspect-ratio: 2/3;
-            }
-
-            .skeleton-detail-content {
-                flex-direction: column;
-            }
-
-            .skeleton-poster-large {
-                width: 100%;
-                height: auto;
-                aspect-ratio: 2/3;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .skeleton-movie-card {
-                width: calc(33.333% - 16px);
-            }
-        }
-    `;
+    return view;
 }
 
 /**
- * Factory function to create skeleton view
+ * Helper function to replace skeleton with content
  */
-export function createSkeletonView(config: SkeletonConfig): SkeletonView {
-    return new SkeletonView({ config });
+export function replaceSkeleton(
+    skeleton: SkeletonView | null,
+    contentView: View<any>
+): void {
+    if (!skeleton) return;
+
+    const container = skeleton.el;
+
+    // Remove skeleton
+    skeleton.destroy();
+
+    // Render content
+    contentView.setElement(container);
+    contentView.render();
+
+    logger.debug('Skeleton replaced with content', undefined, 'ui');
+    analytics.trackEvent('skeleton_replaced');
 }
 
 /**
- * Factory function to create skeleton collection view
+ * Custom shimmer animation CSS (can be added to main.css)
+ *
+ * @keyframes shimmer {
+ *   0% {
+ *     background-position: -1000px 0;
+ *   }
+ *   100% {
+ *     background-position: 1000px 0;
+ *   }
+ * }
+ *
+ * .skeleton-shimmer {
+ *   animation: shimmer 2s infinite linear;
+ *   background: linear-gradient(
+ *     90deg,
+ *     rgba(255, 255, 255, 0) 0%,
+ *     rgba(255, 255, 255, 0.05) 50%,
+ *     rgba(255, 255, 255, 0) 100%
+ *   );
+ *   background-size: 1000px 100%;
+ * }
  */
-export function createSkeletonCollection(config: SkeletonConfig): SkeletonCollectionView {
-    return new SkeletonCollectionView({ config });
-}
