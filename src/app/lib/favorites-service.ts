@@ -434,6 +434,159 @@ class FavoritesService {
     if (item.genres?.includes('Anime')) return 'anime';
     return 'movie';
   }
+
+  // =========================================================================
+  // CLOUD SYNC METHODS (Phase 12B)
+  // =========================================================================
+
+  /**
+   * Sync local favorites to cloud (Supabase)
+   * Requires user to be authenticated
+   */
+  async syncToCloud(): Promise<{ success: boolean; synced: number; error?: string }> {
+    try {
+      // Dynamically import API client (only if Supabase is configured)
+      if (!import.meta.env.VITE_SUPABASE_URL) {
+        console.log('Supabase not configured, skipping cloud sync');
+        return { success: false, synced: 0, error: 'Cloud sync not configured' };
+      }
+
+      const { getApiClient } = await import('./api-client');
+      const apiClient = getApiClient();
+
+      // Check if user is authenticated
+      const { user, error: authError } = await apiClient.getUser();
+      if (authError || !user) {
+        return { success: false, synced: 0, error: 'Not authenticated' };
+      }
+
+      // Get all local favorites
+      const favorites = await this.getFavorites({ limit: 1000 });
+
+      // Convert to API format
+      const cloudItems = favorites.map(fav => ({
+        id: fav.id,
+        type: fav.type === 'anime' ? 'show' : (fav.type === 'course' ? 'movie' : fav.type) as 'movie' | 'show',
+        title: fav.title,
+        year: typeof fav.year === 'string' ? parseInt(fav.year) : fav.year,
+        poster_url: fav.images?.poster || fav.poster_url
+      }));
+
+      // Sync to cloud
+      const { error } = await apiClient.syncFavorites(cloudItems);
+
+      if (error) {
+        console.error('Cloud sync failed:', error);
+        return { success: false, synced: 0, error: error.message };
+      }
+
+      console.log(`Synced ${cloudItems.length} favorites to cloud`);
+      return { success: true, synced: cloudItems.length };
+
+    } catch (error) {
+      console.error('Failed to sync favorites to cloud:', error);
+      return { success: false, synced: 0, error: String(error) };
+    }
+  }
+
+  /**
+   * Sync favorites from cloud to local database
+   * Requires user to be authenticated
+   */
+  async syncFromCloud(): Promise<{ success: boolean; synced: number; error?: string }> {
+    try {
+      // Dynamically import API client (only if Supabase is configured)
+      if (!import.meta.env.VITE_SUPABASE_URL) {
+        console.log('Supabase not configured, skipping cloud sync');
+        return { success: false, synced: 0, error: 'Cloud sync not configured' };
+      }
+
+      const { getApiClient } = await import('./api-client');
+      const apiClient = getApiClient();
+
+      // Check if user is authenticated
+      const { user, error: authError } = await apiClient.getUser();
+      if (authError || !user) {
+        return { success: false, synced: 0, error: 'Not authenticated' };
+      }
+
+      // Get favorites from cloud
+      const { favorites: cloudFavorites, error } = await apiClient.getFavorites();
+
+      if (error) {
+        console.error('Failed to fetch cloud favorites:', error);
+        return { success: false, synced: 0, error: error.message };
+      }
+
+      // Add cloud favorites to local database
+      let synced = 0;
+      for (const cloudFav of cloudFavorites) {
+        const localItem: FavoriteItem = {
+          id: cloudFav.id,
+          type: cloudFav.type,
+          title: cloudFav.title || '',
+          year: cloudFav.year,
+          images: {
+            poster: cloudFav.poster_url || ''
+          }
+        };
+
+        const success = await this.addFavorite(localItem);
+        if (success) synced++;
+      }
+
+      console.log(`Synced ${synced} favorites from cloud`);
+      return { success: true, synced };
+
+    } catch (error) {
+      console.error('Failed to sync favorites from cloud:', error);
+      return { success: false, synced: 0, error: String(error) };
+    }
+  }
+
+  /**
+   * Auto-sync favorite to cloud when added (if authenticated)
+   */
+  private async autoSyncAdd(item: FavoriteItem): Promise<void> {
+    try {
+      if (!import.meta.env.VITE_SUPABASE_URL) return;
+
+      const { getApiClient } = await import('./api-client');
+      const apiClient = getApiClient();
+
+      const cloudItem = {
+        id: item.id,
+        type: item.type === 'anime' ? 'show' : (item.type === 'course' ? 'movie' : item.type) as 'movie' | 'show',
+        title: item.title,
+        year: typeof item.year === 'string' ? parseInt(item.year) : item.year,
+        poster_url: item.images?.poster || item.poster_url
+      };
+
+      await apiClient.addFavorite(cloudItem);
+      console.log('Auto-synced favorite add to cloud');
+    } catch (error) {
+      // Non-critical error, just log
+      console.warn('Failed to auto-sync favorite add:', error);
+    }
+  }
+
+  /**
+   * Auto-sync favorite removal to cloud (if authenticated)
+   */
+  private async autoSyncRemove(id: string): Promise<void> {
+    try {
+      if (!import.meta.env.VITE_SUPABASE_URL) return;
+
+      const { getApiClient } = await import('./api-client');
+      const apiClient = getApiClient();
+
+      await apiClient.removeFavorite(id);
+      console.log('Auto-synced favorite remove to cloud');
+    } catch (error) {
+      // Non-critical error, just log
+      console.warn('Failed to auto-sync favorite remove:', error);
+    }
+  }
 }
 
 // Create singleton instance
