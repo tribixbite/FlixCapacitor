@@ -107,7 +107,7 @@ class BatteryService {
                 isCharging: this.currentBatteryInfo.isCharging
             });
         } catch (error: any) {
-            logger.error('Failed to initialize BatteryService', error, 'battery');
+            logger.error('Failed to initialize BatteryService', error, undefined, 'battery');
         }
     }
 
@@ -123,7 +123,7 @@ class BatteryService {
             this.currentBatteryInfo = await this.plugin.getBatteryInfo();
             return this.currentBatteryInfo;
         } catch (error: any) {
-            logger.error('Error getting battery info', error, 'battery');
+            logger.error('Error getting battery info', error, undefined, 'battery');
             return this.currentBatteryInfo;
         }
     }
@@ -212,7 +212,7 @@ class BatteryService {
         try {
             localStorage.setItem('battery-service-config', JSON.stringify(this.config));
         } catch (error: any) {
-            logger.error('Failed to save battery config', error, 'battery');
+            logger.error('Failed to save battery config', error, undefined, 'battery');
         }
     }
 
@@ -227,7 +227,7 @@ class BatteryService {
                 logger.info('Battery service config loaded', this.config, 'battery');
             }
         } catch (error: any) {
-            logger.error('Failed to load battery config', error, 'battery');
+            logger.error('Failed to load battery config', error, undefined, 'battery');
         }
     }
 

@@ -313,7 +313,7 @@ async function handleOAuthCallback(url: string): Promise<void> {
         await traktService.initialize();
 
         // Exchange code for token
-        await traktService.handleCallback(code, codeVerifier);
+        await traktService.exchangeCodeForToken(code);
 
         console.log('OAuth flow completed successfully');
 

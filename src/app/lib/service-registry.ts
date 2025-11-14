@@ -38,7 +38,6 @@ export function registerAllServices(): void {
         priority: 'critical',
         initializer: () => {
             // Performance monitor already initialized
-            performanceMonitor.trackPageLoad();
             logger.info('Performance monitor ready', undefined, 'startup');
         },
         dependencies: ['logger']
@@ -64,7 +63,7 @@ export function registerAllServices(): void {
         initializer: async () => {
             // Import and initialize SQLite service
             const { sqliteService } = await import('./sqlite-service');
-            await sqliteService.initDB();
+            await sqliteService.initialize();
             logger.info('Database service ready', undefined, 'startup');
         },
         dependencies: ['logger']
@@ -74,8 +73,8 @@ export function registerAllServices(): void {
         name: 'favorites',
         priority: 'high',
         initializer: async () => {
-            // Import favorites service
-            const { favoritesService } = await import('./favorites-service');
+            // Import favorites service (default export)
+            await import('./favorites-service');
             logger.info('Favorites service ready', undefined, 'startup');
         },
         dependencies: ['database']

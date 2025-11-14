@@ -1,7 +1,7 @@
 # FlixCapacitor - Next Steps
 
 **Date:** 2025-11-14
-**Status:** 🎉 Phases 8-10 COMPLETE! Phase 11 UI Polish & Integration - PLANNING 🎉
+**Status:** 🎉 Phases 8-10 COMPLETE! Phase 11 UI Polish & Integration - IN PROGRESS (11A-11B COMPLETE) 🎉
 
 ---
 
@@ -977,7 +977,7 @@ Note: Requires Google Cast SDK (free, no API key required)
 
 ---
 
-## 🚀 Phase 11 - UI Polish & Feature Integration (2025-11-14) 🔄 PLANNING
+## 🚀 Phase 11 - UI Polish & Feature Integration (2025-11-14) 🔄 IN PROGRESS
 
 **Started:** 2025-11-14 | **Target:** v1.4.0-alpha | **Duration:** 3-4 weeks
 
@@ -1019,22 +1019,32 @@ Phase 11 focuses on **UI polish and feature integration** to complete the user-f
 - ⏭️ Background pre-buffering of next file
 - ⏭️ Queue thumbnails (requires FFmpeg integration - Phase 12)
 
-### 11B: Library Management UI 🔄 IN PROGRESS (80% Complete)
+### 11B: Library Management UI ✅ COMPLETE
 - **Priority:** HIGH | **Impact:** Major UX improvement
-- **Completed:**
-  - ✅ LibraryManagementView component (~560 lines)
-  - ✅ Folder list with statistics (files count, size, last scan)
-  - ✅ Rescan button for each folder
-  - ✅ Remove button with confirmation dialog
-  - ✅ Statistics loading from database
-  - ✅ Beautiful Tailwind CSS modal UI
-  - ✅ TypeScript: 0 errors
-- **Remaining:**
-  - ⏳ Integrate into mobile-ui-views (add "Manage Folders" button)
-  - ⏳ Wire rescan callback to scanLibraryFolder()
-  - ⏳ Wire remove callback to remove from settings + database
-- **Implementation:** ~560 lines added
-- **Commits:** Pending
+- **Implementation:** ~620 lines added
+- **Commits:** [current]
+
+**Backend Features (LibraryManagementView):**
+- ✅ LibraryManagementView component (~560 lines)
+- ✅ Folder list with real-time statistics from database
+- ✅ Statistics display (files count, total size, last scan time)
+- ✅ Rescan button for each folder
+- ✅ Remove button with confirmation dialog
+- ✅ Beautiful Tailwind CSS modal UI with loading states
+- ✅ Empty state handling
+
+**Mobile UI Integration:**
+- ✅ "Manage Folders" button in library search bar
+- ✅ showLibraryManagement() method integration
+- ✅ onRescan callback wired to scanLibraryFolder()
+- ✅ onRemove callback with complete cleanup:
+  - Removes from SettingsManager
+  - Deletes media from database via LibraryService
+  - Deletes folder_scan_state entry
+  - Refreshes management view
+- ✅ onClose callback with library view refresh
+
+**TypeScript:** 0 errors (fixed logger signatures across codebase)
 
 ### 11C: Favorites UI 🔄 PENDING
 - **Priority:** MEDIUM | **Impact:** Moderate UX improvement

@@ -99,7 +99,7 @@ class StartupManager {
             this.initializeDeferredServices();
 
         } catch (error: any) {
-            logger.error('Startup initialization failed', error, 'startup');
+            logger.error('Startup initialization failed', error, undefined, 'startup');
             analytics.trackEvent('startup_failed', {
                 error: error.message,
                 servicesInitialized: this.initializedServices.size
@@ -224,9 +224,9 @@ class StartupManager {
         } catch (error: any) {
             this.failedServices.add(service.name);
 
-            logger.error('Service initialization failed', {
+            logger.error('Service initialization failed', error, {
                 service: service.name,
-                error: error.message
+                errorMessage: error.message
             }, 'startup');
 
             analytics.trackEvent('service_init_failed', {
@@ -282,7 +282,7 @@ class StartupManager {
             try {
                 cb();
             } catch (error: any) {
-                logger.error('Ready callback failed', error, 'startup');
+                logger.error('Ready callback failed', error, undefined, 'startup');
             }
         });
         this.readyCallbacks = [];

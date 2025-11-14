@@ -253,10 +253,10 @@ class NetworkService {
             }
 
             // No more retries, fail
-            logger.error('Request failed', {
+            logger.error('Request failed', error, {
                 url,
                 duration,
-                error: error.message
+                errorMessage: error.message
             }, 'network');
 
             analytics.trackEvent('network_request_failed', {

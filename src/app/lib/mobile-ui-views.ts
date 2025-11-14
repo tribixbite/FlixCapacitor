@@ -19,6 +19,7 @@ import MediaPermissions from 'capacitor-plugin-media-permissions';
 import { DirectoryPicker } from 'capacitor-plugin-directory-picker';
 import { VideoPlayer, type VideoPlayerContext } from './video-player';
 import { UITemplates } from './ui-templates';
+import { showLibraryManagement, type LibraryManagementView } from '../views/library-management-view'; // Phase 11B
 
 
 // UI Controller
@@ -504,6 +505,21 @@ export class MobileUIController {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion!.innerHTML = UITemplates.browserView('Library', 'library');
 
+        // Phase 11B: Add Manage Folders button next to search
+        const searchBar = document.querySelector('.search-bar');
+        if (searchBar) {
+            searchBar.innerHTML = `
+                <input type="text" class="search-input" placeholder="Search library..." id="search-input">
+                <button id="library-manage-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 ml-2" title="Manage Folders">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span class="hidden sm:inline">Manage</span>
+                </button>
+            `;
+        }
+
         // Replace filter tabs with folder-based filters
         const filterTabs = document.querySelector('.filter-tabs');
         if (filterTabs) {
@@ -589,6 +605,14 @@ export class MobileUIController {
                 'Failed to Load Library',
                 error.message || 'Please try again'
             );
+        }
+
+        // Phase 11B: Attach manage button handler
+        const manageBtn = document.getElementById('library-manage-btn');
+        if (manageBtn) {
+            manageBtn.addEventListener('click', () => {
+                this.showLibraryManagement();
+            });
         }
     }
 
@@ -1005,6 +1029,73 @@ export class MobileUIController {
                 error.message || 'Failed to scan folder. Please try again.'
             );
         }
+    }
+
+    /**
+     * Show library management modal (Phase 11B)
+     */
+    showLibraryManagement(): void {
+        const mainRegion = document.querySelector('.main-window-region');
+        if (!mainRegion) {
+            console.error('[Library] Main region not found');
+            return;
+        }
+
+        // Create modal container
+        const modalContainer = document.createElement('div');
+        modalContainer.id = 'library-management-modal';
+        mainRegion.appendChild(modalContainer);
+
+        console.log('[Library] Opening library management modal');
+
+        // Show library management view with callbacks
+        const managementView = showLibraryManagement(modalContainer, {
+            onRescan: async (folder) => {
+                console.log('[Library] Rescanning folder:', folder.displayName);
+                // Close the management modal
+                managementView.remove();
+
+                // Trigger rescan
+                await this.scanLibraryFolder(folder.uri, folder.displayName);
+            },
+            onRemove: async (folder) => {
+                console.log('[Library] Removing folder:', folder.displayName);
+
+                try {
+                    // Remove from settings
+                    const settings = (window as any).SettingsManager;
+                    const libraryFolders = settings.get('libraryFolders') || [];
+                    const updatedFolders = libraryFolders.filter((f: any) => f.uri !== folder.uri);
+                    settings.set('libraryFolders', updatedFolders);
+
+                    // Remove from database
+                    const libraryService = (window as any).LibraryService;
+                    if (libraryService) {
+                        // Remove library items for this folder
+                        await libraryService.removeMediaByFolder(folder.uri);
+                    }
+
+                    // Remove from folder_scan_state
+                    const sqliteService = (await import('./sqlite-service')).default;
+                    await sqliteService.run('DELETE FROM folder_scan_state WHERE folder_path = ?', [folder.uri]);
+
+                    console.log('[Library] Folder removed successfully');
+
+                    // Refresh management view
+                    managementView.refresh();
+                } catch (error: any) {
+                    console.error('[Library] Failed to remove folder:', error);
+                    alert(`Failed to remove folder: ${error.message}`);
+                }
+            },
+            onClose: () => {
+                console.log('[Library] Library management modal closed');
+                managementView.remove();
+
+                // Refresh library view to show updated content
+                this.showLibrary();
+            }
+        });
     }
 
     async showLearning(): Promise<void> {
