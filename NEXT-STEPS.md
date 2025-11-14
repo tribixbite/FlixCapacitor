@@ -983,16 +983,24 @@ Note: Requires Google Cast SDK (free, no API key required)
 
 Phase 11 focuses on **UI polish and feature integration** to complete the user-facing implementation of all Phase 9 and Phase 10 backend services.
 
-### 11A: Queue Management UI 🔄 PENDING
+### 11A: Queue Management UI 🔄 IN PROGRESS (75% Complete)
 - **Priority:** HIGH | **Impact:** Major UX improvement
-- **Features:**
-  - Full queue view modal with thumbnails
-  - Drag-and-drop reordering
-  - Queue controls (skip, previous, remove, clear)
-  - Shuffle/Repeat toggles
-  - Auto-play countdown timer
-  - Background pre-buffering
-- **Estimated Lines:** ~600 lines
+- **Completed:**
+  - ✅ PlaybackQueue enhanced with skip previous/next (hasPrevious, playPrevious methods)
+  - ✅ Repeat mode support ('off' | 'all' | 'one') with setRepeatMode/getRepeatMode
+  - ✅ Jump to specific file with jumpTo(index) method
+  - ✅ PlaybackQueueView UI with skip previous/next buttons
+  - ✅ Repeat mode toggle button with visual indicator
+  - ✅ Clear queue button with confirmation dialog
+  - ✅ Jump to file by clicking queue item names
+  - ✅ Repeat mode state persistence (getState/restoreState)
+  - ✅ TypeScript: 0 errors in Phase 11A code
+- **Remaining:**
+  - ⏳ Integration with video player (wire callbacks)
+  - ⏳ Auto-play countdown timer (optional enhancement)
+  - ⏳ Background pre-buffering (future optimization)
+- **Implementation:** ~400 lines added
+- **Commits:** Pending
 
 ### 11B: Library Management UI 🔄 PENDING
 - **Priority:** HIGH | **Impact:** Major UX improvement

@@ -20,6 +20,7 @@ export class PlaybackQueue {
     private movie: any = null;
     private videoFiles: any[] = [];
     private isPaused: boolean = false; // Phase 9A.1: Pause/resume state
+    private repeatMode: 'off' | 'all' | 'one' = 'off'; // Phase 11A: Repeat mode
 
     constructor(fileIndices: number[], videoFiles: any[], movie: any) {
         this.videoFiles = videoFiles;
@@ -42,8 +43,17 @@ export class PlaybackQueue {
     }
 
     /**
+     * Check if there are previous files to play
+     * Phase 11A: Skip previous functionality
+     */
+    hasPrevious(): boolean {
+        return this.currentIndex > 0;
+    }
+
+    /**
      * Move to next file in queue and return its index
      * Phase 9A.1: Respects pause state
+     * Phase 11A: Respects repeat mode
      */
     playNext(): number | null {
         // Check if queue is paused
@@ -52,12 +62,41 @@ export class PlaybackQueue {
             return null;
         }
 
+        // Handle repeat one
+        if (this.repeatMode === 'one') {
+            console.log('Repeat one enabled - replaying current file');
+            return this.queue[this.currentIndex].index;
+        }
+
+        // Handle normal next
         if (this.hasNext()) {
             this.currentIndex++;
             console.log(`Playing next file: ${this.getCurrentFile().name} (${this.getCurrentPosition()}/${this.getTotalFiles()})`);
             return this.queue[this.currentIndex].index;
         }
+
+        // Handle repeat all
+        if (this.repeatMode === 'all' && this.queue.length > 0) {
+            this.currentIndex = 0;
+            console.log('Repeat all enabled - restarting queue from first file');
+            return this.queue[this.currentIndex].index;
+        }
+
         console.log('No more files in queue');
+        return null;
+    }
+
+    /**
+     * Move to previous file in queue and return its index
+     * Phase 11A: Skip previous functionality
+     */
+    playPrevious(): number | null {
+        if (this.hasPrevious()) {
+            this.currentIndex--;
+            console.log(`Playing previous file: ${this.getCurrentFile().name} (${this.getCurrentPosition()}/${this.getTotalFiles()})`);
+            return this.queue[this.currentIndex].index;
+        }
+        console.log('Already at first file in queue');
         return null;
     }
 
@@ -261,6 +300,40 @@ export class PlaybackQueue {
         return this.isPaused;
     }
 
+    // ===== PHASE 11A: QUEUE NAVIGATION & REPEAT MODE =====
+
+    /**
+     * Jump to specific file in queue
+     * @param index Index to jump to (0-based)
+     * @returns File index to play, or null if invalid
+     */
+    jumpTo(index: number): number | null {
+        if (index < 0 || index >= this.queue.length) {
+            console.error(`Invalid jumpTo index: ${index}`);
+            return null;
+        }
+
+        this.currentIndex = index;
+        console.log(`Jumped to file: ${this.getCurrentFile().name} (${this.getCurrentPosition()}/${this.getTotalFiles()})`);
+        return this.queue[this.currentIndex].index;
+    }
+
+    /**
+     * Set repeat mode
+     * @param mode 'off' | 'all' | 'one'
+     */
+    setRepeatMode(mode: 'off' | 'all' | 'one'): void {
+        this.repeatMode = mode;
+        console.log(`Repeat mode set to: ${mode}`);
+    }
+
+    /**
+     * Get current repeat mode
+     */
+    getRepeatMode(): 'off' | 'all' | 'one' {
+        return this.repeatMode;
+    }
+
     /**
      * Export queue to M3U playlist format
      * @returns M3U playlist string
@@ -286,6 +359,7 @@ export class PlaybackQueue {
             queue: this.queue,
             currentIndex: this.currentIndex,
             isPaused: this.isPaused,
+            repeatMode: this.repeatMode, // Phase 11A: Include repeat mode
             movie: {
                 id: this.movie.id,
                 title: this.movie.title,
@@ -302,7 +376,8 @@ export class PlaybackQueue {
         this.queue = state.queue || [];
         this.currentIndex = state.currentIndex || 0;
         this.isPaused = state.isPaused || false;
-        console.log(`Queue state restored: ${this.queue.length} files, current position ${this.currentIndex + 1}`);
+        this.repeatMode = state.repeatMode || 'off'; // Phase 11A: Restore repeat mode
+        console.log(`Queue state restored: ${this.queue.length} files, current position ${this.currentIndex + 1}, repeat: ${this.repeatMode}`);
     }
 }
 
