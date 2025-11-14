@@ -144,9 +144,23 @@
 -keepclassmembers class java.net.** { *; }
 
 # ===== Sentry Crash Reporting =====
-# Will be added when Sentry is integrated
-# -keep class io.sentry.** { *; }
-# -dontwarn io.sentry.**
+# Phase 12E Day 6: Production Monitoring
+-keep class io.sentry.** { *; }
+-keep interface io.sentry.** { *; }
+-keepclassmembers class io.sentry.** { *; }
+-dontwarn io.sentry.**
+
+# Sentry uses reflection for auto-instrumentation
+-keepattributes LineNumberTable,SourceFile
+-keepattributes *Annotation*
+
+# Keep Sentry integrations
+-keep class io.sentry.android.** { *; }
+-keep class io.sentry.android.core.** { *; }
+
+# Keep exception classes for proper stack traces
+-keep class * extends java.lang.Exception
+-keep class * extends java.lang.Throwable
 
 # ===== R8 Optimizations =====
 # Allow aggressive optimization while keeping necessary classes

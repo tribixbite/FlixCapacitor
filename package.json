@@ -73,6 +73,8 @@
     "@capacitor/preferences": "^7.0.2",
     "@capacitor/share": "^7.0.2",
     "@capacitor/status-bar": "^7.0.3",
+    "@sentry/angular": "^9.46.0",
+    "@sentry/capacitor": "^2.4.1",
     "@supabase/supabase-js": "^2.81.1",
     "backbone": "^1.6.1",
     "backbone.marionette": "^4.1.3",
