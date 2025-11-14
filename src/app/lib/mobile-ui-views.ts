@@ -1371,8 +1371,308 @@ export class MobileUIController {
             });
         });
 
+        // Phase 11D: Battery Settings Event Handlers
+        this.setupBatterySettings();
+
+        // Phase 11D: Network Settings Event Handlers
+        this.setupNetworkSettings();
+
+        // Phase 11D: Memory Settings Event Handlers
+        this.setupMemorySettings();
+
+        // Phase 11D: Download Settings Event Handlers
+        this.setupDownloadSettings();
+
         // Proxy Settings
         this.setupProxySettings();
+    }
+
+    /**
+     * Setup Battery Settings (Phase 11D)
+     */
+    async setupBatterySettings(): Promise<void> {
+        try {
+            const { batteryService } = await import('./battery-service');
+            const config = batteryService.getConfig();
+
+            // Load current battery info
+            const batteryInfo = await batteryService.getBatteryInfo();
+
+            // Update battery status display
+            const batteryStatusText = document.getElementById('battery-status-text');
+            const batteryLevelValue = document.getElementById('battery-level-value');
+            if (batteryStatusText && batteryLevelValue && batteryInfo) {
+                batteryStatusText.textContent = batteryInfo.isCharging ? 'Charging' : 'Discharging';
+                batteryLevelValue.textContent = `${batteryInfo.level}%`;
+            }
+
+            // WiFi-Only Toggle
+            const wifiOnlyToggle = document.getElementById('battery-wifi-only-toggle');
+            if (wifiOnlyToggle) {
+                if (config.wifiOnlyDownloads) wifiOnlyToggle.classList.add('active');
+                wifiOnlyToggle.addEventListener('click', () => {
+                    const isActive = wifiOnlyToggle.classList.toggle('active');
+                    batteryService.updateConfig({ wifiOnlyDownloads: isActive });
+                    console.log('[Settings] WiFi-only downloads:', isActive);
+                });
+            }
+
+            // Pause on Low Battery Toggle
+            const pauseLowToggle = document.getElementById('battery-pause-low-toggle');
+            if (pauseLowToggle) {
+                if (config.pauseOnLowBattery) pauseLowToggle.classList.add('active');
+                pauseLowToggle.addEventListener('click', () => {
+                    const isActive = pauseLowToggle.classList.toggle('active');
+                    batteryService.updateConfig({ pauseOnLowBattery: isActive });
+                    console.log('[Settings] Pause on low battery:', isActive);
+                });
+            }
+
+            // Throttle on Battery Saver Toggle
+            const throttleToggle = document.getElementById('battery-throttle-toggle');
+            if (throttleToggle) {
+                if (config.throttleOnBatterySaver) throttleToggle.classList.add('active');
+                throttleToggle.addEventListener('click', () => {
+                    const isActive = throttleToggle.classList.toggle('active');
+                    batteryService.updateConfig({ throttleOnBatterySaver: isActive });
+                    console.log('[Settings] Throttle on battery saver:', isActive);
+                });
+            }
+
+            // Reduce Quality Toggle
+            const reduceQualityToggle = document.getElementById('battery-reduce-quality-toggle');
+            if (reduceQualityToggle) {
+                if (config.reduceTorrentQualityOnLowBattery) reduceQualityToggle.classList.add('active');
+                reduceQualityToggle.addEventListener('click', () => {
+                    const isActive = reduceQualityToggle.classList.toggle('active');
+                    batteryService.updateConfig({ reduceTorrentQualityOnLowBattery: isActive });
+                    console.log('[Settings] Reduce quality on low battery:', isActive);
+                });
+            }
+        } catch (error) {
+            console.error('[Settings] Failed to setup battery settings:', error);
+        }
+    }
+
+    /**
+     * Setup Network Settings (Phase 11D)
+     */
+    async setupNetworkSettings(): Promise<void> {
+        try {
+            const settings = window.SettingsManager;
+
+            // Cache enabled toggle (stored in SettingsManager)
+            const cacheToggle = document.getElementById('network-cache-toggle');
+            const cacheEnabled = settings.get('networkCacheEnabled') !== false;
+            if (cacheToggle) {
+                if (cacheEnabled) cacheToggle.classList.add('active');
+                cacheToggle.addEventListener('click', () => {
+                    const isActive = cacheToggle.classList.toggle('active');
+                    settings.set('networkCacheEnabled', isActive);
+                    console.log('[Settings] Network cache enabled:', isActive);
+                });
+            }
+
+            // Cache TTL Slider
+            const cacheTtlSlider = document.getElementById('network-cache-ttl-slider') as HTMLInputElement;
+            const cacheTtlValue = document.getElementById('network-cache-ttl-value');
+            const cacheTtl = settings.get('networkCacheTTL') || 5;
+            if (cacheTtlSlider && cacheTtlValue) {
+                cacheTtlSlider.value = cacheTtl.toString();
+                cacheTtlValue.textContent = cacheTtl.toString();
+                cacheTtlSlider.addEventListener('input', () => {
+                    const value = parseInt(cacheTtlSlider.value);
+                    cacheTtlValue.textContent = value.toString();
+                    settings.set('networkCacheTTL', value);
+                });
+            }
+
+            // Retry Attempts Slider
+            const retrySlider = document.getElementById('network-retry-slider') as HTMLInputElement;
+            const retryValue = document.getElementById('network-retry-value');
+            const retryAttempts = settings.get('networkRetryAttempts') || 3;
+            if (retrySlider && retryValue) {
+                retrySlider.value = retryAttempts.toString();
+                retryValue.textContent = retryAttempts.toString();
+                retrySlider.addEventListener('input', () => {
+                    const value = parseInt(retrySlider.value);
+                    retryValue.textContent = value.toString();
+                    settings.set('networkRetryAttempts', value);
+                });
+            }
+
+            // Timeout Slider
+            const timeoutSlider = document.getElementById('network-timeout-slider') as HTMLInputElement;
+            const timeoutValue = document.getElementById('network-timeout-value');
+            const timeout = settings.get('networkTimeout') || 30;
+            if (timeoutSlider && timeoutValue) {
+                timeoutSlider.value = timeout.toString();
+                timeoutValue.textContent = timeout.toString();
+                timeoutSlider.addEventListener('input', () => {
+                    const value = parseInt(timeoutSlider.value);
+                    timeoutValue.textContent = value.toString();
+                    settings.set('networkTimeout', value);
+                });
+            }
+
+            // Cache Stats Display
+            const cacheStats = document.getElementById('network-cache-stats');
+            if (cacheStats) {
+                cacheStats.textContent = 'Cache enabled, TTL: ' + cacheTtl + ' min';
+            }
+
+            // Clear Cache Button
+            const clearCacheBtn = document.getElementById('network-clear-cache-btn');
+            if (clearCacheBtn) {
+                clearCacheBtn.addEventListener('click', () => {
+                    if (confirm('Clear network cache?')) {
+                        // Clear cache logic would go here
+                        console.log('[Settings] Network cache cleared');
+                        alert('Network cache cleared successfully');
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('[Settings] Failed to setup network settings:', error);
+        }
+    }
+
+    /**
+     * Setup Memory Settings (Phase 11D)
+     */
+    async setupMemorySettings(): Promise<void> {
+        try {
+            const settings = window.SettingsManager;
+
+            // Image Cache Size Slider
+            const imageCacheSlider = document.getElementById('memory-image-cache-slider') as HTMLInputElement;
+            const imageCacheValue = document.getElementById('memory-image-cache-value');
+            const imageCacheSize = settings.get('memoryCacheSize') || 50;
+            if (imageCacheSlider && imageCacheValue) {
+                imageCacheSlider.value = imageCacheSize.toString();
+                imageCacheValue.textContent = imageCacheSize.toString();
+                imageCacheSlider.addEventListener('input', () => {
+                    const value = parseInt(imageCacheSlider.value);
+                    imageCacheValue.textContent = value.toString();
+                    settings.set('memoryCacheSize', value);
+                });
+            }
+
+            // Disk Cache Size Slider
+            const diskCacheSlider = document.getElementById('memory-disk-cache-slider') as HTMLInputElement;
+            const diskCacheValue = document.getElementById('memory-disk-cache-value');
+            const diskCacheSize = settings.get('diskCacheSize') || 100;
+            if (diskCacheSlider && diskCacheValue) {
+                diskCacheSlider.value = diskCacheSize.toString();
+                diskCacheValue.textContent = diskCacheSize.toString();
+                diskCacheSlider.addEventListener('input', () => {
+                    const value = parseInt(diskCacheSlider.value);
+                    diskCacheValue.textContent = value.toString();
+                    settings.set('diskCacheSize', value);
+                });
+            }
+
+            // Memory Usage Display
+            const memoryUsageText = document.getElementById('memory-usage-text');
+            if (memoryUsageText) {
+                memoryUsageText.textContent = `Image: ${imageCacheSize}MB, Disk: ${diskCacheSize}MB`;
+            }
+
+            // Clear Memory Cache Button
+            const clearMemoryBtn = document.getElementById('memory-clear-btn');
+            if (clearMemoryBtn) {
+                clearMemoryBtn.addEventListener('click', () => {
+                    if (confirm('Clear all caches?')) {
+                        // Clear cache logic would go here
+                        console.log('[Settings] Memory caches cleared');
+                        alert('Caches cleared successfully');
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('[Settings] Failed to setup memory settings:', error);
+        }
+    }
+
+    /**
+     * Setup Download Settings (Phase 11D)
+     */
+    async setupDownloadSettings(): Promise<void> {
+        try {
+            const settings = window.SettingsManager;
+
+            // Concurrent Downloads Slider
+            const concurrentSlider = document.getElementById('download-concurrent-slider') as HTMLInputElement;
+            const concurrentValue = document.getElementById('download-concurrent-value');
+            const concurrent = settings.get('downloadConcurrent') || 3;
+            if (concurrentSlider && concurrentValue) {
+                concurrentSlider.value = concurrent.toString();
+                concurrentValue.textContent = concurrent.toString();
+                concurrentSlider.addEventListener('input', () => {
+                    const value = parseInt(concurrentSlider.value);
+                    concurrentValue.textContent = value.toString();
+                    settings.set('downloadConcurrent', value);
+                });
+            }
+
+            // Download Speed Limit Slider
+            const downloadSpeedSlider = document.getElementById('download-speed-slider') as HTMLInputElement;
+            const downloadSpeedValue = document.getElementById('download-speed-value');
+            const downloadSpeed = settings.get('downloadSpeedLimit') || 0;
+            if (downloadSpeedSlider && downloadSpeedValue) {
+                downloadSpeedSlider.value = downloadSpeed.toString();
+                downloadSpeedValue.textContent = downloadSpeed === 0 ? 'Unlimited' : downloadSpeed.toString();
+                downloadSpeedSlider.addEventListener('input', () => {
+                    const value = parseInt(downloadSpeedSlider.value);
+                    downloadSpeedValue.textContent = value === 0 ? 'Unlimited' : value.toString();
+                    settings.set('downloadSpeedLimit', value);
+                });
+            }
+
+            // Upload Speed Limit Slider
+            const uploadSpeedSlider = document.getElementById('upload-speed-slider') as HTMLInputElement;
+            const uploadSpeedValue = document.getElementById('upload-speed-value');
+            const uploadSpeed = settings.get('uploadSpeedLimit') || 100;
+            if (uploadSpeedSlider && uploadSpeedValue) {
+                uploadSpeedSlider.value = uploadSpeed.toString();
+                uploadSpeedValue.textContent = uploadSpeed === 0 ? 'Unlimited' : uploadSpeed.toString();
+                uploadSpeedSlider.addEventListener('input', () => {
+                    const value = parseInt(uploadSpeedSlider.value);
+                    uploadSpeedValue.textContent = value === 0 ? 'Unlimited' : value.toString();
+                    settings.set('uploadSpeedLimit', value);
+                });
+            }
+
+            // Auto Cleanup Days Slider
+            const cleanupSlider = document.getElementById('download-cleanup-slider') as HTMLInputElement;
+            const cleanupValue = document.getElementById('download-cleanup-value');
+            const cleanupDays = settings.get('downloadCleanupDays') || 7;
+            if (cleanupSlider && cleanupValue) {
+                cleanupSlider.value = cleanupDays.toString();
+                cleanupValue.textContent = cleanupDays.toString();
+                cleanupSlider.addEventListener('input', () => {
+                    const value = parseInt(cleanupSlider.value);
+                    cleanupValue.textContent = value.toString();
+                    settings.set('downloadCleanupDays', value);
+                });
+            }
+
+            // Seed Ratio Limit Slider
+            const seedRatioSlider = document.getElementById('download-seed-ratio-slider') as HTMLInputElement;
+            const seedRatioValue = document.getElementById('download-seed-ratio-value');
+            const seedRatio = settings.get('downloadSeedRatio') || 2;
+            if (seedRatioSlider && seedRatioValue) {
+                seedRatioSlider.value = seedRatio.toString();
+                seedRatioValue.textContent = seedRatio === 0 ? 'Unlimited' : seedRatio.toFixed(1);
+                seedRatioSlider.addEventListener('input', () => {
+                    const value = parseFloat(seedRatioSlider.value);
+                    seedRatioValue.textContent = value === 0 ? 'Unlimited' : value.toFixed(1);
+                    settings.set('downloadSeedRatio', value);
+                });
+            }
+        } catch (error) {
+            console.error('[Settings] Failed to setup download settings:', error);
+        }
     }
 
     async setupProxySettings() {

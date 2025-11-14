@@ -633,6 +633,186 @@ export const UITemplates = {
                         </div>
                     </div>
 
+                    <!-- Phase 11D: Battery Settings Section -->
+                    <div class="settings-section">
+                        <div class="settings-section-title">Battery & Power</div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">WiFi-Only Downloads</div>
+                                <div class="settings-item-description">Pause downloads when not on WiFi</div>
+                            </div>
+                            <div class="toggle-switch" id="battery-wifi-only-toggle">
+                                <div class="toggle-switch-thumb"></div>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Pause on Low Battery</div>
+                                <div class="settings-item-description">Stop downloads below 20% battery</div>
+                            </div>
+                            <div class="toggle-switch" id="battery-pause-low-toggle">
+                                <div class="toggle-switch-thumb"></div>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Throttle on Battery Saver</div>
+                                <div class="settings-item-description">Reduce speeds when battery saver is active</div>
+                            </div>
+                            <div class="toggle-switch" id="battery-throttle-toggle">
+                                <div class="toggle-switch-thumb"></div>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Reduce Quality on Critical Battery</div>
+                                <div class="settings-item-description">Use lower quality below 10% battery</div>
+                            </div>
+                            <div class="toggle-switch" id="battery-reduce-quality-toggle">
+                                <div class="toggle-switch-thumb"></div>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Current Battery Status</div>
+                                <div class="settings-item-description" id="battery-status-text">Loading...</div>
+                            </div>
+                            <div class="settings-item-value" id="battery-level-value">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 11D: Network Settings Section -->
+                    <div class="settings-section">
+                        <div class="settings-section-title">Network & Cache</div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Enable Request Cache</div>
+                                <div class="settings-item-description">Cache API requests for faster loading</div>
+                            </div>
+                            <div class="toggle-switch active" id="network-cache-toggle">
+                                <div class="toggle-switch-thumb"></div>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Cache TTL (minutes)</div>
+                                <div class="settings-item-description">How long to keep cached data</div>
+                            </div>
+                            <input type="range" id="network-cache-ttl-slider" min="1" max="60" value="5"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="network-cache-ttl-value" class="settings-item-value">5</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Retry Attempts</div>
+                                <div class="settings-item-description">Number of retries for failed requests</div>
+                            </div>
+                            <input type="range" id="network-retry-slider" min="1" max="5" value="3"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="network-retry-value" class="settings-item-value">3</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Request Timeout (seconds)</div>
+                                <div class="settings-item-description">Maximum wait time for requests</div>
+                            </div>
+                            <input type="range" id="network-timeout-slider" min="10" max="60" value="30"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="network-timeout-value" class="settings-item-value">30</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Cache Statistics</div>
+                                <div class="settings-item-description" id="network-cache-stats">Loading...</div>
+                            </div>
+                            <button id="network-clear-cache-btn" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                                Clear Cache
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Phase 11D: Memory Settings Section -->
+                    <div class="settings-section">
+                        <div class="settings-section-title">Memory & Storage</div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Image Cache Size (MB)</div>
+                                <div class="settings-item-description">Memory cache for movie posters</div>
+                            </div>
+                            <input type="range" id="memory-image-cache-slider" min="10" max="200" value="50" step="10"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="memory-image-cache-value" class="settings-item-value">50</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Disk Cache Size (MB)</div>
+                                <div class="settings-item-description">Storage cache for metadata</div>
+                            </div>
+                            <input type="range" id="memory-disk-cache-slider" min="50" max="500" value="100" step="50"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="memory-disk-cache-value" class="settings-item-value">100</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Memory Usage</div>
+                                <div class="settings-item-description" id="memory-usage-text">Loading...</div>
+                            </div>
+                            <button id="memory-clear-btn" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                                Clear Caches
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Phase 11D: Download Settings Section -->
+                    <div class="settings-section">
+                        <div class="settings-section-title">Downloads & Streaming</div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Concurrent Downloads</div>
+                                <div class="settings-item-description">Number of simultaneous downloads</div>
+                            </div>
+                            <input type="range" id="download-concurrent-slider" min="1" max="5" value="3"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="download-concurrent-value" class="settings-item-value">3</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Download Speed Limit (KB/s)</div>
+                                <div class="settings-item-description">0 = unlimited</div>
+                            </div>
+                            <input type="range" id="download-speed-slider" min="0" max="10000" value="0" step="500"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="download-speed-value" class="settings-item-value">Unlimited</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Upload Speed Limit (KB/s)</div>
+                                <div class="settings-item-description">Seeding speed limit (0 = unlimited)</div>
+                            </div>
+                            <input type="range" id="upload-speed-slider" min="0" max="1000" value="100" step="50"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="upload-speed-value" class="settings-item-value">100</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Auto Cleanup (days)</div>
+                                <div class="settings-item-description">Remove old downloads after N days</div>
+                            </div>
+                            <input type="range" id="download-cleanup-slider" min="1" max="30" value="7"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="download-cleanup-value" class="settings-item-value">7</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <div class="settings-item-label">Seed Ratio Limit</div>
+                                <div class="settings-item-description">Stop seeding after ratio (0 = unlimited)</div>
+                            </div>
+                            <input type="range" id="download-seed-ratio-slider" min="0" max="5" value="2" step="0.5"
+                                   style="width: 150px;" class="settings-slider">
+                            <span id="download-seed-ratio-value" class="settings-item-value">2.0</span>
+                        </div>
+                    </div>
+
                     <div class="settings-section">
                         <div class="settings-section-title">About</div>
                         <div class="settings-item">
