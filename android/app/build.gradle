@@ -49,6 +49,9 @@ dependencies {
 
     // Phase 10D.1: Memory Optimization - Memory leak detection (debug builds only)
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+
+    // Phase 10D.4: Network Optimization - OkHttp for connection pooling and caching
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 }
 
 apply from: 'capacitor.build.gradle'
