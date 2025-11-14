@@ -1,0 +1,55 @@
+{
+  "name": "capacitor-plugin-torrent-downloader",
+  "version": "1.0.0",
+  "description": "Capacitor plugin for torrent downloading using jlibtorrent",
+  "main": "dist/plugin.cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "unpkg": "dist/plugin.js",
+  "files": [
+    "android/src/main/",
+    "android/build.gradle",
+    "dist/",
+    "src/"
+  ],
+  "author": "FlixCapacitor",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flixcapacitor/popcorn-mobile"
+  },
+  "bugs": {
+    "url": "https://github.com/flixcapacitor/popcorn-mobile/issues"
+  },
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "native",
+    "torrent",
+    "download",
+    "jlibtorrent"
+  ],
+  "scripts": {
+    "verify": "npm run verify:android",
+    "verify:android": "cd android && ./gradlew clean build test && cd ..",
+    "build": "npm run clean && tsc && rollup -c rollup.config.js",
+    "clean": "rimraf ./dist",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/android": "^5.0.0",
+    "typescript": "^5.0.0",
+    "rollup": "^3.0.0",
+    "rimraf": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@capacitor/core": "^5.0.0"
+  },
+  "capacitor": {
+    "android": {
+      "src": "android"
+    }
+  }
+}
