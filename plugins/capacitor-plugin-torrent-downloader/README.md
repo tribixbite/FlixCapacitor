@@ -10,6 +10,9 @@ Capacitor plugin for torrent downloading using jlibtorrent.
 - Foreground service for reliable background downloads
 - Configurable download/upload speed limits
 - Seeding control
+- Storage management and disk space checking
+- File integrity verification (SHA-256)
+- Automatic cleanup of incomplete/old downloads
 
 ## Installation
 
@@ -50,6 +53,43 @@ await TorrentDownload.cancelDownload({ downloadId });
 
 // Delete including files
 await TorrentDownload.deleteDownload({ downloadId });
+
+// Storage Management (Phase 10A.2)
+
+// Check storage info
+const storageInfo = await TorrentDownload.getStorageInfo();
+console.log(`Free space: ${storageInfo.freeFormatted}`);
+console.log(`Warning: ${storageInfo.needsWarning}`);
+
+// Check if enough space before download
+const spaceCheck = await TorrentDownload.checkStorageSpace({
+  requiredBytes: 1024 * 1024 * 1024 // 1GB
+});
+if (!spaceCheck.hasEnoughSpace) {
+  console.log(`Need to free up: ${spaceCheck.recommendedCleanupFormatted}`);
+}
+
+// Clean up incomplete downloads
+const cleanup = await TorrentDownload.cleanupIncompleteDownloads();
+console.log(`Freed: ${cleanup.bytesFreedFormatted}`);
+
+// Clean up downloads older than 30 days
+const oldCleanup = await TorrentDownload.cleanupOldDownloads({
+  maxAgeMillis: 30 * 24 * 60 * 60 * 1000
+});
+
+// Verify file integrity
+const integrity = await TorrentDownload.verifyFileIntegrity({
+  filePath: '/path/to/file.mp4',
+  expectedHash: 'abc123...'
+});
+console.log(`File valid: ${integrity.valid}`);
+
+// Calculate file hash
+const hash = await TorrentDownload.calculateFileHash({
+  filePath: '/path/to/file.mp4'
+});
+console.log(`SHA-256: ${hash.hash}`);
 ```
 
 ## API

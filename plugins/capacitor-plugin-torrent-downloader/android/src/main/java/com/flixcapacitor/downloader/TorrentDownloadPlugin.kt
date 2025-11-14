@@ -45,6 +45,9 @@ class TorrentDownloadPlugin : Plugin() {
     // jlibtorrent session manager
     private var sessionManager: SessionManager? = null
 
+    // Storage manager for disk space and file management
+    private lateinit var storageManager: StorageManager
+
     // Active downloads map: downloadId -> ActiveDownload
     private val activeDownloads = ConcurrentHashMap<Int, ActiveDownload>()
 
@@ -60,6 +63,9 @@ class TorrentDownloadPlugin : Plugin() {
     override fun load() {
         super.load()
         Log.d(TAG, "TorrentDownloadPlugin loaded")
+
+        // Initialize storage manager
+        storageManager = StorageManager(context)
 
         // Initialize notification channel
         createNotificationChannel()
@@ -544,6 +550,219 @@ class TorrentDownloadPlugin : Plugin() {
         } catch (e: Exception) {
             Log.e(TAG, "Failed to stop seeding for download $downloadId", e)
             call.reject("Failed to stop seeding: ${e.message}")
+        }
+    }
+
+    // ========================================================================
+    // Storage Management Methods (Phase 10A.2)
+    // ========================================================================
+
+    /**
+     * Get current storage information
+     * @param call Plugin call (no parameters)
+     * @return StorageInfo with capacity, free space, and warnings
+     */
+    @PluginMethod
+    fun getStorageInfo(call: PluginCall) {
+        try {
+            val location = storageManager.getCurrentStorageLocation()
+            val info = location.storageInfo
+
+            val result = JSObject().apply {
+                put("path", location.path)
+                put("isExternal", location.isExternal)
+                put("isWritable", location.isWritable)
+                put("isRemovable", location.isRemovable)
+                put("totalBytes", info.totalBytes)
+                put("freeBytes", info.freeBytes)
+                put("usedBytes", info.usedBytes)
+                put("percentUsed", info.percentUsed)
+                put("percentFree", info.percentFree)
+                put("hasMinimumSpace", info.hasMinimumSpace)
+                put("needsWarning", info.needsWarning)
+                put("totalFormatted", storageManager.formatBytes(info.totalBytes))
+                put("freeFormatted", storageManager.formatBytes(info.freeBytes))
+                put("usedFormatted", storageManager.formatBytes(info.usedBytes))
+            }
+
+            call.resolve(result)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get storage info", e)
+            call.reject("Failed to get storage info: ${e.message}")
+        }
+    }
+
+    /**
+     * Check if there is enough space for a download
+     * @param call Plugin call with requiredBytes parameter
+     */
+    @PluginMethod
+    fun checkStorageSpace(call: PluginCall) {
+        val requiredBytes = call.getLong("requiredBytes") ?: run {
+            call.reject("requiredBytes is required")
+            return
+        }
+
+        try {
+            val hasEnough = storageManager.hasEnoughSpace(requiredBytes)
+            val recommendedCleanup = storageManager.getRecommendedCleanupSize()
+
+            val result = JSObject().apply {
+                put("hasEnoughSpace", hasEnough)
+                put("requiredBytes", requiredBytes)
+                put("recommendedCleanupBytes", recommendedCleanup)
+                put("requiredFormatted", storageManager.formatBytes(requiredBytes))
+                put("recommendedCleanupFormatted", storageManager.formatBytes(recommendedCleanup))
+            }
+
+            call.resolve(result)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to check storage space", e)
+            call.reject("Failed to check storage space: ${e.message}")
+        }
+    }
+
+    /**
+     * Clean up incomplete downloads
+     * @param call Plugin call (no parameters)
+     * @return CleanupResult with files deleted and bytes freed
+     */
+    @PluginMethod
+    fun cleanupIncompleteDownloads(call: PluginCall) {
+        pluginScope.launch {
+            try {
+                val result = storageManager.cleanupIncompleteDownloads()
+
+                val response = JSObject().apply {
+                    put("filesDeleted", result.filesDeleted)
+                    put("bytesFreed", result.bytesFreed)
+                    put("bytesFreedFormatted", storageManager.formatBytes(result.bytesFreed))
+                    put("errors", result.errors.joinToString(", "))
+                    put("success", result.errors.isEmpty())
+                }
+
+                call.resolve(response)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to cleanup incomplete downloads", e)
+                call.reject("Failed to cleanup: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Clean up old completed downloads
+     * @param call Plugin call with optional maxAgeMillis parameter (default: 30 days)
+     */
+    @PluginMethod
+    fun cleanupOldDownloads(call: PluginCall) {
+        val maxAgeMillis = call.getLong("maxAgeMillis") ?: (30L * 24 * 60 * 60 * 1000)
+
+        pluginScope.launch {
+            try {
+                val result = storageManager.cleanupOldDownloads(maxAgeMillis)
+
+                val response = JSObject().apply {
+                    put("filesDeleted", result.filesDeleted)
+                    put("bytesFreed", result.bytesFreed)
+                    put("bytesFreedFormatted", storageManager.formatBytes(result.bytesFreed))
+                    put("errors", result.errors.joinToString(", "))
+                    put("success", result.errors.isEmpty())
+                }
+
+                call.resolve(response)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to cleanup old downloads", e)
+                call.reject("Failed to cleanup: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Verify file integrity using hash
+     * @param call Plugin call with filePath and expectedHash parameters
+     */
+    @PluginMethod
+    fun verifyFileIntegrity(call: PluginCall) {
+        val filePath = call.getString("filePath") ?: run {
+            call.reject("filePath is required")
+            return
+        }
+
+        val expectedHash = call.getString("expectedHash") ?: run {
+            call.reject("expectedHash is required")
+            return
+        }
+
+        pluginScope.launch {
+            try {
+                val isValid = storageManager.verifyFileIntegrity(filePath, expectedHash)
+
+                val result = JSObject().apply {
+                    put("valid", isValid)
+                    put("filePath", filePath)
+                    put("expectedHash", expectedHash)
+                }
+
+                call.resolve(result)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to verify file integrity", e)
+                call.reject("Failed to verify file: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Calculate SHA-256 hash of a file
+     * @param call Plugin call with filePath parameter
+     */
+    @PluginMethod
+    fun calculateFileHash(call: PluginCall) {
+        val filePath = call.getString("filePath") ?: run {
+            call.reject("filePath is required")
+            return
+        }
+
+        pluginScope.launch {
+            try {
+                val hash = storageManager.calculateFileHash(filePath)
+
+                if (hash != null) {
+                    val result = JSObject().apply {
+                        put("hash", hash)
+                        put("filePath", filePath)
+                        put("algorithm", "SHA-256")
+                    }
+                    call.resolve(result)
+                } else {
+                    call.reject("Failed to calculate hash: file not found or not readable")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to calculate file hash", e)
+                call.reject("Failed to calculate hash: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Get total size of all downloads
+     * @param call Plugin call (no parameters)
+     */
+    @PluginMethod
+    fun getTotalDownloadSize(call: PluginCall) {
+        pluginScope.launch {
+            try {
+                val totalSize = storageManager.getTotalDownloadSize()
+
+                val result = JSObject().apply {
+                    put("totalBytes", totalSize)
+                    put("totalFormatted", storageManager.formatBytes(totalSize))
+                }
+
+                call.resolve(result)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to get total download size", e)
+                call.reject("Failed to get total size: ${e.message}")
+            }
         }
     }
 }

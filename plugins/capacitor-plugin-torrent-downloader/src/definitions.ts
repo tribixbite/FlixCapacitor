@@ -39,6 +39,45 @@ export interface TorrentDownloadPlugin {
    */
   stopSeeding(options: { downloadId: number }): Promise<void>;
 
+  // ========================================================================
+  // Storage Management Methods (Phase 10A.2)
+  // ========================================================================
+
+  /**
+   * Get current storage information
+   */
+  getStorageInfo(): Promise<StorageInfo>;
+
+  /**
+   * Check if there is enough space for a download
+   */
+  checkStorageSpace(options: { requiredBytes: number }): Promise<StorageSpaceCheck>;
+
+  /**
+   * Clean up incomplete downloads
+   */
+  cleanupIncompleteDownloads(): Promise<CleanupResult>;
+
+  /**
+   * Clean up old completed downloads
+   */
+  cleanupOldDownloads(options?: { maxAgeMillis?: number }): Promise<CleanupResult>;
+
+  /**
+   * Verify file integrity using SHA-256 hash
+   */
+  verifyFileIntegrity(options: { filePath: string; expectedHash: string }): Promise<FileIntegrityResult>;
+
+  /**
+   * Calculate SHA-256 hash of a file
+   */
+  calculateFileHash(options: { filePath: string }): Promise<FileHashResult>;
+
+  /**
+   * Get total size of all downloads
+   */
+  getTotalDownloadSize(): Promise<TotalSizeResult>;
+
   /**
    * Add listener for download progress events
    */
@@ -190,4 +229,180 @@ export interface DownloadError {
 
 export interface PluginListenerHandle {
   remove: () => Promise<void>;
+}
+
+// ========================================================================
+// Storage Management Interfaces (Phase 10A.2)
+// ========================================================================
+
+export interface StorageInfo {
+  /**
+   * Storage path
+   */
+  path: string;
+
+  /**
+   * Is external storage
+   */
+  isExternal: boolean;
+
+  /**
+   * Is writable
+   */
+  isWritable: boolean;
+
+  /**
+   * Is removable storage
+   */
+  isRemovable: boolean;
+
+  /**
+   * Total storage in bytes
+   */
+  totalBytes: number;
+
+  /**
+   * Free storage in bytes
+   */
+  freeBytes: number;
+
+  /**
+   * Used storage in bytes
+   */
+  usedBytes: number;
+
+  /**
+   * Percentage used (0-100)
+   */
+  percentUsed: number;
+
+  /**
+   * Percentage free (0-100)
+   */
+  percentFree: number;
+
+  /**
+   * Has minimum required space
+   */
+  hasMinimumSpace: boolean;
+
+  /**
+   * Low storage warning
+   */
+  needsWarning: boolean;
+
+  /**
+   * Formatted total size
+   */
+  totalFormatted: string;
+
+  /**
+   * Formatted free size
+   */
+  freeFormatted: string;
+
+  /**
+   * Formatted used size
+   */
+  usedFormatted: string;
+}
+
+export interface StorageSpaceCheck {
+  /**
+   * Has enough space for download
+   */
+  hasEnoughSpace: boolean;
+
+  /**
+   * Required bytes for download
+   */
+  requiredBytes: number;
+
+  /**
+   * Recommended cleanup size in bytes
+   */
+  recommendedCleanupBytes: number;
+
+  /**
+   * Formatted required size
+   */
+  requiredFormatted: string;
+
+  /**
+   * Formatted cleanup size
+   */
+  recommendedCleanupFormatted: string;
+}
+
+export interface CleanupResult {
+  /**
+   * Number of files deleted
+   */
+  filesDeleted: number;
+
+  /**
+   * Bytes freed
+   */
+  bytesFreed: number;
+
+  /**
+   * Formatted bytes freed
+   */
+  bytesFreedFormatted: string;
+
+  /**
+   * Error messages (comma-separated)
+   */
+  errors: string;
+
+  /**
+   * Success (no errors)
+   */
+  success: boolean;
+}
+
+export interface FileIntegrityResult {
+  /**
+   * File integrity is valid
+   */
+  valid: boolean;
+
+  /**
+   * File path checked
+   */
+  filePath: string;
+
+  /**
+   * Expected hash
+   */
+  expectedHash: string;
+}
+
+export interface FileHashResult {
+  /**
+   * Calculated SHA-256 hash
+   */
+  hash: string;
+
+  /**
+   * File path
+   */
+  filePath: string;
+
+  /**
+   * Hash algorithm
+   */
+  algorithm: string;
+}
+
+export interface TotalSizeResult {
+  /**
+   * Total size in bytes
+   */
+  totalBytes: number;
+
+  /**
+   * Formatted total size
+   */
+  totalFormatted: string;
 }
