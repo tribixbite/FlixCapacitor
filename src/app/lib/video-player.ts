@@ -13,7 +13,7 @@ import type { LibraryItem } from '../../types/library';
  * Supports auto-play next, queue status tracking, and queue management
  * Phase 9A.1: Enhanced with reordering, removal, shuffle, and pause/resume
  */
-class PlaybackQueue {
+export class PlaybackQueue {
     private queue: Array<{ index: number; name: string }> = [];
     private currentIndex: number = 0;
     private movie: any = null;
