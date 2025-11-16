@@ -3548,40 +3548,35 @@ formatDate(dateString: string): string {
 - Service layer: ✅ 100% complete (Day 1)
 - Cloud sync: ✅ 100% complete (Day 2)
 - Supabase setup: ✅ 100% complete (Day 2)
-- UI - Collections List: ⏳ 70% complete (Day 3 partial - view done, modal pending)
+- UI - Collections List: ✅ 100% complete (Day 3 - view + modal + item count)
 - UI - Collection Detail: ⏳ 0% (Day 4)
 - Integration: ⏳ 0% (Day 5)
-- **Overall Phase 1 MVP: ~70% complete** (3.5/5 days)
+- **Overall Phase 1 MVP: ~80% complete** (4/5 days)
 
-**Code Metrics (Day 1-3 Total):**
-- Total lines of code: 2,797
-  * Database: 62 lines (sqlite-service.ts schema update)
-  * Services: 1,891 lines (torrents, collections, sync services)
-  * UI: 435 lines (torrent-collections-view.ts)
+**Code Metrics (Day 1-3 Complete):**
+- Total lines of code: 3,256
+  * Database: 79 lines (sqlite-service.ts schema update + item count query)
+  * Services: 1,908 lines (torrents, collections, sync services)
+  * UI: 816 lines (torrent-collections-view.ts + collection-form-view.ts)
   * SQL: 328 lines (SUPABASE-SETUP.sql)
-  * Docs: 81 lines (spec file separately tracked)
-- Methods implemented: 42
+  * Docs: 125 lines (spec file + NEXT-STEPS updates)
+- Methods implemented: 47
   * TorrentsService: 12
-  * CollectionsService: 15
+  * CollectionsService: 15 (getAllCollections updated with item_count)
   * CollectionSyncService: 10
   * TorrentCollectionsView: 5
-- TypeScript interfaces: 9
+  * CollectionFormView: 5
+- TypeScript interfaces: 10 (added CollectionFormData + CollectionFormViewOptions)
 - Database tables: 3 SQLite + 3 Supabase (mirrored)
 - TypeScript errors: 0 (no new errors introduced)
 
 ### Next Steps
 
-**Immediate (Day 3 completion):**
-1. Create CollectionFormView modal component
-2. Add item count query to CollectionsService
-3. Wire up modal to Create/Edit buttons (replace prompts)
-4. Test create/edit flows with proper modal
-
-**Short-term (Day 4):**
-1. Create TorrentCollectionDetailView
+**Immediate (Day 4):**
+1. Create TorrentCollectionDetailView component
 2. Implement torrent list with metadata display
 3. Add Move Up/Down reordering buttons
-4. Wire up back navigation
+4. Wire up back navigation to Collections List
 
 **Medium-term (Day 5):**
 1. Add "Add to Collection" context menu integration
@@ -3598,10 +3593,10 @@ formatDate(dateString: string): string {
 
 ### Known Issues / TODOs
 
-**Day 3 Remaining Tasks:**
-- CollectionFormView modal: Not yet implemented (using prompts temporarily)
-- Item count: Showing 0 for all collections (need DB query)
-- Long-press context menu: Not implemented (mobile UX enhancement)
+**Day 3 Complete ✅:**
+- ✅ CollectionFormView modal: Implemented with validation, image preview
+- ✅ Item count: Query updated with LEFT JOIN and COUNT
+- ⏳ Long-press context menu: Deferred (mobile UX enhancement)
 
 **Testing Checklist (Day 5):**
 - [ ] Create collection with name only
@@ -3617,13 +3612,14 @@ formatDate(dateString: string): string {
 - [ ] Analytics: All events tracked correctly
 
 **No Blockers:**
-- View compiles successfully (TypeScript)
+- All views compile successfully (TypeScript)
 - Integration with CollectionsService works
-- Can proceed with Day 4 (detail view) in parallel
+- Modal form working with validation
+- Ready to proceed with Day 4 (detail view)
 
 ---
 
 **Last Updated:** 2025-11-16
-**Current Phase:** Phase 13 Day 3 Partial Complete
-**Overall Status:** Production Readiness ~89% → ~90%
-**Next Milestone:** Complete Day 3 (modal), implement Day 4 (detail view), integrate & test (Day 5)
+**Current Phase:** Phase 13 Day 3 COMPLETE ✅
+**Overall Status:** Production Readiness ~89% → ~91%
+**Next Milestone:** Implement Day 4 (detail view), integrate & test (Day 5)

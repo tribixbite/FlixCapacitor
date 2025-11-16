@@ -8,6 +8,7 @@ import { View, type ViewOptions } from 'backbone.marionette';
 import { collectionsService, type Collection, type CollectionWithTorrents } from '../lib/collections-service';
 import { logger } from '../lib/logger';
 import { analytics } from '../lib/analytics';
+import { CollectionFormView, type CollectionFormData } from './collection-form-view';
 
 interface TorrentCollectionsViewOptions extends ViewOptions<any> {
     onCollectionClick?: (collection: Collection) => void;
@@ -139,7 +140,7 @@ export class TorrentCollectionsView extends View<any> {
      */
     private renderCollectionCard(collection: Collection): string {
         const coverImage = collection.cover_image_url || '';
-        const itemCount = 0; // TODO: Get from collection items count
+        const itemCount = collection.item_count || 0;
 
         return `
             <div class="collection-card group cursor-pointer" data-collection-uuid="${collection.uuid}">
@@ -281,30 +282,27 @@ export class TorrentCollectionsView extends View<any> {
         logger.info('Create torrent collection initiated', undefined, 'torrent-collection');
         analytics.trackEvent('torrent_collection_create_initiated');
 
-        // TODO: Open create collection modal
-        // For now, use a simple prompt
-        const name = prompt('Enter collection name:');
-        if (!name) return;
+        // Open create collection modal
+        new CollectionFormView({
+            mode: 'create',
+            onSave: async (data: CollectionFormData) => {
+                try {
+                    const collection = await collectionsService.createCollection(data);
 
-        const description = prompt('Enter description (optional):');
+                    this.collections.push(collection);
+                    this.render();
 
-        try {
-            const collection = await collectionsService.createCollection({
-                name,
-                description: description || undefined
-            });
-
-            this.collections.push(collection);
-            this.render();
-
-            logger.info('Torrent collection created', { uuid: collection.uuid, name }, 'torrent-collection');
-            analytics.trackEvent('torrent_collection_created', { uuid: collection.uuid });
-
-            alert(`Collection "${name}" created successfully!`);
-        } catch (error: any) {
-            logger.error('Failed to create torrent collection', error, undefined, 'torrent-collection');
-            alert('Failed to create collection: ' + error.message);
-        }
+                    logger.info('Torrent collection created', { uuid: collection.uuid, name: data.name }, 'torrent-collection');
+                    analytics.trackEvent('torrent_collection_created', { uuid: collection.uuid });
+                } catch (error: any) {
+                    logger.error('Failed to create torrent collection', error, undefined, 'torrent-collection');
+                    alert('Failed to create collection: ' + error.message);
+                }
+            },
+            onCancel: () => {
+                logger.info('Create collection cancelled', undefined, 'torrent-collection');
+            }
+        });
     }
 
     /**
@@ -323,35 +321,38 @@ export class TorrentCollectionsView extends View<any> {
         logger.info(`Editing torrent collection: ${collectionUuid}`, undefined, 'torrent-collection');
         analytics.trackEvent('torrent_collection_edit_initiated', { collectionUuid });
 
-        // TODO: Open edit collection modal
-        // For now, use simple prompts
-        const name = prompt('Enter new name:', collection.name);
-        if (!name) return;
+        // Open edit collection modal
+        new CollectionFormView({
+            mode: 'edit',
+            existingCollection: collection,
+            onSave: async (data: CollectionFormData) => {
+                try {
+                    await collectionsService.updateCollection(collectionUuid, data);
 
-        const description = prompt('Enter new description:', collection.description || '');
+                    // Update local array
+                    const index = this.collections.findIndex(c => c.uuid === collectionUuid);
+                    if (index !== -1) {
+                        this.collections[index] = {
+                            ...this.collections[index],
+                            name: data.name,
+                            description: data.description,
+                            cover_image_url: data.cover_image_url
+                        };
+                    }
 
-        try {
-            await collectionsService.updateCollection(collectionUuid, {
-                name,
-                description: description || undefined
-            });
+                    this.render();
 
-            // Update local array
-            const index = this.collections.findIndex(c => c.uuid === collectionUuid);
-            if (index !== -1) {
-                this.collections[index] = { ...this.collections[index], name, description };
+                    logger.info('Torrent collection updated', { uuid: collectionUuid }, 'torrent-collection');
+                    analytics.trackEvent('torrent_collection_updated', { collectionUuid });
+                } catch (error: any) {
+                    logger.error('Failed to update torrent collection', error, undefined, 'torrent-collection');
+                    alert('Failed to update collection: ' + error.message);
+                }
+            },
+            onCancel: () => {
+                logger.info('Edit collection cancelled', undefined, 'torrent-collection');
             }
-
-            this.render();
-
-            logger.info('Torrent collection updated', { uuid: collectionUuid }, 'torrent-collection');
-            analytics.trackEvent('torrent_collection_updated', { collectionUuid });
-
-            alert('Collection updated successfully!');
-        } catch (error: any) {
-            logger.error('Failed to update torrent collection', error, undefined, 'torrent-collection');
-            alert('Failed to update collection: ' + error.message);
-        }
+        });
     }
 
     /**

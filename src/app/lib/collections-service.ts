@@ -22,6 +22,7 @@ export interface Collection {
   created_at: string;            // ISO 8601 timestamp
   updated_at: string;            // ISO 8601 timestamp (LWW key)
   last_synced_at?: string;       // Last successful sync timestamp
+  item_count?: number;           // Number of torrents in collection (populated by some queries)
 }
 
 /**
@@ -69,20 +70,24 @@ class CollectionsService {
   private torrentsService = torrentsService;
 
   /**
-   * Get all collections (excluding soft-deleted)
+   * Get all collections (excluding soft-deleted) with item counts
    *
-   * @returns Promise resolving to array of collections
+   * @returns Promise resolving to array of collections with item_count populated
    *
    * @example
    * const collections = await collectionsService.getAllCollections();
-   * collections.forEach(c => console.log(c.name, c.items?.length));
+   * collections.forEach(c => console.log(c.name, c.item_count));
    */
   async getAllCollections(): Promise<Collection[]> {
     const userId = await this.getUserId();
     const results = await this.db.query(
-      `SELECT * FROM collections
-       WHERE user_id = ? AND is_deleted = 0
-       ORDER BY updated_at DESC`,
+      `SELECT c.*, COUNT(ct.torrent_info_hash) as item_count
+       FROM collections c
+       LEFT JOIN collection_torrents ct ON c.uuid = ct.collection_uuid
+       WHERE c.user_id = ? AND c.is_deleted = 0
+       GROUP BY c.uuid, c.id, c.user_id, c.name, c.description, c.cover_image_url,
+                c.is_public, c.created_at, c.updated_at, c.is_deleted, c.last_synced_at
+       ORDER BY c.updated_at DESC`,
       [userId]
     );
 
@@ -90,7 +95,8 @@ class CollectionsService {
     return results.map(row => ({
       ...row,
       is_public: Boolean(row.is_public),
-      is_deleted: Boolean(row.is_deleted)
+      is_deleted: Boolean(row.is_deleted),
+      item_count: Number(row.item_count) || 0
     }));
   }
 
