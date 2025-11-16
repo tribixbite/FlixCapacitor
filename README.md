@@ -154,7 +154,7 @@ npm run preview
 - **Status**: 100% complete (5 days, Phase 1 MVP + Phase 2 Integration)
 
 ### ✅ Phase 12E: Play Store Readiness (2025-11-16)
-- **Status**: 81% complete, awaiting screenshots + device testing
+- **Status**: 86% complete, awaiting screenshots + device testing
 - **Completed**:
   - Release keystore generated (RSA 2048-bit, valid until 2053)
   - ProGuard rules configured (232 lines)
@@ -162,6 +162,7 @@ npm run preview
   - App icon created (512x512px, verified)
   - Feature graphic created (1024x500px, verified)
   - Legal documentation (PRIVACY.md, TERMS.md)
+  - Hosting infrastructure (public-docs/: HTML legal docs, deployment guide)
   - Production monitoring (Sentry integration)
   - Rollout strategy (staged deployment plan)
 - **Pending**: 8 phone screenshots (manual capture), release build testing

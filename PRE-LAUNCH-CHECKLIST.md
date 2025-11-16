@@ -585,16 +585,17 @@ This checklist covers all tasks required before FlixCapacitor v1.0.0 can be subm
 
 ## Next Immediate Actions
 
-1. **Capture Screenshots** (1-2 hours)
+1. **Capture Screenshots** (1-2 hours) - PRIMARY BLOCKER
    - Open browser on Android device
    - Navigate to http://localhost:3000/
    - Follow SCREENSHOT-URLS.md
    - Save to `play-store-assets/screenshots/phone/`
 
-2. **Host Privacy Policy & Terms** (30 minutes)
-   - Create GitHub Pages or use existing website
-   - Upload PRIVACY.md and TERMS.md
-   - Get public URLs for Play Store listing
+2. **Deploy Hosting** (5 minutes) - OPTIONAL BUT RECOMMENDED
+   - ✅ HTML files ready (public-docs/: privacy.html, terms.html, index.html)
+   - Enable GitHub Pages (Settings → Pages → /public-docs folder)
+   - OR use Netlify/Vercel (see public-docs/README.md)
+   - Add URLs to Play Store Console
 
 3. **Release Build Testing** (4-6 hours)
    - Build release APK with ProGuard
@@ -603,8 +604,9 @@ This checklist covers all tasks required before FlixCapacitor v1.0.0 can be subm
    - Document any issues
 
 4. **Play Store Submission** (1-2 hours)
-   - Upload all assets
+   - Upload all assets (icon, graphic, screenshots)
    - Complete listing
+   - Add Privacy Policy and Terms URLs
    - Submit for review
 
 ---

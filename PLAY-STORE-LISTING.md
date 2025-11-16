@@ -459,11 +459,22 @@ FlixCapacitor is a torrent streaming client. Users are responsible for ensuring 
 ## Contact & Links
 
 **Developer:** tribixbite
-**Email:** support@flixcapacitor.app
+**Email:** support@flixcapacitor.app (or your email)
 **Website:** https://flixcapacitor.app (coming soon)
 **GitHub:** https://github.com/tribixbite/FlixCapacitor
-**Privacy Policy:** https://github.com/tribixbite/FlixCapacitor/blob/main/PRIVACY.md
-**Terms of Service:** https://github.com/tribixbite/FlixCapacitor/blob/main/TERMS.md
+
+**Privacy Policy URL (REQUIRED for Play Store):**
+- After GitHub Pages deployment: `https://[username].github.io/[repo]/privacy.html`
+- HTML file ready: `public-docs/privacy.html`
+- Source: PRIVACY.md
+
+**Terms of Service URL (RECOMMENDED):**
+- After GitHub Pages deployment: `https://[username].github.io/[repo]/terms.html`
+- HTML file ready: `public-docs/terms.html`
+- Source: TERMS.md
+
+**Deployment Guide:** See `public-docs/README.md` for setup instructions
+
 **Documentation:** https://github.com/tribixbite/FlixCapacitor/blob/main/docs/
 
 ---
