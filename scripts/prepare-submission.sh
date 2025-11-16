@@ -5,7 +5,7 @@
 #
 # Usage: ./scripts/prepare-submission.sh
 
-set -e
+# Note: Not using 'set -e' to avoid issues with counter increments
 
 # Colors
 RED='\033[0;31m'
@@ -22,6 +22,18 @@ echo "╔═══════════════════════�
 echo "║   FlixCapacitor - Play Store Submission Readiness Check       ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo
+
+# Function to format bytes to human-readable size
+format_bytes() {
+    local bytes=$1
+    if [ $bytes -lt 1024 ]; then
+        echo "${bytes}B"
+    elif [ $bytes -lt 1048576 ]; then
+        echo "$((bytes / 1024))KiB"
+    else
+        echo "$((bytes / 1048576))MiB"
+    fi
+}
 
 # Function to print status
 print_status() {
@@ -51,9 +63,9 @@ echo "━━━ 📦 Play Store Assets ━━━"
 if [ -f "play-store-assets/app-icon-512.png" ]; then
     SIZE=$(stat -c%s "play-store-assets/app-icon-512.png" 2>/dev/null || stat -f%z "play-store-assets/app-icon-512.png" 2>/dev/null)
     if [ $SIZE -lt 1048576 ]; then
-        print_status "success" "App icon (512x512px, $(numfmt --to=iec-i --suffix=B $SIZE 2>/dev/null || echo \"${SIZE}B\"))"
+        print_status "success" "App icon (512x512px, $(format_bytes $SIZE))"
     else
-        print_status "warning" "App icon too large ($(numfmt --to=iec-i --suffix=B $SIZE 2>/dev/null || echo \"${SIZE}B\") > 1MB)"
+        print_status "warning" "App icon too large ($(format_bytes $SIZE) > 1MB)"
     fi
 else
     print_status "error" "App icon missing (play-store-assets/app-icon-512.png)"
@@ -63,9 +75,9 @@ fi
 if [ -f "play-store-assets/feature-graphic-1024x500.png" ]; then
     SIZE=$(stat -c%s "play-store-assets/feature-graphic-1024x500.png" 2>/dev/null || stat -f%z "play-store-assets/feature-graphic-1024x500.png" 2>/dev/null)
     if [ $SIZE -lt 1048576 ]; then
-        print_status "success" "Feature graphic (1024x500px, $(numfmt --to=iec-i --suffix=B $SIZE 2>/dev/null || echo \"${SIZE}B\"))"
+        print_status "success" "Feature graphic (1024x500px, $(format_bytes $SIZE))"
     else
-        print_status "warning" "Feature graphic too large ($(numfmt --to=iec-i --suffix=B $SIZE 2>/dev/null || echo \"${SIZE}B\") > 1MB)"
+        print_status "warning" "Feature graphic too large ($(format_bytes $SIZE) > 1MB)"
     fi
 else
     print_status "error" "Feature graphic missing"
@@ -81,7 +93,7 @@ if [ $SCREENSHOT_COUNT -ge 6 ] && [ $SCREENSHOT_COUNT -le 8 ]; then
     echo "   Screenshots found:"
     find play-store-assets/screenshots/phone/ -type f \( -name "*.png" -o -name "*.jpg" \) 2>/dev/null | while read file; do
         SIZE=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null)
-        echo "   • $(basename "$file") ($(numfmt --to=iec-i --suffix=B $SIZE 2>/dev/null || echo \"${SIZE}B\"))"
+        echo "   • $(basename "$file") ($(format_bytes $SIZE))"
     done
 elif [ $SCREENSHOT_COUNT -eq 0 ]; then
     print_status "error" "No screenshots found (need 6-8)"
