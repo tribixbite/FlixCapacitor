@@ -25,7 +25,9 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "check": "biome check --write . && npm run typecheck"
+    "check": "biome check --write . && npm run typecheck",
+    "verify-submission": "./scripts/prepare-submission.sh",
+    "verify": "./scripts/verify-pre-launch.sh"
   },
   "keywords": [],
   "author": "",
