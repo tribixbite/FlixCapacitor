@@ -3877,3 +3877,199 @@ bebd7323 - feat(views): implement CollectionFormView modal
 **Status:** ✅ VERIFIED - READY FOR DEVICE TESTING
 **Production Readiness:** 96%
 **Next Milestone:** Manual QA on physical Android device
+
+## Phase 12E Day 3 Complete - Play Store Listing & Asset Documentation (2025-11-16)
+
+### Summary
+
+Created comprehensive Play Store listing content and detailed asset creation guidelines. All text content ready for Play Store submission, with complete specifications for visual assets.
+
+### Files Created
+
+1. **PLAY-STORE-LISTING.md** (500+ lines) ✨
+   - Complete store listing content:
+     * App title: "FlixCapacitor - Torrent Streaming" (37/50 chars)
+     * Short description: 80/80 characters used
+     * Full description: 2,961/4,000 characters (comprehensive feature overview)
+   - Content rating questionnaire responses
+   - Privacy & data safety disclosures
+   - Technical specifications (version, SDK, permissions)
+   - Marketing asset requirements
+   - Launch timeline and checklist
+   - All Play Store metadata ready
+
+2. **PLAY-STORE-ASSETS.md** (600+ lines) ✨
+   - Detailed specifications for all visual assets:
+     * App icon (512x512px PNG)
+     * Feature graphic (1024x500px PNG/JPG)
+     * Phone screenshots (1080x1920, 6-8 images)
+     * Tablet screenshots (2048x1536, optional 4 images)
+     * Promotional video (YouTube, optional)
+   - Step-by-step creation guides
+   - Screenshot content recommendations
+   - Capture methods (Chrome DevTools, ADB, emulator)
+   - File optimization techniques
+   - Upload instructions for Play Console
+   - Timeline and resource links
+
+### Content Highlights
+
+**App Title:**
+> FlixCapacitor - Torrent Streaming
+
+**Short Description:**
+> Stream torrents instantly with native playback, cloud sync, and offline library.
+
+**Key Features (from full description):**
+- ✅ Native torrent streaming (jlibtorrent)
+- ✅ Beautiful mobile-first UI
+- ✅ Personal collections with cloud sync ✨ (Phase 13)
+- ✅ Smart library management
+- ✅ Advanced playback features (queue, PiP, subtitles)
+- ✅ Optional cloud sync (Supabase)
+- ✅ Privacy-focused (local-first, no ads)
+- ✅ Performance optimized (89.8% bundle reduction)
+- ✅ Modern tech stack
+
+**Target Audience:**
+- Adults 18+ (primary)
+- Teens 13-17 with parental guidance
+- Expected rating: Teen (13+) or Mature (17+)
+
+**Category:** Entertainment → Video Players & Editors
+
+### Screenshot Plan (8 total)
+
+**Recommended Screenshots:**
+1. **Home Screen** - Movies grid with bottom navigation
+2. **Movie Detail** - Torrent options + "Add to Collection" ✨
+3. **Video Player** - Full-screen playback with controls
+4. **Collections** - Collections grid view ✨ (Phase 13)
+5. **Collection Detail** - Torrent list with reordering ✨ (Phase 13)
+6. **Library** - Personal library with local files
+7. **Favorites** - Saved content with sync indicator
+8. **Settings** - Features and cloud sync options
+
+**Screenshot Highlights:**
+- Showcases Phase 13 Collections feature (NEW!)
+- "Add to Collection" button in torrent display
+- Collection organization and reordering
+- Dark theme throughout (matches app)
+- 1080x1920 resolution (portrait, optimized for phone)
+
+### Asset Specifications
+
+**App Icon:**
+- Size: 512x512px
+- Format: 32-bit PNG with alpha
+- Design: ⚡ Lightning bolt with gradient
+- Colors: Dark background, red/blue accents
+
+**Feature Graphic:**
+- Size: 1024x500px
+- Layout: App name + tagline + phone mockup
+- Tagline: "Stream Instantly"
+- Visual: Lightning bolt + device showing app
+
+**Screenshots:**
+- Phone: 1080x1920px (6-8 required)
+- Tablet: 2048x1536px (4 optional)
+- Format: PNG or JPG < 8MB each
+- Theme: Dark mode (matches app)
+
+### Technical Metadata
+
+**Version:**
+- Version Name: 1.0.0
+- Version Code: 1
+- Minimum SDK: 24 (Android 7.0)
+- Target SDK: 35 (Android 15)
+
+**Permissions:**
+- Storage (read/write)
+- Internet & network state
+- Wake lock (streaming)
+- Foreground service
+- Optional: Battery optimization
+
+**Supported Devices:**
+- Phones: ✅ Optimized
+- Tablets: ✅ Supported
+- Android TV: ⏳ Future
+- Wear OS: ❌ N/A
+
+### Privacy & Data Safety
+
+**Data Collection:**
+- **Local only** (default): Favorites, history, settings, collections
+- **Cloud sync** (opt-in): Encrypted backups to Supabase
+- **Analytics** (opt-in): Anonymous usage stats via Sentry
+
+**User Control:**
+- Opt-in cloud sync
+- Opt-in analytics
+- Delete all data anytime
+- Export data
+- No ads, no tracking, no data selling
+
+### Content Rating
+
+**Questionnaire Responses:**
+- Violence: No
+- Sexual Content: No
+- Profanity: No
+- Drugs/Alcohol: No
+- Social Features: Optional (collection sharing only)
+- User-Generated Content: No (users organize their own content)
+- Purchases: No (100% free, no IAP, no ads)
+
+**Expected Rating:** Teen (13+) or Mature (17+)
+- Due to torrent content responsibility disclaimer
+
+### Next Steps (Day 4)
+
+**Asset Creation:**
+- [ ] Create app icon (512x512)
+- [ ] Create feature graphic (1024x500)
+- [ ] Capture 6-8 phone screenshots
+- [ ] Capture 4 tablet screenshots (optional)
+- [ ] Record promotional video (optional)
+
+**Optimization:**
+- [ ] Optimize all images (compression, sRGB)
+- [ ] Test images at multiple sizes
+- [ ] Verify quality and branding
+
+**Upload:**
+- [ ] Upload to Play Console
+- [ ] Preview listing
+- [ ] Save as draft
+- [ ] Ready for Day 4 completion
+
+### Phase 12E Day 3 Status
+
+**Completed:**
+- ✅ Store listing text (title, descriptions, features)
+- ✅ Content rating responses
+- ✅ Privacy & data safety disclosures
+- ✅ Technical metadata documentation
+- ✅ Asset specifications and guidelines
+- ✅ Screenshot content plan
+- ✅ Creation tools and methods documented
+- ✅ Timeline and checklists
+
+**Remaining:**
+- ⏳ Visual asset creation (icons, graphics, screenshots)
+- ⏳ Asset optimization and quality checks
+- ⏳ Play Console upload
+- ⏳ Listing preview and finalization
+
+**Progress:** Day 3 text content 100% complete
+**Next:** Day 4 visual asset creation
+
+---
+
+**Phase 12E Day 3 Completion Date:** 2025-11-16
+**Status:** ✅ COMPLETE - Ready for Day 4 (Asset Creation)
+**Deliverables:** 2 comprehensive docs (1,100+ lines combined)
+**Production Readiness:** ~96% → ~97%
