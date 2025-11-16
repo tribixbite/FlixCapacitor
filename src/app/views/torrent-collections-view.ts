@@ -9,6 +9,7 @@ import { collectionsService, type Collection, type CollectionWithTorrents } from
 import { logger } from '../lib/logger';
 import { analytics } from '../lib/analytics';
 import { CollectionFormView, type CollectionFormData } from './collection-form-view';
+import { TorrentCollectionDetailView } from './torrent-collection-detail-view';
 
 interface TorrentCollectionsViewOptions extends ViewOptions<any> {
     onCollectionClick?: (collection: Collection) => void;
@@ -267,9 +268,38 @@ export class TorrentCollectionsView extends View<any> {
         if (this.onCollectionClickCallback) {
             this.onCollectionClickCallback(collection);
         } else {
-            // TODO: Open collection detail view
-            alert(`Opening collection "${collection.name}". Detail view coming soon!`);
+            // Open collection detail view
+            this.openDetailView(collectionUuid);
         }
+    }
+
+    /**
+     * Open collection detail view
+     */
+    private openDetailView(collectionUuid: string): void {
+        // Hide list view
+        const listContainer = (this as any).el?.querySelector('.fixed.inset-0') as HTMLElement;
+        if (listContainer) {
+            listContainer.style.display = 'none';
+        }
+
+        // Create detail view
+        const detailView = new TorrentCollectionDetailView({
+            collectionUuid,
+            onBack: () => {
+                // Reload collections in case items were removed/reordered
+                this.loadCollections();
+
+                // Show list view again
+                if (listContainer) {
+                    listContainer.style.display = 'flex';
+                }
+            }
+        });
+
+        // Mount detail view to same container
+        detailView.setElement((this as any).el);
+        detailView.render();
     }
 
     /**
