@@ -23,6 +23,9 @@ export interface DatabaseStats {
   tvshows: number;
   watched_movies: number;
   watched_episodes: number;
+  torrents: number;
+  collections: number;
+  collection_torrents: number;
 }
 
 export interface ExportData {
@@ -31,13 +34,16 @@ export interface ExportData {
   tvshows: any[];
   watched_movies: any[];
   watched_episodes: any[];
+  torrents?: any[];
+  collections?: any[];
+  collection_torrents?: any[];
 }
 
 class SQLiteService {
   private sqlite: SQLiteConnection | null = null;
   private db: SQLiteDBConnection | null = null;
   private dbName: string = 'flixcapacitor.db';
-  private dbVersion: number = 1;
+  private dbVersion: number = 2;
   private isInitialized: boolean = false;
   private platform: string;
 
@@ -232,6 +238,57 @@ class SQLiteService {
       );
       CREATE INDEX IF NOT EXISTS idx_learning_provider ON learning_courses(provider);
       CREATE INDEX IF NOT EXISTS idx_learning_subject ON learning_courses(subject_area);
+
+      -- Torrents table (Phase 13: Torrent Collections)
+      -- Persists torrent metadata for collections
+      CREATE TABLE IF NOT EXISTS torrents (
+        info_hash TEXT PRIMARY KEY,
+        user_id TEXT,
+        name TEXT NOT NULL,
+        magnet_link TEXT NOT NULL UNIQUE,
+        size_bytes INTEGER,
+        quality TEXT,
+        cached_seeders INTEGER,
+        added_at TEXT DEFAULT (datetime('now')),
+        imdb_id TEXT,
+        FOREIGN KEY(imdb_id) REFERENCES movies(imdb_id) ON DELETE SET NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_torrents_user_id ON torrents(user_id);
+      CREATE INDEX IF NOT EXISTS idx_torrents_imdb_id ON torrents(imdb_id);
+
+      -- Collections table (Phase 13: Torrent Collections)
+      -- Playlist-like feature to organize torrents
+      CREATE TABLE IF NOT EXISTS collections (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uuid TEXT NOT NULL UNIQUE,
+        user_id TEXT,
+        name TEXT NOT NULL,
+        description TEXT,
+        cover_image_url TEXT,
+        is_public INTEGER DEFAULT 0,
+        created_at TEXT DEFAULT (datetime('now')),
+        updated_at TEXT DEFAULT (datetime('now')),
+        is_deleted INTEGER DEFAULT 0,
+        last_synced_at TEXT
+      );
+      CREATE INDEX IF NOT EXISTS idx_collections_uuid ON collections(uuid);
+      CREATE INDEX IF NOT EXISTS idx_collections_user_id ON collections(user_id);
+      CREATE INDEX IF NOT EXISTS idx_collections_updated_at ON collections(updated_at);
+
+      -- Collection-torrents join table (Phase 13: Torrent Collections)
+      -- Many-to-many relationship with explicit ordering
+      CREATE TABLE IF NOT EXISTS collection_torrents (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        collection_uuid TEXT NOT NULL,
+        torrent_info_hash TEXT NOT NULL,
+        sort_order INTEGER NOT NULL,
+        added_at TEXT DEFAULT (datetime('now')),
+        FOREIGN KEY(collection_uuid) REFERENCES collections(uuid) ON DELETE CASCADE,
+        FOREIGN KEY(torrent_info_hash) REFERENCES torrents(info_hash) ON DELETE CASCADE,
+        UNIQUE(collection_uuid, torrent_info_hash)
+      );
+      CREATE INDEX IF NOT EXISTS idx_collection_torrents_collection ON collection_torrents(collection_uuid);
+      CREATE INDEX IF NOT EXISTS idx_collection_torrents_torrent ON collection_torrents(torrent_info_hash);
     `;
 
     try {
@@ -477,7 +534,10 @@ class SQLiteService {
       movies: await this.count('movies'),
       tvshows: await this.count('tvshows'),
       watched_movies: await this.count('watched_movies'),
-      watched_episodes: await this.count('watched_episodes')
+      watched_episodes: await this.count('watched_episodes'),
+      torrents: await this.count('torrents'),
+      collections: await this.count('collections'),
+      collection_torrents: await this.count('collection_torrents')
     };
   }
 
