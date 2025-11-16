@@ -704,6 +704,19 @@ function initMarionette(): any {
             return;
         }
 
+        // Phase 13: Initialize Collection Sync (background, non-blocking)
+        try {
+            const { collectionSyncService } = await import('./app/lib/collection-sync-service.ts');
+            console.log('Starting collection sync...');
+            collectionSyncService.sync().then(result => {
+                console.log('Collection sync completed:', result);
+            }).catch(err => {
+                console.warn('Collection sync failed (continuing anyway):', err);
+            });
+        } catch (error) {
+            console.warn('Failed to load collection sync service:', error);
+        }
+
         // ALWAYS hide loading screen after brief delay
         setTimeout(() => {
             console.log('Hiding loading screen...');

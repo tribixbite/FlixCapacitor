@@ -249,6 +249,9 @@ export class MobileUIController {
             case 'library':
                 this.showLibrary();
                 break;
+            case 'collections':
+                this.showCollections();
+                break;
             case 'learning':
                 this.showLearning();
                 break;
@@ -653,6 +656,52 @@ export class MobileUIController {
             manageBtn.addEventListener('click', () => {
                 this.showLibraryManagement();
             });
+        }
+    }
+
+    /**
+     * Phase 13: Show Torrent Collections view
+     */
+    async showCollections(): Promise<void> {
+        const mainRegion = document.querySelector('.main-window-region');
+
+        // Hide loading screen
+        const loadingScreen = document.querySelector('.loading-screen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
+
+        // Clear main region
+        mainRegion!.innerHTML = '';
+
+        try {
+            // Dynamically import TorrentCollectionsView
+            const { TorrentCollectionsView } = await import('../views/torrent-collections-view.ts');
+
+            // Create and render the collections view
+            const collectionsView = new TorrentCollectionsView({
+                onClose: () => {
+                    // Navigate back to previous view or movies
+                    if (this.navigationHistory.length > 0) {
+                        this.goBack();
+                    } else {
+                        this.navigateTo('movies');
+                    }
+                },
+                el: mainRegion
+            } as any);
+
+            collectionsView.setElement(mainRegion);
+            collectionsView.render();
+
+            console.log('Collections view displayed');
+        } catch (error: any) {
+            console.error('Failed to load collections view:', error);
+            mainRegion!.innerHTML = UITemplates.emptyState(
+                '⚠️',
+                'Failed to Load Collections',
+                error.message || 'Please try again'
+            );
         }
     }
 
