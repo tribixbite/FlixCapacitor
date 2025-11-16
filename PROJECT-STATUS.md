@@ -33,12 +33,13 @@ FlixCapacitor is a production-ready torrent streaming application for Android, f
 - 10,850+ lines of docs
 - API, architecture, user guides
 
-**Phase 12E: Production Release (81%)**
+**Phase 12E: Production Release (86%)**
 - ✅ Day 1: Release build config (keystore + ProGuard)
 - ⏳ Day 2: Release testing (requires device)
 - ✅ Day 3: Play Store listing
 - ⏳ Day 4: Visual assets (67% - screenshots pending)
 - ✅ Day 5-7: Legal + Monitoring + Rollout
+- ✅ Infrastructure: Hosting HTML docs ready (deployment pending)
 
 **Phase 13: Torrent Collections**
 - 3,775 lines of code
@@ -59,7 +60,10 @@ FlixCapacitor is a production-ready torrent streaming application for Android, f
 - ✅ App icon (512x512px, 39K)
 - ✅ Feature graphic (1024x500px, 47K)
 - ✅ Play Store listing text
-- ✅ Privacy policy + Terms
+- ✅ Privacy policy + Terms (Markdown)
+- ✅ Privacy policy HTML (25K, public-docs/privacy.html)
+- ✅ Terms of service HTML (23K, public-docs/terms.html)
+- ✅ Hosting infrastructure (deployment guide ready)
 
 **Pending:**
 - ⏳ 8 phone screenshots (manual capture)
@@ -70,20 +74,26 @@ FlixCapacitor is a production-ready torrent streaming application for Android, f
 
 ## Next Steps
 
-1. **Capture screenshots** (1-2 hours)
+1. **Deploy hosting** (5 minutes) - OPTIONAL BUT RECOMMENDED
+   - Enable GitHub Pages (Settings → Pages)
+   - Source: main branch, /public-docs folder
+   - Get URLs for Play Store Console
+   - See public-docs/README.md for guide
+
+2. **Capture screenshots** (1-2 hours) - PRIMARY BLOCKER
    - Dev server running at http://localhost:3000/
    - Follow SCREENSHOT-URLS.md
 
-2. **Release build testing** (4-6 hours)
+3. **Release build testing** (4-6 hours)
    - Build with ProGuard
    - Test on physical device
 
-3. **Manual QA** (7-10 days)
+4. **Manual QA** (7-10 days)
    - All features verification
    - Multi-device cloud sync
    - Accessibility testing
 
-4. **Play Store submission**
+5. **Play Store submission**
    - Upload all assets
    - Submit for review
 
@@ -96,6 +106,7 @@ FlixCapacitor is a production-ready torrent streaming application for Android, f
 - ✅ **10,850+ lines** of documentation
 - ✅ **Cloud sync** with conflict resolution
 - ✅ **WCAG AA** accessibility compliance
+- ✅ **Hosting infrastructure** ready (HTML legal docs + deployment guide)
 
 ---
 
