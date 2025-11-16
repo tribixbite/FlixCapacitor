@@ -91,6 +91,18 @@ Complete guide to all project documentation and development tools.
   - Infrastructure: 100% complete, deployment pending (5 minutes)
   - Phase 12E: 81% → 86%
 
+- **[PHASE-13-COMPLETION-SUMMARY.md](PHASE-13-COMPLETION-SUMMARY.md)** - **NEW 2025-11-16:** Torrent Collections feature (Phase 13 MVP COMPLETE)
+  - Complete playlist-like collection system with cloud sync
+  - 3 new database tables (torrents, collections, collection_torrents)
+  - 3 service classes (TorrentsService, CollectionsService, CollectionSyncService) - 1,462 lines
+  - 4 UI views (Collections List, Detail, Form Modal, Context Menu) - 1,268 lines
+  - Cloud sync with Last Write Wins (LWW) conflict resolution
+  - Offline-first architecture, Supabase RLS policies
+  - Navigation integration, Add to Collection from search
+  - Torrent reordering (Move Up/Down buttons)
+  - Phase 13: 100% complete (all MVP requirements delivered)
+  - Total: 2,731 lines of code across 5 implementation days
+
 - **[NEXT-STEPS.md](NEXT-STEPS.md)** - Current project status and immediate next actions
   - Phase-by-phase progress tracking
   - Current development status
