@@ -1,6 +1,6 @@
 # FlixCapacitor Mobile - Technical Specifications
 
-**Last Updated:** 2025-11-13
+**Last Updated:** 2025-11-16
 **Version:** 1.0.0
 **Status:** Complete - Ready for Device Testing
 
@@ -13,21 +13,22 @@
 
 ### Feature Specifications
 4. **[Multi-File Playback](MULTI-FILE-PLAYBACK.md)** - Sequential video queue with auto-next functionality
-5. **[Library Folder Picker](LIBRARY-FOLDER-PICKER.md)** - SAF integration with persistent permissions
-6. **[File-Level Favorites](FILE-LEVEL-FAVORITES.md)** - Per-file bookmarking in multi-file torrents
-7. **[Subtitle Detection](SUBTITLE-DETECTION.md)** - Automatic subtitle file discovery and language detection
-8. **[Video Switching Bug Fix](VIDEO-SWITCHING-FIX.md)** - Request tracking to prevent race conditions
-9. **[Deep Linking](DEEP-LINKING.md)** - URL scheme handling for content navigation
-10. **[Theme System](THEME-SYSTEM.md)** - Dark mode with persistence and system preference detection
+5. **[Torrent Collections](TORRENT-COLLECTIONS.md)** - Playlist-like feature to organize torrents with cloud sync
+6. **[Library Folder Picker](LIBRARY-FOLDER-PICKER.md)** - SAF integration with persistent permissions
+7. **[File-Level Favorites](FILE-LEVEL-FAVORITES.md)** - Per-file bookmarking in multi-file torrents
+8. **[Subtitle Detection](SUBTITLE-DETECTION.md)** - Automatic subtitle file discovery and language detection
+9. **[Video Switching Bug Fix](VIDEO-SWITCHING-FIX.md)** - Request tracking to prevent race conditions
+10. **[Deep Linking](DEEP-LINKING.md)** - URL scheme handling for content navigation
+11. **[Theme System](THEME-SYSTEM.md)** - Dark mode with persistence and system preference detection
 
 ### Mobile-Specific Specifications
-11. **[Capacitor Plugin Architecture](CAPACITOR-PLUGINS.md)** - Custom native plugin development (12 plugins)
-12. **[Mobile UI Design](MOBILE-UI-DESIGN.md)** - Touch-friendly responsive design with Tailwind CSS
-13. **[Android Build System](ANDROID-BUILD-SYSTEM.md)** - Custom ARM64 AAPT2 build pipeline
+12. **[Capacitor Plugin Architecture](CAPACITOR-PLUGINS.md)** - Custom native plugin development (12 plugins)
+13. **[Mobile UI Design](MOBILE-UI-DESIGN.md)** - Touch-friendly responsive design with Tailwind CSS
+14. **[Android Build System](ANDROID-BUILD-SYSTEM.md)** - Custom ARM64 AAPT2 build pipeline
 
 ### API & Integration Specifications
-14. **[Content Provider APIs](CONTENT-PROVIDERS.md)** - TMDB, OMDB, and demo provider integration
-15. **[External Player Fallback](EXTERNAL-PLAYER-FALLBACK.md)** - VLC/MX Player integration
+15. **[Content Provider APIs](CONTENT-PROVIDERS.md)** - TMDB, OMDB, and demo provider integration
+16. **[External Player Fallback](EXTERNAL-PLAYER-FALLBACK.md)** - VLC/MX Player integration
 
 ## Quick Reference
 
