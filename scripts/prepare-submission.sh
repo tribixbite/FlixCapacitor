@@ -149,10 +149,10 @@ else
     print_status "error" "Build script missing"
 fi
 
-if [ -f "android/keystore/flixcapacitor-release.keystore" ]; then
+if [ -f "android/app/flixcapacitor-release.keystore" ]; then
     print_status "success" "Release keystore"
 else
-    print_status "error" "Release keystore missing"
+    print_status "error" "Release keystore missing (expected: android/app/flixcapacitor-release.keystore)"
 fi
 
 if [ -f "android/app/proguard-rules.pro" ]; then
