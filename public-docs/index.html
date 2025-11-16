@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlixCapacitor - Stream movies, TV shows, anime, and educational content">
+    <title>FlixCapacitor - Legal Documents</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1f1f1f 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            background: rgba(20, 20, 20, 0.95);
+            padding: 60px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .app-name {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #e50914 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .tagline {
+            font-size: 20px;
+            color: #b3b3b3;
+            margin-bottom: 40px;
+        }
+
+        .description {
+            color: #e5e5e5;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .link-button {
+            display: block;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #e50914 0%, #3b82f6 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .link-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+        }
+
+        .link-button.secondary {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3b82f6;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #333;
+            color: #b3b3b3;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            .logo {
+                font-size: 56px;
+            }
+
+            .app-name {
+                font-size: 36px;
+            }
+
+            .tagline {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">⚡</div>
+        <h1 class="app-name">FlixCapacitor</h1>
+        <p class="tagline">Stream Instantly</p>
+
+        <p class="description">
+            A modern, mobile-first streaming app built with Capacitor and native torrent support.
+            Stream movies, TV shows, anime, and educational content with cloud sync and collections.
+        </p>
+
+        <div class="links">
+            <a href="privacy.html" class="link-button">Privacy Policy</a>
+            <a href="terms.html" class="link-button">Terms of Service</a>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 FlixCapacitor. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

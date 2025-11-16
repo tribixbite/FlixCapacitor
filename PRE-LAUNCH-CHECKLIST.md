@@ -295,7 +295,7 @@ This checklist covers all tasks required before FlixCapacitor v1.0.0 can be subm
 
 ---
 
-## 11. Infrastructure ✅
+## 11. Infrastructure ⏳
 
 ### Backend (Supabase)
 - [x] ✅ Supabase project created
@@ -306,10 +306,21 @@ This checklist covers all tasks required before FlixCapacitor v1.0.0 can be subm
 - [ ] ⏳ Production Supabase credentials configured
 
 ### Hosting
-- [ ] ⏳ Privacy policy hosted (public URL)
-- [ ] ⏳ Terms of service hosted (public URL)
-- [ ] ⏳ Support email configured
+- [x] ✅ Privacy policy HTML created (public-docs/privacy.html, 25K)
+- [x] ✅ Terms of service HTML created (public-docs/terms.html, 23K)
+- [x] ✅ Landing page created (public-docs/index.html, 4.0K)
+- [x] ✅ Deployment guide created (public-docs/README.md)
+- [x] ✅ Conversion script created (scripts/convert-docs-to-html.js)
+- [ ] ⏳ Deploy to GitHub Pages (5 minutes - see public-docs/README.md)
+- [ ] ⏳ Add URLs to Play Store Console
+- [ ] ⏳ Support email configured (support@flixcapacitor.app or personal email)
 - [ ] ⏳ GitHub repository public (optional)
+
+**Hosting Ready:** HTML files prepared, deployment guide complete
+**Next Step:** Deploy via GitHub Pages (Settings → Pages → /public-docs folder)
+**URLs After Deploy:**
+- Privacy: `https://[username].github.io/[repo]/privacy.html`
+- Terms: `https://[username].github.io/[repo]/terms.html`
 
 ---
 
