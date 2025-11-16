@@ -2470,6 +2470,66 @@ export class MobileUIController {
             target!.querySelector('span')!.textContent =
                 target!.classList.contains('bookmarked') ? '★' : '☆';
         });
+
+        // Phase 13 Phase 2: Add to Collection buttons
+        const addToCollectionBtns = document.querySelectorAll('.add-to-collection-btn');
+        addToCollectionBtns.forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const button = e.currentTarget as HTMLElement;
+                const infoHash = button.dataset.infoHash || '';
+                const name = button.dataset.torrentName || 'Unknown';
+                const quality = button.dataset.quality || '';
+                const size = button.dataset.size || '';
+                const seeders = parseInt(button.dataset.seeders || '0', 10);
+
+                if (!infoHash) {
+                    console.warn('No info hash found for torrent');
+                    return;
+                }
+
+                // Dynamically import CollectionPickerView
+                const { showCollectionPicker } = await import('../views/collection-picker-view.js');
+
+                // Construct magnet link from info_hash
+                const magnetLink = `magnet:?xt=urn:btih:${infoHash}&dn=${encodeURIComponent(name)}`;
+
+                // Show collection picker
+                await showCollectionPicker({
+                    info_hash: infoHash,
+                    name,
+                    magnet_link: magnetLink,
+                    quality,
+                    size_bytes: size ? this.parseTorrentSize(size) : 0,
+                    cached_seeders: seeders,
+                    imdb_id: movie.imdb_id || movie.ids?.imdb || ''
+                });
+            });
+        });
+    }
+
+    /**
+     * Parse torrent size string to bytes
+     * e.g., "1.5 GB" -> 1610612736
+     */
+    private parseTorrentSize(sizeStr: string): number {
+        const match = sizeStr.match(/^([\d.]+)\s*([KMGT]?B)$/i);
+        if (!match) return 0;
+
+        const value = parseFloat(match[1]);
+        const unit = match[2].toUpperCase();
+
+        const multipliers: Record<string, number> = {
+            'B': 1,
+            'KB': 1024,
+            'MB': 1024 * 1024,
+            'GB': 1024 * 1024 * 1024,
+            'TB': 1024 * 1024 * 1024 * 1024
+        };
+
+        return Math.round(value * (multipliers[unit] || 1));
     }
 
     /**

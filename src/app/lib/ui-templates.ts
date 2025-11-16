@@ -409,6 +409,19 @@ export const UITemplates = {
                                             <div>Seeds: ${torrent.seed || 0} peers</div>
                                             <div>Peers: ${torrent.peer || 0} downloading</div>
                                         </div>
+                                        <button class="add-to-collection-btn"
+                                                data-info-hash="${torrent.hash || ''}"
+                                                data-torrent-name="${item.title || 'Unknown'}"
+                                                data-quality="${quality}"
+                                                data-size="${torrent.size || ''}"
+                                                data-seeders="${torrent.seed || 0}"
+                                                style="margin-top: 0.75rem; width: 100%; padding: 0.5rem 1rem;
+                                                       background: rgba(59, 130, 246, 0.1); color: rgb(59, 130, 246);
+                                                       border: 1px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-sm);
+                                                       font-weight: 500; font-size: 0.875rem; cursor: pointer;
+                                                       transition: all 0.2s;">
+                                            📚 Add to Collection
+                                        </button>
                                     </div>
                                 `;
                             }).join('')}

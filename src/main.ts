@@ -713,6 +713,28 @@ function initMarionette(): any {
             }).catch(err => {
                 console.warn('Collection sync failed (continuing anyway):', err);
             });
+
+            // Phase 13 Phase 2: Hook sync to network-online events
+            try {
+                const { Network } = await import('@capacitor/network');
+                console.log('Setting up network-online auto-sync...');
+
+                // Sync when network comes back online
+                Network.addListener('networkStatusChange', status => {
+                    if (status.connected) {
+                        console.log('Network connection restored, syncing collections...');
+                        collectionSyncService.sync().then(result => {
+                            console.log('Network-triggered sync completed:', result);
+                        }).catch(err => {
+                            console.warn('Network-triggered sync failed:', err);
+                        });
+                    }
+                });
+
+                console.log('✓ Network-online auto-sync configured');
+            } catch (networkError) {
+                console.warn('Failed to setup network-online sync (continuing anyway):', networkError);
+            }
         } catch (error) {
             console.warn('Failed to load collection sync service:', error);
         }

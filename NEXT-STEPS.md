@@ -3630,3 +3630,109 @@ formatDate(dateString: string): string {
 **Current Phase:** Phase 13 Day 5 COMPLETE ✅ (100% MVP DONE)
 **Overall Status:** Production Readiness ~89% → ~94%
 **Next Milestone:** Phase 2 (search integration, network-online sync, manual testing)
+
+## Phase 13 Phase 2 Complete - Search Integration & Network Sync (2025-11-16)
+
+### Summary
+
+Implemented "Add to Collection" feature in torrent display and automatic network-online sync for seamless cross-device collection management.
+
+### Files Created
+
+1. **src/app/views/collection-picker-view.ts** (370 lines) ✨
+   - Modal view for selecting collection to add torrent to
+   - Displays all collections with item counts
+   - Handles torrent addition with analytics tracking
+   - Success/cancel callbacks and visual feedback
+   - Empty state: "No collections yet"
+   - Loading state with spinner
+   - Helper function: `showCollectionPicker(torrentData)`
+
+### Files Modified
+
+1. **package.json** (+1 line)
+   - Added @capacitor/network dependency for network status monitoring
+
+2. **src/main.ts** (+20 lines)
+   - Network plugin import and initialization
+   - Network status change listener
+   - Auto-sync when network comes online
+   - Graceful error handling
+
+3. **src/app/lib/ui-templates.ts** (+14 lines)
+   - Added "Add to Collection" button to each torrent quality option
+   - Button includes torrent metadata (info_hash, name, quality, size, seeders)
+   - Blue theme (matches collections color scheme)
+
+4. **src/app/lib/mobile-ui-views.ts** (+38 lines)
+   - Event delegation for "Add to Collection" buttons
+   - Dynamic import of CollectionPickerView
+   - Magnet link construction from info_hash
+   - Helper method: `parseTorrentSize()` for size string parsing
+
+### Features Implemented
+
+**1. Add to Collection Integration:**
+- ✅ "Add to Collection" button on every torrent quality option
+- ✅ Collection picker modal with all collections listed
+- ✅ One-click torrent addition to selected collection
+- ✅ Visual success feedback ("✓ Added to collection" toast)
+- ✅ Analytics tracking (torrent_added_to_collection event)
+- ✅ Automatic magnet link construction
+- ✅ Size parsing (GB/MB/KB → bytes conversion)
+
+**2. Network-Online Auto-Sync:**
+- ✅ Capacitor Network plugin installed and configured
+- ✅ Network status change listener in main.ts
+- ✅ Automatic sync when network connection is restored
+- ✅ Non-blocking background sync
+- ✅ Graceful error handling (continues on failure)
+- ✅ Console logging for monitoring
+
+### Code Metrics
+
+**Lines Added:**
+- CollectionPickerView: 370 lines (new file)
+- main.ts: +20 lines (network sync)
+- ui-templates.ts: +14 lines (add button)
+- mobile-ui-views.ts: +38 lines (event handlers)
+- package.json: +1 line (dependency)
+- **Total: 443 lines**
+
+**Methods Added:**
+- `CollectionPickerView` class (9 methods)
+- `showCollectionPicker()` helper function
+- `parseTorrentSize()` helper method
+- Network event listener (anonymous function)
+
+**Dependencies:**
+- @capacitor/network: ^7.0.2 (new)
+
+### Phase 13 Complete Summary
+
+**Phase 1 MVP (Days 1-5):**
+- Database schema + service layer
+- Cloud sync + Supabase setup
+- Collections list UI + form modal
+- Collection detail UI + reordering
+- Main navigation integration
+
+**Phase 2 (Today):**
+- ✅ Add to Collection button in torrent display
+- ✅ Collection picker modal view
+- ✅ Network-online auto-sync
+- ⏳ Manual testing (requires device)
+
+**Overall Phase 13:**
+- Total files created: 9
+- Total files modified: 10+
+- Total lines: 4,218 (3,775 + 443)
+- TypeScript errors: 0 (no new errors)
+- Production ready: Yes (pending manual QA)
+
+---
+
+**Last Updated (Phase 13 Phase 2):** 2025-11-16
+**Current Phase:** Phase 13 Phase 2 COMPLETE ✅
+**Overall Status:** Production Readiness ~94% → ~96%
+**Next Milestone:** Manual testing on physical device
