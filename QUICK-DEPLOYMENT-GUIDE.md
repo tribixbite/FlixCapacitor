@@ -252,6 +252,8 @@ Run verification script to check all requirements:
 
 **Ready to start?** Begin with **Step 1: Capture Screenshots** 📸
 
+**After Screenshots?** See **[AFTER-SCREENSHOTS.md](AFTER-SCREENSHOTS.md)** for complete Play Store submission workflow (90 minutes).
+
 **Last Updated:** 2025-11-16
 **Production Readiness:** 98%
 **Primary Blocker:** Screenshot capture (1-2 hours)

@@ -235,6 +235,29 @@ Complete guide to all project documentation and development tools.
 
 ## 🏭 **Production Deployment**
 
+### Play Store Submission (v1.0.0)
+
+- **[QUICK-DEPLOYMENT-GUIDE.md](QUICK-DEPLOYMENT-GUIDE.md)** - **UPDATED 2025-11-16:** 5-step deployment workflow
+  - Step 1: Capture screenshots (1-2 hours) - PRIMARY BLOCKER
+  - Step 2: Deploy hosting (5 minutes, optional)
+  - Step 3: Release build testing (4-6 hours)
+  - Step 4: Play Store submission (1-2 hours)
+  - Step 5: Manual QA (7-10 days post-submission)
+  - Production readiness: 98%
+
+- **[AFTER-SCREENSHOTS.md](AFTER-SCREENSHOTS.md)** - **NEW 2025-11-16:** Complete Play Store submission guide (~90 minutes)
+  - Step-by-step workflow after screenshot capture
+  - Google Play Console setup (10 minutes)
+  - Store listing completion (15 minutes)
+  - Content rating questionnaire (10 minutes)
+  - Data safety declarations (15 minutes)
+  - APK upload and testing (20 minutes)
+  - Submission and rollout strategy
+  - Emergency procedures for post-release issues
+  - Estimated timeline: 90 minutes + 7-10 day Google review
+
+### General Deployment
+
 - **[PRODUCTION-READINESS.md](PRODUCTION-READINESS.md)** - Comprehensive deployment checklist
   - Pre-production security checks
   - Performance validation
