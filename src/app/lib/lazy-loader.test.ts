@@ -340,14 +340,17 @@ describe('preloadCriticalRoutes', () => {
     });
 
     it('should fallback to setTimeout when requestIdleCallback not available', () => {
-        const originalIdleCallback = global.requestIdleCallback;
-        (global as any).requestIdleCallback = undefined;
+        const originalGlobalIdleCallback = global.requestIdleCallback;
+        const originalWindowIdleCallback = (window as any).requestIdleCallback;
+        delete (global as any).requestIdleCallback;
+        delete (window as any).requestIdleCallback;
 
         const routes = ['/home', '/about'];
         preloadCriticalRoutes(routes);
 
         // Restore
-        global.requestIdleCallback = originalIdleCallback;
+        global.requestIdleCallback = originalGlobalIdleCallback;
+        (window as any).requestIdleCallback = originalWindowIdleCallback;
     });
 });
 

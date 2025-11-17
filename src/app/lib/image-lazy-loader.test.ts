@@ -153,8 +153,9 @@ describe('ImageLazyLoader', () => {
             loader.observe(img);
 
             // Trigger IntersectionObserver callback manually
-            const observer = (global.IntersectionObserver as any).mock.calls[0][0];
-            observer([{ isIntersecting: true, target: img }]);
+            const instances = (global.IntersectionObserver as any)._instances;
+            const callback = instances[instances.length - 1].callback;
+            callback([{ isIntersecting: true, target: img }]);
 
             await eventPromise;
         });
@@ -176,8 +177,9 @@ describe('ImageLazyLoader', () => {
             loader.observe(img);
 
             // Trigger IntersectionObserver callback manually
-            const observer = (global.IntersectionObserver as any).mock.calls[0][0];
-            observer([{ isIntersecting: true, target: img }]);
+            const instances = (global.IntersectionObserver as any)._instances;
+            const callback = instances[instances.length - 1].callback;
+            callback([{ isIntersecting: true, target: img }]);
 
             // Wait a bit for error to trigger
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -254,8 +256,10 @@ describe('ImageLazyLoader', () => {
 
     describe('fallback behavior', () => {
         it('should load immediately when IntersectionObserver not available', () => {
-            const originalObserver = global.IntersectionObserver;
-            (global as any).IntersectionObserver = undefined;
+            const originalGlobalObserver = global.IntersectionObserver;
+            const originalWindowObserver = (window as any).IntersectionObserver;
+            delete (global as any).IntersectionObserver;
+            delete (window as any).IntersectionObserver;
 
             const noObserverLoader = new ImageLazyLoader();
             const img = document.createElement('img');
@@ -264,7 +268,8 @@ describe('ImageLazyLoader', () => {
             noObserverLoader.observe(img);
 
             // Restore
-            global.IntersectionObserver = originalObserver;
+            global.IntersectionObserver = originalGlobalObserver;
+            (window as any).IntersectionObserver = originalWindowObserver;
             noObserverLoader.disconnect();
         });
     });
@@ -359,8 +364,10 @@ describe('lazyLoadBackgrounds', () => {
     });
 
     it('should load immediately when IntersectionObserver not available', () => {
-        const originalObserver = global.IntersectionObserver;
-        (global as any).IntersectionObserver = undefined;
+        const originalGlobalObserver = global.IntersectionObserver;
+        const originalWindowObserver = (window as any).IntersectionObserver;
+        delete (global as any).IntersectionObserver;
+        delete (window as any).IntersectionObserver;
 
         document.body.innerHTML = `
             <div data-bg="https://example.com/bg1.jpg"></div>
@@ -374,6 +381,7 @@ describe('lazyLoadBackgrounds', () => {
         expect(elements[1].getAttribute('style')).toContain('background-image');
 
         // Restore
-        global.IntersectionObserver = originalObserver;
+        global.IntersectionObserver = originalGlobalObserver;
+        (window as any).IntersectionObserver = originalWindowObserver;
     });
 });

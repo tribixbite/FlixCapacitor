@@ -43,7 +43,8 @@ beforeAll(() => {
         writable: true
     });
 
-    // Mock IntersectionObserver
+    // Mock IntersectionObserver with instance tracking
+    const intersectionObserverInstances: any[] = [];
     const IntersectionObserverMock = class IntersectionObserver {
         callback: IntersectionObserverCallback;
         options?: IntersectionObserverInit;
@@ -51,6 +52,8 @@ beforeAll(() => {
         constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
             this.callback = callback;
             this.options = options;
+            // Track this instance so tests can access callbacks
+            intersectionObserverInstances.push(this);
         }
 
         observe = vi.fn();
@@ -61,6 +64,9 @@ beforeAll(() => {
         get rootMargin() { return '0px'; }
         get thresholds() { return [0]; }
     };
+
+    // Store instances array on the mock for test access
+    (IntersectionObserverMock as any)._instances = intersectionObserverInstances;
 
     global.IntersectionObserver = IntersectionObserverMock as any;
     if (typeof window !== 'undefined') {
@@ -129,6 +135,10 @@ afterEach(() => {
     localStorage.clear();
     sessionStorage.clear();
     vi.clearAllMocks();
+    // Clear IntersectionObserver instances (if it exists)
+    if (global.IntersectionObserver && (global.IntersectionObserver as any)._instances) {
+        (global.IntersectionObserver as any)._instances.length = 0;
+    }
 });
 
 // Clean up after all tests

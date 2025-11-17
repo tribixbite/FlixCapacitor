@@ -327,8 +327,15 @@ describe('ObjectPool', () => {
 
     describe('clear', () => {
         it('should remove all objects from pool', () => {
+            // Acquire objects first, then release them all
+            const objects = [];
             for (let i = 0; i < 3; i++) {
-                pool.release(pool.acquire());
+                objects.push(pool.acquire());
+            }
+
+            // Release all objects to pool
+            for (const obj of objects) {
+                pool.release(obj);
             }
 
             expect(pool.size()).toBe(3);
