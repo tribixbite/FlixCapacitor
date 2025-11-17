@@ -44,12 +44,21 @@ beforeAll(() => {
     });
 
     // Mock IntersectionObserver
-    global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-        observe: vi.fn(),
-        unobserve: vi.fn(),
-        disconnect: vi.fn(),
-        takeRecords: vi.fn()
-    }));
+    global.IntersectionObserver = class IntersectionObserver {
+        constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+            this.callback = callback;
+            this.options = options;
+        }
+        callback: IntersectionObserverCallback;
+        options?: IntersectionObserverInit;
+        observe = vi.fn();
+        unobserve = vi.fn();
+        disconnect = vi.fn();
+        takeRecords = vi.fn(() => []);
+        get root() { return null; }
+        get rootMargin() { return '0px'; }
+        get thresholds() { return [0]; }
+    } as any;
 
     // Mock ResizeObserver
     global.ResizeObserver = vi.fn().mockImplementation(() => ({
@@ -74,10 +83,19 @@ beforeAll(() => {
     global.cancelAnimationFrame = vi.fn();
 
     // Mock requestIdleCallback
-    global.requestIdleCallback = vi.fn((cb) => {
-        setTimeout(() => cb({ didTimeout: false, timeRemaining: () => 50 }), 0);
-        return 0;
+    const requestIdleCallbackMock = vi.fn((cb: IdleRequestCallback, options?: IdleRequestOptions) => {
+        const handle = setTimeout(() => {
+            cb({
+                didTimeout: false,
+                timeRemaining: () => 50
+            });
+        }, 0);
+        return handle as any as number;
     });
+
+    global.requestIdleCallback = requestIdleCallbackMock;
+    (global as any).window = (global as any).window || {};
+    (global as any).window.requestIdleCallback = requestIdleCallbackMock;
 
     global.cancelIdleCallback = vi.fn();
 
