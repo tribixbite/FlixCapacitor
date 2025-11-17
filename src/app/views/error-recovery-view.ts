@@ -74,8 +74,8 @@ export class ErrorRecoveryView extends View<any> {
         }
 
         return `
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm pointer-events-auto">
-                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-xl w-full mx-4 max-h-[90vh] flex flex-col">
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm pointer-events-auto modal-overlay-safe">
+                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-xl w-full max-h-[90vh] flex flex-col">
                     <!-- Header -->
                     <div class="p-6 border-b border-gray-700">
                         <div class="flex items-center gap-4">
@@ -210,8 +210,8 @@ export class ErrorRecoveryView extends View<any> {
      */
     private renderGenericError(): string {
         return `
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm pointer-events-auto">
-                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-md w-full mx-4 p-8 text-center">
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm pointer-events-auto modal-overlay-safe">
+                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-md w-full p-8 text-center">
                     <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>

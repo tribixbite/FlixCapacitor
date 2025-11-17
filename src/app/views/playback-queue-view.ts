@@ -94,7 +94,7 @@ export class PlaybackQueueView extends View<any> {
             : 'Repeat: One (click for Off)';
 
         return `
-            <div class="fixed top-4 left-4 right-4 z-50 pointer-events-auto">
+            <div class="fixed top-4 left-4 right-4 z-50 pointer-events-auto toast-safe">
                 <div class="bg-gray-900/95 backdrop-blur-sm rounded-lg shadow-2xl border border-gray-700 max-w-md">
                     <!-- Header -->
                     <div class="flex items-center justify-between p-4 border-b border-gray-700">

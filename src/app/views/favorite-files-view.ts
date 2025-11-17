@@ -121,8 +121,8 @@ export class FavoriteFilesView extends Marionette.View<Backbone.Model> {
 
     if (this.isLoading) {
       return `
-        <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div class="bg-gray-900 rounded-lg p-8 max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 modal-overlay-safe">
+          <div class="bg-gray-900 rounded-lg p-8 max-w-6xl w-full max-h-[90vh] overflow-hidden">
             <div class="flex items-center justify-center py-20">
               <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
               <span class="ml-4 text-gray-300">Loading favorites...</span>
@@ -137,8 +137,8 @@ export class FavoriteFilesView extends Marionette.View<Backbone.Model> {
     const hasSelection = this.selectedIds.size > 0;
 
     return `
-      <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-900 rounded-lg p-6 max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 modal-overlay-safe">
+        <div class="bg-gray-900 rounded-lg p-6 max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
           <!-- Header -->
           <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">

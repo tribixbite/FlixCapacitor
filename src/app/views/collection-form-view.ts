@@ -77,8 +77,8 @@ export class CollectionFormView extends View<any> {
     const submitText = this.mode === 'create' ? 'Create' : 'Save Changes';
 
     return `
-      <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm collection-form-modal">
-        <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-md w-full mx-4">
+      <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm collection-form-modal modal-overlay-safe">
+        <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-md w-full">
 
           <!-- Header -->
           <div class="flex items-center justify-between p-6 border-b border-gray-700">

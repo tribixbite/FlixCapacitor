@@ -51,8 +51,8 @@ export class LibraryScanProgressView extends View<any> {
         const elapsed = this.formatDuration(this.currentProgress.elapsedMs);
 
         return `
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm pointer-events-auto">
-                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-lg w-full mx-4">
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm pointer-events-auto modal-overlay-safe">
+                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-lg w-full">
                     <!-- Header -->
                     <div class="flex items-center justify-between p-6 border-b border-gray-700">
                         <div class="flex items-center gap-3">
@@ -147,8 +147,8 @@ export class LibraryScanProgressView extends View<any> {
      */
     private renderInitializing(): string {
         return `
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm pointer-events-auto">
-                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-lg w-full mx-4 p-8 text-center">
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm pointer-events-auto modal-overlay-safe">
+                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-lg w-full p-8 text-center">
                     <svg class="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>

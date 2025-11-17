@@ -82,8 +82,8 @@ export class SubtitlePickerView extends View<any> {
 
     template(): string {
         return `
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm pointer-events-auto">
-                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col">
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm pointer-events-auto modal-overlay-safe">
+                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-2xl w-full max-h-[90vh] flex flex-col">
                     <!-- Header -->
                     <div class="flex items-center justify-between p-6 border-b border-gray-700">
                         <div class="flex items-center gap-3">
