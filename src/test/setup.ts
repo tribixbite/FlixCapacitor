@@ -44,13 +44,15 @@ beforeAll(() => {
     });
 
     // Mock IntersectionObserver
-    global.IntersectionObserver = class IntersectionObserver {
+    const IntersectionObserverMock = class IntersectionObserver {
+        callback: IntersectionObserverCallback;
+        options?: IntersectionObserverInit;
+
         constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
             this.callback = callback;
             this.options = options;
         }
-        callback: IntersectionObserverCallback;
-        options?: IntersectionObserverInit;
+
         observe = vi.fn();
         unobserve = vi.fn();
         disconnect = vi.fn();
@@ -58,7 +60,12 @@ beforeAll(() => {
         get root() { return null; }
         get rootMargin() { return '0px'; }
         get thresholds() { return [0]; }
-    } as any;
+    };
+
+    global.IntersectionObserver = IntersectionObserverMock as any;
+    if (typeof window !== 'undefined') {
+        (window as any).IntersectionObserver = IntersectionObserverMock;
+    }
 
     // Mock ResizeObserver
     global.ResizeObserver = vi.fn().mockImplementation(() => ({
@@ -93,11 +100,15 @@ beforeAll(() => {
         return handle as any as number;
     });
 
-    global.requestIdleCallback = requestIdleCallbackMock;
-    (global as any).window = (global as any).window || {};
-    (global as any).window.requestIdleCallback = requestIdleCallbackMock;
+    const cancelIdleCallbackMock = vi.fn();
 
-    global.cancelIdleCallback = vi.fn();
+    global.requestIdleCallback = requestIdleCallbackMock;
+    global.cancelIdleCallback = cancelIdleCallbackMock;
+
+    if (typeof window !== 'undefined') {
+        (window as any).requestIdleCallback = requestIdleCallbackMock;
+        (window as any).cancelIdleCallback = cancelIdleCallbackMock;
+    }
 
     // Mock performance.memory (Chrome-specific)
     if (!performance.memory) {
