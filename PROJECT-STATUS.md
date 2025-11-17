@@ -51,6 +51,7 @@ FlixCapacitor is a production-ready torrent streaming application for Android, f
 ### ⏳ Pending (1%)
 
 **Phase 12C: Testing & QA**
+- Automated tests: 96.3% pass rate (103/107 tests passing)
 - Manual device testing required
 - 7-10 days estimated
 
