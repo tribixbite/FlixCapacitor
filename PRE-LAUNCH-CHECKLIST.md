@@ -1,7 +1,7 @@
 # FlixCapacitor - Pre-Launch Checklist
 
 **Version:** 1.0.0
-**Last Updated:** 2025-11-16
+**Last Updated:** 2025-11-18
 **Production Readiness:** 98%
 
 ---
@@ -111,19 +111,22 @@ This checklist covers all tasks required before FlixCapacitor v1.0.0 can be subm
 - [ ] ❌ 07: Favorites (1080x1920)
 - [ ] ❌ 08: Settings (1080x1920)
 
-**Status:** 0/8 complete - ✅ ALL UI FIXES APPLIED (2025-11-18)
+**Status:** 0/8 complete - ✅ ALL UI FIXES APPLIED (2025-11-18 Round 4)
 **Priority:** HIGH (PRIMARY BLOCKER)
 **Time Estimate:** 1-2 hours (after device testing confirms fixes)
 **Blocker:** Requires physical Android device OR browser on device
 **Guide:** SCREENSHOT-URLS.md, scripts/capture-screenshots.md
 **Dev Server:** Running at http://localhost:3000/
-**UI Fixes:** All 8 screenshot bugs fixed (see SCREENSHOT-REVIEW.md)
-  - ✅ Settings scrolling, safe-area spacing (06f63abd)
-  - ✅ Browse/Library/Favorites search bar spacing (b661f054)
-  - ✅ Collections TypeError crash (b661f054)
-  - ✅ Toast positioning (b661f054)
+**UI Fixes:** All 13 screenshot bugs fixed (see SCREENSHOT-REVIEW.md for full details)
+  - ✅ Settings scrolling, safe-area spacing (06f63abd, 4910bf0f)
+  - ✅ Browse/Library/Favorites search bar spacing (b661f054, 4910bf0f)
+  - ✅ Collections TypeError crash with error UI (b661f054, 64c2db3d)
+  - ✅ Toast positioning with CSS class (b661f054, 64c2db3d)
   - ✅ Directory Picker lifecycle (28b4ba20)
   - ✅ Library scan TypeError (28b4ba20)
+  - ✅ Safe-area spacing increased to 2rem base (4910bf0f)
+  - ✅ Collections error handling with retry button (64c2db3d)
+**Latest Commits:** 4910bf0f, 64c2db3d, 48936d19 (2025-11-18)
 **Next:** Test fixes on device, then capture screenshots
 
 ### Tablet Screenshots (Optional: 1-8)
@@ -625,5 +628,5 @@ This checklist covers all tasks required before FlixCapacitor v1.0.0 can be subm
 **Estimated Time to Submission:** 2-8 hours of work
 **Estimated Time to Launch:** 3-4 weeks (realistic)
 
-**Last Updated:** 2025-11-16
-**Document Version:** 1.0
+**Last Updated:** 2025-11-18
+**Document Version:** 1.1
