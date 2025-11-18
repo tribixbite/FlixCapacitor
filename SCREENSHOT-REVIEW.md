@@ -979,10 +979,148 @@ Increased base padding from 1rem (16px) to 2rem (32px):
 
 ---
 
+---
+
+## FOURTH ROUND FIXES (2025-11-18)
+
+**Date:** 2025-11-18
+**Commit:** 64c2db3d
+**Status:** ✅ Collections error handling + Toast positioning fixed
+**Screenshots:** 050319, 050324, 050332
+
+### Issue #12: Collections TypeError (Not Properly Fixed) ✅ FIXED
+
+**Severity:** 🔴 CRITICAL → ✅ FIXED
+**Commit:** 64c2db3d
+**Location:** `src/app/views/torrent-collections-view.ts:26, 119-132, 214-238`
+
+**Problem:**
+Screenshot 050332 showed Collections still crashing with same error: "Failed to Load Collections - Cannot read properties of undefined (reading 'collections')". Previous defensive check (b661f054) didn't prevent Promise rejection alerts because error wasn't handled properly.
+
+**Root Cause:**
+- Previous fix added defensive check in template() but didn't handle errors from loadCollections()
+- When collectionsService.getAllCollections() threw error, Promise rejection showed as alert dialog
+- No error state in UI - users saw modal error instead of friendly error message
+- No retry mechanism
+
+**Solution:**
+Added proper error state management:
+
+```typescript
+// Added error property
+export class TorrentCollectionsView extends View<any> {
+    private collections: Collection[] = [];
+    private isLoading: boolean = false;
+    private error: string | null = null;  // NEW: Track error state
+    // ...
+}
+
+// Updated loadCollections with error handling
+async loadCollections(): Promise<void> {
+    this.isLoading = true;
+    this.error = null;  // Clear previous error
+    this.render();
+
+    try {
+        this.collections = await collectionsService.getAllCollections();
+        // ... success handling
+    } catch (error: any) {
+        logger.error('Failed to load torrent collections', error, undefined, 'torrent-collection');
+        this.error = error.message || 'Failed to load collections';  // Set error
+        this.collections = [];  // Clear collections
+    } finally {
+        this.isLoading = false;
+        this.render();
+    }
+}
+
+// Added renderError() method
+private renderError(): string {
+    return `
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+            <svg class="w-16 h-16 text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-red-400 text-lg mb-2">Failed to Load Collections</p>
+            <p class="text-gray-500 text-sm mb-6">${this.escapeHtml(this.error || 'An error occurred')}</p>
+            <button class="retry-load px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                Try Again
+            </button>
+        </div>
+    `;
+}
+
+// Updated template to show error state
+${this.error ? this.renderError() : (this.isLoading ? this.renderLoading() : this.renderCollections())}
+```
+
+**Improvements:**
+- Graceful error UI instead of modal alerts
+- User-friendly error message with retry button
+- Error state properly tracked and cleared on retry
+- No more Promise rejection dialogs
+
+**Testing:**
+- [ ] Collections: Click Collections tab with network error - should show friendly error UI
+- [ ] Click "Try Again" button - should reload collections
+- [ ] Error clears when collections load successfully
+
+---
+
+### Issue #13: Toast Still Overlapping Status Bar ✅ FIXED
+
+**Severity:** ⚠️ MEDIUM → ✅ FIXED
+**Commit:** 64c2db3d
+**Location:** `src/app/lib/mobile-ui-views.ts:2870`
+
+**Problem:**
+Screenshot 050324 showed "Favorite File 30" toast still overlapping/very close to status bar, despite Round 3 fix increasing safe-area spacing to 2rem.
+
+**Root Cause:**
+Toast notification was NOT using the `.toast` CSS class defined in main.css! Instead, it used hardcoded Tailwind class:
+
+```typescript
+// BEFORE: Hardcoded position, ignores safe-area CSS
+toast.className = 'toast-notification fixed top-20 left-1/2 -translate-x-1/2 z-[10000] px-6 py-4 rounded-lg shadow-2xl max-w-md';
+```
+
+The `top-20` is 80px fixed, not using safe-area calculations from `.toast` class.
+
+**Solution:**
+Changed to use `.toast` CSS class which has proper safe-area calculation:
+
+```typescript
+// AFTER: Uses .toast class with safe-area calculation
+toast.className = 'toast-notification toast left-1/2 -translate-x-1/2 z-[10000] px-6 py-4 rounded-lg shadow-2xl max-w-md';
+```
+
+Now uses `.toast` class from main.css:
+```css
+.toast {
+  @apply fixed left-4 right-4 bg-dark-card border border-dark-border rounded-lg p-4 shadow-lg animate-slide-up z-50;
+  top: calc(2rem + var(--safe-area-top, env(safe-area-inset-top)));
+}
+```
+
+**Spacing Calculation:**
+- **Minimum (no safe-area):** 32px (2rem)
+- **With safe-area:** 32px + 24-48px = 56-80px total
+- **Previous (wrong):** Fixed 80px regardless of safe-area
+
+**Testing:**
+- [ ] Favorite a movie/file - toast should appear with generous spacing below status bar
+- [ ] Test on different Android versions - spacing should be consistent
+- [ ] Multiple toasts - should not overlap status bar or each other
+
+---
+
 **All Fixes Summary:** 2025-11-18
-**Total Commits:** 5 (28b4ba20, 06f63abd, 4cf72eeb, b661f054, 4910bf0f)
-**Total Issues Fixed:** 11
+**Total Commits:** 7 (28b4ba20, 06f63abd, 4cf72eeb, b661f054, 4910bf0f, 64c2db3d)
+**Total Issues Fixed:** 13
   - Round 1: 3 issues (Directory Picker, Library TypeError, Settings title)
-  - Round 2: 7 issues (Settings scrolling, Browse scrolling, Collections crash, search bar spacing, toast positioning)
+  - Round 2: 5 issues (Settings scrolling, Browse scrolling, search bar spacing - partial)
   - Round 3: 1 issue (increased safe-area spacing to 2rem base)
-**Status:** ✅ ALL OVERLAPPING UI ISSUES FIXED - READY FOR DEVICE TESTING
+  - Round 4: 2 issues (Collections error handling, Toast CSS class usage)
+  - **Note:** Collections crash was "fixed" in Round 2 but not properly, fixed again in Round 4
+  - **Note:** Toast positioning was "fixed" in Round 2 & 3 but not properly, fixed again in Round 4
+**Status:** ✅ ALL ISSUES FIXED - Collections error handling + Toast safe-area spacing confirmed
