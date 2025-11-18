@@ -40,8 +40,10 @@ FlixCapacitor is a production-ready torrent streaming application for Android, f
 - ✅ Day 4: Visual assets (app icon 39K + feature graphic 47K)
 - ✅ Day 5-7: Legal + Beta testing + Rollout strategy (3,437 lines)
 - ✅ Infrastructure: Hosting HTML docs ready (privacy.html 25K + terms.html 23K)
-- ✅ UI Critical Fix: Android safe area insets (16 modals + toasts fixed)
-- ⏳ Screenshots: 0/8 captured (PRIMARY BLOCKER - manual device work, 1-2 hours)
+- ✅ UI Critical Fix Round 1: Lifecycle errors + TypeErrors (28b4ba20)
+- ✅ UI Critical Fix Round 2: Safe area insets + scrolling (06f63abd, 4cf72eeb, b661f054)
+- ✅ All 8 screenshot bugs fixed and deployed to device (aa7ba5c5 docs)
+- ⏳ Screenshots: 0/8 captured (PRIMARY BLOCKER - awaiting device testing verification)
 
 **Phase 13: Torrent Collections**
 - 3,775 lines of code
