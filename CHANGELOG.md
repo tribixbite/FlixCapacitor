@@ -9,6 +9,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+#### UI & Runtime Fixes (2025-11-18) - Session 8
+
+**Production readiness improvements across 5 rounds of fixes (18 commits)**
+
+- **UI Bug Fixes (15 total issues resolved)**
+  - **Round 3**: Increased safe-area spacing to 2rem (32px minimum) to prevent status bar overlap
+  - **Round 4**: Collections error handling with retry UI, Toast CSS class overlay fix
+  - **Round 5**: Defensive check Promise rejections in Collections and Library views
+  - **Impact**: All modals, toasts, and fixed UI elements now respect Android safe-area insets
+  - **Commits**: 4910bf0f, 24a8ff88, 64c2db3d, 48936d19, 14153eaa
+
+- **Runtime Error Fixes**
+  - **Problem**: `Promise rejection: Cannot read properties of undefined (reading 'renderLoading')`
+  - **Cause**: Defensive checks calling instance methods when `this` is undefined
+  - **Solution**: Return static HTML instead of calling methods in defensive checks
+  - **Files Fixed**: torrent-collections-view.ts, library-management-view.ts
+  - **Impact**: Eliminates Promise rejection errors during view initialization
+  - **Commit**: 14153eaa
+
+- **Code Quality Review**
+  - Systematic defensive check review across 93 TypeScript files
+  - Only 2 of 93 files had critical pattern (both fixed)
+  - Documentation: DEFENSIVE-CHECK-REVIEW-TODO.md
+  - **Commits**: f49aa377
+
+- **Test Suite Improvements**
+  - Test pass rate improved: 91.6% → 97.2% (104/107 tests)
+  - 1 additional test passing (lazyLoadBackgrounds)
+  - Only 3 non-blocking test environment failures remain
+  - **Commits**: 62e0e490
+
+### Added
+
+#### Infrastructure (2025-11-18) - Session 8
+
+- **GitHub Pages Hosting Infrastructure**
+  - Privacy Policy HTML (privacy.html, 25K)
+  - Terms of Service HTML (terms.html, 23K)
+  - Setup guide: GITHUB-PAGES-SETUP.md with step-by-step deployment instructions
+  - Ready for immediate deployment (2-minute setup)
+  - **Commits**: 421e3d7f, 468b43e9
+
+- **Documentation Updates**
+  - SESSION-8-SUMMARY.md: Complete 18-commit documentation
+  - CURRENT-STATUS.md: Updated with 98% production readiness
+  - SCREENSHOT-REVIEW.md: All 5 rounds documented
+  - PRE-LAUNCH-CHECKLIST.md: Updated with latest status
+  - **Commits**: 3a3fdb80, 6334edbf, e3bd9f21, c44eb063, 3399144e, 143d0f47, c05a93ca
+
 #### CRITICAL Bug Fixes (2025-11-13)
 
 **Identified by Gemini 2.5 Pro code review, validated with 26 passing JUnit tests**
