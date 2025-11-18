@@ -322,16 +322,22 @@ This checklist covers all tasks required before FlixCapacitor v1.0.0 can be subm
 - [x] ✅ Landing page created (public-docs/index.html, 4.0K)
 - [x] ✅ Deployment guide created (public-docs/README.md)
 - [x] ✅ Conversion script created (scripts/convert-docs-to-html.js)
-- [ ] ⏳ Deploy to GitHub Pages (5 minutes - see public-docs/README.md)
+- [x] ✅ Files committed and pushed to GitHub (commits: 867e7c02, 421e3d7f)
+- [ ] ⏳ Enable GitHub Pages in repo settings (MANUAL - see GITHUB-PAGES-SETUP.md)
+- [ ] ⏳ Verify deployed URLs load correctly
 - [ ] ⏳ Add URLs to Play Store Console
 - [ ] ⏳ Support email configured (support@flixcapacitor.app or personal email)
-- [ ] ⏳ GitHub repository public (optional)
 
-**Hosting Ready:** HTML files prepared, deployment guide complete
-**Next Step:** Deploy via GitHub Pages (Settings → Pages → /public-docs folder)
-**URLs After Deploy:**
-- Privacy: `https://[username].github.io/[repo]/privacy.html`
-- Terms: `https://[username].github.io/[repo]/terms.html`
+**Hosting Status:** ✅ Ready for deployment (files pushed to GitHub)
+**Manual Step Required:** Enable Pages in repo settings (2 minutes - web UI only)
+**Setup Guide:** GITHUB-PAGES-SETUP.md (complete instructions)
+**Repository:** https://github.com/tribixbite/FlixCapacitor
+**Public Docs:** https://github.com/tribixbite/FlixCapacitor/tree/main/public-docs
+
+**URLs After User Enables Pages:**
+- Privacy: `https://tribixbite.github.io/FlixCapacitor/privacy.html`
+- Terms: `https://tribixbite.github.io/FlixCapacitor/terms.html`
+- Landing: `https://tribixbite.github.io/FlixCapacitor/`
 
 ---
 
