@@ -100,10 +100,16 @@
 
   .content-card-poster {
     @apply w-full h-full object-cover bg-gradient-to-br from-dark-card to-dark-lighter;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
   }
 
   .content-card-overlay {
     @apply absolute bottom-0 left-0 right-0 px-3 py-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent;
+    z-index: 5;
+    min-height: 80px;
   }
 
   .content-card-title {
