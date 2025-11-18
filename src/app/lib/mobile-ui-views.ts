@@ -2867,7 +2867,7 @@ export class MobileUIController {
 
         // Create toast element
         const toast = document.createElement('div');
-        toast.className = 'toast-notification fixed top-20 left-1/2 -translate-x-1/2 z-[10000] px-6 py-4 rounded-lg shadow-2xl max-w-md';
+        toast.className = 'toast-notification toast left-1/2 -translate-x-1/2 z-[10000] px-6 py-4 rounded-lg shadow-2xl max-w-md';
 
         // Style based on type
         const styles = {

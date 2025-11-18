@@ -23,6 +23,7 @@ interface TorrentCollectionsViewOptions extends ViewOptions<any> {
 export class TorrentCollectionsView extends View<any> {
     private collections: Collection[] = [];
     private isLoading: boolean = false;
+    private error: string | null = null;
     private onCollectionClickCallback?: (collection: Collection) => void;
     private onCloseCallback?: () => void;
 
@@ -37,7 +38,8 @@ export class TorrentCollectionsView extends View<any> {
             'click .collection-card': 'handleCollectionClick',
             'click .collection-create': 'handleCreateCollection',
             'click .collection-edit': 'handleEditCollection',
-            'click .collection-delete': 'handleDeleteCollection'
+            'click .collection-delete': 'handleDeleteCollection',
+            'click .retry-load': 'handleRetryLoad'
         };
 
         analytics.trackEvent('torrent_collections_opened');
@@ -46,7 +48,7 @@ export class TorrentCollectionsView extends View<any> {
 
     template(): string {
         // Defensive check: ensure 'this' is properly initialized
-        if (!this || this.collections === undefined || this.isLoading === undefined) {
+        if (!this || this.collections === undefined || this.isLoading === undefined || this.error === undefined) {
             console.warn('[TorrentCollections] Template called before initialization');
             return this.renderLoading();
         }
@@ -73,22 +75,24 @@ export class TorrentCollectionsView extends View<any> {
                     </div>
 
                     <!-- Toolbar -->
-                    <div class="flex items-center gap-2 px-6 py-4 border-b border-gray-700">
-                        <div class="flex-1 text-gray-400 text-sm">
-                            ${this.collections.length} collection${this.collections.length !== 1 ? 's' : ''}
-                        </div>
+                    ${this.error ? '' : `
+                        <div class="flex items-center gap-2 px-6 py-4 border-b border-gray-700">
+                            <div class="flex-1 text-gray-400 text-sm">
+                                ${this.collections.length} collection${this.collections.length !== 1 ? 's' : ''}
+                            </div>
 
-                        <button class="collection-create px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            <span>New Collection</span>
-                        </button>
-                    </div>
+                            <button class="collection-create px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                <span>New Collection</span>
+                            </button>
+                        </div>
+                    `}
 
                     <!-- Content -->
                     <div class="flex-1 overflow-y-auto p-6">
-                        ${this.isLoading ? this.renderLoading() : this.renderCollections()}
+                        ${this.error ? this.renderError() : (this.isLoading ? this.renderLoading() : this.renderCollections())}
                     </div>
                 </div>
             </div>
@@ -105,6 +109,24 @@ export class TorrentCollectionsView extends View<any> {
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
                     <p class="text-gray-400">Loading collections...</p>
                 </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Render error state
+     */
+    private renderError(): string {
+        return `
+            <div class="flex flex-col items-center justify-center py-20 text-center">
+                <svg class="w-16 h-16 text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-red-400 text-lg mb-2">Failed to Load Collections</p>
+                <p class="text-gray-500 text-sm mb-6">${this.escapeHtml(this.error || 'An error occurred')}</p>
+                <button class="retry-load px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                    Try Again
+                </button>
             </div>
         `;
     }
@@ -207,6 +229,7 @@ export class TorrentCollectionsView extends View<any> {
      */
     async loadCollections(): Promise<void> {
         this.isLoading = true;
+        this.error = null;
         this.render();
 
         try {
@@ -216,11 +239,20 @@ export class TorrentCollectionsView extends View<any> {
             analytics.trackEvent('torrent_collections_loaded', { count: this.collections.length });
         } catch (error: any) {
             logger.error('Failed to load torrent collections', error, undefined, 'torrent-collection');
-            // Show error state (could add renderError() method)
+            this.error = error.message || 'Failed to load collections';
+            this.collections = [];
         } finally {
             this.isLoading = false;
             this.render();
         }
+    }
+
+    /**
+     * Handle retry load button click
+     */
+    handleRetryLoad(e: Event): void {
+        e.preventDefault();
+        this.loadCollections();
     }
 
     /**
