@@ -1,18 +1,30 @@
 # Pre-Testing Checklist - FlixCapacitor Mobile
 
-**Date:** 2025-11-13
-**Version:** 1.1.0 (with CRITICAL bug fixes)
+**Date:** 2025-11-18 (Updated)
+**Version:** 1.1.0 (with CRITICAL bug fixes + 8 UI fixes)
 **Status:** ✅ READY FOR DEVICE TESTING
 
 ---
 
 ## Executive Summary
 
-This checklist confirms that all preparation work for device testing is complete. The app includes 2 CRITICAL bug fixes identified by Gemini 2.5 Pro code review:
+This checklist confirms that all preparation work for device testing is complete. The app includes:
+
+**2 CRITICAL bug fixes** (2025-11-13):
 1. InputStream.skip() loop for reliable video seeking
 2. Dynamic port allocation to prevent app restart crashes
 
-All code changes are tested (26 passing JUnit tests), documented (11 files updated), and ready for validation on physical Android device.
+**8 UI bug fixes** (2025-11-18):
+1. Directory Picker lifecycle error (28b4ba20)
+2. Library JavaScript TypeError (28b4ba20)
+3. Settings title safe-area overlap (28b4ba20)
+4. Settings view scrolling behavior (06f63abd)
+5. Browse container scrolling (4cf72eeb)
+6. Collections view TypeError crash (b661f054)
+7. Search bars overlapping status bar on all views (b661f054)
+8. Toast notifications positioning (b661f054)
+
+All code changes are tested (26 passing JUnit tests), documented (17 files updated including SCREENSHOT-REVIEW.md), and ready for validation on physical Android device.
 
 ---
 
@@ -157,7 +169,25 @@ All code changes are tested (26 passing JUnit tests), documented (11 files updat
 
 ## Device Testing Priority Order
 
-### Priority 0: CRITICAL Bug Fix Validation (MUST TEST FIRST)
+### Priority 0A: UI FIX VALIDATION (TEST BEFORE SCREENSHOTS - 2025-11-18)
+
+**See MANUAL-TESTING-GUIDE.md Priority 0 section for detailed test procedures.**
+
+Quick validation checklist:
+- [ ] Settings: Header stays fixed while scrolling (06f63abd)
+- [ ] Browse/Movies/Shows: Search bar stays fixed while scrolling (4cf72eeb)
+- [ ] Collections: Opens without TypeError crash (b661f054)
+- [ ] Browse/Favorites/Library: Search bars properly spaced from status bar (b661f054)
+- [ ] Toast notifications: Appear below status bar, not overlapping (b661f054)
+- [ ] Directory Picker: "Choose Folders" works without lifecycle error (28b4ba20)
+- [ ] Library scan: Content displays without JavaScript error (28b4ba20)
+
+**Status:** All 8 UI fixes deployed in latest APK (b661f054)
+**Documentation:** SCREENSHOT-REVIEW.md has detailed fix descriptions
+
+---
+
+### Priority 0B: CRITICAL Bug Fix Validation (2025-11-13)
 
 #### Test 1: Video Seeking (InputStream.skip() loop)
 - [ ] Test small seek offsets (<1 minute)
