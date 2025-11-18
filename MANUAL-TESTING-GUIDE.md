@@ -1,23 +1,216 @@
 # Manual Testing Guide - FlixCapacitor Mobile
 
-**Date:** 2025-11-13
-**APK Version:** app-debug.apk (74MB, built 2025-11-13 07:02)
-**Device:** Connected via ADB at 192.168.1.247:41407
-**Status:** Ready for Manual Testing
+**Date:** 2025-11-18 (Updated)
+**APK Version:** app-debug.apk (Latest build with all UI fixes)
+**Device:** Android device (Termux build environment)
+**Status:** Ready for Manual Testing - ALL UI FIXES APPLIED
 
 ## Quick Test Status
 
 **Automated Testing:** ✅ Complete
-- APK installed successfully via ADB
+- APK built and installed successfully (b661f054)
 - App launches without errors
 - All 12 Capacitor plugins loaded (including DirectoryPicker)
 - No plugin initialization errors in logcat
 
 **Manual Testing:** ⏳ Required (see below)
 
+**Latest Fixes Applied:**
+- ✅ Round 1 (28b4ba20): Directory Picker lifecycle + JavaScript TypeError + Settings title
+- ✅ Round 2 (b661f054): Settings/Browse scrolling + Collections crash + safe-area insets + toast positioning
+- ✅ All 8 screenshot bugs fixed and deployed
+
 ---
 
-## Priority 0: CRITICAL Bug Fix Validation (2025-11-13)
+## Priority 0: UI FIX VALIDATION (2025-11-18) - TEST FIRST
+
+**MUST TEST BEFORE SCREENSHOTS** - These 8 UI bugs were fixed in commits 28b4ba20 through b661f054. Manual device testing is required to verify all fixes work correctly before capturing Play Store screenshots.
+
+### UI Fix #1: Settings View Scrolling ✅ FIXED (06f63abd)
+
+**Bug Description:** Entire Settings view was scrollable including the header. Expected behavior is fixed header with only content area scrolling.
+
+**Fix:** Moved Settings CSS into `@layer components`, set `overflow: hidden` on container, `overflow-y: auto` on content area.
+
+#### Test Steps:
+1. Navigate to Settings tab (bottom navigation)
+2. **Expected:** "Settings" title visible at top with proper spacing from status bar
+3. Scroll down through settings options
+4. **Expected:** "Settings" header stays fixed at top while content scrolls
+5. **Expected:** Content scrolls smoothly without stuttering
+6. Scroll to bottom of settings
+7. **Expected:** Last setting visible with safe-area padding at bottom
+
+**Success Criteria:**
+- [ ] Settings header stays fixed while scrolling
+- [ ] Only content area scrolls
+- [ ] No overlap with Android status bar
+- [ ] Smooth scrolling performance
+
+---
+
+### UI Fix #2: Browse Container Scrolling ✅ FIXED (4cf72eeb)
+
+**Bug Description:** Browse/Movies/Shows/Anime views had entire container scrolling instead of just the content grid.
+
+**Fix:** Applied same fixed header + scrollable content pattern as Settings view.
+
+#### Test Steps:
+1. Navigate to Browse tab → Movies
+2. **Expected:** Search bar visible at top with proper spacing
+3. Scroll down through movie grid
+4. **Expected:** Search bar and filter tabs stay fixed while grid scrolls
+5. Repeat for Shows and Anime tabs
+6. **Expected:** Consistent behavior across all content types
+
+**Success Criteria:**
+- [ ] Search bar and filters stay fixed on Browse/Movies/Shows/Anime
+- [ ] Only content grid scrolls
+- [ ] No jarring layout shifts when scrolling
+- [ ] Consistent behavior across all tabs
+
+---
+
+### UI Fix #3: Collections View TypeError ✅ FIXED (b661f054)
+
+**Bug Description:** Collections tab crashed with error "Cannot read properties of undefined (reading 'collections')"
+
+**Fix:** Added defensive initialization check in `template()` method (same pattern as library-management-view.ts).
+
+#### Test Steps:
+1. Navigate to Collections tab
+2. **Expected:** Collections view opens without crash
+3. **Expected:** Shows either collections grid or empty state
+4. If empty, tap "Create Collection" button
+5. **Expected:** Create modal opens
+6. If collections exist, tap on a collection
+7. **Expected:** Collection detail view opens without errors
+
+**Success Criteria:**
+- [ ] No TypeError when opening Collections tab
+- [ ] Collections grid or empty state displays correctly
+- [ ] Can create new collections
+- [ ] Can view existing collections
+- [ ] No JavaScript errors in console
+
+---
+
+### UI Fix #4-7: Search Bars Overlapping Status Bar ✅ FIXED (b661f054)
+
+**Bug Description:** Search bars on Browse, Favorites, and Library tabs overlapped the Android status bar at the top.
+
+**Fix:** Updated `.search-bar` CSS to use `padding-top: calc(1rem + var(--safe-area-top, env(safe-area-inset-top)))`
+
+#### Test Steps:
+1. **Browse Tab:**
+   - Navigate to Browse → Movies
+   - **Expected:** Search bar has clear spacing below status bar
+   - **Expected:** Settings gear icon not overlapping status bar
+
+2. **Favorites Tab:**
+   - Navigate to Favorites
+   - **Expected:** Search bar has clear spacing below status bar
+   - **Expected:** "Search favorites..." placeholder visible
+
+3. **Library Tab:**
+   - Navigate to Library
+   - **Expected:** Search bar has clear spacing below status bar
+   - **Expected:** Blue settings gear icon properly spaced
+
+4. **Test on Multiple Screens:**
+   - Test on different Android versions (different status bar heights)
+   - **Expected:** Consistent spacing across devices
+
+**Success Criteria:**
+- [ ] Browse search bar properly spaced from status bar
+- [ ] Favorites search bar properly spaced
+- [ ] Library search bar properly spaced
+- [ ] Settings gear icons not overlapping status bar
+- [ ] Spacing consistent across Android versions
+
+---
+
+### UI Fix #8: Toast Notifications Overlapping Status Bar ✅ FIXED (b661f054)
+
+**Bug Description:** Toast notifications (e.g., "Favorite File 30") appeared at top overlapping the Android status bar.
+
+**Fix:** Moved toast position to top with safe-area inset: `top: calc(1rem + var(--safe-area-top, env(safe-area-inset-top)))`
+
+#### Test Steps:
+1. Navigate to Browse → Movies
+2. Click on any movie
+3. In file picker, tap the star icon to favorite a file
+4. **Expected:** Toast appears at top with message "Favorited: [filename]"
+5. **Expected:** Toast has clear spacing below status bar (not overlapping)
+6. **Expected:** Toast is readable and not cut off
+7. Wait for toast to dismiss (3-4 seconds)
+8. **Expected:** Toast fades out smoothly
+9. Unfavorite the same file
+10. **Expected:** Toast shows "Removed from favorites"
+
+**Success Criteria:**
+- [ ] Toast appears below status bar (not overlapping)
+- [ ] Toast message fully readable
+- [ ] Toast position consistent across different screens
+- [ ] Toast auto-dismisses after ~3 seconds
+- [ ] Multiple toasts don't overlap each other
+
+---
+
+### UI Fix #9: Directory Picker Lifecycle Error ✅ FIXED (28b4ba20)
+
+**Bug Description:** Tapping "Choose Folders" in Library showed error: "LifecycleOwner attempting to register while current state is RESUMED"
+
+**Fix:** Added retry logic with lifecycle error handling in `pickLibraryFolder()` method.
+
+#### Test Steps:
+1. Navigate to Library tab
+2. If library is empty, tap "Choose Folders" button
+3. **Expected:** Android directory picker opens immediately
+4. **Expected:** No lifecycle error dialog appears
+5. Select a folder from device storage
+6. **Expected:** Folder picker closes and scanning begins
+7. **Expected:** Scan progress shown with file count
+8. Repeat test 3-5 times to ensure consistency
+9. **Expected:** Works every time without errors
+
+**Success Criteria:**
+- [ ] "Choose Folders" button opens directory picker without errors
+- [ ] No lifecycle error dialog
+- [ ] Folder selection works immediately
+- [ ] Consistent behavior across multiple attempts
+- [ ] Scan begins after folder selection
+
+---
+
+### UI Fix #10: Library Content JavaScript TypeError ✅ FIXED (28b4ba20)
+
+**Bug Description:** After Quick Scan completed (65 files found), attempting to view library content showed error: "Cannot read properties of undefined (reading 'loading')"
+
+**Fix:** Added defensive initialization check in library-management-view.ts `template()` method.
+
+#### Test Steps:
+1. Navigate to Library tab
+2. Tap "Quick Scan" button (or wait for scan to complete from previous test)
+3. **Expected:** Scan progress shown with file count
+4. Wait for scan to complete
+5. **Expected:** Library content displays (movie cards with posters)
+6. **Expected:** No JavaScript error modal appears
+7. Tap on different filter tabs (All Folders, Movies, Downloads, Videos)
+8. **Expected:** Content updates without errors
+9. Scroll through library content
+10. **Expected:** Smooth scrolling, all posters load
+
+**Success Criteria:**
+- [ ] Library scan completes without errors
+- [ ] Scanned content displays correctly (no TypeError)
+- [ ] Filter tabs work without crashes
+- [ ] Library content is interactive (can click movies)
+- [ ] No JavaScript error dialogs appear
+
+---
+
+## Priority 1: CRITICAL Bug Fix Validation (2025-11-13)
 
 **MUST TEST FIRST** - These 2 CRITICAL bugs were fixed in commits 18a1f2eb and validated with automated tests. Manual device testing is required to confirm fixes work in production environment.
 
