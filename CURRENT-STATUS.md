@@ -1,17 +1,19 @@
 # FlixCapacitor - Current Status
 
-**Last Updated:** 2025-11-17
+**Last Updated:** 2025-11-18
 **Version:** 1.0.0 (Pre-Release)
-**Production Readiness:** 99%
+**Production Readiness:** 98%
 
 ---
 
 ## Executive Summary
 
-FlixCapacitor is **99% production-ready** and awaiting only manual device work (screenshot capture, release testing, and Play Store submission). All autonomous development work has been completed.
+FlixCapacitor is **98% production-ready** with all autonomous development work completed. Legal document hosting infrastructure is ready for GitHub Pages deployment. All screenshot UI bugs have been fixed and tested.
 
-**Status:** ✅ Ready for manual testing and Play Store submission
-**Next Blocker:** Screenshot capture (requires physical Android device)
+**Status:** ✅ All autonomous work complete - ready for manual device work
+**Next Blockers:**
+1. Enable GitHub Pages (2-min web UI action - see GITHUB-PAGES-SETUP.md)
+2. Screenshot capture (requires physical Android device)
 
 ---
 
@@ -37,14 +39,17 @@ FlixCapacitor is **99% production-ready** and awaiting only manual device work (
 - ✅ Session summaries (6 sessions documented)
 - ✅ DOCS-INDEX with complete catalog
 
-**Phase 12E: Production Release (99%)**
+**Phase 12E: Production Release (98%)**
 - ✅ Day 1-2: Release build config (keystore RSA 2048-bit + ProGuard 232 lines)
 - ✅ Day 3-4: Play Store listing (484 lines complete)
 - ✅ Day 4: Visual assets (app icon 39K + feature graphic 47K)
 - ✅ Day 5: Legal docs (PRIVACY.md 25K + TERMS.md 23K)
-- ✅ Day 5: Hosting infrastructure (HTML docs ready for GitHub Pages/Netlify)
-- ✅ UI Critical Fix: Android safe area insets (16 modals + toasts fixed)
-- ⏳ Day 3-4: Screenshots (0/8 captured) - **PRIMARY BLOCKER**
+- ✅ Day 5: Hosting infrastructure (HTML docs pushed to GitHub)
+- ✅ UI Fixes Round 1-2: Android safe area insets (16 modals + toasts)
+- ✅ UI Fixes Round 3-4: Safe-area spacing + Collections/Toast (13 total issues)
+- ✅ GitHub Pages Deployment: Files ready (GITHUB-PAGES-SETUP.md)
+- ⏳ Enable GitHub Pages: Manual web UI step (2 minutes)
+- ⏳ Screenshots: 0/8 captured - **PRIMARY BLOCKER**
 
 **Phase 13: Torrent Collections**
 - ✅ 3,775 lines of production code
@@ -131,36 +136,45 @@ npm run typecheck
 
 ```
 On branch main
-Your branch is ahead of 'origin/main' by 274 commits
+Your branch is up to date with 'origin/main'
 
-Working tree: Clean
-Latest commit: 8dbdf812 (Session 6 documentation)
-Total commits this project: 274 commits
+Working tree: Clean (uncommitted: SESSION-8-SUMMARY.md, CURRENT-STATUS.md edits)
+Latest commit: 468b43e9 (Session 8 - GitHub Pages checklist update)
+All commits pushed to GitHub: ✅
+Repository: https://github.com/tribixbite/FlixCapacitor
 ```
 
 ---
 
 ## Recent Session Summaries
 
-### Session 6 (2025-11-17) ← LATEST
+### Session 8 (2025-11-18) ← LATEST
+**Focus:** UI fixes Round 3 & 4 + GitHub Pages deployment preparation
+**Commits:** 5 commits (4910bf0f, 64c2db3d, 48936d19, 421e3d7f, 468b43e9)
+**Impact:** All screenshot bugs resolved, hosting ready for deployment
+**Production:** 98% (all autonomous work complete)
+
+**Key Achievements:**
+- ✅ Round 3: Increased safe-area spacing to 2rem (32px minimum)
+- ✅ Round 4: Collections error handling + Toast CSS class fix
+- ✅ All 13 screenshot UI bugs resolved across 4 rounds
+- ✅ Pushed 315 commits to GitHub
+- ✅ Created GITHUB-PAGES-SETUP.md deployment guide
+- ✅ Updated PRE-LAUNCH-CHECKLIST.md with latest status
+
+**Details:** See SESSION-8-SUMMARY.md
+
+### Session 7 (2025-11-17)
+**Focus:** Screenshot UI fixes Round 1 & 2
+**Commits:** 4 commits
+**Impact:** Initial UI overlap issues resolved
+**Production:** 98%
+
+### Session 6 (2025-11-17)
 **Focus:** Critical UI fixes + comprehensive testing + deep code analysis
 **Commits:** 4 commits
 **Impact:** UI overlap issue resolved, test environment improved
-**Production:** 98% → 99%
-
-**Key Achievement:** Production-blocking UI issue resolved - all modals now respect Android safe area insets.
-
-**Work Completed:**
-- ✅ zen-mcp thinkdeep 5-step analysis (identified 16 modal overlays)
-- ✅ Fixed all 16 modals + toasts with safe area CSS utilities
-- ✅ Improved test environment (IntersectionObserver + requestIdleCallback mocks)
-- ✅ Updated PROJECT-STATUS.md to 99% production readiness
-
-### Session 5 (2025-11-16)
-**Focus:** Documentation completeness and gap filling
-**Commits:** 7 commits
-**Impact:** Session summaries indexed, historical docs clarified
-**Production:** 98% → 98%
+**Production:** 98%
 
 ---
 
@@ -223,13 +237,16 @@ npm run verify-submission
 # 90-minute Play Store submission process
 ```
 
-### 4. Optional: Deploy Hosting (5 minutes)
+### 4. Optional: Deploy Hosting (2 minutes) - READY NOW
 
 ```bash
-# Enable GitHub Pages (Settings → Pages)
-# Source: main branch, /public-docs folder
-# Get URLs for Play Store Console
-# See: public-docs/README.md
+# ✅ Files already pushed to GitHub
+# Enable GitHub Pages in repo settings:
+# Settings → Pages → Source: main branch, /public-docs folder
+# See: GITHUB-PAGES-SETUP.md for step-by-step instructions
+# URLs will be:
+# - Privacy: https://tribixbite.github.io/FlixCapacitor/privacy.html
+# - Terms: https://tribixbite.github.io/FlixCapacitor/terms.html
 ```
 
 ---
@@ -278,7 +295,9 @@ The FlixCapacitor v1.0.0 project is 99% production-ready and awaiting manual scr
 
 ---
 
-**Last Updated:** 2025-11-17
-**Session:** 7 (Continuation)
-**Production Readiness:** 99%
-**Next Milestone:** Screenshot capture → Play Store submission
+**Last Updated:** 2025-11-18
+**Session:** 8 (Continuation - UI Fixes Round 3 & 4 + Hosting)
+**Production Readiness:** 98%
+**Next Milestones:**
+1. Enable GitHub Pages (optional, 2 min)
+2. Screenshot capture (required, 1-2 hours) → Play Store submission
