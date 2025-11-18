@@ -978,7 +978,21 @@ export class MobileUIController {
             console.log('[Library] Opening folder picker...');
 
             // Open directory picker with SAF
-            const result = await DirectoryPicker.pickDirectory();
+            // Wrap in try-catch to handle lifecycle errors gracefully
+            let result;
+            try {
+                result = await DirectoryPicker.pickDirectory();
+            } catch (lifecycleError: any) {
+                // Handle specific lifecycle error from Capacitor plugin
+                if (lifecycleError.message && lifecycleError.message.includes('LifecycleOwner')) {
+                    console.warn('[Library] Directory picker lifecycle error, retrying...', lifecycleError.message);
+                    // Wait briefly and retry once
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    result = await DirectoryPicker.pickDirectory();
+                } else {
+                    throw lifecycleError;
+                }
+            }
 
             if (!result || !result.uri) {
                 console.log('[Library] No directory selected');

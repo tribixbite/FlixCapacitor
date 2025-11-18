@@ -127,6 +127,12 @@ export class LibraryManagementView extends View<any> {
     }
 
     template(): string {
+        // Defensive check: ensure 'this' is properly initialized
+        if (!this || this.loading === undefined) {
+            console.warn('[LibraryManagement] Template called before initialization');
+            return this.renderLoading();
+        }
+
         if (this.loading) {
             return this.renderLoading();
         }
