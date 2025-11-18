@@ -130,7 +130,13 @@ export class LibraryManagementView extends View<any> {
         // Defensive check: ensure 'this' is properly initialized
         if (!this || this.loading === undefined) {
             console.warn('[LibraryManagement] Template called before initialization');
-            return this.renderLoading();
+            // Return static loading HTML since 'this' might not exist
+            return `
+                <div class="flex flex-col items-center justify-center min-h-screen">
+                    <div class="w-12 h-12 border-4 border-gray-700 border-t-primary rounded-full animate-spin"></div>
+                    <p class="mt-4 text-gray-400">Loading library...</p>
+                </div>
+            `;
         }
 
         if (this.loading) {

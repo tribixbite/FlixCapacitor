@@ -50,7 +50,15 @@ export class TorrentCollectionsView extends View<any> {
         // Defensive check: ensure 'this' is properly initialized
         if (!this || this.collections === undefined || this.isLoading === undefined || this.error === undefined) {
             console.warn('[TorrentCollections] Template called before initialization');
-            return this.renderLoading();
+            // Return static loading HTML since 'this' might not exist
+            return `
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="w-12 h-12 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin"></div>
+                        <p class="text-gray-400">Loading collections...</p>
+                    </div>
+                </div>
+            `;
         }
 
         return `
