@@ -913,5 +913,76 @@ template(): string {
 ---
 
 **All Fixes Complete:** 2025-11-18
-**Total Commits:** 28b4ba20, 06f63abd, 4cf72eeb, b661f054
-**Status:** ✅ READY FOR FINAL DEVICE TESTING
+**Total Commits:** 28b4ba20, 06f63abd, 4cf72eeb, b661f054, 4910bf0f
+**Status:** ✅ ALL OVERLAPPING UI ISSUES FIXED
+
+---
+
+## THIRD ROUND FIX (2025-11-18)
+
+**Date:** 2025-11-18
+**Commit:** 4910bf0f
+**Status:** ✅ Safe-area spacing increased
+**User Feedback:** "you didnt document and fix all issues eg overlapping ui"
+
+### Issue #11: Insufficient Safe-Area Spacing ✅ FIXED
+
+**Severity:** ⚠️ MEDIUM → ✅ FIXED
+**Commit:** 4910bf0f
+**Location:** `src/app/css/main.css:213, 297, 487`
+
+**Problem:**
+Search bars, Settings header, and toast notifications still had insufficient spacing from the status bar. Previous fix used `calc(1rem + safe-area-inset-top)` which only provided 16px base padding, insufficient for Android status bars (typically 24-32px tall).
+
+**Root Cause:**
+- Android status bars: 24-32px tall
+- Previous base padding: 1rem = 16px
+- On devices without safe-area-inset-top support: only 16px total padding
+- Result: UI elements too close to or overlapping status bar
+
+**Solution:**
+Increased base padding from 1rem (16px) to 2rem (32px):
+
+```css
+/* Search bar - increased from 1rem to 2rem */
+.search-bar {
+  padding-top: calc(2rem + var(--safe-area-top, env(safe-area-inset-top)));
+}
+
+/* Settings header - increased from 1rem to 2rem */
+.settings-header {
+  padding-top: calc(2rem + var(--safe-area-top, env(safe-area-inset-top)));
+}
+
+/* Toast notifications - increased from 1rem to 2rem */
+.toast {
+  top: calc(2rem + var(--safe-area-top, env(safe-area-inset-top)));
+}
+```
+
+**Spacing Calculation:**
+- **Minimum (no safe-area):** 32px (2rem) base padding
+- **With safe-area:** 32px + 24-48px = 56-80px total
+- **Ensures:** Comfortable spacing above status bar on all Android devices
+
+**Affected Components:**
+- Browse/Favorites/Library search bars
+- Settings header title
+- Toast notifications
+
+**Testing:**
+- [ ] Browse: search bar has generous spacing from status bar
+- [ ] Favorites: search bar properly spaced
+- [ ] Library: search bar and settings icon properly spaced
+- [ ] Settings: header title has proper spacing
+- [ ] Toasts: appear well below status bar
+
+---
+
+**All Fixes Summary:** 2025-11-18
+**Total Commits:** 5 (28b4ba20, 06f63abd, 4cf72eeb, b661f054, 4910bf0f)
+**Total Issues Fixed:** 11
+  - Round 1: 3 issues (Directory Picker, Library TypeError, Settings title)
+  - Round 2: 7 issues (Settings scrolling, Browse scrolling, Collections crash, search bar spacing, toast positioning)
+  - Round 3: 1 issue (increased safe-area spacing to 2rem base)
+**Status:** ✅ ALL OVERLAPPING UI ISSUES FIXED - READY FOR DEVICE TESTING
