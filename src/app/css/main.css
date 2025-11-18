@@ -86,24 +86,32 @@
 
   /* Content grid */
   .content-grid {
-    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-4 pb-[calc(theme(spacing.20)+env(safe-area-inset-bottom))];
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
     width: 100%;
-    max-width: 100vw;
     box-sizing: border-box;
     overflow-x: hidden;
+    overflow-y: auto;
   }
 
   /* Content card (movie/show poster) */
   .content-card {
-    @apply aspect-[2/3] relative rounded-lg overflow-hidden cursor-pointer transition-transform duration-200 active:scale-95 min-w-0;
+    @apply relative rounded-lg overflow-hidden cursor-pointer transition-transform duration-200 active:scale-95;
+    aspect-ratio: 2/3;
   }
 
   .content-card-poster {
-    @apply absolute inset-0 w-full h-full object-cover bg-gradient-to-br from-dark-card to-dark-lighter;
+    @apply absolute inset-0 w-full h-full object-cover;
+    z-index: 1;
   }
 
   .content-card-overlay {
-    @apply absolute bottom-0 left-0 right-0 px-3 py-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent z-10 min-h-[80px];
+    @apply absolute bottom-0 left-0 right-0 px-2 py-2;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+    z-index: 10;
   }
 
   .content-card-title {
@@ -128,7 +136,8 @@
 
   /* Favorite button */
   .content-card-favorite {
-    @apply absolute top-2 left-2 w-9 h-9 bg-black/70 backdrop-blur-sm border-none rounded-full flex items-center justify-center cursor-pointer z-20 transition-all active:scale-90;
+    @apply absolute top-2 left-2 w-8 h-8 bg-black/80 border-none rounded-full flex items-center justify-center cursor-pointer transition-all active:scale-90;
+    z-index: 20;
   }
 
   .content-card-favorite:active {
@@ -136,7 +145,8 @@
   }
 
   .content-card-favorite svg {
-    @apply w-4 h-4 text-red-500;
+    @apply w-4 h-4;
+    color: #ef4444;
   }
 
   /* Loading states for content */
