@@ -125,9 +125,7 @@ export const UITemplates = {
 
     // Grid of Content
     contentGrid: (items: any[]) => `
-        <div class="grid">
-            ${items.map((item: any) => UITemplates.contentCard(item)).join('')}
-        </div>
+        ${items.map((item: any) => UITemplates.contentCard(item)).join('')}
     `,
 
     // Loading State
