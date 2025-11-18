@@ -198,12 +198,13 @@
     @apply bottom-nav-item text-gray-400 hover:text-gray-300;
   }
 
-  /* Browser container */
+  /* Browser container - Fixed height container for proper scrolling */
   .browser-container {
-    @apply flex flex-col h-full min-h-screen-safe bg-dark;
+    @apply flex flex-col h-full bg-dark;
     width: 100%;
     max-width: 100vw;
-    overflow-x: hidden;
+    overflow: hidden;
+    position: relative;
   }
 
   /* Search bar */
