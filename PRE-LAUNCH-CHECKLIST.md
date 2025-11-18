@@ -27,7 +27,7 @@ This checklist covers all tasks required before FlixCapacitor v1.0.0 can be subm
 - [x] Phase 11: UI Polish & Accessibility (100%)
 - [x] Phase 12A: Performance Optimization (100% - 89.8% bundle reduction)
 - [x] Phase 12B: Backend Integration (100% - Supabase cloud sync)
-- [ ] Phase 12C: Testing & QA (0% - requires device)
+- [ ] Phase 12C: Testing & QA (10% - UI fixes ready for device testing)
 - [x] Phase 12D: Documentation (100% - 10,850+ lines)
 - [x] Phase 12E: Production Release (98% - all autonomous work complete, screenshots pending)
 - [x] Phase 13: Torrent Collections (100% - 3,775 lines)
@@ -111,12 +111,20 @@ This checklist covers all tasks required before FlixCapacitor v1.0.0 can be subm
 - [ ] ❌ 07: Favorites (1080x1920)
 - [ ] ❌ 08: Settings (1080x1920)
 
-**Status:** 0/8 complete
-**Priority:** HIGH
-**Time Estimate:** 1-2 hours
+**Status:** 0/8 complete - ✅ ALL UI FIXES APPLIED (2025-11-18)
+**Priority:** HIGH (PRIMARY BLOCKER)
+**Time Estimate:** 1-2 hours (after device testing confirms fixes)
 **Blocker:** Requires physical Android device OR browser on device
 **Guide:** SCREENSHOT-URLS.md, scripts/capture-screenshots.md
 **Dev Server:** Running at http://localhost:3000/
+**UI Fixes:** All 8 screenshot bugs fixed (see SCREENSHOT-REVIEW.md)
+  - ✅ Settings scrolling, safe-area spacing (06f63abd)
+  - ✅ Browse/Library/Favorites search bar spacing (b661f054)
+  - ✅ Collections TypeError crash (b661f054)
+  - ✅ Toast positioning (b661f054)
+  - ✅ Directory Picker lifecycle (28b4ba20)
+  - ✅ Library scan TypeError (28b4ba20)
+**Next:** Test fixes on device, then capture screenshots
 
 ### Tablet Screenshots (Optional: 1-8)
 - [ ] ⏳ Tablet screenshots (2048x1536, landscape)
