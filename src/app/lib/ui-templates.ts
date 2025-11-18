@@ -97,12 +97,14 @@ export const UITemplates = {
                      alt="${item.title}"
                      loading="lazy">
                 <button class="content-card-favorite" data-id="${item.imdb_id || item.tvdb_id}" title="Add to Favorites">
-                    <span class="favorite-icon">❤️</span>
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
                 </button>
                 ${item.quality ? `<div class="content-card-badge hd">${item.quality}</div>` : ''}
                 ${torrentHealth ? `
-                    <div class="content-card-health" style="position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; display: flex; align-items: center; gap: 6px; z-index: 2;">
-                        <span style="color: ${healthColor};">●</span>
+                    <div class="content-card-health" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.8); padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; display: flex; align-items: center; gap: 4px; z-index: 15;">
+                        <span style="color: ${healthColor}; font-size: 0.5rem;">●</span>
                         <span style="color: #10b981;">↑${torrentHealth.seeds}</span>
                         <span style="color: #6b7280;">↓${torrentHealth.peers}</span>
                     </div>
@@ -112,7 +114,7 @@ export const UITemplates = {
                     <div class="content-card-meta">
                         ${item.rating?.percentage ? `
                             <div class="content-card-rating">
-                                <span>⭐</span>
+                                <span style="font-size: 0.65rem;">⭐</span>
                                 <span>${(item.rating.percentage / 10).toFixed(1)}</span>
                             </div>
                         ` : ''}

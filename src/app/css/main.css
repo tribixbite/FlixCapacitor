@@ -95,21 +95,15 @@
 
   /* Content card (movie/show poster) */
   .content-card {
-    @apply aspect-[2/3] relative rounded-lg overflow-hidden cursor-pointer transition-transform duration-200 active:scale-95;
+    @apply aspect-[2/3] relative rounded-lg overflow-hidden cursor-pointer transition-transform duration-200 active:scale-95 min-w-0;
   }
 
   .content-card-poster {
-    @apply w-full h-full object-cover bg-gradient-to-br from-dark-card to-dark-lighter;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
+    @apply absolute inset-0 w-full h-full object-cover bg-gradient-to-br from-dark-card to-dark-lighter;
   }
 
   .content-card-overlay {
-    @apply absolute bottom-0 left-0 right-0 px-3 py-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent;
-    z-index: 5;
-    min-height: 80px;
+    @apply absolute bottom-0 left-0 right-0 px-3 py-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent z-10 min-h-[80px];
   }
 
   .content-card-title {
@@ -134,7 +128,7 @@
 
   /* Favorite button */
   .content-card-favorite {
-    @apply absolute top-2 left-2 tap-target w-11 h-11 bg-black/70 backdrop-blur-sm border-none rounded-full flex items-center justify-center cursor-pointer z-10 transition-all active:scale-90;
+    @apply absolute top-2 left-2 w-9 h-9 bg-black/70 backdrop-blur-sm border-none rounded-full flex items-center justify-center cursor-pointer z-20 transition-all active:scale-90;
   }
 
   .content-card-favorite:active {
@@ -142,7 +136,7 @@
   }
 
   .content-card-favorite svg {
-    @apply w-6 h-6;
+    @apply w-4 h-4 text-red-500;
   }
 
   /* Loading states for content */
