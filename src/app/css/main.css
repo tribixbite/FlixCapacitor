@@ -210,7 +210,7 @@
   /* Search bar - Fixed to top with safe area support */
   .search-bar {
     @apply sticky top-0 z-10 bg-dark-lighter/95 backdrop-blur-sm border-b border-dark-border px-4 py-4;
-    padding-top: calc(1rem + var(--safe-area-top, env(safe-area-inset-top)));
+    padding-top: calc(2rem + var(--safe-area-top, env(safe-area-inset-top)));
     -webkit-backdrop-filter: blur(8px);
   }
 
@@ -294,7 +294,7 @@
   /* Toast notifications - Position with safe area support */
   .toast {
     @apply fixed left-4 right-4 bg-dark-card border border-dark-border rounded-lg p-4 shadow-lg animate-slide-up z-50;
-    top: calc(1rem + var(--safe-area-top, env(safe-area-inset-top)));
+    top: calc(2rem + var(--safe-area-top, env(safe-area-inset-top)));
   }
 
   .toast-success {
@@ -484,7 +484,7 @@
     -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--bg-dark-border);
     padding: 1rem;
-    padding-top: calc(1rem + var(--safe-area-top, env(safe-area-inset-top)));
+    padding-top: calc(2rem + var(--safe-area-top, env(safe-area-inset-top)));
   }
 
   .settings-title {
