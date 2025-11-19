@@ -95,14 +95,23 @@
     box-sizing: border-box;
     overflow-x: hidden;
     overflow-y: auto;
+    align-items: start;
   }
 
   /* Content card (movie/show poster) */
   .content-card {
-    @apply relative rounded-lg overflow-hidden cursor-pointer transition-transform duration-200 active:scale-95;
+    position: relative;
     width: 100%;
     padding-bottom: 150%; /* 2:3 aspect ratio */
     height: 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .content-card:active {
+    transform: scale(0.95);
   }
 
   .content-card-poster {
