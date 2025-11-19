@@ -1278,3 +1278,84 @@ if (!this) { return '<div>Static HTML</div>'; }  // ✅ Works
 **Testing Required:** Collections tab + Library management
 **Status:** ✅ FIXED - APK installed (2025-11-18)
 
+
+---
+
+## Session 8 Continued - UI Layout Fixes (2025-11-18)
+
+**Time Range:** 18:33 - 19:55
+**Screenshots Reviewed:** 6 additional
+**Issues Fixed:** 7 rounds of fixes (Rounds 6-12)
+
+### Round 6: Grid Wrapper Fix
+**Commit:** 03155a72
+**Issue:** Movies displayed in single column instead of 2-column grid
+**Root Cause:** `UITemplates.contentGrid()` wrapped cards in `<div class="grid">` (Tailwind default single-column)
+**Fix:** Removed unnecessary wrapper div so cards render directly into existing `.content-grid` container
+
+### Round 7: Z-Index Overlay Fix
+**Commit:** 56fa38b5
+**Issue:** Movie title/metadata overlay not visible at bottom of cards
+**Fix:** Added explicit z-index to poster (1) and overlay (5)
+
+### Round 8: Content Card Layout Fixes
+**Commit:** 8a6c9458
+**Issues Fixed:**
+- Health indicator moved from top-left to top-right (no longer overlaps favorite)
+- Replaced emoji heart with SVG icon for proper centering
+- Reduced favorite button size (w-9 h-9)
+- Fixed overlay CSS with Tailwind-only @apply
+
+### Rounds 9-11: Grid and Aspect Ratio Attempts
+**Commits:** c6c1effc, 11597c93, 7f854eb0
+**Issues:** Cards still overlapping vertically
+**Attempts:**
+- Round 9: Explicit CSS grid instead of Tailwind
+- Round 10: padding-bottom: 150% aspect ratio trick
+- Round 11: Grid align-items: start
+
+**Problem:** padding-bottom hack unreliable with CSS Grid layout
+
+### Round 12: Gemini-Recommended Fix (SUCCESS)
+**Commit:** cb7804f6
+**Analysis:** Consulted Gemini 2.5 Pro for CSS Grid expertise
+**Root Cause Identified:** `padding-bottom: 150%; height: 0` hack doesn't communicate height properly to CSS Grid
+
+**Solution Applied:**
+```css
+.content-card {
+  aspect-ratio: 2 / 3;  /* Modern CSS property */
+  contain: paint;        /* Rendering performance */
+  background-color: #1f1f1f;
+}
+
+.content-card-overlay {
+  max-height: 50%;       /* Prevent overflow */
+  box-sizing: border-box;
+}
+
+.content-card-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+
+**Result:** ✅ Browse grid now displays correctly with:
+- Proper 2-column layout with gaps
+- Cards contained within bounds - no vertical overlap
+- Movie titles, ratings, and years visible in overlay
+- Heart button top-left, health indicator top-right
+- Proper 2:3 aspect ratio maintained
+
+### Final Status: Browse View
+**Assessment:** ✅ PRODUCTION READY
+- All major layout issues resolved
+- Cards display properly in 2-column grid
+- Metadata overlay visible and constrained
+- Button positioning correct
+
+---
+
+**Total Session 8 Commits:** 26 (from 4910bf0f to cb7804f6)
+**Key Learning:** Modern `aspect-ratio` CSS property is more reliable than padding-bottom hack for CSS Grid layouts.
