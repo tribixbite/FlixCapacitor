@@ -147,6 +147,10 @@
     @apply text-xs text-gray-300 flex items-center gap-2;
     font-weight: 600;
     text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.85); /* Increased opacity for better legibility */
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-flex; /* Only as wide as content */
   }
 
   .content-card-rating {
@@ -166,8 +170,8 @@
     position: absolute;
     top: 8px;
     left: 8px;
-    width: 32px;
-    height: 32px;
+    width: 48px; /* Increased from 32px to meet 44-48dp accessibility standard */
+    height: 48px; /* Increased from 32px to meet 44-48dp accessibility standard */
     background: rgba(0, 0, 0, 0.8);
     border: none;
     border-radius: 50%;
@@ -177,6 +181,9 @@
     cursor: pointer;
     z-index: 20;
     transition: transform 0.2s;
+    padding: 0; /* Ensure full area is tappable */
+    min-width: 48px; /* Enforce minimum touch target */
+    min-height: 48px; /* Enforce minimum touch target */
   }
 
   .content-card-favorite:active {
@@ -185,8 +192,8 @@
   }
 
   .content-card-favorite svg {
-    width: 16px;
-    height: 16px;
+    width: 20px; /* Increased from 16px for better visibility */
+    height: 20px; /* Increased from 16px for better visibility */
     color: #ef4444;
   }
 
@@ -280,8 +287,21 @@
 
   /* Filter tabs */
   .filter-tabs {
-    @apply flex gap-2 overflow-x-auto smooth-scroll scrollbar-hide px-4 py-3;
+    @apply flex gap-2 overflow-x-auto smooth-scroll scrollbar-hide py-3;
     position: relative;
+    /* Horizontal padding applied to first/last child for better scroll behavior */
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Add padding to first and last tab for edge spacing */
+  .filter-tab:first-child {
+    margin-left: 0;
+  }
+
+  .filter-tab:last-child {
+    margin-right: 0;
+    padding-right: 1.5rem; /* Extra padding to prevent truncation at edge */
   }
 
   /* Scroll indicator for filter tabs */
@@ -298,7 +318,9 @@
   }
 
   .filter-tab {
-    @apply px-4 py-2 rounded-full font-medium transition-all whitespace-nowrap tap-target bg-dark-card text-gray-400 border border-dark-border active:scale-95 cursor-pointer select-none;
+    @apply px-5 py-2 rounded-full font-medium transition-all whitespace-nowrap tap-target bg-dark-card text-gray-400 border border-dark-border active:scale-95 cursor-pointer select-none;
+    flex-shrink: 0; /* Prevent tabs from shrinking */
+    min-width: max-content; /* Ensure tab is wide enough for content */
   }
 
   .filter-tab:hover {
