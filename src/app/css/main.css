@@ -88,8 +88,8 @@
   .content-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 12px;
+    gap: 16px;
+    padding: 16px;
     padding-bottom: calc(80px + env(safe-area-inset-bottom));
     width: 100%;
     box-sizing: border-box;
@@ -130,7 +130,7 @@
     left: 0;
     right: 0;
     padding: 8px;
-    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+    background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.85) 50%, transparent 100%);
     z-index: 10;
     max-height: 50%;
     box-sizing: border-box;
@@ -144,7 +144,9 @@
   }
 
   .content-card-meta {
-    @apply text-xs text-gray-400 flex items-center gap-2;
+    @apply text-xs text-gray-300 flex items-center gap-2;
+    font-weight: 600;
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.9);
   }
 
   .content-card-rating {
@@ -259,7 +261,7 @@
   /* Search bar - Fixed to top with safe area support */
   .search-bar {
     @apply sticky top-0 z-10 bg-dark-lighter/95 backdrop-blur-sm border-b border-dark-border px-4 py-4;
-    padding-top: calc(2rem + var(--safe-area-top, env(safe-area-inset-top)));
+    padding-top: calc(1rem + env(safe-area-inset-top));
     -webkit-backdrop-filter: blur(8px);
   }
 
@@ -279,6 +281,20 @@
   /* Filter tabs */
   .filter-tabs {
     @apply flex gap-2 overflow-x-auto smooth-scroll scrollbar-hide px-4 py-3;
+    position: relative;
+  }
+
+  /* Scroll indicator for filter tabs */
+  .filter-tabs::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient(to right, transparent, var(--bg-secondary));
+    pointer-events: none;
+    z-index: 1;
   }
 
   .filter-tab {
