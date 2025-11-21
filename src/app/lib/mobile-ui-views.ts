@@ -1683,9 +1683,15 @@ export class MobileUIController {
             // Update battery status display
             const batteryStatusText = document.getElementById('battery-status-text');
             const batteryLevelValue = document.getElementById('battery-level-value');
-            if (batteryStatusText && batteryLevelValue && batteryInfo) {
-                batteryStatusText.textContent = batteryInfo.isCharging ? 'Charging' : 'Discharging';
-                batteryLevelValue.textContent = `${batteryInfo.level}%`;
+            if (batteryStatusText && batteryLevelValue) {
+                if (batteryInfo) {
+                    batteryStatusText.textContent = batteryInfo.isCharging ? 'Charging' : 'Discharging';
+                    batteryLevelValue.textContent = `${batteryInfo.level}%`;
+                } else {
+                    // Clear loading state and show unavailable
+                    batteryStatusText.textContent = 'Unavailable';
+                    batteryLevelValue.textContent = 'N/A';
+                }
             }
 
             // WiFi-Only Toggle

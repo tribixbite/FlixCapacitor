@@ -147,9 +147,9 @@
     @apply text-xs text-gray-300 flex items-center gap-2;
     font-weight: 600;
     text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.9);
-    background: rgba(0, 0, 0, 0.85); /* Increased opacity for better legibility */
-    padding: 2px 6px;
-    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.95); /* Increased from 0.85 to 0.95 for maximum legibility */
+    padding: 3px 8px; /* Increased padding for better breathing room */
+    border-radius: 6px; /* Increased from 4px for softer appearance */
     display: inline-flex; /* Only as wide as content */
   }
 
@@ -169,10 +169,10 @@
   .content-card-favorite {
     position: absolute;
     top: 8px;
-    left: 8px;
+    right: 8px; /* Moved from left to right to avoid obscuring faces */
     width: 48px; /* Increased from 32px to meet 44-48dp accessibility standard */
     height: 48px; /* Increased from 32px to meet 44-48dp accessibility standard */
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85); /* Increased opacity for better visibility */
     border: none;
     border-radius: 50%;
     display: flex;
@@ -180,7 +180,7 @@
     justify-content: center;
     cursor: pointer;
     z-index: 20;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background 0.2s;
     padding: 0; /* Ensure full area is tappable */
     min-width: 48px; /* Enforce minimum touch target */
     min-height: 48px; /* Enforce minimum touch target */
@@ -304,17 +304,30 @@
     padding-right: 1.5rem; /* Extra padding to prevent truncation at edge */
   }
 
-  /* Scroll indicator for filter tabs */
+  /* Scroll indicator for filter tabs - Enhanced for better discoverability */
   .filter-tabs::after {
     content: '';
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
-    width: 40px;
-    background: linear-gradient(to right, transparent, var(--bg-secondary));
+    width: 60px; /* Increased from 40px for more prominent hint */
+    background: linear-gradient(to right, transparent, rgba(20, 20, 20, 0.85) 50%, var(--bg-secondary) 100%);
     pointer-events: none;
     z-index: 1;
+  }
+
+  /* Add subtle shadow to further indicate scrollability */
+  .filter-tabs::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.3), transparent);
+    pointer-events: none;
+    z-index: 2;
   }
 
   .filter-tab {
