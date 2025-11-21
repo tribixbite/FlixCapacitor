@@ -17,7 +17,6 @@
  */
 
 import * as Sentry from '@sentry/capacitor';
-import { CaptureConsole } from '@sentry/integrations';
 
 export interface SentryConfig {
   dsn?: string;
@@ -68,10 +67,7 @@ export function initializeSentry(config: SentryConfig): void {
 
       // Integrations
       integrations: [
-        // Capture console errors
-        new CaptureConsole({
-          levels: ['error', 'assert']
-        }),
+        // Sentry built-in integrations are used automatically
       ],
 
       // Before sending events, scrub sensitive data
@@ -181,7 +177,8 @@ export function initializeSentry(config: SentryConfig): void {
  */
 export function isSentryEnabled(): boolean {
   try {
-    const client = Sentry.getCurrentHub().getClient();
+    // Check if Sentry is initialized by checking the client
+    const client = Sentry.getClient();
     return !!client;
   } catch {
     return false;

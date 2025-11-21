@@ -29,9 +29,7 @@ export default class AuthModalView extends Marionette.View<Backbone.Model> {
     private onCancel?: () => void;
     private isLoading: boolean = false;
 
-    className() {
-        return 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4';
-    }
+    override className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4';
 
     template() {
         const title = this.mode === 'signin' ? 'Sign In' : 'Create Account';
@@ -128,16 +126,14 @@ export default class AuthModalView extends Marionette.View<Backbone.Model> {
         `;
     }
 
-    events(): Backbone.EventsHash {
-        return {
-            'submit [data-form="auth"]': 'handleSubmit',
-            'click [data-action="close"]': 'handleClose',
-            'click [data-action="switch-mode"]': 'handleSwitchMode'
-        };
-    }
+    override events = {
+        'submit [data-form="auth"]': 'handleSubmit',
+        'click [data-action="close"]': 'handleClose',
+        'click [data-action="switch-mode"]': 'handleSwitchMode'
+    };
 
     constructor(options: AuthModalViewOptions) {
-        super(options);
+        super(options as any);
         this.mode = options.mode || 'signin';
         this.onSuccess = options.onSuccess;
         this.onCancel = options.onCancel;
@@ -313,7 +309,7 @@ export default class AuthModalView extends Marionette.View<Backbone.Model> {
     /**
      * Clean up when view is removed
      */
-    onDestroy(): void {
+    override onDestroy(): void {
         // Clean up any event listeners
         this.isLoading = false;
     }
