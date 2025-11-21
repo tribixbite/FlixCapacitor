@@ -391,34 +391,30 @@ export const UITemplates = {
                                 const healthColor = seedHealth === 'excellent' ? '#10b981' : seedHealth === 'good' ? '#22c55e' : seedHealth === 'fair' ? '#f59e0b' : '#ef4444';
 
                                 return `
-                                    <div class="torrent-option" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.1);">
-                                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                    <div class="torrent-option" style="background: rgba(255,255,255,0.05); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.1); min-height: 88px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
                                             <div>
-                                                <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem;">${quality}</div>
-                                                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">${torrent.size || 'Unknown size'}</div>
+                                                <div style="font-weight: 600; font-size: 1.25rem; margin-bottom: 0.375rem;">${quality}</div>
+                                                <div style="font-size: 1rem; color: rgba(255,255,255,0.7); font-weight: 500;">${torrent.size || 'Unknown size'}</div>
                                             </div>
                                             <div style="text-align: right;">
-                                                <div style="font-size: 0.75rem; color: ${healthColor}; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">${seedHealth}</div>
-                                                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">
+                                                <div style="font-size: 0.875rem; color: ${healthColor}; font-weight: 700; text-transform: uppercase; margin-bottom: 0.375rem;">${seedHealth}</div>
+                                                <div style="font-size: 1rem; color: rgba(255,255,255,0.7); font-weight: 600;">
                                                     <span style="color: #10b981;">↑ ${torrent.seed || 0}</span> •
                                                     <span style="color: #3b82f6;">↓ ${torrent.peer || 0}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; font-size: 0.75rem; color: rgba(255,255,255,0.5);">
-                                            <div>Seeds: ${torrent.seed || 0} peers</div>
-                                            <div>Peers: ${torrent.peer || 0} downloading</div>
-                                        </div>
-                                        <button class="add-to-collection-btn"
+                                        <button class="add-to-collection-btn tap-target"
                                                 data-info-hash="${torrent.hash || ''}"
                                                 data-torrent-name="${item.title || 'Unknown'}"
                                                 data-quality="${quality}"
                                                 data-size="${torrent.size || ''}"
                                                 data-seeders="${torrent.seed || 0}"
-                                                style="margin-top: 0.75rem; width: 100%; padding: 0.5rem 1rem;
+                                                style="margin-top: 0.75rem; width: 100%; padding: 0.875rem 1.25rem; min-height: 48px;
                                                        background: rgba(59, 130, 246, 0.1); color: rgb(59, 130, 246);
                                                        border: 1px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-sm);
-                                                       font-weight: 500; font-size: 0.875rem; cursor: pointer;
+                                                       font-weight: 600; font-size: 1rem; cursor: pointer;
                                                        transition: all 0.2s;">
                                             📚 Add to Collection
                                         </button>
