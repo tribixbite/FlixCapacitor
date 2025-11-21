@@ -74,13 +74,17 @@ FlixCapacitor is **100% production-ready** with all autonomous development work 
    - ✅ All meet Play Store requirements (1080x2340, PNG, <8MB)
    - ✅ Verification passed: npm run verify-submission
 
-2. **Release Build Testing** (4-6 hours) - NEXT STEP
+2. **Release Build Testing** (4-6 hours) - NEXT STEP (MANUAL USER WORK)
+   - ⚠️ Requires keystore passwords (security requirement)
+   - ⚠️ Requires physical device testing (quality assurance)
    - Build release APK with ProGuard
-   - Test on physical device
+   - Test thoroughly on physical device
    - Verify all features work
    - Check for ProGuard issues
+   - See: NEXT-MANUAL-STEPS.md for detailed guide
 
-3. **Play Store Submission** (90 minutes) - FINAL STEP
+3. **Play Store Submission** (90 minutes) - FINAL STEP (MANUAL USER WORK)
+   - ⚠️ Requires Google Play Console account and $25 fee
    - Upload APK to Play Console
    - Complete store listing
    - Submit for review (7-10 day review period)
@@ -233,14 +237,24 @@ Repository: https://github.com/tribixbite/FlixCapacitor
 ✅ npm run verify-submission passed (Success: 15 | Warnings: 1 | Errors: 0)
 ```
 
-### 2. Build and Test Release APK (4-6 hours) - NEXT STEP
+### 2. Build and Test Release APK (4-6 hours) - MANUAL USER WORK
+
+**⚠️ This step requires manual user work - cannot be automated**
+
+Requires:
+- Keystore passwords (security requirement - never stored in codebase)
+- Physical device for testing (quality assurance requirement)
 
 ```bash
-# Build release APK with ProGuard
-./build-and-install.sh
+# See detailed step-by-step guide:
+cat NEXT-MANUAL-STEPS.md
 
-# Test all features thoroughly on physical device
-# See: MANUAL-TESTING-GUIDE.md
+# Quick summary:
+# 1. Set keystore passwords as environment variables
+# 2. Build release APK: cd android && ./gradlew assembleRelease
+# 3. Test thoroughly on physical device (2-3 hours)
+# 4. Verify all features work correctly
+# See: MANUAL-TESTING-GUIDE.md for complete testing checklist
 ```
 
 ### 3. Follow Submission Workflow (90 minutes) - FINAL STEP
@@ -301,11 +315,16 @@ Repository: https://github.com/tribixbite/FlixCapacitor
 
 **All autonomous work and Play Store screenshots are now complete.**
 
-The FlixCapacitor v1.0.0 project is 100% production-ready and awaiting release build testing and Play Store submission.
+The FlixCapacitor v1.0.0 project is 100% production-ready from an **autonomous development perspective**. All code, documentation, UI fixes, and Play Store assets are complete and verified.
 
-**Status:** ✅ READY FOR PLAY STORE SUBMISSION
+**Remaining Work:** Manual user tasks that cannot be automated due to:
+- **Security requirements** (keystore passwords must never be in codebase)
+- **Quality assurance requirements** (physical device testing required)
+- **Account requirements** (Google Play Console access)
+
+**Status:** ✅ READY FOR MANUAL USER WORK (See: NEXT-MANUAL-STEPS.md)
 **Timeline:** 2-3 weeks (5-7.5 hours user work + 7-10 days Google review)
-**Next Blocker:** Release APK build and testing (4-6 hours)
+**Next Blocker:** Release APK build and testing (manual user work with keystore passwords)
 
 ---
 
