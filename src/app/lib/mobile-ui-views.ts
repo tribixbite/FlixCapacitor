@@ -2468,8 +2468,18 @@ export class MobileUIController {
         const mainRegion = document.querySelector('.main-window-region');
         mainRegion!.innerHTML = UITemplates.detailView(movie);
 
+        // Hide bottom nav and FAB when in detail view
+        const bottomNav = document.querySelector('.bottom-nav') as HTMLElement;
+        const fab = document.getElementById('mobile-fab') as HTMLElement;
+        if (bottomNav) bottomNav.style.display = 'none';
+        if (fab) fab.style.display = 'none';
+
         // Add event listeners
         document.getElementById('detail-back')?.addEventListener('click', () => {
+            // Show bottom nav and FAB when leaving detail view
+            if (bottomNav) bottomNav.style.display = '';
+            if (fab) fab.style.display = '';
+
             // Use goBack() to return to previous view
             const didGoBack = this.goBack();
             if (!didGoBack) {

@@ -357,12 +357,115 @@
     @apply relative h-[40vh] overflow-hidden;
   }
 
+  .detail-hero-gradient {
+    @apply absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-dark via-dark/80 to-transparent;
+  }
+
+  /* Detail View - Full page movie/show detail */
+  .detail-view {
+    @apply min-h-screen bg-dark;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .detail-header {
+    @apply relative h-[35vh] overflow-hidden;
+  }
+
   .detail-backdrop {
     @apply w-full h-full object-cover;
   }
 
-  .detail-hero-gradient {
-    @apply absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-dark via-dark/80 to-transparent;
+  .detail-backdrop-overlay {
+    @apply absolute inset-0;
+    background: linear-gradient(to bottom, rgba(18, 18, 18, 0.4) 0%, rgba(18, 18, 18, 0.95) 100%);
+  }
+
+  .detail-back-btn {
+    @apply absolute top-4 left-4 w-10 h-10 rounded-full bg-black/60 text-white flex items-center justify-center text-xl font-bold z-20;
+    padding-top: env(safe-area-inset-top, 0px);
+    margin-top: env(safe-area-inset-top, 0px);
+  }
+
+  .detail-content {
+    @apply relative px-4 pb-8;
+    margin-top: -80px;
+    z-index: 10;
+  }
+
+  .detail-poster {
+    @apply w-32 h-48 rounded-lg shadow-xl object-cover mx-auto mb-4;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .detail-title {
+    @apply text-2xl font-bold text-white text-center mb-2;
+  }
+
+  .detail-meta {
+    @apply flex flex-wrap items-center justify-center gap-3 text-sm text-gray-400 mb-4;
+  }
+
+  .detail-rating {
+    @apply flex items-center gap-1 text-yellow-400;
+  }
+
+  .detail-actions {
+    @apply flex items-center justify-center gap-3 mb-6;
+  }
+
+  .detail-actions .btn-primary {
+    @apply flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full font-semibold;
+    min-height: 48px;
+  }
+
+  .detail-actions .btn-secondary {
+    @apply w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center;
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  .detail-actions .btn-secondary.bookmarked {
+    @apply bg-yellow-500/20 text-yellow-400;
+  }
+
+  .detail-section {
+    @apply mb-6;
+  }
+
+  .detail-section-title {
+    @apply text-lg font-semibold text-white mb-3;
+  }
+
+  .detail-overview {
+    @apply text-gray-300 leading-relaxed text-sm;
+  }
+
+  .detail-info-grid {
+    @apply grid grid-cols-2 gap-4;
+  }
+
+  .detail-info-grid .info-item {
+    @apply text-sm;
+  }
+
+  .detail-info-grid .info-label {
+    @apply text-gray-500 text-xs uppercase tracking-wide mb-1;
+  }
+
+  .detail-info-grid .info-value {
+    @apply text-gray-300;
+  }
+
+  /* Hide bottom nav and global FAB when detail view is showing */
+  .main-window-region:has(.detail-view) ~ .bottom-nav,
+  .detail-view ~ .bottom-nav {
+    display: none !important;
+  }
+
+  /* Hide FAB on detail view - FAB has class .mobile-fab and id #mobile-fab */
+  body:has(.detail-view) .mobile-fab,
+  body:has(.detail-view) #mobile-fab {
+    display: none !important;
   }
 
   /* Loading states */
