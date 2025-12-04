@@ -202,6 +202,23 @@
     @apply col-span-full flex flex-col items-center justify-center min-h-[50vh] gap-4;
   }
 
+  /* Empty state - centered content with icon, title, message */
+  .content-empty {
+    @apply col-span-full flex flex-col items-center justify-center min-h-[50vh] gap-3 text-center px-6;
+  }
+
+  .empty-icon {
+    @apply text-5xl mb-2;
+  }
+
+  .empty-title {
+    @apply text-lg font-semibold text-white;
+  }
+
+  .empty-message {
+    @apply text-sm text-gray-400 max-w-xs;
+  }
+
   /* Poster card (legacy alias) */
   .poster-card {
     @apply content-card;
