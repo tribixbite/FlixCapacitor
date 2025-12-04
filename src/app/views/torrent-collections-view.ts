@@ -50,58 +50,50 @@ export class TorrentCollectionsView extends View<any> {
         // Defensive check: ensure 'this' is properly initialized
         if (!this || this.collections === undefined || this.isLoading === undefined || this.error === undefined) {
             console.warn('[TorrentCollections] Template called before initialization');
-            // Return static loading HTML since 'this' might not exist
+            // Return inline loading HTML (not fixed modal) for mobile tab navigation
             return `
-                <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-                    <div class="flex flex-col items-center gap-4">
-                        <div class="w-12 h-12 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin"></div>
-                        <p class="text-gray-400">Loading collections...</p>
-                    </div>
+                <div class="flex flex-col items-center justify-center min-h-[50vh] gap-4">
+                    <div class="w-12 h-12 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin"></div>
+                    <p class="text-gray-400">Loading collections...</p>
                 </div>
             `;
         }
 
+        // Render as inline content for mobile tab view (not fixed modal overlay)
         return `
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm pointer-events-auto modal-overlay-safe">
-                <div class="bg-gray-900/95 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 max-w-6xl w-full max-h-[90vh] flex flex-col">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between p-6 border-b border-gray-700">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                            </svg>
-                            <div>
-                                <div class="text-white font-semibold">Torrent Collections</div>
-                                <div class="text-gray-400 text-sm">Organize your torrents into playlists</div>
-                            </div>
+            <div class="flex flex-col h-full bg-dark">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4 border-b border-gray-700 safe-area-top">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                        <div>
+                            <div class="text-white font-semibold">Collections</div>
+                            <div class="text-gray-400 text-xs">Organize your torrents</div>
                         </div>
-                        <button class="torrent-collections-close p-2 hover:bg-gray-800 rounded-lg transition-colors">
-                            <svg class="w-5 h-5 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </div>
+                </div>
+
+                <!-- Toolbar -->
+                ${this.error ? '' : `
+                    <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-700">
+                        <div class="flex-1 text-gray-400 text-sm">
+                            ${this.collections.length} collection${this.collections.length !== 1 ? 's' : ''}
+                        </div>
+
+                        <button class="collection-create px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
+                            <span>New</span>
                         </button>
                     </div>
+                `}
 
-                    <!-- Toolbar -->
-                    ${this.error ? '' : `
-                        <div class="flex items-center gap-2 px-6 py-4 border-b border-gray-700">
-                            <div class="flex-1 text-gray-400 text-sm">
-                                ${this.collections.length} collection${this.collections.length !== 1 ? 's' : ''}
-                            </div>
-
-                            <button class="collection-create px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                </svg>
-                                <span>New Collection</span>
-                            </button>
-                        </div>
-                    `}
-
-                    <!-- Content -->
-                    <div class="flex-1 overflow-y-auto p-6">
-                        ${this.error ? this.renderError() : (this.isLoading ? this.renderLoading() : this.renderCollections())}
-                    </div>
+                <!-- Content - scrollable area with padding for bottom nav -->
+                <div class="flex-1 overflow-y-auto p-4 pb-24">
+                    ${this.error ? this.renderError() : (this.isLoading ? this.renderLoading() : this.renderCollections())}
                 </div>
             </div>
         `;
@@ -112,9 +104,9 @@ export class TorrentCollectionsView extends View<any> {
      */
     private renderLoading(): string {
         return `
-            <div class="flex items-center justify-center py-20">
+            <div class="flex items-center justify-center min-h-[40vh]">
                 <div class="flex flex-col items-center gap-4">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-blue-500"></div>
                     <p class="text-gray-400">Loading collections...</p>
                 </div>
             </div>
