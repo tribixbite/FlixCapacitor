@@ -617,14 +617,16 @@ export class MobileUIController {
             }
 
             // Transform library items to content card format
+            // Use valid placeholder URL since /img/video-placeholder.png doesn't exist
+            const videoPlaceholder = 'https://via.placeholder.com/300x450/1f1f1f/808080?text=🎬+Video';
             const itemsFormatted = libraryItems.map((item: any) => ({
                 imdb_id: item.imdb_id || `local_${item.media_id}`,
                 title: item.title,
                 year: item.year || 'Unknown',
                 rating: item.rating || 'N/A',
                 images: {
-                    poster: item.poster_url || '/img/video-placeholder.png',
-                    fanart: item.backdrop_url || '/img/video-placeholder.png'
+                    poster: item.poster_url || videoPlaceholder,
+                    fanart: item.backdrop_url || videoPlaceholder
                 },
                 genres: item.genres ? JSON.parse(item.genres) : [],
                 synopsis: item.synopsis || `Local media file: ${item.original_filename}`,
@@ -761,14 +763,16 @@ export class MobileUIController {
             }
 
             // Transform library items to content card format
+            // Use valid placeholder URL since /img/video-placeholder.png doesn't exist
+            const videoPlaceholder = 'https://via.placeholder.com/300x450/1f1f1f/808080?text=🎬+Video';
             const itemsFormatted = filteredItems.map((item: any) => ({
                 imdb_id: item.imdb_id || `local_${item.media_id}`,
                 title: item.title,
                 year: item.year || 'Unknown',
                 rating: item.rating || 'N/A',
                 images: {
-                    poster: item.poster_url || '/img/video-placeholder.png',
-                    fanart: item.backdrop_url || '/img/video-placeholder.png'
+                    poster: item.poster_url || videoPlaceholder,
+                    fanart: item.backdrop_url || videoPlaceholder
                 },
                 genres: item.genres ? JSON.parse(item.genres) : [],
                 synopsis: item.synopsis || `Local media file: ${item.original_filename}`,
