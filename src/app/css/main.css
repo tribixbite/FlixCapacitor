@@ -394,13 +394,18 @@
 
   .detail-backdrop-overlay {
     @apply absolute inset-0;
-    background: linear-gradient(to bottom, rgba(18, 18, 18, 0.4) 0%, rgba(18, 18, 18, 0.95) 100%);
+    /* Increased top opacity for status bar legibility per accessibility review */
+    background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.7) 0%,           /* Dark scrim for status bar */
+      rgba(18, 18, 18, 0.4) 15%,       /* Fade to lighter */
+      rgba(18, 18, 18, 0.6) 60%,       /* Gradual darkening */
+      rgba(18, 18, 18, 0.95) 100%);    /* Dark at bottom for content */
   }
 
   .detail-back-btn {
     @apply absolute top-4 left-4 w-10 h-10 rounded-full bg-black/60 text-white flex items-center justify-center text-xl font-bold z-20;
-    padding-top: env(safe-area-inset-top, 0px);
-    margin-top: env(safe-area-inset-top, 0px);
+    /* Account for safe area inset */
+    top: calc(1rem + env(safe-area-inset-top, 0px));
   }
 
   .detail-content {
@@ -479,9 +484,13 @@
     display: none !important;
   }
 
-  /* Hide FAB on detail view - FAB has class .mobile-fab and id #mobile-fab */
+  /* Hide FAB on detail view and settings view - FAB is inappropriate on these screens */
   body:has(.detail-view) .mobile-fab,
-  body:has(.detail-view) #mobile-fab {
+  body:has(.detail-view) #mobile-fab,
+  body:has(.settings-view) .mobile-fab,
+  body:has(.settings-view) #mobile-fab,
+  /* Also hide on Collections view */
+  .main-window-region:has(.collection-card) ~ .mobile-fab {
     display: none !important;
   }
 
