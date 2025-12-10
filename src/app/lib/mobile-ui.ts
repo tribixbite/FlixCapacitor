@@ -23,7 +23,7 @@ interface MockMovie {
 
 interface MobileUIAPI {
     init: () => void;
-    showAddTorrentDialog: () => void;
+    showAddTorrentDialog: (prefilledMagnet?: string) => void;
 }
 
 /**
@@ -214,8 +214,9 @@ function addFABStyles(): void {
 
 /**
  * Show dialog for adding torrent/magnet link
+ * @param prefilledMagnet Optional magnet URL to prefill the input (e.g., from deep link)
  */
-function showAddTorrentDialog(): void {
+function showAddTorrentDialog(prefilledMagnet?: string): void {
     // Create overlay
     const overlay = document.createElement('div');
     overlay.className = 'mobile-dialog-overlay';
@@ -259,6 +260,11 @@ function showAddTorrentDialog(): void {
     const fileInput = document.getElementById('torrent-file-input') as HTMLInputElement;
     const cancelButton = document.getElementById('dialog-cancel') as HTMLButtonElement;
     const addButton = document.getElementById('dialog-add') as HTMLButtonElement;
+
+    // Prefill input if magnet URL provided (e.g., from deep link)
+    if (prefilledMagnet) {
+        input.value = prefilledMagnet;
+    }
 
     // Auto-focus input
     setTimeout(() => input.focus(), 100);

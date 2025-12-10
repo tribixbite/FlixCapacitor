@@ -240,13 +240,23 @@ class TorrentStreamingService : Service() {
             android.util.Log.d("TorrentStreamingService", "startTorrentStreaming() - Creating save directory")
             showErrorToast("Creating torrent directory...")
 
-            // Create save directory in external storage (accessible via file manager)
-            // On Android 10+, this uses scoped storage (no extra permissions needed)
-            val saveDir = File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES), "FlixCapacitor")
+            // Create save directory in PUBLIC Downloads folder (visible in file manager)
+            // Using public directory so users can access downloaded files easily
+            @Suppress("DEPRECATION")
+            val publicDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            var saveDir = File(publicDownloads, "FlixCapacitor")
             if (!saveDir.exists()) {
                 val created = saveDir.mkdirs()
                 android.util.Log.d("TorrentStreamingService", "Directory created: $created")
-                showErrorToast("Created: ${saveDir.absolutePath}")
+                if (!created) {
+                    // Fallback to app-specific storage if public folder creation fails
+                    android.util.Log.w("TorrentStreamingService", "Could not create public dir, using app storage")
+                    saveDir = File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES), "FlixCapacitor")
+                    saveDir.mkdirs()
+                    showErrorToast("Using: ${saveDir.absolutePath}")
+                } else {
+                    showErrorToast("Created: ${saveDir.absolutePath}")
+                }
             }
             android.util.Log.d("TorrentStreamingService", "Save directory: ${saveDir.absolutePath}")
 
@@ -442,9 +452,13 @@ class TorrentStreamingService : Service() {
                 if (filePath != null) {
                     val file = File(filePath)
 
-                    // Wait for file to have some data (at least 5 MB or 2% of file)
+                    // Wait for file to have enough data for reliable playback
+                    // Require at least 3% of file OR 10MB minimum (whichever is larger)
+                    // This ensures video headers and initial frames are available
                     val fileSize = torrentSession?.getSelectedFileSize() ?: 0
-                    val minimumBytes = minOf(5 * 1024 * 1024L, (fileSize * 0.02).toLong())
+                    val minimumPercent = (fileSize * 0.03).toLong() // 3% minimum
+                    val minimumFixed = 10 * 1024 * 1024L // 10MB minimum
+                    val minimumBytes = maxOf(minimumFixed, minimumPercent)
 
                     if (file.exists() && file.length() >= minimumBytes) {
                         // File ready, start streaming

@@ -624,7 +624,7 @@ function handleVideoFile(file: { path: string; name: string }): void {
 }
 
 function handleTorrent(torrent: string): void {
-    console.log('Handling torrent:', torrent);
+    console.log('Handling torrent from deep link:', torrent);
 
     const app = window.App as MobileApp | undefined;
 
@@ -636,13 +636,23 @@ function handleTorrent(torrent: string): void {
         console.warn('No player to close');
     }
 
-    if (app?.Config?.getProviderForType) {
-        const torrentCache = app.Config.getProviderForType('torrentCache');
-        if (torrentCache) {
-            torrentCache.resolve(torrent);
-        }
+    // Use MobileUI dialog to show the magnet link for user confirmation
+    // This allows user to see what they're about to play before starting
+    const MobileUI = (window as any).MobileUI;
+    if (MobileUI?.showAddTorrentDialog) {
+        // Show dialog with magnet prefilled - user can review and click Add to play
+        MobileUI.showAddTorrentDialog(torrent);
     } else {
-        console.error('App.Config not available for torrent handling');
+        // Fallback: Try legacy provider system (less likely to work)
+        console.warn('MobileUI not available, falling back to legacy handler');
+        if (app?.Config?.getProviderForType) {
+            const torrentCache = app.Config.getProviderForType('torrentCache');
+            if (torrentCache) {
+                torrentCache.resolve(torrent);
+            }
+        } else {
+            console.error('No handler available for torrent');
+        }
     }
 }
 
