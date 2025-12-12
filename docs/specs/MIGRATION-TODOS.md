@@ -140,23 +140,23 @@
 ## Phase 3: Content Discovery (Tasks 51-70)
 
 ### 3.1 Movie Browser
-- [ ] **T051** Create `MovieCard.svelte` component
+- [x] **T051** Create `MovieCard.svelte` component
   - Test: Poster, title, rating render
-- [ ] **T052** Create `ContentGrid.svelte` for responsive grid
+- [x] **T052** Create `ContentGrid.svelte` for responsive grid
   - Test: Grid columns adjust to width
-- [ ] **T053** Implement infinite scroll pagination
+- [x] **T053** Implement infinite scroll pagination
   - Test: More items load on scroll
-- [ ] **T054** Create movies route `/movies/+page.svelte`
+- [x] **T054** Create movies route `/movies/+page.svelte`
   - Test: Page loads and displays movies
-- [ ] **T055** Implement category tabs (Popular, Trending, Top Rated)
+- [x] **T055** Implement category tabs (Popular, Trending, Top Rated)
   - Test: Tabs switch content
 
 ### 3.2 TV Show Browser
-- [ ] **T056** Create `ShowCard.svelte` component
+- [x] **T056** Create `ShowCard.svelte` component
   - Test: Show poster and info render
-- [ ] **T057** Create shows route `/shows/+page.svelte`
+- [x] **T057** Create shows route `/shows/+page.svelte`
   - Test: Page loads TV shows
-- [ ] **T058** Implement show category tabs
+- [x] **T058** Implement show category tabs
   - Test: Categories filter correctly
 - [ ] **T059** Add "Continue Watching" section
   - Test: In-progress shows display
@@ -192,13 +192,13 @@
 ## Phase 4: Content Details (Tasks 71-90)
 
 ### 4.1 Movie Detail Page
-- [ ] **T071** Create `/movies/[id]/+page.svelte` route
+- [x] **T071** Create `/movies/[id]/+page.svelte` route
   - Test: Route params work
-- [ ] **T072** Create `DetailHero.svelte` with backdrop
+- [x] **T072** Create `DetailHero.svelte` with backdrop
   - Test: Backdrop image loads
-- [ ] **T073** Display movie metadata (year, runtime, rating, genres)
+- [x] **T073** Display movie metadata (year, runtime, rating, genres)
   - Test: All metadata displays
-- [ ] **T074** Create `CastList.svelte` horizontal scroll
+- [x] **T074** Create `CastList.svelte` horizontal scroll
   - Test: Cast members render
 - [ ] **T075** Implement "Add to Favorites" button
   - Test: Favorite toggles
@@ -206,15 +206,15 @@
   - Test: Torrents list renders
 - [ ] **T077** Implement torrent quality badges
   - Test: Quality tags display (720p, 1080p, 4K)
-- [ ] **T078** Create "Play" action button
+- [x] **T078** Create "Play" action button
   - Test: Play button triggers streaming
 
 ### 4.2 TV Show Detail Page
-- [ ] **T079** Create `/shows/[id]/+page.svelte` route
+- [x] **T079** Create `/shows/[id]/+page.svelte` route
   - Test: Show details load
 - [ ] **T080** Create `SeasonPicker.svelte` selector
   - Test: Season selection works
-- [ ] **T081** Create `EpisodeList.svelte` with episode cards
+- [~] **T081** Create `EpisodeList.svelte` with episode cards
   - Test: Episodes render with thumbnails
 - [ ] **T082** Implement episode watch status indicators
   - Test: Watched episodes marked
@@ -344,15 +344,15 @@
 ## Phase 7: User Features (Tasks 131-150)
 
 ### 7.1 Favorites System
-- [ ] **T131** Create `/favorites/+page.svelte` route
+- [x] **T131** Create `/favorites/+page.svelte` route
   - Test: Favorites page loads
 - [ ] **T132** Implement favorites persistence (SQLite)
   - Test: Favorites persist
-- [ ] **T133** Create favorites grid view
+- [x] **T133** Create favorites grid view
   - Test: Favorites display
-- [ ] **T134** Implement remove from favorites
+- [x] **T134** Implement remove from favorites
   - Test: Remove works
-- [ ] **T135** Add favorites empty state
+- [x] **T135** Add favorites empty state
   - Test: Empty message shows
 
 ### 7.2 Collections System
@@ -466,15 +466,15 @@
 ## Tracking Progress
 
 ```
-Progress: [█░░░░░░░░░░░░░░░░░░░] 9/165 (5.5%)
+Progress: [███░░░░░░░░░░░░░░░░░] 27/165 (16.4%)
 
 Phase 0: [░░░░░░░░░░] 0/15
 Phase 1: [██████░░░░] 9/15
 Phase 2: [░░░░░░░░░░] 0/20
-Phase 3: [░░░░░░░░░░] 0/20
-Phase 4: [░░░░░░░░░░] 0/20
+Phase 3: [██████░░░░] 8/20
+Phase 4: [█████░░░░░] 6/20
 Phase 5: [░░░░░░░░░░] 0/20
 Phase 6: [░░░░░░░░░░] 0/20
-Phase 7: [░░░░░░░░░░] 0/20
+Phase 7: [████░░░░░░] 4/20
 Phase 8: [░░░░░░░░░░] 0/15
 ```
