@@ -40,6 +40,13 @@
 - Real-time updates during download
 - Visual indicator in bottom nav when download active
 
+### Svelte 5 App Migration
+- Migrate existing UI components from vanilla JS to Svelte 5
+- Implement proper routing and state management
+- Create video player component with torrent streaming
+- Build downloads management view
+- Integrate all Capacitor plugins
+
 ## Completed Work
 
 ### Downloads Management Tab ✓
@@ -69,6 +76,56 @@ val minimumFixed = 10 * 1024 * 1024L // 10MB minimum
 val minimumBytes = maxOf(minimumFixed, minimumPercent)
 ```
 
+## Completed Svelte 5 Integration
+
+### Capacitor Configuration ✓
+**File:** `svelte-app/capacitor.config.ts`
+- TypeScript configuration with full type safety
+- Android-specific settings (mixed content, debugging, capture input)
+- Dark theme splash screen and status bar
+- HTTP plugin enabled for API calls
+- Keyboard handling configured
+
+### Plugin Wrappers ✓
+**Files:** `svelte-app/src/lib/plugins/*.ts`
+
+1. **torrent-streamer.ts** - Complete TorrentStreamer wrapper
+   - Svelte 5 runes for reactive state ($state, $derived, $effect)
+   - Event listeners: progress, error, ready, metadata, stopped
+   - Full API coverage: start, stop, pause, resume, getStatus
+   - File selection: getVideoFileList, getAllFiles, selectFile
+   - External player support: openExternalPlayer
+   - Proxy configuration: reloadProxySettings
+   - Type-safe interfaces matching Kotlin implementation
+   - Automatic cleanup on component unmount
+
+2. **torrent-downloader.ts** - TorrentDownloader wrapper (future use)
+   - Download queue management
+   - Progress tracking for multiple torrents
+   - Pause/resume/remove functionality
+   - Reactive Map of download statuses
+   - Event listeners for progress, complete, error
+
+3. **platform.ts** - Platform utilities
+   - Platform detection (isNative, isAndroid, isIOS, isWeb)
+   - Status bar control (dark/light themes, colors, show/hide)
+   - Haptics feedback (impact, notification, vibrate, selection)
+   - Network status monitoring (online/offline, wifi/cellular)
+   - All hooks use Svelte 5 runes for reactivity
+
+4. **index.ts** - Barrel exports
+   - Re-exports all custom plugins with types
+   - Re-exports Capacitor core plugins (Preferences, Filesystem, etc.)
+   - Single import point for all plugin functionality
+
+### Key Features
+- Full type safety with TypeScript interfaces
+- Reactive state management using Svelte 5 runes
+- Automatic resource cleanup with $effect
+- Error handling and state tracking
+- Derived states for computed values
+- Event listener management with cleanup
+
 ## Commits
 
 1. `fix(torrent): improve deep link handling, buffer threshold and save location`
@@ -81,3 +138,8 @@ val minimumBytes = maxOf(minimumFixed, minimumPercent)
    - Biome for linting and formatting
    - Vitest + Playwright for testing
    - Basic layout and welcome page
+3. `feat(svelte-app): add Capacitor config and plugin wrappers`
+   - Capacitor configuration for Android
+   - Complete plugin wrappers with Svelte 5 runes
+   - Platform utilities for native features
+   - Type-safe interfaces matching Kotlin implementation

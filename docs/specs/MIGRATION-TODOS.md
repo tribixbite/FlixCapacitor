@@ -60,23 +60,23 @@
   - Test: Status bar color matches theme
 
 ### 1.2 Bottom Navigation
-- [ ] **T021** Create `BottomNav.svelte` with Konsta Tabbar
+- [x] **T021** Create `BottomNav.svelte` with Konsta Tabbar
   - Test: All 6 tabs render
-- [ ] **T022** Implement active state highlighting
+- [x] **T022** Implement active state highlighting
   - Test: Current tab highlighted
-- [ ] **T023** Add haptic feedback on tab tap
+- [x] **T023** Add haptic feedback on tab tap
   - Test: Vibration on tap (device)
 - [ ] **T024** Create navigation store for route state
   - Test: Store updates on navigation
-- [ ] **T025** Implement tab icons (Browse, Favorites, Library, Downloads, Collections, Settings)
+- [x] **T025** Implement tab icons (Browse, Favorites, Library, Downloads, Collections, Settings)
   - Test: Icons display correctly
 
 ### 1.3 Top Navigation
-- [ ] **T026** Create `TopNavbar.svelte` with dynamic title
+- [x] **T026** Create `TopNavbar.svelte` with dynamic title
   - Test: Title updates per route
-- [ ] **T027** Implement search button/icon
+- [x] **T027** Implement search button/icon
   - Test: Search button clickable
-- [ ] **T028** Add back navigation support
+- [x] **T028** Add back navigation support
   - Test: Back button works
 - [ ] **T029** Create scroll-aware navbar (hide on scroll down)
   - Test: Navbar hides on scroll
@@ -174,15 +174,15 @@
   - Test: Anime info populates
 
 ### 3.4 Search & Filters
-- [ ] **T065** Create `SearchBar.svelte` with debounce
+- [x] **T065** Create `SearchBar.svelte` with debounce
   - Test: Search triggers after typing stops
-- [ ] **T066** Create `FilterSheet.svelte` bottom sheet
+- [x] **T066** Create `FilterSheet.svelte` bottom sheet
   - Test: Sheet opens and closes
-- [ ] **T067** Implement genre filter chips
+- [x] **T067** Implement genre filter chips
   - Test: Genre selection filters content
-- [ ] **T068** Implement year range filter
+- [x] **T068** Implement year range filter
   - Test: Year filter works
-- [ ] **T069** Implement rating filter
+- [x] **T069** Implement rating filter
   - Test: Rating filter works
 - [ ] **T070** Create search results page
   - Test: Results display for query
@@ -466,10 +466,10 @@
 ## Tracking Progress
 
 ```
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0/165 (0%)
+Progress: [█░░░░░░░░░░░░░░░░░░░] 9/165 (5.5%)
 
 Phase 0: [░░░░░░░░░░] 0/15
-Phase 1: [░░░░░░░░░░] 0/15
+Phase 1: [██████░░░░] 9/15
 Phase 2: [░░░░░░░░░░] 0/20
 Phase 3: [░░░░░░░░░░] 0/20
 Phase 4: [░░░░░░░░░░] 0/20
