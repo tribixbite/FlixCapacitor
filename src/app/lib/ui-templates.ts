@@ -429,6 +429,366 @@ export const UITemplates = {
     `,
 
     // Settings View
+    // Downloads Management View
+    downloadsView: () => `
+        <div class="downloads-view">
+            <div class="downloads-header">
+                <h1 class="downloads-title">Downloads</h1>
+                <button class="downloads-add-btn" id="downloads-add-btn">+ Add Torrent</button>
+            </div>
+            <div class="downloads-tabs">
+                <button class="downloads-tab active" data-tab="active">Active</button>
+                <button class="downloads-tab" data-tab="completed">Completed</button>
+                <button class="downloads-tab" data-tab="all">All</button>
+            </div>
+            <div class="downloads-list" id="downloads-list">
+                <div class="content-loading">
+                    <div class="loading-spinner-large"></div>
+                    <div class="loading-text">Loading downloads...</div>
+                </div>
+            </div>
+            <div class="downloads-storage-info" id="downloads-storage-info">
+                <!-- Storage info will be populated dynamically -->
+            </div>
+        </div>
+        <style>
+            .downloads-view {
+                padding: 1rem;
+                padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom) + 2rem);
+            }
+            .downloads-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+            .downloads-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+            }
+            .downloads-add-btn {
+                background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+                color: white;
+                border: none;
+                padding: 0.75rem 1rem;
+                border-radius: var(--radius-md);
+                font-weight: 600;
+                cursor: pointer;
+                font-size: 0.9rem;
+            }
+            .downloads-tabs {
+                display: flex;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 0.5rem;
+            }
+            .downloads-tab {
+                background: transparent;
+                border: none;
+                color: var(--text-secondary);
+                padding: 0.5rem 1rem;
+                cursor: pointer;
+                font-size: 0.9rem;
+                border-radius: var(--radius-sm);
+                transition: all 0.2s;
+            }
+            .downloads-tab.active {
+                background: rgba(229, 9, 20, 0.15);
+                color: var(--accent-primary);
+                font-weight: 600;
+            }
+            .downloads-list {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                min-height: 200px;
+            }
+            .download-item {
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-md);
+                padding: 1rem;
+            }
+            .download-item-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 0.75rem;
+            }
+            .download-item-name {
+                font-weight: 600;
+                font-size: 1rem;
+                flex: 1;
+                margin-right: 0.5rem;
+                word-break: break-word;
+            }
+            .download-item-status {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+                border-radius: 4px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            .download-item-status.downloading { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+            .download-item-status.seeding { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+            .download-item-status.paused { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+            .download-item-status.finished { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+            .download-item-status.error { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+            .download-item-status.queued { background: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+            .download-progress-bar {
+                height: 6px;
+                background: var(--bg-tertiary);
+                border-radius: 3px;
+                overflow: hidden;
+                margin-bottom: 0.75rem;
+            }
+            .download-progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+                transition: width 0.3s ease;
+            }
+            .download-item-stats {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem 1rem;
+                font-size: 0.8rem;
+                color: var(--text-secondary);
+            }
+            .download-stat {
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+            }
+            .download-stat-icon { font-size: 0.9rem; }
+            .download-stat-value { color: var(--text-primary); font-weight: 500; }
+            .download-item-actions {
+                display: flex;
+                gap: 0.5rem;
+                margin-top: 0.75rem;
+                padding-top: 0.75rem;
+                border-top: 1px solid var(--border-color);
+            }
+            .download-action-btn {
+                flex: 1;
+                padding: 0.625rem;
+                border: 1px solid var(--border-color);
+                background: var(--bg-tertiary);
+                color: var(--text-secondary);
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-size: 0.85rem;
+                font-weight: 500;
+                transition: all 0.2s;
+            }
+            .download-action-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: var(--text-primary);
+            }
+            .download-action-btn.danger:hover {
+                background: rgba(239, 68, 68, 0.1);
+                color: #ef4444;
+                border-color: rgba(239, 68, 68, 0.3);
+            }
+            .download-action-btn.primary {
+                background: rgba(59, 130, 246, 0.1);
+                color: #3b82f6;
+                border-color: rgba(59, 130, 246, 0.3);
+            }
+            .downloads-storage-info {
+                margin-top: 1.5rem;
+                padding: 1rem;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-md);
+            }
+            .storage-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.75rem;
+            }
+            .storage-title {
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+            .storage-value {
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+            }
+            .storage-bar {
+                height: 8px;
+                background: var(--bg-tertiary);
+                border-radius: 4px;
+                overflow: hidden;
+            }
+            .storage-bar-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #10b981, #059669);
+                transition: width 0.3s ease;
+            }
+            .storage-bar-fill.warning { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+            .storage-bar-fill.danger { background: linear-gradient(90deg, #ef4444, #dc2626); }
+            .downloads-empty {
+                text-align: center;
+                padding: 3rem 1rem;
+                color: var(--text-secondary);
+            }
+            .downloads-empty-icon {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+            }
+            .downloads-empty-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 0.5rem;
+            }
+            .downloads-empty-message {
+                font-size: 0.9rem;
+            }
+        </style>
+    `,
+
+    // Download Item Card
+    downloadItemCard: (download: any) => {
+        const progress = download.progress || 0;
+        const state = download.state || 'queued';
+        const isPaused = download.isPaused || state === 'paused';
+        const isFinished = state === 'finished' || state === 'seeding';
+
+        // Format bytes to human readable
+        const formatBytes = (bytes: number): string => {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        };
+
+        // Format speed
+        const formatSpeed = (bytesPerSec: number): string => {
+            return formatBytes(bytesPerSec) + '/s';
+        };
+
+        // Format ETA
+        const formatEta = (seconds: number): string => {
+            if (seconds <= 0 || !isFinite(seconds)) return '--';
+            if (seconds < 60) return `${Math.round(seconds)}s`;
+            if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
+            const hours = Math.floor(seconds / 3600);
+            const mins = Math.round((seconds % 3600) / 60);
+            return `${hours}h ${mins}m`;
+        };
+
+        return `
+            <div class="download-item" data-download-id="${download.downloadId || download.id}">
+                <div class="download-item-header">
+                    <div class="download-item-name">${download.name || 'Unknown Torrent'}</div>
+                    <div class="download-item-status ${state}">${state}</div>
+                </div>
+                <div class="download-progress-bar">
+                    <div class="download-progress-fill" style="width: ${(progress * 100).toFixed(1)}%"></div>
+                </div>
+                <div class="download-item-stats">
+                    <div class="download-stat">
+                        <span class="download-stat-icon">📊</span>
+                        <span class="download-stat-value">${(progress * 100).toFixed(1)}%</span>
+                    </div>
+                    ${download.downloadSpeed !== undefined ? `
+                        <div class="download-stat">
+                            <span class="download-stat-icon">⬇️</span>
+                            <span class="download-stat-value">${formatSpeed(download.downloadSpeed)}</span>
+                        </div>
+                    ` : ''}
+                    ${download.uploadSpeed !== undefined ? `
+                        <div class="download-stat">
+                            <span class="download-stat-icon">⬆️</span>
+                            <span class="download-stat-value">${formatSpeed(download.uploadSpeed)}</span>
+                        </div>
+                    ` : ''}
+                    ${download.numPeers !== undefined || download.peers !== undefined ? `
+                        <div class="download-stat">
+                            <span class="download-stat-icon">👥</span>
+                            <span class="download-stat-value">${download.numPeers || download.peers || 0} peers</span>
+                        </div>
+                    ` : ''}
+                    ${download.seeds !== undefined ? `
+                        <div class="download-stat">
+                            <span class="download-stat-icon">🌱</span>
+                            <span class="download-stat-value">${download.seeds} seeds</span>
+                        </div>
+                    ` : ''}
+                    ${download.eta !== undefined && !isFinished ? `
+                        <div class="download-stat">
+                            <span class="download-stat-icon">⏱️</span>
+                            <span class="download-stat-value">${formatEta(download.eta)}</span>
+                        </div>
+                    ` : ''}
+                    ${download.totalBytes !== undefined ? `
+                        <div class="download-stat">
+                            <span class="download-stat-icon">💾</span>
+                            <span class="download-stat-value">${formatBytes(download.downloadedBytes || 0)} / ${formatBytes(download.totalBytes)}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="download-item-actions">
+                    ${!isFinished ? `
+                        <button class="download-action-btn ${isPaused ? 'primary' : ''}" data-action="${isPaused ? 'resume' : 'pause'}" data-id="${download.downloadId || download.id}">
+                            ${isPaused ? '▶️ Resume' : '⏸️ Pause'}
+                        </button>
+                    ` : ''}
+                    ${isFinished ? `
+                        <button class="download-action-btn primary" data-action="play" data-id="${download.downloadId || download.id}">
+                            ▶️ Play
+                        </button>
+                        <button class="download-action-btn" data-action="stop-seed" data-id="${download.downloadId || download.id}">
+                            ⏹️ Stop Seeding
+                        </button>
+                    ` : ''}
+                    <button class="download-action-btn danger" data-action="cancel" data-id="${download.downloadId || download.id}">
+                        ✕ ${isFinished ? 'Delete' : 'Cancel'}
+                    </button>
+                </div>
+            </div>
+        `;
+    },
+
+    // Downloads Empty State
+    downloadsEmptyState: (tab: string) => `
+        <div class="downloads-empty">
+            <div class="downloads-empty-icon">${tab === 'completed' ? '✅' : '⬇️'}</div>
+            <div class="downloads-empty-title">
+                ${tab === 'completed' ? 'No Completed Downloads' : tab === 'active' ? 'No Active Downloads' : 'No Downloads'}
+            </div>
+            <div class="downloads-empty-message">
+                ${tab === 'completed'
+                    ? 'Completed downloads will appear here'
+                    : 'Add a torrent to start downloading'}
+            </div>
+        </div>
+    `,
+
+    // Storage Info Widget
+    storageInfoWidget: (info: any) => {
+        const percentUsed = info.percentUsed || 0;
+        const barClass = percentUsed > 90 ? 'danger' : percentUsed > 70 ? 'warning' : '';
+
+        return `
+            <div class="storage-header">
+                <span class="storage-title">💾 Storage</span>
+                <span class="storage-value">${info.usedFormatted || '0 B'} / ${info.totalFormatted || 'Unknown'}</span>
+            </div>
+            <div class="storage-bar">
+                <div class="storage-bar-fill ${barClass}" style="width: ${percentUsed}%"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-tertiary);">
+                <span>${info.freeFormatted || 'Unknown'} free</span>
+                <span>${info.path || ''}</span>
+            </div>
+        `;
+    },
+
     settingsView: () => {
         const settings = window.SettingsManager || { get: () => null };
         const serverUrl = settings.get('streamingServerUrl') || 'http://localhost:3001/api';

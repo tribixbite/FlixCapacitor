@@ -122,6 +122,8 @@ export class MobileUIController {
             'anime': '#0a0a0a',
             'favorites': '#0a0a0a',
             'library': '#0a0a0a',
+            'downloads': '#0a0a0a',
+            'collections': '#0a0a0a',
             'learning': '#0a0a0a',
             'settings': '#141414'
         };
@@ -230,6 +232,12 @@ export class MobileUIController {
         // Track current view
         this.currentView = route;
 
+        // Clean up downloads listeners when navigating away
+        if ((window as any).__downloadsCleanup) {
+            (window as any).__downloadsCleanup();
+            delete (window as any).__downloadsCleanup;
+        }
+
         // Conference Polish: Update status bar color for current view
         this.updateStatusBarColor(route);
 
@@ -251,6 +259,9 @@ export class MobileUIController {
                 break;
             case 'collections':
                 this.showCollections();
+                break;
+            case 'downloads':
+                this.showDownloads();
                 break;
             case 'learning':
                 this.showLearning();
@@ -705,6 +716,277 @@ export class MobileUIController {
                 error.message || 'Please try again'
             );
         }
+    }
+
+    /**
+     * Show Downloads management tab
+     * Displays active/completed torrent downloads with progress and controls
+     */
+    async showDownloads(): Promise<void> {
+        const mainRegion = document.querySelector('.main-window-region');
+
+        // Hide loading screen
+        const loadingScreen = document.querySelector('.loading-screen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
+
+        // Render downloads view
+        mainRegion!.innerHTML = UITemplates.downloadsView();
+
+        // Track current filter tab
+        let currentTab = 'active';
+
+        // Store downloads data and listener handles
+        const downloadsData: Map<string, any> = new Map();
+        const listenerHandles: Array<{ remove: () => Promise<void> }> = [];
+
+        // Access plugins through Capacitor runtime bridge (avoids build-time dependency)
+        // Plugins are registered at native runtime and accessible via Capacitor.Plugins
+        const Capacitor = (window as any).Capacitor;
+        const TorrentStreamer = Capacitor?.Plugins?.TorrentStreamer || null;
+        const TorrentDownload = Capacitor?.Plugins?.TorrentDownload || null;
+
+        if (!TorrentStreamer) {
+            console.log('TorrentStreamer plugin not available');
+        }
+        if (!TorrentDownload) {
+            console.log('TorrentDownload plugin not available');
+        }
+
+        // Function to update downloads list
+        const updateDownloadsList = () => {
+            const downloadsList = document.getElementById('downloads-list');
+            if (!downloadsList) return;
+
+            // Convert map to array and filter by tab
+            let downloads = Array.from(downloadsData.values());
+
+            if (currentTab === 'active') {
+                downloads = downloads.filter(d =>
+                    d.state === 'downloading' || d.state === 'checking' ||
+                    d.state === 'queued' || d.state === 'paused'
+                );
+            } else if (currentTab === 'completed') {
+                downloads = downloads.filter(d =>
+                    d.state === 'finished' || d.state === 'seeding'
+                );
+            }
+
+            if (downloads.length === 0) {
+                downloadsList.innerHTML = UITemplates.downloadsEmptyState(currentTab);
+            } else {
+                downloadsList.innerHTML = downloads
+                    .map(d => UITemplates.downloadItemCard(d))
+                    .join('');
+            }
+
+            // Attach action button handlers
+            downloadsList.querySelectorAll('.download-action-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    const action = target.dataset.action;
+                    const downloadId = target.dataset.id;
+
+                    if (!downloadId) return;
+
+                    try {
+                        switch (action) {
+                            case 'pause':
+                                if (downloadId === 'streaming' && TorrentStreamer) {
+                                    await TorrentStreamer.pause();
+                                    const data = downloadsData.get(downloadId);
+                                    if (data) {
+                                        data.isPaused = true;
+                                        data.state = 'paused';
+                                    }
+                                } else if (TorrentDownload) {
+                                    await TorrentDownload.pauseDownload({ downloadId: parseInt(downloadId) });
+                                }
+                                break;
+
+                            case 'resume':
+                                if (downloadId === 'streaming' && TorrentStreamer) {
+                                    await TorrentStreamer.resume();
+                                    const data = downloadsData.get(downloadId);
+                                    if (data) {
+                                        data.isPaused = false;
+                                        data.state = 'downloading';
+                                    }
+                                } else if (TorrentDownload) {
+                                    await TorrentDownload.resumeDownload({ downloadId: parseInt(downloadId) });
+                                }
+                                break;
+
+                            case 'cancel':
+                                if (downloadId === 'streaming' && TorrentStreamer) {
+                                    await TorrentStreamer.stop();
+                                    downloadsData.delete(downloadId);
+                                } else if (TorrentDownload) {
+                                    await TorrentDownload.cancelDownload({ downloadId: parseInt(downloadId) });
+                                    downloadsData.delete(downloadId);
+                                }
+                                break;
+
+                            case 'stop-seed':
+                                if (TorrentDownload) {
+                                    await TorrentDownload.stopSeeding({ downloadId: parseInt(downloadId) });
+                                }
+                                break;
+
+                            case 'play':
+                                // TODO: Implement play functionality for completed downloads
+                                console.log('Play download:', downloadId);
+                                break;
+                        }
+                        updateDownloadsList();
+                    } catch (err: any) {
+                        console.error(`Failed to ${action} download:`, err);
+                    }
+                });
+            });
+        };
+
+        // Function to load storage info
+        const loadStorageInfo = async () => {
+            const storageInfoEl = document.getElementById('downloads-storage-info');
+            if (!storageInfoEl || !TorrentDownload) {
+                if (storageInfoEl) storageInfoEl.style.display = 'none';
+                return;
+            }
+
+            try {
+                const storageInfo = await TorrentDownload.getStorageInfo();
+                storageInfoEl.innerHTML = UITemplates.storageInfoWidget(storageInfo);
+            } catch (err) {
+                console.error('Failed to get storage info:', err);
+                storageInfoEl.style.display = 'none';
+            }
+        };
+
+        // Set up TorrentStreamer progress listener for current streaming session
+        if (TorrentStreamer) {
+            try {
+                const status = await TorrentStreamer.getStatus();
+                if (status && status.hasMetadata) {
+                    // There's an active streaming session
+                    downloadsData.set('streaming', {
+                        id: 'streaming',
+                        name: 'Current Stream',
+                        progress: status.progress,
+                        downloadSpeed: status.downloadSpeed,
+                        uploadSpeed: status.uploadSpeed,
+                        numPeers: status.numPeers,
+                        state: status.isPaused ? 'paused' : (status.state || 'downloading'),
+                        isPaused: status.isPaused,
+                        totalDownloaded: status.totalDownloaded,
+                        totalUploaded: status.totalUploaded
+                    });
+                }
+
+                // Listen for progress updates
+                const progressHandle = await TorrentStreamer.addListener('progress', (status: any) => {
+                    if (downloadsData.has('streaming')) {
+                        const data = downloadsData.get('streaming');
+                        data.progress = status.progress;
+                        data.downloadSpeed = status.downloadSpeed;
+                        data.uploadSpeed = status.uploadSpeed;
+                        data.numPeers = status.numPeers;
+                        data.state = status.isPaused ? 'paused' : (status.state || 'downloading');
+                        data.isPaused = status.isPaused;
+                        updateDownloadsList();
+                    }
+                });
+                listenerHandles.push(progressHandle);
+
+                // Listen for stopped event
+                const stoppedHandle = await TorrentStreamer.addListener('stopped', () => {
+                    downloadsData.delete('streaming');
+                    updateDownloadsList();
+                });
+                listenerHandles.push(stoppedHandle);
+
+            } catch (err) {
+                console.log('No active streaming session');
+            }
+        }
+
+        // Set up TorrentDownload progress listener for background downloads
+        if (TorrentDownload) {
+            try {
+                const progressHandle = await TorrentDownload.addListener('downloadProgress', (progress: any) => {
+                    const id = String(progress.downloadId);
+                    let data = downloadsData.get(id);
+                    if (!data) {
+                        data = { id, name: `Download ${id}` };
+                        downloadsData.set(id, data);
+                    }
+                    data.progress = progress.progress / 100; // Convert to 0-1 range
+                    data.downloadSpeed = progress.downloadSpeed;
+                    data.uploadSpeed = progress.uploadSpeed;
+                    data.numPeers = progress.peers;
+                    data.seeds = progress.seeds;
+                    data.totalBytes = progress.totalBytes;
+                    data.downloadedBytes = progress.downloadedBytes;
+                    data.eta = progress.eta;
+                    data.state = progress.state?.toLowerCase() || 'downloading';
+                    updateDownloadsList();
+                });
+                listenerHandles.push(progressHandle);
+
+                const stateHandle = await TorrentDownload.addListener('downloadStateChange', (change: any) => {
+                    const id = String(change.downloadId);
+                    const data = downloadsData.get(id);
+                    if (data) {
+                        data.state = change.newState?.toLowerCase() || data.state;
+                        updateDownloadsList();
+                    }
+                });
+                listenerHandles.push(stateHandle);
+
+            } catch (err) {
+                console.error('Failed to set up TorrentDownload listeners:', err);
+            }
+        }
+
+        // Tab switching
+        document.querySelectorAll('.downloads-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.downloads-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = (tab as HTMLElement).dataset.tab || 'active';
+                updateDownloadsList();
+            });
+        });
+
+        // Add torrent button
+        const addBtn = document.getElementById('downloads-add-btn');
+        if (addBtn) {
+            addBtn.addEventListener('click', () => {
+                // Use MobileUI's add torrent dialog
+                const MobileUI = (window as any).MobileUI;
+                if (MobileUI?.showAddTorrentDialog) {
+                    MobileUI.showAddTorrentDialog();
+                }
+            });
+        }
+
+        // Initial update
+        updateDownloadsList();
+        await loadStorageInfo();
+
+        // Clean up listeners when navigating away
+        // Store cleanup function on window for later access
+        (window as any).__downloadsCleanup = async () => {
+            for (const handle of listenerHandles) {
+                try {
+                    await handle.remove();
+                } catch (e) {
+                    // Ignore errors during cleanup
+                }
+            }
+            listenerHandles.length = 0;
+        };
     }
 
     /**

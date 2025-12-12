@@ -35,16 +35,24 @@
 
 ## Remaining Work (TODO)
 
-### Downloads Management Tab
-- Add "Downloads" tab to bottom navigation
-- Show list of active/completed downloads
-- Display progress bars, speeds, peer counts
-- Allow pause/resume/cancel operations
-
 ### Download Progress UI
 - Persistent progress display (not just toast notifications)
 - Real-time updates during download
 - Visual indicator in bottom nav when download active
+
+## Completed Work
+
+### Downloads Management Tab ✓
+- Added "Downloads" tab to bottom navigation (`index.html`)
+- Created `downloadsView` template (`ui-templates.ts`)
+- Created `downloadItemCard` template for individual downloads
+- Implemented `showDownloads()` method (`mobile-ui-views.ts`)
+- Shows list of active/completed downloads with tabs
+- Display progress bars, speeds, peer counts, ETA
+- Allows pause/resume/cancel operations
+- Integrates with TorrentStreamer for streaming sessions
+- Integrates with TorrentDownload for background downloads
+- Shows storage info when TorrentDownload plugin available
 
 ## Technical Notes
 
