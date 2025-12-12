@@ -73,3 +73,11 @@ val minimumBytes = maxOf(minimumFixed, minimumPercent)
 
 1. `fix(torrent): improve deep link handling, buffer threshold and save location`
    - All three critical fixes in single commit
+2. `feat(svelte-v2): create initial Svelte 5 + Konsta UI project structure`
+   - Complete directory structure with all routes and components folders
+   - Package.json with Svelte 5, SvelteKit, Konsta UI 8, Capacitor 7
+   - Vite + Tailwind CSS 4 + TypeScript strict mode configuration
+   - Path aliases for clean imports
+   - Biome for linting and formatting
+   - Vitest + Playwright for testing
+   - Basic layout and welcome page
