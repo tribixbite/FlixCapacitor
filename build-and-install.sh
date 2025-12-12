@@ -108,15 +108,17 @@ if ! command -v adb &>/dev/null; then
     echo "   Will use alternative installation methods"
 fi
 
-# Step 2: Build web assets first
-echo "Step 2: Building web assets with Vite..."
+# Step 2: Build web assets first (Svelte 5 app)
+echo "Step 2: Building Svelte 5 web assets with Vite..."
 
+cd svelte-app
 if npm run build; then
     echo "✅ Web build successful!"
 else
     echo "❌ Web build failed!"
     exit 1
 fi
+cd ..
 
 # Step 3: Sync to Capacitor
 echo "Step 3: Syncing to Capacitor Android..."

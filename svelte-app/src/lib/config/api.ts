@@ -1,97 +1,28 @@
 /**
  * API Configuration
- * Central configuration for all external API services
- * Environment variables are loaded from .env file during build time
+ * Central configuration for all external API endpoints and keys
  */
 
-// Type definitions for API configuration
-interface ImageSizes {
-  small: string;
-  medium: string;
-  large: string;
-  original: string;
-}
-
-interface TMDBConfig {
-  apiKey: string;
-  baseUrl: string;
-  imageBaseUrl: string;
-  language: string;
-  region: string;
-}
-
-interface OpenSubtitlesConfig {
-  apiKey: string;
-  baseUrl: string;
-  userAgent: string;
-}
-
-interface OMDBConfig {
-  apiKey: string;
-  baseUrl: string;
-}
-
-interface ApiConfigType {
-  tmdb: TMDBConfig;
-  openSubtitles: OpenSubtitlesConfig;
-  omdb: OMDBConfig;
-}
-
-// Helper to get environment variable with fallback
-const getEnv = (key: string): string => {
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    return import.meta.env[key] || '';
-  }
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env[key] || '';
-  }
-  return '';
-};
-
-/**
- * API Configuration
- * Centralized configuration for all external APIs
- */
-export const apiConfig: ApiConfigType = {
-  /**
-   * TMDB (The Movie Database) Configuration
-   * https://www.themoviedb.org/settings/api
-   */
+// TMDB API Configuration
+// Get your API key at: https://www.themoviedb.org/settings/api
+export const apiConfig = {
   tmdb: {
-    apiKey: getEnv('VITE_TMDB_API_KEY'),
     baseUrl: 'https://api.themoviedb.org/3',
     imageBaseUrl: 'https://image.tmdb.org/t/p',
-    language: 'en-US',
-    region: 'US'
+    apiKey: import.meta.env.VITE_TMDB_API_KEY || 'YOUR_TMDB_API_KEY',
+    language: 'en-US'
   },
-
-  /**
-   * OpenSubtitles Configuration
-   * https://www.opensubtitles.com/api
-   */
   openSubtitles: {
-    apiKey: getEnv('VITE_OPENSUBTITLES_API_KEY'),
     baseUrl: 'https://api.opensubtitles.com/api/v1',
+    apiKey: import.meta.env.VITE_OPENSUBTITLES_API_KEY || '',
     userAgent: 'FlixCapacitor v2.0.0'
-  },
-
-  /**
-   * OMDb (Open Movie Database) Configuration
-   * https://www.omdbapi.com
-   */
-  omdb: {
-    apiKey: getEnv('VITE_OMDB_API_KEY'),
-    baseUrl: 'https://www.omdbapi.com'
   }
 };
 
-/**
- * Image Size Presets
- * TMDB image sizes for different use cases
- */
+// Image size configurations for TMDB
 export const imageSizes = {
   poster: {
-    small: 'w154',
+    small: 'w185',
     medium: 'w342',
     large: 'w500',
     original: 'original'
@@ -113,46 +44,56 @@ export const imageSizes = {
     medium: 'w185',
     large: 'w300',
     original: 'original'
+  },
+  logo: {
+    small: 'w45',
+    medium: 'w154',
+    large: 'w500',
+    original: 'original'
   }
-} as const;
+};
 
-/**
- * Type exports for image sizes
- */
-export type ImageType = 'poster' | 'backdrop' | 'profile' | 'still';
+export type ImageType = keyof typeof imageSizes;
 export type ImageSize = 'small' | 'medium' | 'large' | 'original';
 
-/**
- * Validate API configuration
- * Checks if required API keys are configured
- */
-export function validateConfig(): { valid: boolean; missing: string[] } {
-  const missing: string[] = [];
+// Genre mappings for quick lookup
+export const movieGenres: Record<number, string> = {
+  28: 'Action',
+  12: 'Adventure',
+  16: 'Animation',
+  35: 'Comedy',
+  80: 'Crime',
+  99: 'Documentary',
+  18: 'Drama',
+  10751: 'Family',
+  14: 'Fantasy',
+  36: 'History',
+  27: 'Horror',
+  10402: 'Music',
+  9648: 'Mystery',
+  10749: 'Romance',
+  878: 'Science Fiction',
+  10770: 'TV Movie',
+  53: 'Thriller',
+  10752: 'War',
+  37: 'Western'
+};
 
-  if (!apiConfig.tmdb.apiKey) {
-    missing.push('VITE_TMDB_API_KEY');
-  }
-  if (!apiConfig.openSubtitles.apiKey) {
-    missing.push('VITE_OPENSUBTITLES_API_KEY');
-  }
-  if (!apiConfig.omdb.apiKey) {
-    missing.push('VITE_OMDB_API_KEY');
-  }
-
-  return {
-    valid: missing.length === 0,
-    missing
-  };
-}
-
-/**
- * Log configuration status (development only)
- */
-if (import.meta.env.DEV) {
-  const status = validateConfig();
-  if (status.valid) {
-    console.log('✅ All API keys configured');
-  } else {
-    console.warn('⚠️ Missing API keys:', status.missing.join(', '));
-  }
-}
+export const tvGenres: Record<number, string> = {
+  10759: 'Action & Adventure',
+  16: 'Animation',
+  35: 'Comedy',
+  80: 'Crime',
+  99: 'Documentary',
+  18: 'Drama',
+  10751: 'Family',
+  10762: 'Kids',
+  9648: 'Mystery',
+  10763: 'News',
+  10764: 'Reality',
+  10765: 'Sci-Fi & Fantasy',
+  10766: 'Soap',
+  10767: 'Talk',
+  10768: 'War & Politics',
+  37: 'Western'
+};
