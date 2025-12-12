@@ -1,9 +1,8 @@
 <script lang="ts">
   import { Navbar, NavbarBackLink, Link } from 'konsta/svelte';
   import { page } from '$app/stores';
-  import { goto } from '$app/navigation';
-  import { useHaptics, ImpactStyle } from '$plugins/platform';
-  import { uiStore } from '$stores/ui.store';
+  import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
+  import { uiStore } from '$lib/stores/ui.store';
 
   let {
     title = '',
@@ -58,26 +57,28 @@
   transparent={transparent}
   bgClass={transparent ? '' : 'bg-black/95 backdrop-blur-xl'}
   innerClass="!px-4"
-  left={showBack ? (
-    <NavbarBackLink onClick={handleBack} />
-  ) : undefined}
-  right={
-    <div class="flex items-center gap-2">
-      {#if showSearch}
-        <Link
-          navbar
-          onClick={handleSearchClick}
-          class="!text-white"
-        >
-          🔍
-        </Link>
-      {/if}
-      {#if rightSlot}
-        {@render rightSlot()}
-      {/if}
-    </div>
-  }
-/>
+>
+  {#if showBack}
+    <NavbarBackLink slot="left" onClick={handleBack} />
+  {/if}
+
+  <div slot="right" class="flex items-center gap-2">
+    {#if showSearch}
+      <Link
+        navbar
+        onClick={handleSearchClick}
+        class="!text-white"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </Link>
+    {/if}
+    {#if rightSlot}
+      {@render rightSlot()}
+    {/if}
+  </div>
+</Navbar>
 
 <style>
   :global(.k-navbar) {

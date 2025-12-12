@@ -370,6 +370,27 @@ class TMDBService {
     };
   }
 
+  // Alias for getShowSeason
+  async getSeasonDetails(showId: number, seasonNumber: number): Promise<Season> {
+    return this.getShowSeason(showId, seasonNumber);
+  }
+
+  async getShowCredits(id: number): Promise<{ cast: Cast[]; crew: any[] }> {
+    const data = await this.fetch<TMDBCredits>(`/tv/${id}/credits`);
+    return {
+      cast: data.cast.slice(0, 20).map(c => ({
+        id: c.id,
+        name: c.name,
+        character: c.character,
+        profilePath: c.profile_path,
+        order: c.order,
+        gender: c.gender ?? undefined,
+        knownForDepartment: c.known_for_department
+      })),
+      crew: data.crew
+    };
+  }
+
   /**
    * Genres
    */
@@ -525,3 +546,13 @@ class TMDBService {
 // Export singleton instance
 export const tmdbService = new TMDBService();
 export default tmdbService;
+
+/**
+ * Standalone image URL helper for convenience
+ * @param path - TMDB image path
+ * @param size - Image size (w92, w185, w300, w500, w780, original)
+ */
+export function imageUrl(path: string | null, size = 'w500'): string {
+  if (!path) return '/placeholder.jpg';
+  return `${apiConfig.tmdb.imageBaseUrl}/${size}${path}`;
+}

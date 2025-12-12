@@ -8,7 +8,7 @@
   const { impact } = useHaptics();
 
   // Subscribe to settings
-  let settings = $state<AppSettings>();
+  let settings = $state<AppSettings | undefined>();
   settingsStore.subscribe(s => settings = s);
 
   async function updateSetting<K extends keyof AppSettings>(key: K, value: AppSettings[K]) {
@@ -45,6 +45,11 @@
   function openQualityPicker() {
     uiStore.openSheet('quality-picker');
   }
+
+  // Derived values for display
+  let qualityLabel = $derived(qualityOptions.find(o => o.value === settings?.preferredQuality)?.label || 'Auto');
+  let subtitleSizeLabel = $derived(subtitleSizeOptions.find(o => o.value === settings?.subtitleSize)?.label || 'Medium');
+  let downloadFolderName = $derived(settings?.downloadPath?.split('/').pop() || 'Default');
 </script>
 
 <svelte:head>
@@ -57,30 +62,26 @@
   <List strongIos inset>
     <ListItem
       title="Preferred Quality"
-      after={qualityOptions.find(o => o.value === settings?.preferredQuality)?.label || 'Auto'}
+      after={qualityLabel}
       link
       onClick={openQualityPicker}
     />
 
-    <ListItem
-      title="Auto-play"
-      after={
-        <Toggle
-          checked={settings?.autoPlay}
-          onChange={(e) => updateSetting('autoPlay', e.target.checked)}
-        />
-      }
-    />
+    <ListItem title="Auto-play">
+      <Toggle
+        slot="after"
+        checked={settings?.autoPlay ?? true}
+        onChange={(e) => updateSetting('autoPlay', e.target.checked)}
+      />
+    </ListItem>
 
-    <ListItem
-      title="Auto-play Next Episode"
-      after={
-        <Toggle
-          checked={settings?.autoPlayNextEpisode}
-          onChange={(e) => updateSetting('autoPlayNextEpisode', e.target.checked)}
-        />
-      }
-    />
+    <ListItem title="Auto-play Next Episode">
+      <Toggle
+        slot="after"
+        checked={settings?.autoPlayNextEpisode ?? true}
+        onChange={(e) => updateSetting('autoPlayNextEpisode', e.target.checked)}
+      />
+    </ListItem>
   </List>
 
   <!-- Subtitle Settings -->
@@ -88,47 +89,41 @@
   <List strongIos inset>
     <ListItem
       title="Subtitle Size"
-      after={subtitleSizeOptions.find(o => o.value === settings?.subtitleSize)?.label || 'Medium'}
+      after={subtitleSizeLabel}
       link
     />
 
-    <ListItem
-      title="Subtitle Background"
-      after={
-        <Toggle
-          checked={settings?.subtitleBackground}
-          onChange={(e) => updateSetting('subtitleBackground', e.target.checked)}
-        />
-      }
-    />
+    <ListItem title="Subtitle Background">
+      <Toggle
+        slot="after"
+        checked={settings?.subtitleBackground ?? true}
+        onChange={(e) => updateSetting('subtitleBackground', e.target.checked)}
+      />
+    </ListItem>
   </List>
 
   <!-- Download Settings -->
   <BlockTitle>Downloads</BlockTitle>
   <List strongIos inset>
-    <ListItem
-      title="Download on Wi-Fi Only"
-      after={
-        <Toggle
-          checked={settings?.downloadOnWifiOnly}
-          onChange={(e) => updateSetting('downloadOnWifiOnly', e.target.checked)}
-        />
-      }
-    />
+    <ListItem title="Download on Wi-Fi Only">
+      <Toggle
+        slot="after"
+        checked={settings?.downloadOnWifiOnly ?? true}
+        onChange={(e) => updateSetting('downloadOnWifiOnly', e.target.checked)}
+      />
+    </ListItem>
 
-    <ListItem
-      title="Seed After Download"
-      after={
-        <Toggle
-          checked={settings?.seedAfterDownload}
-          onChange={(e) => updateSetting('seedAfterDownload', e.target.checked)}
-        />
-      }
-    />
+    <ListItem title="Seed After Download">
+      <Toggle
+        slot="after"
+        checked={settings?.seedAfterDownload ?? false}
+        onChange={(e) => updateSetting('seedAfterDownload', e.target.checked)}
+      />
+    </ListItem>
 
     <ListItem
       title="Download Location"
-      after={settings?.downloadPath?.split('/').pop() || 'Default'}
+      after={downloadFolderName}
       link
     />
   </List>
@@ -136,39 +131,33 @@
   <!-- Appearance -->
   <BlockTitle>Appearance</BlockTitle>
   <List strongIos inset>
-    <ListItem
-      title="Show Ratings"
-      after={
-        <Toggle
-          checked={settings?.showRatings}
-          onChange={(e) => updateSetting('showRatings', e.target.checked)}
-        />
-      }
-    />
+    <ListItem title="Show Ratings">
+      <Toggle
+        slot="after"
+        checked={settings?.showRatings ?? true}
+        onChange={(e) => updateSetting('showRatings', e.target.checked)}
+      />
+    </ListItem>
 
-    <ListItem
-      title="Compact Mode"
-      after={
-        <Toggle
-          checked={settings?.compactMode}
-          onChange={(e) => updateSetting('compactMode', e.target.checked)}
-        />
-      }
-    />
+    <ListItem title="Compact Mode">
+      <Toggle
+        slot="after"
+        checked={settings?.compactMode ?? false}
+        onChange={(e) => updateSetting('compactMode', e.target.checked)}
+      />
+    </ListItem>
   </List>
 
   <!-- Advanced -->
   <BlockTitle>Advanced</BlockTitle>
   <List strongIos inset>
-    <ListItem
-      title="Developer Mode"
-      after={
-        <Toggle
-          checked={settings?.developerMode}
-          onChange={(e) => updateSetting('developerMode', e.target.checked)}
-        />
-      }
-    />
+    <ListItem title="Developer Mode">
+      <Toggle
+        slot="after"
+        checked={settings?.developerMode ?? false}
+        onChange={(e) => updateSetting('developerMode', e.target.checked)}
+      />
+    </ListItem>
 
     <ListItem
       title="Clear Cache"

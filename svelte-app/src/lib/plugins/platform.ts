@@ -3,6 +3,9 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { Network, type ConnectionStatus } from '@capacitor/network';
 
+// Re-export haptics types for direct import
+export { ImpactStyle, NotificationType };
+
 /**
  * Platform detection and native feature utilities
  */

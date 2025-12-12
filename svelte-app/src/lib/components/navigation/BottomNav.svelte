@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Tabbar, TabbarLink } from 'konsta/svelte';
   import { page } from '$app/stores';
-  import { useHaptics, ImpactStyle } from '$plugins/platform';
+  import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
 
   const { impact } = useHaptics();
 
@@ -36,13 +36,12 @@
       href={item.href}
       active={active}
       onClick={() => handleNavClick(item.href)}
-      icon={
-        <span class="text-xl">
-          {active ? item.activeIcon : item.icon}
-        </span>
-      }
       label={item.label}
-    />
+    >
+      <span slot="icon" class="text-xl">
+        {active ? item.activeIcon : item.icon}
+      </span>
+    </TabbarLink>
   {/each}
 </Tabbar>
 
