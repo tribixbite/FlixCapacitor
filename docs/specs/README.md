@@ -1,8 +1,8 @@
 # FlixCapacitor Mobile - Technical Specifications
 
-**Last Updated:** 2025-11-16
-**Version:** 1.0.0
-**Status:** Complete - Ready for Device Testing
+**Last Updated:** 2025-12-13
+**Version:** 2.0.0
+**Status:** Svelte 5 Migration Complete - Full Functionality Restored
 
 ## Table of Contents
 
@@ -34,9 +34,11 @@
 
 ### Technology Stack
 - **Platform:** Capacitor 7.x (web-to-native Android bridge)
-- **Languages:** TypeScript 5.9.3 (strict mode), Kotlin, JavaScript
-- **CSS Framework:** Tailwind CSS 3.4.17 (35.10 kB production bundle)
-- **Build Tool:** Vite 7.1.9
+- **Framework:** Svelte 5 with Runes ($state, $derived, $effect, $props)
+- **UI Library:** Konsta UI (iOS/Material Design components)
+- **Languages:** TypeScript 5.x (strict mode), Kotlin
+- **CSS Framework:** Tailwind CSS 3.x
+- **Build Tool:** Vite 6.x + SvelteKit (static adapter)
 - **Torrent Engine:** jlibtorrent 2.0.11 (native Android)
 - **HTTP Server:** NanoHTTPD (dynamic port allocation, ephemeral ports 49152-65535)
 - **Database:** SQLite via @capacitor-community/sqlite
@@ -58,11 +60,12 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    TypeScript Web Layer                      │
-│  - Mobile UI (Backbone.js + Marionette)                     │
-│  - Video Player (HTML5 + PlaybackQueue)                     │
-│  - Content Providers (Movies, Shows, Anime, Courses)        │
-│  - Services (Library, Favorites, Settings, SQLite)          │
+│                    Svelte 5 Web Layer                        │
+│  - UI Components (Konsta UI + Tailwind CSS)                 │
+│  - State Management (Svelte 5 Runes)                        │
+│  - Services (TMDB, OpenSubtitles, Chromecast, Torrents)     │
+│  - Video Player (HTML5 + PlayerControls)                    │
+│  - Routes: Home, Movies, Shows, Search, Learning, Settings  │
 └──────────────────────┬──────────────────────────────────────┘
                        │ Capacitor Bridge
 ┌──────────────────────┴──────────────────────────────────────┐
@@ -76,35 +79,46 @@
 
 ## Implementation Status
 
-### Phase 1-6: Core Development ✅ COMPLETE
-- ✅ TypeScript strict mode migration (90 errors fixed)
-- ✅ Tailwind CSS migration (67 inline styles converted)
+### Phase 1-6: Core Development ✅ COMPLETE (Legacy)
+- ✅ TypeScript strict mode migration
+- ✅ Tailwind CSS migration
 - ✅ Mobile-first responsive design
 - ✅ Dark mode with theme persistence
-- ✅ All 10 priority features implemented
-- ✅ DirectoryPicker plugin initialization fix
-- ✅ Production build optimization
 
-### Phase 7: Performance Optimization ✅ COMPLETE
-- ✅ CSS bundle under 50KB target (35.10 kB)
-- ✅ Vite production optimizations
-- ⏸️ Critical CSS inlining (optional, deferred)
-- ⏸️ Code splitting (optional, deferred)
-
-### Phase 8: CRITICAL Bug Fixes ✅ COMPLETE (2025-11-13)
+### Phase 7-8: Native Bug Fixes ✅ COMPLETE (2025-11)
 - ✅ InputStream.skip() loop fix (video seeking failures)
 - ✅ Dynamic port allocation (app restart crashes resolved)
-- ✅ 26 passing JUnit tests (StreamingServerTest + TorrentStreamingServiceTest)
-- ✅ Comprehensive device testing procedures documented
-- ✅ NATIVE-TORRENT-STREAMING.md spec updated to v1.1.0
-- **Identified by:** Gemini 2.5 Pro code review
-- **See:** SESSION-SUMMARY-2025-11-13.md and MANUAL-TESTING-GUIDE.md Priority 0
+- ✅ 26 passing JUnit tests
 
-### Next Phase: Manual Testing ⏳ PENDING
-- ⏳ DirectoryPicker functionality (Library → Add Folder)
-- ⏳ UI/UX verification (touch targets, safe areas, navigation)
-- ⏳ Dark mode toggle and persistence
-- ⏳ Core functionality (playback, favorites, queue, search)
+### Phase 9: Svelte 5 Migration ✅ COMPLETE (2025-12)
+- ✅ Complete rewrite from Backbone.js to Svelte 5
+- ✅ Konsta UI integration (iOS/Material Design)
+- ✅ SvelteKit with static adapter
+- ✅ New component architecture with Runes
+
+### Phase 10: Full Functionality Restoration ✅ COMPLETE (2025-12-13)
+- ✅ **Settings:** VPN/proxy config, external player selection, quality filters
+- ✅ **Browse by Genre:** GenreChips component for quick filtering
+- ✅ **Torrent Display:** TorrentList with seed/leech counts, health indicators
+- ✅ **TV Series:** EZTV integration with season filtering
+- ✅ **Academic Torrents:** Learning page with category filtering
+- ✅ **Chromecast:** Device discovery, connection, media casting
+- ✅ **Video Search:** TMDB multi-search with filter tabs, recent searches
+- ✅ **Video Player:** Quality selector, subtitles, resume position, PiP
+
+### Services Implemented
+| Service | Description | API |
+|---------|-------------|-----|
+| tmdbService | Movie/TV metadata | TMDB API |
+| openSubtitlesService | Subtitle search | OpenSubtitles REST |
+| torrentProviderService | Torrent search | YTS, EZTV, Academic |
+| chromecastService | Media casting | Google Cast |
+| errorReportingService | Crash tracking | Sentry |
+
+### Next: Device Testing ⏳
+- ⏳ Full UI verification across all views
+- ⏳ Torrent streaming end-to-end test
+- ⏳ Chromecast device connection test
 
 ## Specification Format
 
@@ -138,4 +152,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-11-16 by Claude Code*
+*Last Updated: 2025-12-13 by Claude Code (claude-opus-4-5-20251101)*
