@@ -80,12 +80,79 @@ export interface AppSettings {
   experimentalFeatures: boolean;
   enableBetaFeatures: boolean;
   customProviders: boolean;
+
+  // Network/VPN settings
+  useVpn: boolean;
+  vpnProvider: VpnProvider | null;
+  proxyEnabled: boolean;
+  proxyHost: string;
+  proxyPort: number;
+  proxyUsername: string;
+  proxyPassword: string;
+  proxyType: ProxyType;
+
+  // External player settings
+  useExternalPlayer: boolean;
+  externalPlayerPackage: string;
+  externalPlayerName: string;
+  preferredExternalPlayers: ExternalPlayer[];
+
+  // Chromecast settings
+  enableChromecast: boolean;
+  chromecastDeviceName: string;
+  chromecastQuality: VideoQuality;
+
+  // Torrent provider settings
+  torrentProviders: TorrentProviderConfig[];
+  preferredTorrentQuality: VideoQuality[];
+  minSeeders: number;
+  maxFileSize: number; // in GB
+
+  // Content sources
+  enableYTS: boolean;
+  enableEZTV: boolean;
+  enableRARBG: boolean;
+  enableAcademicTorrents: boolean;
+  enable1337x: boolean;
 }
 
 export type VideoQuality = '480p' | '720p' | '1080p' | '2160p' | 'auto';
 export type SubtitleSize = 'small' | 'medium' | 'large' | 'xlarge';
 export type ThemeMode = 'dark' | 'light' | 'system' | 'amoled';
 export type LogLevel = 'error' | 'warn' | 'info' | 'debug' | 'verbose';
+export type VpnProvider = 'expressvpn' | 'nordvpn' | 'surfshark' | 'protonvpn' | 'mullvad' | 'custom';
+export type ProxyType = 'http' | 'https' | 'socks4' | 'socks5';
+
+// External player configuration
+export interface ExternalPlayer {
+  id: string;
+  name: string;
+  packageName: string;
+  icon?: string;
+  supportsStreaming: boolean;
+  supportsChromecast: boolean;
+}
+
+// Torrent provider configuration
+export interface TorrentProviderConfig {
+  id: string;
+  name: string;
+  enabled: boolean;
+  priority: number;
+  apiUrl?: string;
+  categories: ('movies' | 'tv' | 'anime' | 'documentaries' | 'learning')[];
+}
+
+// Common external players for Android
+export const EXTERNAL_PLAYERS: ExternalPlayer[] = [
+  { id: 'vlc', name: 'VLC', packageName: 'org.videolan.vlc', supportsStreaming: true, supportsChromecast: true },
+  { id: 'mx', name: 'MX Player', packageName: 'com.mxtech.videoplayer.ad', supportsStreaming: true, supportsChromecast: false },
+  { id: 'mx_pro', name: 'MX Player Pro', packageName: 'com.mxtech.videoplayer.pro', supportsStreaming: true, supportsChromecast: false },
+  { id: 'mpv', name: 'mpv', packageName: 'is.xyz.mpv', supportsStreaming: true, supportsChromecast: false },
+  { id: 'kodi', name: 'Kodi', packageName: 'org.xbmc.kodi', supportsStreaming: true, supportsChromecast: true },
+  { id: 'just', name: 'Just Player', packageName: 'com.brouken.player', supportsStreaming: true, supportsChromecast: false },
+  { id: 'nova', name: 'Nova Player', packageName: 'org.courville.nova', supportsStreaming: true, supportsChromecast: true },
+];
 
 export type ContentFilter =
   | 'violence'
@@ -309,4 +376,43 @@ export const DEFAULT_SETTINGS: AppSettings = {
   experimentalFeatures: false,
   enableBetaFeatures: false,
   customProviders: false,
+
+  // Network/VPN
+  useVpn: false,
+  vpnProvider: null,
+  proxyEnabled: false,
+  proxyHost: '',
+  proxyPort: 8080,
+  proxyUsername: '',
+  proxyPassword: '',
+  proxyType: 'http',
+
+  // External player
+  useExternalPlayer: false,
+  externalPlayerPackage: '',
+  externalPlayerName: '',
+  preferredExternalPlayers: [],
+
+  // Chromecast
+  enableChromecast: true,
+  chromecastDeviceName: '',
+  chromecastQuality: '1080p',
+
+  // Torrent providers
+  torrentProviders: [
+    { id: 'yts', name: 'YTS', enabled: true, priority: 1, categories: ['movies'] },
+    { id: 'eztv', name: 'EZTV', enabled: true, priority: 2, categories: ['tv'] },
+    { id: '1337x', name: '1337x', enabled: false, priority: 3, categories: ['movies', 'tv'] },
+    { id: 'academic', name: 'Academic Torrents', enabled: false, priority: 4, categories: ['learning', 'documentaries'] },
+  ],
+  preferredTorrentQuality: ['1080p', '720p'],
+  minSeeders: 5,
+  maxFileSize: 10,
+
+  // Content sources
+  enableYTS: true,
+  enableEZTV: true,
+  enableRARBG: false,
+  enableAcademicTorrents: false,
+  enable1337x: false,
 };

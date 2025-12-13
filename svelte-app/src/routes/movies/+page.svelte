@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import { MovieCard, ContentGrid, CategoryTabs } from '$components/content';
-  import { FilterSheet } from '$components/navigation';
+  import { FilterSheet, GenreChips } from '$components/navigation';
   import { tmdbService } from '$services/tmdb.service';
   import { uiStore } from '$stores/ui.store';
   import type { Movie, Genre } from '$types';
@@ -110,6 +110,11 @@
     minRating = filters.minRating;
     loadMovies(true);
   }
+
+  function handleGenreSelect(genreIds: number[]) {
+    selectedGenres = genreIds;
+    loadMovies(true);
+  }
 </script>
 
 <svelte:head>
@@ -122,6 +127,13 @@
     {categories}
     selected={section}
     onChange={handleCategoryChange}
+  />
+
+  <!-- Genre Quick Select -->
+  <GenreChips
+    {genres}
+    {selectedGenres}
+    onSelect={handleGenreSelect}
   />
 
   <!-- Filter Button -->

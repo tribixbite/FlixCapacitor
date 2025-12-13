@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import { Navbar, NavbarBackLink, Link } from 'konsta/svelte';
   import { page } from '$app/stores';
   import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
-  import { uiStore } from '$lib/stores/ui.store';
 
   let {
     title = '',
@@ -34,7 +34,9 @@
       '/library': 'Library',
       '/downloads': 'Downloads',
       '/collections': 'Collections',
-      '/settings': 'Settings'
+      '/settings': 'Settings',
+      '/learning': 'Learning',
+      '/search': 'Search'
     };
 
     return routeTitles[pathname] || 'FlixCapacitor';
@@ -47,7 +49,7 @@
 
   async function handleSearchClick() {
     await impact(ImpactStyle.Light);
-    uiStore.toggleSearch();
+    goto('/search');
   }
 </script>
 

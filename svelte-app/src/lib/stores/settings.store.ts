@@ -4,40 +4,13 @@ import { Preferences } from '@capacitor/preferences';
 
 const SETTINGS_KEY = 'app_settings';
 
+import { DEFAULT_SETTINGS } from '$types/settings.types';
+
 const defaultSettings: AppSettings = {
-  // Playback
-  preferredQuality: 'auto',
-  autoPlay: true,
-  autoPlayNextEpisode: true,
-  skipIntro: false,
-  skipCredits: false,
-  defaultSubtitleLanguage: null,
-  subtitleSize: 'medium',
-  subtitleBackground: true,
-
-  // Downloads
+  ...DEFAULT_SETTINGS,
+  // Override any specific defaults for mobile
   downloadPath: '/storage/emulated/0/Download/FlixCapacitor',
-  downloadOnWifiOnly: true,
-  maxConcurrentDownloads: 2,
-  seedAfterDownload: false,
-  seedRatio: 1.0,
-
-  // Appearance
-  theme: 'dark',
   accentColor: '#dc2626',
-  compactMode: false,
-  showRatings: true,
-
-  // Content
-  adultContent: false,
-  preferredLanguage: 'en',
-  region: 'US',
-
-  // Advanced
-  cacheSize: 500, // MB
-  clearCacheOnExit: false,
-  enableAnalytics: false,
-  developerMode: false
 };
 
 interface SettingsStore extends Writable<AppSettings> {

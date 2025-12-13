@@ -1,18 +1,20 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
-  import { DetailHero, CastList } from '$components/content';
+  import { DetailHero, CastList, TorrentList } from '$components/content';
   import { Preloader, BlockTitle } from 'konsta/svelte';
   import { tmdbService } from '$services/tmdb.service';
+  import { torrentProviderService } from '$services/torrent-provider.service';
   import { uiStore } from '$stores/ui.store';
-  import type { Movie, Cast } from '$types';
+  import type { Movie, Cast, TorrentInfo } from '$types';
 
   let movieId = $derived(Number($page.params.id));
 
   let movie = $state<Movie | null>(null);
   let cast = $state<Cast[]>([]);
-  let recommendations = $state<Movie[]>([]);
+  let torrents = $state<TorrentInfo[]>([]);
   let loading = $state(true);
+  let torrentsLoading = $state(false);
 
   // Load movie details when ID changes
   $effect(() => {
@@ -31,6 +33,9 @@
 
       movie = movieData;
       cast = creditsData.cast;
+
+      // Load torrents after we have movie data
+      loadTorrents(movieData);
     } catch (error) {
       console.error('Failed to load movie details:', error);
       uiStore.showToast('Failed to load movie details', 'error');
@@ -39,13 +44,50 @@
     }
   }
 
+  async function loadTorrents(movieData: Movie) {
+    torrentsLoading = true;
+    try {
+      // Search by IMDB ID first (most accurate)
+      if (movieData.imdbId) {
+        torrents = await torrentProviderService.searchByImdbId(movieData.imdbId);
+      }
+
+      // Fallback to title search if no results
+      if (torrents.length === 0 && movieData.title) {
+        torrents = await torrentProviderService.searchByTitle(
+          movieData.title,
+          movieData.year || undefined
+        );
+      }
+    } catch (error) {
+      console.error('Failed to load torrents:', error);
+    } finally {
+      torrentsLoading = false;
+    }
+  }
+
   function handlePlay() {
-    // Navigate to torrent selection or player
-    goto(`/player?type=movie&id=${movieId}`);
+    // Navigate to player with first available torrent
+    if (torrents.length > 0) {
+      const bestTorrent = torrents[0];
+      goto(`/player?type=movie&id=${movieId}&magnet=${encodeURIComponent(bestTorrent.magnetUri || '')}`);
+    } else {
+      uiStore.showToast('No torrents available', 'error');
+    }
+  }
+
+  function handleTorrentSelect(torrent: TorrentInfo) {
+    // Navigate to player with selected torrent
+    goto(`/player?type=movie&id=${movieId}&magnet=${encodeURIComponent(torrent.magnetUri || '')}`);
   }
 
   function handleDownload() {
-    uiStore.showToast('Download feature coming soon', 'info');
+    if (torrents.length > 0) {
+      uiStore.showToast('Download started', 'success');
+      // TODO: Implement download queue
+    } else {
+      uiStore.showToast('No torrents available', 'error');
+    }
   }
 </script>
 
@@ -76,6 +118,18 @@
         </p>
       </div>
     {/if}
+
+    <!-- Available Torrents -->
+    <div class="mt-6">
+      <div class="px-4">
+        <BlockTitle>Available Sources</BlockTitle>
+      </div>
+      <TorrentList
+        {torrents}
+        loading={torrentsLoading}
+        onSelect={handleTorrentSelect}
+      />
+    </div>
 
     <!-- Cast -->
     {#if cast.length > 0}

@@ -6,3 +6,4 @@ export { default as DetailHero } from './DetailHero.svelte';
 export { default as CastList } from './CastList.svelte';
 export { default as CategoryTabs } from './CategoryTabs.svelte';
 export { default as EpisodeList } from './EpisodeList.svelte';
+export { default as TorrentList } from './TorrentList.svelte';

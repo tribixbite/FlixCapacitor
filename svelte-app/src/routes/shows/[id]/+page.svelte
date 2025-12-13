@@ -1,11 +1,12 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
-  import { DetailHero, CastList, EpisodeList } from '$components/content';
-  import { Preloader, BlockTitle } from 'konsta/svelte';
+  import { DetailHero, CastList, EpisodeList, TorrentList } from '$components/content';
+  import { Preloader, BlockTitle, Chip } from 'konsta/svelte';
   import { tmdbService } from '$services/tmdb.service';
+  import { torrentProviderService } from '$services/torrent-provider.service';
   import { uiStore } from '$stores/ui.store';
-  import type { TVShow, Cast, Season } from '$types';
+  import type { TVShow, Cast, Season, TorrentInfo } from '$types';
 
   let showId = $derived(Number($page.params.id));
 
@@ -14,6 +15,21 @@
   let seasons = $state<Season[]>([]);
   let selectedSeason = $state(1);
   let loading = $state(true);
+
+  // Torrent state
+  let allTorrents = $state<TorrentInfo[]>([]);
+  let availableSeasons = $state<Map<number, number[]>>(new Map());
+  let torrentsLoading = $state(false);
+  let showImdbId = $state<string | null>(null);
+
+  // Derived: torrents for the selected season
+  let seasonTorrents = $derived.by(() => {
+    return allTorrents.filter(t => {
+      const match = t.name?.match(/S(\d+)E(\d+)/i);
+      if (!match) return false;
+      return parseInt(match[1], 10) === selectedSeason;
+    });
+  });
 
   // Load show details when ID changes
   $effect(() => {
@@ -38,6 +54,13 @@
       if (seasons.length > 0) {
         selectedSeason = seasons[seasons.length - 1].seasonNumber;
       }
+
+      // Load torrents if we have external IDs
+      // @ts-ignore - external_ids might be available
+      showImdbId = showData.imdbId || showData.external_ids?.imdb_id || null;
+      if (showImdbId) {
+        loadTorrents(showImdbId);
+      }
     } catch (error) {
       console.error('Failed to load show details:', error);
       uiStore.showToast('Failed to load show details', 'error');
@@ -46,7 +69,27 @@
     }
   }
 
+  async function loadTorrents(imdbId: string) {
+    torrentsLoading = true;
+    try {
+      allTorrents = await torrentProviderService.searchTVShowByImdbId(imdbId);
+      availableSeasons = await torrentProviderService.getAvailableSeasons(imdbId);
+    } catch (error) {
+      console.error('Failed to load torrents:', error);
+    } finally {
+      torrentsLoading = false;
+    }
+  }
+
   function handlePlay(seasonNumber?: number, episodeNumber?: number) {
+    // Find the best torrent for this episode
+    let torrent: TorrentInfo | undefined;
+
+    if (seasonNumber !== undefined && episodeNumber !== undefined) {
+      const pattern = new RegExp(`S${String(seasonNumber).padStart(2, '0')}E${String(episodeNumber).padStart(2, '0')}`, 'i');
+      torrent = allTorrents.find(t => pattern.test(t.name || ''));
+    }
+
     const params = new URLSearchParams({
       type: 'tv',
       id: String(showId)
@@ -58,16 +101,41 @@
     if (episodeNumber !== undefined) {
       params.set('episode', String(episodeNumber));
     }
+    if (torrent?.magnetUri) {
+      params.set('magnet', torrent.magnetUri);
+    }
 
     goto(`/player?${params.toString()}`);
   }
 
+  function handleTorrentSelect(torrent: TorrentInfo) {
+    // Parse season/episode from torrent name
+    const match = torrent.name?.match(/S(\d+)E(\d+)/i);
+    if (match) {
+      const season = parseInt(match[1], 10);
+      const episode = parseInt(match[2], 10);
+      goto(`/player?type=tv&id=${showId}&season=${season}&episode=${episode}&magnet=${encodeURIComponent(torrent.magnetUri || '')}`);
+    } else {
+      goto(`/player?type=tv&id=${showId}&magnet=${encodeURIComponent(torrent.magnetUri || '')}`);
+    }
+  }
+
   function handleDownload() {
-    uiStore.showToast('Download feature coming soon', 'info');
+    if (seasonTorrents.length > 0) {
+      uiStore.showToast('Download started', 'success');
+      // TODO: Implement download queue
+    } else {
+      uiStore.showToast('No torrents available', 'error');
+    }
   }
 
   function handleSeasonChange(seasonNumber: number) {
     selectedSeason = seasonNumber;
+  }
+
+  // Check if season has torrents
+  function seasonHasTorrents(seasonNumber: number): boolean {
+    return availableSeasons.has(seasonNumber);
   }
 </script>
 
@@ -109,6 +177,30 @@
           onSeasonChange={handleSeasonChange}
           onEpisodePlay={handlePlay}
         />
+      </div>
+    {/if}
+
+    <!-- Available Torrents for Season -->
+    {#if seasonTorrents.length > 0 || torrentsLoading}
+      <div class="mt-6">
+        <div class="px-4 flex items-center justify-between">
+          <BlockTitle class="!mb-0">Season {selectedSeason} Sources</BlockTitle>
+          {#if seasonTorrents.length > 0}
+            <span class="text-xs text-zinc-500">{seasonTorrents.length} torrents</span>
+          {/if}
+        </div>
+        <TorrentList
+          torrents={seasonTorrents}
+          loading={torrentsLoading}
+          onSelect={handleTorrentSelect}
+        />
+      </div>
+    {:else if !torrentsLoading && showImdbId}
+      <div class="mt-6 px-4">
+        <BlockTitle>Sources</BlockTitle>
+        <div class="text-center py-4 text-zinc-500 text-sm">
+          No torrents found for Season {selectedSeason}
+        </div>
       </div>
     {/if}
 

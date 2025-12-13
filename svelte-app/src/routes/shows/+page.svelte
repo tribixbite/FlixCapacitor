@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import { ShowCard, ContentGrid, CategoryTabs } from '$components/content';
-  import { FilterSheet } from '$components/navigation';
+  import { FilterSheet, GenreChips } from '$components/navigation';
   import { tmdbService } from '$services/tmdb.service';
   import { uiStore } from '$stores/ui.store';
   import type { TVShow, Genre } from '$types';
@@ -98,6 +98,11 @@
     minRating = filters.minRating;
     loadShows(true);
   }
+
+  function handleGenreSelect(genreIds: number[]) {
+    selectedGenres = genreIds;
+    loadShows(true);
+  }
 </script>
 
 <svelte:head>
@@ -109,6 +114,13 @@
     {categories}
     selected={section}
     onChange={handleCategoryChange}
+  />
+
+  <!-- Genre Quick Select -->
+  <GenreChips
+    {genres}
+    {selectedGenres}
+    onSelect={handleGenreSelect}
   />
 
   <div class="px-4 mb-4">

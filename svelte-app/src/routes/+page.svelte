@@ -10,7 +10,8 @@
   const categories = [
     { id: 'movies', label: 'Movies' },
     { id: 'shows', label: 'TV Shows' },
-    { id: 'anime', label: 'Anime' }
+    { id: 'anime', label: 'Anime' },
+    { id: 'learning', label: 'Learning' }
   ];
 
   // Content state
@@ -169,6 +170,22 @@
       <div class="flex flex-col items-center justify-center py-20 text-zinc-500">
         <span class="text-4xl mb-4">🎌</span>
         <p>Anime section coming soon</p>
+      </div>
+    {:else if selectedCategory === 'learning'}
+      <!-- Learning section - redirect to full learning page -->
+      <div class="flex flex-col items-center justify-center py-20 text-center px-4">
+        <span class="text-6xl mb-4">🎓</span>
+        <h2 class="text-xl font-semibold text-white mb-2">Educational Content</h2>
+        <p class="text-zinc-400 mb-6 max-w-xs">
+          Access free courses, lectures, documentaries, and research papers from Academic Torrents.
+        </p>
+        <button
+          type="button"
+          class="bg-red-600 text-white px-6 py-3 rounded-xl font-medium active:bg-red-700 transition-colors"
+          onclick={() => goto('/learning')}
+        >
+          Browse Learning Content
+        </button>
       </div>
     {/if}
   {/if}
