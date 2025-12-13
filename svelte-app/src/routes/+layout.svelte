@@ -2,7 +2,10 @@
   import { App, Page } from 'konsta/svelte';
   import { page } from '$app/stores';
   import { BottomNav, TopNavbar, SearchBar } from '$components/navigation';
+  import { OfflineBanner } from '$components/ui';
   import { settingsStore } from '$stores/settings.store';
+  import { watchHistoryStore } from '$stores/watch-history.store';
+  import { errorReportingService } from '$services';
   import { platform, useStatusBar } from '$plugins/platform';
   import '../app.css';
 
@@ -29,11 +32,20 @@
     }
   });
 
-  // Load settings on mount
+  // Load settings and watch history on mount
   $effect(() => {
     settingsStore.load();
+    watchHistoryStore.load();
+  });
+
+  // Initialize error reporting
+  $effect(() => {
+    errorReportingService.init();
   });
 </script>
+
+<!-- Offline Banner (renders at top when offline) -->
+<OfflineBanner />
 
 <App theme="ios" dark={true} class="h-full">
   <Page class="!bg-black min-h-screen">
@@ -47,6 +59,7 @@
     <div
       class="pt-14 pb-20 min-h-screen overflow-y-auto"
       class:!pb-0={hideBottomNav}
+      data-sveltekit-preload-data="hover"
     >
       {@render children()}
     </div>
