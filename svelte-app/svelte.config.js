@@ -11,8 +11,11 @@ const config = {
       assets: 'build',
       fallback: 'index.html',
       precompress: false,
-      strict: true
+      strict: false
     }),
+    prerender: {
+      handleHttpError: 'warn'
+    },
     alias: {
       '$components': 'src/lib/components',
       '$stores': 'src/lib/stores',

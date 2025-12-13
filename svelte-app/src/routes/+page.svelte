@@ -55,6 +55,7 @@
   }
 
   function handleMovieTap(movie: Movie) {
+    console.log('[Home] handleMovieTap called for movie:', movie.id, movie.title);
     goto(`/movies/${movie.id}`);
   }
 
