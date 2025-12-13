@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Segmented, SegmentedButton } from 'konsta/svelte';
   import { useHaptics, ImpactStyle } from '$plugins/platform';
 
   type Category = { id: string; label: string };
@@ -25,16 +24,18 @@
 </script>
 
 <div class="px-4 mb-4">
-  <Segmented strong rounded>
+  <div class="flex bg-zinc-900 rounded-xl p-1 gap-1">
     {#each categories as category (category.id)}
-      <SegmentedButton
-        strong
-        rounded
-        active={selected === category.id}
-        onClick={() => handleChange(category.id)}
+      <button
+        type="button"
+        class="flex-1 py-2 px-3 text-sm font-medium rounded-lg transition-all duration-200
+          {selected === category.id
+            ? 'bg-red-600 text-white shadow-lg'
+            : 'text-zinc-400 hover:text-white active:bg-zinc-800'}"
+        onclick={() => handleChange(category.id)}
       >
         {category.label}
-      </SegmentedButton>
+      </button>
     {/each}
-  </Segmented>
+  </div>
 </div>

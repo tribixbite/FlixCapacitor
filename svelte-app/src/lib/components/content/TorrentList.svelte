@@ -157,6 +157,13 @@
           class="w-full bg-zinc-900 rounded-xl p-3 text-left active:bg-zinc-800 transition-colors"
           onclick={() => handleSelect(torrent)}
         >
+          <!-- Title Row (for torrents with titles, like Academic) -->
+          {#if torrent.title && torrent.provider === 'Academic Torrents'}
+            <div class="text-sm font-medium text-white mb-2 line-clamp-2">
+              {torrent.title}
+            </div>
+          {/if}
+
           <!-- Header Row: Quality + Provider + Size -->
           <div class="flex items-center gap-2 mb-2">
             <!-- Quality Badge -->
