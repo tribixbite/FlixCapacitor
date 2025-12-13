@@ -9,6 +9,7 @@
   import { useTorrentStreamer } from '$lib/plugins/torrent-streamer';
   import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
   import { openSubtitlesService, type SubtitleResult } from '$services';
+  import { watchHistoryStore, generateContentId } from '$stores/watch-history.store';
   import { ScreenOrientation } from '@capacitor/screen-orientation';
   import { StatusBar, Style } from '@capacitor/status-bar';
 
@@ -21,7 +22,8 @@
     season,
     episode,
     onClose,
-    onError
+    onError,
+    onNextEpisode
   } = $props<{
     magnetUri?: string;
     title?: string;
@@ -32,6 +34,7 @@
     episode?: number;
     onClose?: () => void;
     onError?: (error: string) => void;
+    onNextEpisode?: () => void;
   }>();
 
   const streamer = useTorrentStreamer();
@@ -46,9 +49,22 @@
   let volume = $state(1);
   let isMuted = $state(false);
   let isFullscreen = $state(false);
+  let isPiP = $state(false);
   let showControls = $state(true);
   let controlsTimeout: number | null = null;
   let isInitialized = $state(false);
+  let positionSaveInterval: number | null = null;
+  let hasRestoredPosition = $state(false);
+
+  // Check if Picture-in-Picture is supported
+  const supportsPiP = $derived(
+    typeof document !== 'undefined' &&
+    'pictureInPictureEnabled' in document &&
+    (document as Document & { pictureInPictureEnabled?: boolean }).pictureInPictureEnabled === true
+  );
+
+  // Generate unique content ID for watch history
+  const contentId = $derived(generateContentId({ imdbId, magnetUri, season, episode }));
 
   // Quality and subtitle state
   let showQualitySelector = $state(false);
@@ -86,10 +102,50 @@
         videoElement.src = url;
         videoElement.load();
       }
+
+      // Start position save interval (every 5 seconds during playback)
+      positionSaveInterval = window.setInterval(() => {
+        if (isPlaying && duration > 0) {
+          savePlaybackPosition();
+        }
+      }, 5000);
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : 'Failed to initialize player';
       onError?.(errorMsg);
     }
+  }
+
+  // Save current playback position to watch history
+  async function savePlaybackPosition() {
+    if (!contentId || duration <= 0) return;
+
+    await watchHistoryStore.savePosition({
+      contentId,
+      title,
+      posterUrl,
+      position: currentTime,
+      duration,
+      imdbId: imdbId || undefined,
+      season,
+      episode,
+      mediaType: season !== undefined ? 'episode' : 'movie'
+    });
+  }
+
+  // Restore position from watch history
+  function restorePlaybackPosition() {
+    if (hasRestoredPosition || !contentId) return;
+
+    const entry = watchHistoryStore.getPosition(contentId);
+    if (entry && entry.position > 0 && entry.progress < 90) {
+      // Resume from last position (minus 5 seconds for context)
+      const resumeTime = Math.max(0, entry.position - 5);
+      if (videoElement) {
+        videoElement.currentTime = resumeTime;
+        console.log(`Resuming playback at ${Math.floor(resumeTime)}s`);
+      }
+    }
+    hasRestoredPosition = true;
   }
 
   async function lockOrientation() {
@@ -180,6 +236,25 @@
       }
     } catch (e) {
       console.warn('Fullscreen error:', e);
+    }
+    resetControlsTimeout();
+  }
+
+  async function togglePiP() {
+    if (!videoElement || !supportsPiP) return;
+    impact(ImpactStyle.Medium);
+
+    try {
+      const doc = document as Document & { pictureInPictureElement?: Element };
+      if (doc.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+        isPiP = false;
+      } else {
+        await videoElement.requestPictureInPicture();
+        isPiP = true;
+      }
+    } catch (e) {
+      console.warn('PiP error:', e);
     }
     resetControlsTimeout();
   }
@@ -314,10 +389,23 @@
     duration = videoElement.duration || 0;
   }
 
-  function handleVideoEnded() {
+  async function handleVideoEnded() {
     isPlaying = false;
     isPaused = false;
     showControls = true;
+
+    // Mark as completed in watch history
+    if (contentId) {
+      await watchHistoryStore.markCompleted(contentId);
+    }
+
+    // Trigger next episode callback if this is a TV episode
+    if (season !== undefined && episode !== undefined && onNextEpisode) {
+      // Small delay before triggering next episode
+      setTimeout(() => {
+        onNextEpisode();
+      }, 2000);
+    }
   }
 
   function handleVideoError(e: Event) {
@@ -353,6 +441,17 @@
   }
 
   async function handleClose() {
+    // Save final position before closing
+    if (duration > 0) {
+      await savePlaybackPosition();
+    }
+
+    // Cleanup
+    if (positionSaveInterval) {
+      clearInterval(positionSaveInterval);
+      positionSaveInterval = null;
+    }
+
     await streamer.stop();
     await unlockOrientation();
     await showStatusBar();
@@ -361,8 +460,16 @@
 
   onMount(() => {
     return () => {
+      // Cleanup on unmount
       if (controlsTimeout) {
         clearTimeout(controlsTimeout);
+      }
+      if (positionSaveInterval) {
+        clearInterval(positionSaveInterval);
+      }
+      // Save position on unmount if we have valid duration
+      if (duration > 0) {
+        savePlaybackPosition();
       }
       streamer.stop();
       unlockOrientation();
@@ -388,7 +495,11 @@
     onended={handleVideoEnded}
     onerror={handleVideoError}
     onwaiting={() => { /* handled by buffer indicator */ }}
-    oncanplay={() => { isPlaying = !videoElement?.paused; }}
+    oncanplay={() => {
+      isPlaying = !videoElement?.paused;
+      // Restore saved position on first canplay
+      restorePlaybackPosition();
+    }}
   >
     <track kind="captions" />
   </video>
@@ -443,6 +554,8 @@
       {volume}
       {isMuted}
       {isFullscreen}
+      {isPiP}
+      {supportsPiP}
       bufferedPercent={bufferedPercent}
       hasSubtitles={!!currentSubtitleUrl}
       onPlayPause={togglePlayPause}
@@ -452,6 +565,7 @@
       onVolumeChange={setVolume}
       onMuteToggle={toggleMute}
       onFullscreenToggle={toggleFullscreen}
+      onPiPToggle={togglePiP}
       onClose={handleClose}
       onQualitySelect={() => { showQualitySelector = true; }}
       onSubtitleSelect={() => { showSubtitleSelector = true; }}

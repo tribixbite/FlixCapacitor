@@ -9,6 +9,8 @@
     volume = 1,
     isMuted = false,
     isFullscreen = false,
+    isPiP = false,
+    supportsPiP = false,
     bufferedPercent = 0,
     hasSubtitles = false,
     onPlayPause,
@@ -18,6 +20,7 @@
     onVolumeChange,
     onMuteToggle,
     onFullscreenToggle,
+    onPiPToggle,
     onClose,
     onQualitySelect,
     onSubtitleSelect
@@ -31,6 +34,8 @@
     volume?: number;
     isMuted?: boolean;
     isFullscreen?: boolean;
+    isPiP?: boolean;
+    supportsPiP?: boolean;
     bufferedPercent?: number;
     hasSubtitles?: boolean;
     onPlayPause?: () => void;
@@ -40,6 +45,7 @@
     onVolumeChange?: (volume: number) => void;
     onMuteToggle?: () => void;
     onFullscreenToggle?: () => void;
+    onPiPToggle?: () => void;
     onClose?: () => void;
     onQualitySelect?: () => void;
     onSubtitleSelect?: () => void;
@@ -253,6 +259,20 @@
             </svg>
           {/if}
         </button>
+
+        <!-- Picture-in-Picture (only shown if supported) -->
+        {#if supportsPiP}
+          <button
+            type="button"
+            class="p-2 rounded-full hover:bg-white/10 transition-colors"
+            onclick={onPiPToggle}
+            aria-label={isPiP ? 'Exit picture-in-picture' : 'Enter picture-in-picture'}
+          >
+            <svg class="w-5 h-5 {isPiP ? 'text-red-500' : 'text-white'}" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/>
+            </svg>
+          </button>
+        {/if}
 
         <!-- Fullscreen -->
         <button

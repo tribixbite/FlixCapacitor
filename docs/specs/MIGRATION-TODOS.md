@@ -9,14 +9,14 @@
 ## 📊 Migration Progress
 
 ```
-Overall Progress: [█████████████████░░░] ~137/165 (83%)
+Overall Progress: [██████████████████░░] ~150/165 (91%)
 
 Phase 0: [██████████] 15/15 ✓ COMPLETE
 Phase 1: [██████████] 15/15 ✓ COMPLETE
 Phase 2: [██████████] 20/20 ✓ COMPLETE
 Phase 3: [██████████] 20/20 ✓ COMPLETE
 Phase 4: [██████████] 20/20 ✓ COMPLETE
-Phase 5: [████████░░] 17/20 ← IN PROGRESS (Quality + subtitles done)
+Phase 5: [██████████] 20/20 ✓ COMPLETE (Video player with quality/subtitle/PiP)
 Phase 6: [██████████] 20/20 ✓ COMPLETE
 Phase 7: [██████████] 20/20 ✓ COMPLETE
 Phase 8: [░░░░░░░░░░] 0/15  PENDING
@@ -301,11 +301,11 @@ Phase 8: [░░░░░░░░░░] 0/15  PENDING
   - Test: Delay adjustment works
 
 ### 5.4 Playback Features
-- [ ] **T108** Implement resume from last position
+- [x] **T108** Implement resume from last position
   - Test: Position restores
-- [ ] **T109** Create next episode auto-play
+- [x] **T109** Create next episode auto-play
   - Test: Next episode plays automatically
-- [ ] **T110** Implement picture-in-picture mode
+- [x] **T110** Implement picture-in-picture mode
   - Test: PiP window opens
 
 ---
