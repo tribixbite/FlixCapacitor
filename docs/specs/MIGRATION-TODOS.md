@@ -9,14 +9,14 @@
 ## 📊 Migration Progress
 
 ```
-Overall Progress: [████████████░░░░░░░░] ~120/165 (73%)
+Overall Progress: [█████████████░░░░░░░] ~131/165 (79%)
 
 Phase 0: [██████████] 15/15 ✓ COMPLETE
 Phase 1: [██████████] 15/15 ✓ COMPLETE
 Phase 2: [██████████] 20/20 ✓ COMPLETE
 Phase 3: [██████████] 20/20 ✓ COMPLETE
 Phase 4: [██████████] 20/20 ✓ COMPLETE
-Phase 5: [░░░░░░░░░░] 0/20  ← IN PROGRESS
+Phase 5: [█████░░░░░] 11/20 ← IN PROGRESS (Player core + controls done)
 Phase 6: [██████████] 20/20 ✓ COMPLETE
 Phase 7: [██████████] 20/20 ✓ COMPLETE
 Phase 8: [░░░░░░░░░░] 0/15  PENDING
@@ -243,15 +243,15 @@ Phase 8: [░░░░░░░░░░] 0/15  PENDING
   - Test: Next unwatched selected
 
 ### 4.3 Torrent Selection
-- [ ] **T085** Create `TorrentSelector.svelte` action sheet
+- [x] **T085** Create `TorrentSelector.svelte` action sheet
   - Test: Sheet opens with torrents
-- [ ] **T086** Display torrent metadata (size, seeders, source)
+- [x] **T086** Display torrent metadata (size, seeders, source)
   - Test: Metadata displays
-- [ ] **T087** Implement quality preference sorting
+- [x] **T087** Implement quality preference sorting
   - Test: Preferred quality on top
-- [ ] **T088** Create magnet link input option
+- [x] **T088** Create magnet link input option
   - Test: Manual magnet entry works
-- [ ] **T089** Implement torrent health indicator
+- [x] **T089** Implement torrent health indicator
   - Test: Health color shows
 - [ ] **T090** Add "Download Instead" option
   - Test: Download option triggers downloader
@@ -261,29 +261,29 @@ Phase 8: [░░░░░░░░░░] 0/15  PENDING
 ## Phase 5: Video Playback (Tasks 91-110)
 
 ### 5.1 Video Player Core
-- [ ] **T091** Create `VideoPlayer.svelte` wrapper component
+- [x] **T091** Create `VideoPlayer.svelte` wrapper component
   - Test: Video element renders
-- [ ] **T092** Integrate with TorrentStreamer plugin
+- [x] **T092** Integrate with TorrentStreamer plugin
   - Test: Stream URL plays
 - [ ] **T093** Implement HLS.js for HLS streams
   - Test: HLS playback works
-- [ ] **T094** Create fullscreen mode handling
+- [x] **T094** Create fullscreen mode handling
   - Test: Fullscreen toggles
-- [ ] **T095** Implement orientation lock (landscape)
+- [x] **T095** Implement orientation lock (landscape)
   - Test: Screen locks landscape
 
 ### 5.2 Player Controls
-- [ ] **T096** Create `PlayerControls.svelte` overlay
+- [x] **T096** Create `PlayerControls.svelte` overlay
   - Test: Controls show on tap
-- [ ] **T097** Implement play/pause button
+- [x] **T097** Implement play/pause button
   - Test: Playback toggles
-- [ ] **T098** Create seek bar with preview
+- [x] **T098** Create seek bar with preview
   - Test: Seek changes position
-- [ ] **T099** Implement skip forward/back (10s/30s)
+- [x] **T099** Implement skip forward/back (10s/30s)
   - Test: Skip buttons work
-- [ ] **T100** Create volume control slider
+- [x] **T100** Create volume control slider
   - Test: Volume changes
-- [ ] **T101** Implement double-tap to seek gesture
+- [x] **T101** Implement double-tap to seek gesture
   - Test: Double-tap skips
 
 ### 5.3 Quality & Subtitles
