@@ -9,14 +9,14 @@
 ## 📊 Migration Progress
 
 ```
-Overall Progress: [█████████████░░░░░░░] ~131/165 (79%)
+Overall Progress: [█████████████████░░░] ~137/165 (83%)
 
 Phase 0: [██████████] 15/15 ✓ COMPLETE
 Phase 1: [██████████] 15/15 ✓ COMPLETE
 Phase 2: [██████████] 20/20 ✓ COMPLETE
 Phase 3: [██████████] 20/20 ✓ COMPLETE
 Phase 4: [██████████] 20/20 ✓ COMPLETE
-Phase 5: [█████░░░░░] 11/20 ← IN PROGRESS (Player core + controls done)
+Phase 5: [████████░░] 17/20 ← IN PROGRESS (Quality + subtitles done)
 Phase 6: [██████████] 20/20 ✓ COMPLETE
 Phase 7: [██████████] 20/20 ✓ COMPLETE
 Phase 8: [░░░░░░░░░░] 0/15  PENDING
@@ -287,17 +287,17 @@ Phase 8: [░░░░░░░░░░] 0/15  PENDING
   - Test: Double-tap skips
 
 ### 5.3 Quality & Subtitles
-- [ ] **T102** Create `QualitySelector.svelte` sheet
+- [x] **T102** Create `QualitySelector.svelte` sheet
   - Test: Quality options display
-- [ ] **T103** Implement quality switching
+- [x] **T103** Implement quality switching
   - Test: Quality changes without restart
-- [ ] **T104** Create `SubtitleSelector.svelte` sheet
+- [x] **T104** Create `SubtitleSelector.svelte` sheet
   - Test: Subtitle list shows
-- [ ] **T105** Implement subtitle search integration
+- [x] **T105** Implement subtitle search integration
   - Test: Search finds subtitles
-- [ ] **T106** Create subtitle renderer overlay
+- [x] **T106** Create subtitle renderer overlay
   - Test: Subtitles display in sync
-- [ ] **T107** Implement subtitle timing adjustment
+- [x] **T107** Implement subtitle timing adjustment
   - Test: Delay adjustment works
 
 ### 5.4 Playback Features
