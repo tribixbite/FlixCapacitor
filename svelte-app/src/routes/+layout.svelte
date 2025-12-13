@@ -57,7 +57,8 @@
 
     <!-- Main Content Area -->
     <div
-      class="pt-14 pb-20 min-h-screen overflow-y-auto"
+      class="pt-[env(safe-area-inset-top,0px)] pb-20 min-h-screen overflow-y-auto"
+      style="padding-top: calc(env(safe-area-inset-top, 0px) + 3.5rem)"
       class:!pb-0={hideBottomNav}
       data-sveltekit-preload-data="hover"
     >

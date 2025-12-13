@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { List, ListItem, Toggle, BlockTitle, Button, ListInput } from 'konsta/svelte';
+  import { List, ListItem, BlockTitle, Button } from 'konsta/svelte';
   import { settingsStore } from '$lib/stores/settings.store';
   import { uiStore } from '$lib/stores/ui.store';
   import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
@@ -111,41 +111,37 @@
       onClick={() => showQualitySheet = true}
     />
 
-    <ListItem title="Auto-play">
-      <Toggle
-        slot="after"
-        checked={settings?.autoPlay ?? true}
-        onChange={(e) => updateSetting('autoPlay', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Auto-play"
+      after={settings?.autoPlay ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('autoPlay', !(settings?.autoPlay ?? true))}
+    />
 
-    <ListItem title="Auto-play Next Episode">
-      <Toggle
-        slot="after"
-        checked={settings?.autoPlayNextEpisode ?? true}
-        onChange={(e) => updateSetting('autoPlayNextEpisode', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Auto-play Next Episode"
+      after={settings?.autoPlayNextEpisode ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('autoPlayNextEpisode', !(settings?.autoPlayNextEpisode ?? true))}
+    />
 
-    <ListItem title="Remember Playback Position">
-      <Toggle
-        slot="after"
-        checked={settings?.rememberPlaybackPosition ?? true}
-        onChange={(e) => updateSetting('rememberPlaybackPosition', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Remember Playback Position"
+      after={settings?.rememberPlaybackPosition ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('rememberPlaybackPosition', !(settings?.rememberPlaybackPosition ?? true))}
+    />
   </List>
 
   <!-- External Player Settings -->
   <BlockTitle>External Player</BlockTitle>
   <List strongIos inset>
-    <ListItem title="Use External Player">
-      <Toggle
-        slot="after"
-        checked={settings?.useExternalPlayer ?? false}
-        onChange={(e) => updateSetting('useExternalPlayer', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Use External Player"
+      after={settings?.useExternalPlayer ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('useExternalPlayer', !(settings?.useExternalPlayer ?? false))}
+    />
 
     {#if settings?.useExternalPlayer}
       <ListItem
@@ -168,13 +164,12 @@
   <!-- Chromecast Settings -->
   <BlockTitle>Chromecast</BlockTitle>
   <List strongIos inset>
-    <ListItem title="Enable Chromecast">
-      <Toggle
-        slot="after"
-        checked={settings?.enableChromecast ?? true}
-        onChange={(e) => updateSetting('enableChromecast', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Enable Chromecast"
+      after={settings?.enableChromecast ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('enableChromecast', !(settings?.enableChromecast ?? true))}
+    />
 
     {#if settings?.enableChromecast}
       <ListItem
@@ -194,49 +189,44 @@
       link
     />
 
-    <ListItem title="Subtitle Background">
-      <Toggle
-        slot="after"
-        checked={settings?.subtitleBackground ?? true}
-        onChange={(e) => updateSetting('subtitleBackground', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Subtitle Background"
+      after={settings?.subtitleBackground ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('subtitleBackground', !(settings?.subtitleBackground ?? true))}
+    />
   </List>
 
   <!-- Torrent Providers -->
   <BlockTitle>Content Sources</BlockTitle>
   <List strongIos inset>
-    <ListItem title="YTS (Movies)">
-      <Toggle
-        slot="after"
-        checked={settings?.enableYTS ?? true}
-        onChange={(e) => updateSetting('enableYTS', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="YTS (Movies)"
+      after={settings?.enableYTS ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('enableYTS', !(settings?.enableYTS ?? true))}
+    />
 
-    <ListItem title="EZTV (TV Shows)">
-      <Toggle
-        slot="after"
-        checked={settings?.enableEZTV ?? true}
-        onChange={(e) => updateSetting('enableEZTV', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="EZTV (TV Shows)"
+      after={settings?.enableEZTV ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('enableEZTV', !(settings?.enableEZTV ?? true))}
+    />
 
-    <ListItem title="1337x (Movies & TV)">
-      <Toggle
-        slot="after"
-        checked={settings?.enable1337x ?? false}
-        onChange={(e) => updateSetting('enable1337x', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="1337x (Movies & TV)"
+      after={settings?.enable1337x ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('enable1337x', !(settings?.enable1337x ?? false))}
+    />
 
-    <ListItem title="Academic Torrents (Learning)">
-      <Toggle
-        slot="after"
-        checked={settings?.enableAcademicTorrents ?? false}
-        onChange={(e) => updateSetting('enableAcademicTorrents', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Academic Torrents (Learning)"
+      after={settings?.enableAcademicTorrents ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('enableAcademicTorrents', !(settings?.enableAcademicTorrents ?? false))}
+    />
 
     <ListItem
       title="Minimum Seeders"
@@ -248,13 +238,12 @@
   <!-- Network Settings -->
   <BlockTitle>Network / VPN</BlockTitle>
   <List strongIos inset>
-    <ListItem title="Use VPN">
-      <Toggle
-        slot="after"
-        checked={settings?.useVpn ?? false}
-        onChange={(e) => updateSetting('useVpn', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Use VPN"
+      after={settings?.useVpn ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('useVpn', !(settings?.useVpn ?? false))}
+    />
 
     {#if settings?.useVpn}
       <ListItem
@@ -264,13 +253,12 @@
       />
     {/if}
 
-    <ListItem title="Enable Proxy">
-      <Toggle
-        slot="after"
-        checked={settings?.proxyEnabled ?? false}
-        onChange={(e) => updateSetting('proxyEnabled', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Enable Proxy"
+      after={settings?.proxyEnabled ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('proxyEnabled', !(settings?.proxyEnabled ?? false))}
+    />
 
     {#if settings?.proxyEnabled}
       <ListItem
@@ -323,21 +311,19 @@
   <!-- Download Settings -->
   <BlockTitle>Downloads</BlockTitle>
   <List strongIos inset>
-    <ListItem title="Download on Wi-Fi Only">
-      <Toggle
-        slot="after"
-        checked={settings?.downloadOnWifiOnly ?? true}
-        onChange={(e) => updateSetting('downloadOnWifiOnly', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Download on Wi-Fi Only"
+      after={settings?.downloadOnWifiOnly ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('downloadOnWifiOnly', !(settings?.downloadOnWifiOnly ?? true))}
+    />
 
-    <ListItem title="Seed After Download">
-      <Toggle
-        slot="after"
-        checked={settings?.seedAfterDownload ?? false}
-        onChange={(e) => updateSetting('seedAfterDownload', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Seed After Download"
+      after={settings?.seedAfterDownload ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('seedAfterDownload', !(settings?.seedAfterDownload ?? false))}
+    />
 
     <ListItem
       title="Download Location"
@@ -355,49 +341,44 @@
   <!-- Appearance -->
   <BlockTitle>Appearance</BlockTitle>
   <List strongIos inset>
-    <ListItem title="Show Ratings">
-      <Toggle
-        slot="after"
-        checked={settings?.showRatings ?? true}
-        onChange={(e) => updateSetting('showRatings', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Show Ratings"
+      after={settings?.showRatings ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('showRatings', !(settings?.showRatings ?? true))}
+    />
 
-    <ListItem title="Compact Mode">
-      <Toggle
-        slot="after"
-        checked={settings?.compactMode ?? false}
-        onChange={(e) => updateSetting('compactMode', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Compact Mode"
+      after={settings?.compactMode ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('compactMode', !(settings?.compactMode ?? false))}
+    />
 
-    <ListItem title="Enable Animations">
-      <Toggle
-        slot="after"
-        checked={settings?.enableAnimations ?? true}
-        onChange={(e) => updateSetting('enableAnimations', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Enable Animations"
+      after={settings?.enableAnimations ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('enableAnimations', !(settings?.enableAnimations ?? true))}
+    />
   </List>
 
   <!-- Advanced -->
   <BlockTitle>Advanced</BlockTitle>
   <List strongIos inset>
-    <ListItem title="Developer Mode">
-      <Toggle
-        slot="after"
-        checked={settings?.developerMode ?? false}
-        onChange={(e) => updateSetting('developerMode', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Developer Mode"
+      after={settings?.developerMode ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('developerMode', !(settings?.developerMode ?? false))}
+    />
 
-    <ListItem title="Hardware Acceleration">
-      <Toggle
-        slot="after"
-        checked={settings?.hardwareAcceleration ?? true}
-        onChange={(e) => updateSetting('hardwareAcceleration', e.target.checked)}
-      />
-    </ListItem>
+    <ListItem
+      title="Hardware Acceleration"
+      after={settings?.hardwareAcceleration ? 'On' : 'Off'}
+      link
+      onClick={() => updateSetting('hardwareAcceleration', !(settings?.hardwareAcceleration ?? true))}
+    />
 
     <ListItem
       title="Clear Cache"
