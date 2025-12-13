@@ -102,6 +102,12 @@
         return 'bg-zinc-700';
     }
   }
+
+  // Get health bar width based on seed/leech ratio
+  function getHealthWidth(seeders: number, leechers: number): number {
+    const ratio = seeders / Math.max(leechers, 1);
+    return Math.min(100, Math.max(10, ratio * 30));
+  }
 </script>
 
 <div class="torrent-list">
@@ -197,11 +203,9 @@
 
             <!-- Health Indicator Bar -->
             <div class="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-              {@const ratio = seeders / Math.max(leechers, 1)}
-              {@const healthWidth = Math.min(100, Math.max(10, ratio * 30))}
               <div
                 class="h-full transition-all {seeders >= 20 ? 'bg-green-500' : seeders >= 5 ? 'bg-yellow-500' : 'bg-red-500'}"
-                style="width: {healthWidth}%"
+                style="width: {getHealthWidth(seeders, leechers)}%"
               ></div>
             </div>
           </div>
