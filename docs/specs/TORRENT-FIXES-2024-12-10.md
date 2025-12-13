@@ -143,3 +143,23 @@ val minimumBytes = maxOf(minimumFixed, minimumPercent)
    - Complete plugin wrappers with Svelte 5 runes
    - Platform utilities for native features
    - Type-safe interfaces matching Kotlin implementation
+
+## Session 2: UI Navigation Fixes (Dec 12)
+
+### Issues Fixed
+1. **Movie Card Navigation** - Tapping movie cards now navigates to detail pages
+   - Root cause: Anchor tag links not working in Capacitor webview
+   - Solution: Changed to button+goto() pattern with SvelteKit navigation
+   - Added +layout.ts with `ssr:false` and `prerender:false` for proper SPA mode
+
+2. **Bottom Nav Icons** - Added SVG icons replacing text-only labels
+   - Root cause: Konsta UI's TabbarLink icon slot not working in Svelte 5
+   - Solution: Custom nav component with inline SVG icons
+   - Reduced from 6 to 5 items (Browse, Favorites, Library, Downloads, Settings)
+
+### Technical Changes
+- `svelte-app/src/routes/+layout.ts` - New file for SPA configuration
+- `svelte-app/svelte.config.js` - Added handleHttpError:warn for prerendering
+- `svelte-app/src/lib/components/content/MovieCard.svelte` - button+goto() navigation
+- `svelte-app/src/lib/components/content/ShowCard.svelte` - button+goto() navigation
+- `svelte-app/src/lib/components/navigation/BottomNav.svelte` - Custom nav with SVG icons
