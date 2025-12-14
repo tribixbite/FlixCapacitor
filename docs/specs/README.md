@@ -101,10 +101,20 @@
 - ✅ **Browse by Genre:** GenreChips component for quick filtering
 - ✅ **Torrent Display:** TorrentList with seed/leech counts, health indicators
 - ✅ **TV Series:** EZTV integration with season filtering
-- ✅ **Academic Torrents:** Learning page with category filtering
+- ✅ **Academic Torrents:** Learning page with video-only filtering
 - ✅ **Chromecast:** Device discovery, connection, media casting
 - ✅ **Video Search:** TMDB multi-search with filter tabs, recent searches
 - ✅ **Video Player:** Quality selector, subtitles, resume position, PiP
+
+### Phase 10.1: Learning Page Enhancements ✅ COMPLETE (2025-12-13)
+- ✅ **Video-Only Filter:** `isVideoContent()` function filters RSS feed to show only:
+  - Video courses (MIT, Stanford, Yale, etc.)
+  - Lectures and tutorials
+  - Documentaries
+- ✅ **Excluded Content:** Datasets, Wikipedia dumps, text archives, PDFs
+- ✅ **Inline Search:** Dedicated search bar on Learning page
+- ✅ **Category Filters:** All, Courses, Lectures, Documentaries tabs
+- ✅ **Sample Fallback:** 10 curated video courses when RSS has no video content
 
 ### Services Implemented
 | Service | Description | API |
