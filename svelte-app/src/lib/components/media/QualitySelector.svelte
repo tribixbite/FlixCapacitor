@@ -47,8 +47,9 @@
 <div
   class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
   onclick={handleBackdropClick}
-  onkeydown={() => {}}
+  onkeydown={(e) => { if (e.key === 'Escape') onClose?.(); }}
   role="dialog"
+  tabindex="-1"
   aria-modal="true"
   aria-label="Quality selector"
 >

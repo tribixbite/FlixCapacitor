@@ -422,6 +422,7 @@
     onclick={() => showQualitySheet = false}
     onkeydown={(e) => e.key === 'Escape' && (showQualitySheet = false)}
     role="dialog"
+    tabindex="-1"
     aria-modal="true"
   >
     <div
@@ -451,6 +452,7 @@
     onclick={() => showPlayerSheet = false}
     onkeydown={(e) => e.key === 'Escape' && (showPlayerSheet = false)}
     role="dialog"
+    tabindex="-1"
     aria-modal="true"
   >
     <div

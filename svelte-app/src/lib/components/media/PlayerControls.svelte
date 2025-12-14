@@ -184,7 +184,12 @@
       ontouchstart={handleSeekStart}
       ontouchmove={handleSeekMove}
       ontouchend={handleSeekEnd}
+      onkeydown={(e) => {
+        if (e.key === 'ArrowRight') onSeek?.(Math.min(duration, currentTime + 10));
+        if (e.key === 'ArrowLeft') onSeek?.(Math.max(0, currentTime - 10));
+      }}
       role="slider"
+      tabindex="0"
       aria-label="Video progress"
       aria-valuemin={0}
       aria-valuemax={duration}
@@ -194,17 +199,17 @@
       <div
         class="absolute inset-y-0 left-0 bg-white/40 rounded-full"
         style="width: {bufferedPercent}%"
-      />
+      ></div>
       <!-- Progress -->
       <div
         class="absolute inset-y-0 left-0 bg-red-500 rounded-full"
         style="width: {isSeeking ? (seekPosition / duration * 100) : progressPercent}%"
-      />
+      ></div>
       <!-- Thumb -->
       <div
         class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-red-500 rounded-full shadow-lg"
         style="left: calc({isSeeking ? (seekPosition / duration * 100) : progressPercent}% - 6px)"
-      />
+      ></div>
     </div>
 
     <!-- Time and Controls Row -->

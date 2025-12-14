@@ -55,7 +55,7 @@
       <div
         class="h-full bg-red-500 transition-all duration-300"
         style="width: {progress}%"
-      />
+      ></div>
     </div>
 
     <!-- Stats -->
