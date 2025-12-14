@@ -6,7 +6,8 @@
   import QualitySelector from './QualitySelector.svelte';
   import SubtitleSelector from './SubtitleSelector.svelte';
   import SubtitleOverlay from './SubtitleOverlay.svelte';
-  import { useTorrentStreamer } from '$lib/plugins/torrent-streamer.svelte';
+  import VideoFilePicker from './VideoFilePicker.svelte';
+  import { useTorrentStreamer, type VideoFile } from '$lib/plugins/torrent-streamer.svelte';
   import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
   import { openSubtitlesService, type SubtitleResult } from '$services';
   import { watchHistoryStore, generateContentId } from '$stores/watch-history.store';
@@ -66,6 +67,12 @@
   // Generate unique content ID for watch history
   const contentId = $derived(generateContentId({ imdbId, magnetUri, season, episode }));
 
+  // Video file picker state (for multi-file torrents)
+  let showVideoFilePicker = $state(false);
+  let videoFiles = $state<VideoFile[]>([]);
+  let selectedFileIndex = $state(0);
+  let hasCheckedForMultipleFiles = $state(false);
+
   // Quality and subtitle state
   let showQualitySelector = $state(false);
   let showSubtitleSelector = $state(false);
@@ -87,6 +94,56 @@
       initializePlayer();
     }
   });
+
+  // Check for multiple video files when metadata is received
+  $effect(() => {
+    const metadata = streamer.metadata;
+    if (metadata && metadata.numFiles > 1 && !hasCheckedForMultipleFiles) {
+      checkForMultipleVideoFiles();
+    }
+  });
+
+  /**
+   * Check if torrent has multiple video files and show picker if so
+   */
+  async function checkForMultipleVideoFiles() {
+    hasCheckedForMultipleFiles = true;
+    try {
+      const files = await streamer.getVideoFiles();
+      if (files.length > 1) {
+        videoFiles = files;
+        showVideoFilePicker = true;
+        // Pause video while user selects
+        if (videoElement && !videoElement.paused) {
+          videoElement.pause();
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to get video files:', e);
+    }
+  }
+
+  /**
+   * Handle video file selection from picker
+   */
+  async function handleVideoFileSelect(file: VideoFile) {
+    try {
+      selectedFileIndex = file.index;
+      const success = await streamer.selectFile(file.index);
+      if (success) {
+        // Update video source with new stream URL
+        if (streamer.streamUrl && videoElement) {
+          videoElement.src = streamer.streamUrl;
+          videoElement.load();
+          videoElement.play();
+        }
+      }
+    } catch (e) {
+      console.error('Failed to select video file:', e);
+      onError?.('Failed to select video file');
+    }
+    showVideoFilePicker = false;
+  }
 
   async function initializePlayer() {
     try {
@@ -600,6 +657,17 @@
       currentSubtitle={currentSubtitleUrl}
       onSelect={handleSubtitleSelect}
       onClose={() => { showSubtitleSelector = false; }}
+    />
+  {/if}
+
+  <!-- Video File Picker (for multi-file torrents) -->
+  {#if showVideoFilePicker}
+    <VideoFilePicker
+      files={videoFiles}
+      currentIndex={selectedFileIndex}
+      torrentName={streamer.torrentName}
+      onSelect={handleVideoFileSelect}
+      onClose={() => { showVideoFilePicker = false; }}
     />
   {/if}
 </div>
