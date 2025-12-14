@@ -6,7 +6,7 @@
   import QualitySelector from './QualitySelector.svelte';
   import SubtitleSelector from './SubtitleSelector.svelte';
   import SubtitleOverlay from './SubtitleOverlay.svelte';
-  import { useTorrentStreamer } from '$lib/plugins/torrent-streamer';
+  import { useTorrentStreamer } from '$lib/plugins/torrent-streamer.svelte';
   import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
   import { openSubtitlesService, type SubtitleResult } from '$services';
   import { watchHistoryStore, generateContentId } from '$stores/watch-history.store';

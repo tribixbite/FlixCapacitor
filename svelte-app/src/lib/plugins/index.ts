@@ -1,5 +1,5 @@
 // Re-export all plugin wrappers
-export { TorrentStreamer, useTorrentStreamer } from './torrent-streamer';
+export { TorrentStreamer, useTorrentStreamer } from './torrent-streamer.svelte';
 export type {
   TorrentStreamerPlugin,
   TorrentStatus,
@@ -7,7 +7,7 @@ export type {
   MetadataData,
   VideoFile,
   FileInfo
-} from './torrent-streamer';
+} from './torrent-streamer.svelte';
 
 export { TorrentDownloader, useTorrentDownloader } from './torrent-downloader';
 export type {

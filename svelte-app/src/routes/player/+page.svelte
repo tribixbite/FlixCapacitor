@@ -7,10 +7,11 @@
   import TorrentSelector from './TorrentSelector.svelte';
   import type { Movie, TVShow } from '$types';
 
-  // Query params: type (movie/show), id, magnetUri (optional direct play)
+  // Query params: type (movie/show/academic), id, magnetUri (optional direct play)
   let type = $derived($page.url.searchParams.get('type') || 'movie');
   let id = $derived(Number($page.url.searchParams.get('id')));
   let directMagnet = $derived($page.url.searchParams.get('magnet') || '');
+  let directTitle = $derived($page.url.searchParams.get('title') || '');
   let episode = $derived($page.url.searchParams.get('episode') || '');
   let season = $derived($page.url.searchParams.get('season') || '');
 
@@ -21,10 +22,16 @@
   let selectedMagnet = $state<string>('');
   let isPlaying = $state(false);
 
-  // Load content details
+  // Load content details (only if we have an ID and not a direct magnet)
   $effect(() => {
-    if (id) {
+    if (id && !directMagnet) {
       loadContent();
+    } else if (directMagnet) {
+      // Direct magnet play - no need to load content
+      loading = false;
+    } else if (!id && !directMagnet) {
+      // No id and no magnet - go back
+      goBack();
     }
   });
 
@@ -33,6 +40,7 @@
     if (directMagnet) {
       selectedMagnet = directMagnet;
       isPlaying = true;
+      loading = false;
     }
   });
 
@@ -80,7 +88,10 @@
   }
 
   function goBack() {
-    if (type === 'movie' && id) {
+    if (type === 'academic') {
+      // Go back to Learning page
+      goto('/?tab=learning');
+    } else if (type === 'movie' && id) {
       goto(`/movies/${id}`);
     } else if (type === 'show' && id) {
       goto(`/shows/${id}`);
@@ -91,7 +102,9 @@
 
   // Build title for player
   let playerTitle = $derived(() => {
-    if (!content) return '';
+    // Use direct title for Academic Torrents or other direct magnet play
+    if (directTitle) return directTitle;
+    if (!content) return 'Loading...';
     if (type === 'movie') {
       return (content as Movie).title;
     }
@@ -103,6 +116,8 @@
   });
 
   let playerSubtitle = $derived(() => {
+    // For Academic Torrents, show the type
+    if (type === 'academic') return 'Educational Content';
     if (!content) return '';
     if (type === 'movie') {
       return (content as Movie).year?.toString() || '';
