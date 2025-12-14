@@ -199,6 +199,8 @@ class TMDBService {
       originalLanguage: show.original_language,
       popularity: show.popularity,
       type: show.type,
+      // Extract IMDB ID from external_ids if available
+      imdbId: show.external_ids?.imdb_id ?? undefined,
       networks: show.networks.map(n => ({
         id: n.id,
         name: n.name,

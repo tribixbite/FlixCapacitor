@@ -87,6 +87,17 @@ export interface TMDBTVShowDetails extends TMDBTVShow {
   status: string;
   tagline: string;
   type: string;
+  // External IDs from append_to_response
+  external_ids?: {
+    imdb_id: string | null;
+    freebase_mid: string | null;
+    freebase_id: string | null;
+    tvdb_id: number | null;
+    tvrage_id: number | null;
+    facebook_id: string | null;
+    instagram_id: string | null;
+    twitter_id: string | null;
+  };
 }
 
 export interface TMDBSeason {

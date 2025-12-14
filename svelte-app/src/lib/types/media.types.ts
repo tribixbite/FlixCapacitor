@@ -58,6 +58,8 @@ export interface TVShow {
   type?: string;
   networks?: Network[];
   seasons?: Season[];
+  // External IDs for torrent lookups
+  imdbId?: string;
 }
 
 export interface Season {
