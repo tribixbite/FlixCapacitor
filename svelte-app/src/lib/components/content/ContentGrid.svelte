@@ -22,9 +22,9 @@
     children: Snippet<[item: T, index: number]>;
   }>();
 
-  let container: HTMLDivElement | null = null;
+  let container = $state<HTMLDivElement | null>(null);
   let observer: IntersectionObserver | null = null;
-  let sentinel: HTMLDivElement | null = null;
+  let sentinel = $state<HTMLDivElement | null>(null);
 
   // Column classes based on prop
   const colsMap: Record<2 | 3 | 4, string> = {

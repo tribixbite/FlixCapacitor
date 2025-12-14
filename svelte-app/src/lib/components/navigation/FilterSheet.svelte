@@ -35,12 +35,23 @@
 
   const { impact } = useHaptics();
 
-  // Local filter state
-  let localGenres = $state<number[]>([...selectedGenres]);
-  let localSortBy = $state(sortBy);
-  let localMinRating = $state(minRating);
-  let localYearFrom = $state(yearFrom);
-  let localYearTo = $state(yearTo);
+  // Local filter state - initialized empty, synced via effect
+  let localGenres = $state<number[]>([]);
+  let localSortBy = $state('popularity.desc');
+  let localMinRating = $state(0);
+  let localYearFrom = $state(1900);
+  let localYearTo = $state(new Date().getFullYear());
+
+  // Sync props to local state when sheet opens or props change
+  $effect(() => {
+    if (open) {
+      localGenres = [...selectedGenres];
+      localSortBy = sortBy;
+      localMinRating = minRating;
+      localYearFrom = yearFrom;
+      localYearTo = yearTo;
+    }
+  });
 
   const sortOptions = [
     { value: 'popularity.desc', label: 'Most Popular' },
