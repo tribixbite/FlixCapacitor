@@ -131,6 +131,10 @@
   - File metadata parsing (title, year, quality)
   - Folder management with remove capability
   - Local video playback via external apps (ACTION_VIEW intent)
+- ✅ **Library Persistence:** Folders and items persist across app restarts
+  - Capacitor Preferences storage for folders and items
+  - Auto-load on app startup
+  - Wrapped store methods ensure all changes are persisted
 - ✅ **UI Safe Area Fix:** Player header no longer cut off behind status bar
 
 ### Services Implemented
