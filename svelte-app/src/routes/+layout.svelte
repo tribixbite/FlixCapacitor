@@ -55,10 +55,10 @@
     <!-- Search Overlay -->
     <SearchBar />
 
-    <!-- Main Content Area -->
+    <!-- Main Content Area - accounts for fixed navbar (44px) + safe area + spacing -->
     <div
-      class="pt-[env(safe-area-inset-top,0px)] pb-20 min-h-screen overflow-y-auto"
-      style="padding-top: calc(env(safe-area-inset-top, 0px) + 3.5rem)"
+      class="pb-20 min-h-screen overflow-y-auto"
+      style="padding-top: calc(env(safe-area-inset-top, 0px) + 5rem)"
       class:!pb-0={hideBottomNav}
       data-sveltekit-preload-data="hover"
     >
