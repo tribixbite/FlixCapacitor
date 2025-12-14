@@ -1,8 +1,8 @@
 # FlixCapacitor Mobile - Technical Specifications
 
-**Last Updated:** 2025-12-13
-**Version:** 2.0.0
-**Status:** Svelte 5 Migration Complete - Full Functionality Restored
+**Last Updated:** 2025-12-14
+**Version:** 2.1.0
+**Status:** Phase 10.2 Complete - Downloads & Multi-File Support
 
 ## Table of Contents
 
@@ -116,6 +116,22 @@
 - ✅ **Category Filters:** All, Courses, Lectures, Documentaries tabs
 - ✅ **Sample Fallback:** 10 curated video courses when RSS has no video content
 
+### Phase 10.2: Downloads & Multi-File Support ✅ COMPLETE (2025-12-14)
+- ✅ **Add Torrent Sheet:** Bottom sheet on Downloads page for adding torrents
+  - Magnet URI input with clipboard paste
+  - Stream Now button (navigates to player)
+  - Download button (background download)
+  - .torrent file picker placeholder
+- ✅ **Video File Picker:** For multi-file torrents
+  - Auto-detects torrents with multiple video files
+  - Shows file type badge (MKV/MP4/etc), filename, size
+  - Integrates with selectFile() to switch playback
+- ✅ **Library Folder Picker:** SAF integration for local media
+  - Directory picker with persistent permissions
+  - File metadata parsing (title, year, quality)
+  - Folder management with remove capability
+- ✅ **UI Safe Area Fix:** Content no longer cut off behind navbar
+
 ### Services Implemented
 | Service | Description | API |
 |---------|-------------|-----|
@@ -125,10 +141,12 @@
 | chromecastService | Media casting | Google Cast |
 | errorReportingService | Crash tracking | Sentry |
 
-### Next: Device Testing ⏳
-- ⏳ Full UI verification across all views
-- ⏳ Torrent streaming end-to-end test
-- ⏳ Chromecast device connection test
+### Device Testing ✅ COMPLETE (2025-12-14)
+- ✅ Full UI verification across all views (Browse, Favorites, Library, Downloads, Settings, Learning)
+- ✅ Add Torrent sheet functionality tested
+- ✅ No UI cut-offs on any screen
+- ⏳ Torrent streaming end-to-end test (pending real torrent)
+- ⏳ Chromecast device connection test (pending Chromecast device)
 
 ## Specification Format
 
@@ -162,4 +180,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-13 by Claude Code (claude-opus-4-5-20251101)*
+*Last Updated: 2025-12-14 by Claude Code (claude-opus-4-5-20251101)*
