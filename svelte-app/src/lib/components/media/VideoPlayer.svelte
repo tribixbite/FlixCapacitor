@@ -357,10 +357,12 @@
     try {
       currentSubtitleUrl = sub.url || '';
 
-      // Download and parse subtitle file
-      if (sub.url) {
-        const content = await openSubtitlesService.downloadSubtitle(sub.url);
-        subtitleCues = parseSubtitleFile(content, sub.format || 'srt');
+      // Download and parse subtitle file using fileId
+      if (sub.fileId) {
+        const content = await openSubtitlesService.downloadSubtitle(sub.fileId);
+        // Determine format from fileName extension or default to srt
+        const format = sub.fileName?.toLowerCase().endsWith('.vtt') ? 'vtt' : 'srt';
+        subtitleCues = parseSubtitleFile(content, format);
       }
     } catch (e) {
       console.error('Failed to load subtitles:', e);
@@ -387,7 +389,9 @@
         const timingLine = lines.find(l => l.includes('-->'));
         if (!timingLine) continue;
 
-        const [startStr, endStr] = timingLine.split('-->').map(s => s.trim());
+        const timeParts = timingLine.split('-->').map(s => s.trim());
+        const startStr = timeParts[0] ?? '';
+        const endStr = timeParts[1] ?? '';
         const start = parseTimestamp(startStr);
         const end = parseTimestamp(endStr);
         const text = lines.slice(lines.indexOf(timingLine) + 1).join('\n').trim();
@@ -409,7 +413,10 @@
         if (timingIndex === -1) continue;
 
         const timingLine = lines[timingIndex];
-        const [startStr, endStr] = timingLine.split('-->').map(s => s.trim().split(' ')[0]);
+        if (!timingLine) continue;
+        const srtParts = timingLine.split('-->').map(s => s.trim().split(' ')[0] ?? '');
+        const startStr = srtParts[0] ?? '';
+        const endStr = srtParts[1] ?? '';
         const start = parseTimestamp(startStr);
         const end = parseTimestamp(endStr);
         const text = lines.slice(timingIndex + 1).join('\n').trim();
@@ -427,10 +434,13 @@
   function parseTimestamp(ts: string): number {
     const parts = ts.replace(',', '.').split(':');
     if (parts.length === 3) {
-      const [hours, minutes, seconds] = parts;
+      const hours = parts[0] ?? '0';
+      const minutes = parts[1] ?? '0';
+      const seconds = parts[2] ?? '0';
       return parseFloat(hours) * 3600 + parseFloat(minutes) * 60 + parseFloat(seconds);
     } else if (parts.length === 2) {
-      const [minutes, seconds] = parts;
+      const minutes = parts[0] ?? '0';
+      const seconds = parts[1] ?? '0';
       return parseFloat(minutes) * 60 + parseFloat(seconds);
     }
     return parseFloat(ts) || 0;

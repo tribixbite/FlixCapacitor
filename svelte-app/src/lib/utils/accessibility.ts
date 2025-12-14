@@ -116,6 +116,8 @@ export function trapFocus(container: HTMLElement, event: KeyboardEvent): void {
   const firstElement = focusableElements[0];
   const lastElement = focusableElements[focusableElements.length - 1];
 
+  if (!firstElement || !lastElement) return;
+
   if (event.shiftKey && document.activeElement === firstElement) {
     event.preventDefault();
     lastElement.focus();
@@ -135,19 +137,26 @@ export function getContrastRatio(foreground: string, background: string): number
     let r: number, g: number, b: number;
 
     if (color.length === 4) {
-      r = parseInt(color[1] + color[1], 16);
-      g = parseInt(color[2] + color[2], 16);
-      b = parseInt(color[3] + color[3], 16);
+      const c1 = color[1] ?? '0';
+      const c2 = color[2] ?? '0';
+      const c3 = color[3] ?? '0';
+      r = parseInt(c1 + c1, 16);
+      g = parseInt(c2 + c2, 16);
+      b = parseInt(c3 + c3, 16);
     } else {
       r = parseInt(color.slice(1, 3), 16);
       g = parseInt(color.slice(3, 5), 16);
       b = parseInt(color.slice(5, 7), 16);
     }
 
-    const [rs, gs, bs] = [r, g, b].map((c) => {
+    const sRGB = [r, g, b].map((c) => {
       c = c / 255;
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
+
+    const rs = sRGB[0] ?? 0;
+    const gs = sRGB[1] ?? 0;
+    const bs = sRGB[2] ?? 0;
 
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
   };

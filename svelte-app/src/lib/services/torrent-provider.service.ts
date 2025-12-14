@@ -265,14 +265,19 @@ class TorrentProviderService {
         return [];
       }
 
-      return this.convertYTSToTorrentInfo(data.data.movies[0]);
+      const movie = data.data.movies[0];
+      if (!movie) return [];
+      return this.convertYTSToTorrentInfo(movie);
     } catch (error) {
       console.error('Error searching torrents by IMDB:', error);
       // Try next mirror
       if (this.ytsMirrorIndex < YTS_MIRRORS.length - 1) {
         this.ytsMirrorIndex++;
-        this.ytsBaseUrl = YTS_MIRRORS[this.ytsMirrorIndex];
-        return this.searchByImdbId(imdbId);
+        const nextMirror = YTS_MIRRORS[this.ytsMirrorIndex];
+        if (nextMirror) {
+          this.ytsBaseUrl = nextMirror;
+          return this.searchByImdbId(imdbId);
+        }
       }
       return [];
     }
@@ -308,16 +313,20 @@ class TorrentProviderService {
       const bestMatch = data.data.movies.find(m =>
         m.title.toLowerCase() === targetTitle ||
         m.title.toLowerCase().includes(targetTitle)
-      ) || data.data.movies[0];
+      ) ?? data.data.movies[0];
 
+      if (!bestMatch) return [];
       return this.convertYTSToTorrentInfo(bestMatch);
     } catch (error) {
       console.error('Error searching torrents by title:', error);
       // Try next mirror
       if (this.ytsMirrorIndex < YTS_MIRRORS.length - 1) {
         this.ytsMirrorIndex++;
-        this.ytsBaseUrl = YTS_MIRRORS[this.ytsMirrorIndex];
-        return this.searchByTitle(title, year);
+        const nextMirror = YTS_MIRRORS[this.ytsMirrorIndex];
+        if (nextMirror) {
+          this.ytsBaseUrl = nextMirror;
+          return this.searchByTitle(title, year);
+        }
       }
       return [];
     }
@@ -378,8 +387,11 @@ class TorrentProviderService {
       // Try next mirror
       if (this.eztvMirrorIndex < EZTV_MIRRORS.length - 1) {
         this.eztvMirrorIndex++;
-        this.eztvBaseUrl = EZTV_MIRRORS[this.eztvMirrorIndex];
-        return this.searchTVShowByImdbId(imdbId);
+        const nextMirror = EZTV_MIRRORS[this.eztvMirrorIndex];
+        if (nextMirror) {
+          this.eztvBaseUrl = nextMirror;
+          return this.searchTVShowByImdbId(imdbId);
+        }
       }
       return [];
     }
@@ -398,7 +410,7 @@ class TorrentProviderService {
     // Filter to specific season/episode
     return allTorrents.filter(t => {
       const seMatch = t.name?.match(/S(\d+)E(\d+)/i);
-      if (!seMatch) return false;
+      if (!seMatch || !seMatch[1] || !seMatch[2]) return false;
 
       const torrentSeason = parseInt(seMatch[1], 10);
       const torrentEpisode = parseInt(seMatch[2], 10);
@@ -421,7 +433,7 @@ class TorrentProviderService {
 
     for (const torrent of allTorrents) {
       const seMatch = torrent.name?.match(/S(\d+)E(\d+)/i);
-      if (!seMatch) continue;
+      if (!seMatch || !seMatch[1] || !seMatch[2]) continue;
 
       const season = parseInt(seMatch[1], 10);
       const episode = parseInt(seMatch[2], 10);
@@ -512,6 +524,7 @@ class TorrentProviderService {
 
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
+        if (!item) continue;
         const title = item.getElementsByTagName('title')[0]?.textContent || '';
         const category = item.getElementsByTagName('category')[0]?.textContent || '';
         const infohash = item.getElementsByTagName('infohash')[0]?.textContent || '';
@@ -778,7 +791,7 @@ class TorrentProviderService {
    */
   extractInfoHash(magnetUri: string): string | null {
     const match = magnetUri.match(/xt=urn:btih:([a-fA-F0-9]+)/i);
-    return match ? match[1] : null;
+    return match?.[1] ?? null;
   }
 
   /**
@@ -786,9 +799,9 @@ class TorrentProviderService {
    */
   resetMirrors(): void {
     this.ytsMirrorIndex = 0;
-    this.ytsBaseUrl = YTS_MIRRORS[0];
+    this.ytsBaseUrl = YTS_MIRRORS[0] ?? YTS_API_BASE;
     this.eztvMirrorIndex = 0;
-    this.eztvBaseUrl = EZTV_MIRRORS[0];
+    this.eztvBaseUrl = EZTV_MIRRORS[0] ?? EZTV_API_BASE;
   }
 }
 

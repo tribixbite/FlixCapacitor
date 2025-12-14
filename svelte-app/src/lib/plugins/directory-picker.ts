@@ -210,7 +210,7 @@ export function parseFilename(filename: string): {
 
   // Try TV show pattern first
   const tvMatch = nameWithoutExt.match(tvShowPattern);
-  if (tvMatch) {
+  if (tvMatch && tvMatch[1] && tvMatch[2] && tvMatch[3]) {
     return {
       title: cleanTitle(tvMatch[1]),
       season: parseInt(tvMatch[2], 10),
@@ -221,7 +221,7 @@ export function parseFilename(filename: string): {
 
   // Try movie with year pattern
   const yearMatch = nameWithoutExt.match(yearPattern);
-  if (yearMatch) {
+  if (yearMatch && yearMatch[1] && yearMatch[2]) {
     return {
       title: cleanTitle(yearMatch[1]),
       year: parseInt(yearMatch[2], 10),

@@ -38,7 +38,7 @@
 
   // Get visible items
   const visibleItems = $derived(
-    items.slice(startIndex, endIndex).map((item, i) => ({
+    items.slice(startIndex, endIndex).map((item: T, i: number) => ({
       item,
       index: startIndex + i,
       style: `position: absolute; top: ${(startIndex + i) * itemHeight}px; height: ${itemHeight}px; left: 0; right: 0;`
@@ -58,19 +58,19 @@
   }
 
   onMount(() => {
-    if (container) {
-      viewportHeight = container.clientHeight;
+    if (!container) return;
 
-      // Watch for resize
-      const resizeObserver = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          viewportHeight = entry.contentRect.height;
-        }
-      });
-      resizeObserver.observe(container);
+    viewportHeight = container.clientHeight;
 
-      return () => resizeObserver.disconnect();
-    }
+    // Watch for resize
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        viewportHeight = entry.contentRect.height;
+      }
+    });
+    resizeObserver.observe(container);
+
+    return () => resizeObserver.disconnect();
   });
 </script>
 

@@ -87,7 +87,7 @@
   function updateSeekPosition(e: MouseEvent | TouchEvent) {
     const target = e.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientX = 'touches' in e ? (e.touches[0]?.clientX ?? 0) : e.clientX;
     const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     seekPosition = percent * duration;
   }

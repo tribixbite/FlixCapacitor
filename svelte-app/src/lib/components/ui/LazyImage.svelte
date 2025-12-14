@@ -60,9 +60,11 @@
     onLoad?.();
   }
 
-  function handleError(e: Event) {
+  function handleError(e: Event | string) {
     hasError = true;
-    onError?.(e);
+    if (e instanceof Event) {
+      onError?.(e);
+    }
   }
 
   onMount(() => {
@@ -88,10 +90,11 @@
       }
 
       return () => observer.disconnect();
-    } else {
-      // No IntersectionObserver support, load immediately
-      isIntersecting = true;
     }
+
+    // No IntersectionObserver support, load immediately
+    isIntersecting = true;
+    return undefined;
   });
 
   // Load actual image when intersecting

@@ -153,7 +153,8 @@ function createWatchHistoryStore(): WatchHistoryStore {
 export const watchHistoryStore = createWatchHistoryStore();
 
 // Derived stores for different views
-export const continueWatching: Readable<WatchHistoryEntry[]> = derived(
+// Note: Named watchHistoryContinue to avoid conflict with library.store.continueWatching
+export const watchHistoryContinue: Readable<WatchHistoryEntry[]> = derived(
   watchHistoryStore,
   $history => $history
     .filter(entry => !entry.completed && entry.progress > 5 && entry.progress < 90)
@@ -203,7 +204,7 @@ export function generateContentId(options: {
   if (magnetUri) {
     // Extract info hash from magnet or create simple hash
     const infoHashMatch = magnetUri.match(/btih:([a-fA-F0-9]{40})/i);
-    if (infoHashMatch) {
+    if (infoHashMatch?.[1]) {
       return `magnet_${infoHashMatch[1].toLowerCase()}`;
     }
     // Simple hash for non-standard magnets

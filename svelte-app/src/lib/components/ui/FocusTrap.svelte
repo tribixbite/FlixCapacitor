@@ -45,6 +45,8 @@
     const firstFocusable = focusable[0];
     const lastFocusable = focusable[focusable.length - 1];
 
+    if (!firstFocusable || !lastFocusable) return;
+
     if (e.shiftKey) {
       // Shift + Tab: go to last if at first
       if (document.activeElement === firstFocusable) {
@@ -77,7 +79,7 @@
     }
 
     if (!elementToFocus) {
-      elementToFocus = focusable[0];
+      elementToFocus = focusable[0] ?? null;
     }
 
     elementToFocus?.focus();

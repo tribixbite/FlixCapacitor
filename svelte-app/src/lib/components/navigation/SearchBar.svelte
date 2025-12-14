@@ -54,7 +54,6 @@
       value={inputValue}
       placeholder={placeholder}
       disableButton={true}
-      disableButtonText="Cancel"
       onInput={handleInput}
       onClear={handleClear}
       onDisable={handleCancel}

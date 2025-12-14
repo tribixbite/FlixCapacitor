@@ -16,7 +16,7 @@
   }>();
 
   // Font size classes
-  const fontSizes = {
+  const fontSizes: Record<'small' | 'medium' | 'large' | 'xlarge', string> = {
     small: 'text-sm',
     medium: 'text-base',
     large: 'text-lg',
@@ -24,14 +24,14 @@
   };
 
   // Background classes
-  const backgrounds = {
+  const backgrounds: Record<'none' | 'semi' | 'solid', string> = {
     none: 'bg-transparent',
     semi: 'bg-black/60',
     solid: 'bg-black'
   };
 
   // Position classes
-  const positions = {
+  const positions: Record<'top' | 'bottom', string> = {
     top: 'top-16',
     bottom: 'bottom-20'
   };
@@ -55,18 +55,21 @@
   let lines = $derived(
     text
       .split(/\r?\n/)
-      .map(line => parseSubtitleText(line))
-      .filter(line => line.length > 0)
+      .map((line: string) => parseSubtitleText(line))
+      .filter((line: string) => line.length > 0)
   );
 </script>
 
 {#if visible && lines.length > 0}
+  {@const positionClass = positions[position as 'top' | 'bottom']}
+  {@const bgClass = backgrounds[backgroundColor as 'none' | 'semi' | 'solid']}
+  {@const fontClass = fontSizes[fontSize as 'small' | 'medium' | 'large' | 'xlarge']}
   <div
-    class="subtitle-overlay absolute left-0 right-0 {positions[position]} flex justify-center pointer-events-none z-20 px-4"
+    class="subtitle-overlay absolute left-0 right-0 {positionClass} flex justify-center pointer-events-none z-20 px-4"
   >
-    <div class="{backgrounds[backgroundColor]} rounded-lg px-4 py-2 max-w-[90%]">
+    <div class="{bgClass} rounded-lg px-4 py-2 max-w-[90%]">
       {#each lines as line}
-        <p class="{fontSizes[fontSize]} text-white text-center font-medium leading-relaxed subtitle-text">
+        <p class="{fontClass} text-white text-center font-medium leading-relaxed subtitle-text">
           {line}
         </p>
       {/each}

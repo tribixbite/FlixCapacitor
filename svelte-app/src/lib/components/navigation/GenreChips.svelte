@@ -26,7 +26,7 @@
 
     let newSelection: number[];
     if (selectedGenres.includes(genreId)) {
-      newSelection = selectedGenres.filter(g => g !== genreId);
+      newSelection = selectedGenres.filter((g: number) => g !== genreId);
     } else {
       newSelection = [...selectedGenres, genreId];
     }

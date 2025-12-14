@@ -32,14 +32,14 @@
     3: 'grid-cols-3',
     4: 'grid-cols-4'
   };
-  let gridCols = $derived(colsMap[columns]);
+  let gridCols = $derived(colsMap[columns as 2 | 3 | 4]);
 
   const gapMap: Record<2 | 3 | 4, string> = {
     2: 'gap-2',
     3: 'gap-3',
     4: 'gap-4'
   };
-  let gapClass = $derived(gapMap[gap]);
+  let gapClass = $derived(gapMap[gap as 2 | 3 | 4]);
 
   // Set up infinite scroll
   $effect(() => {
