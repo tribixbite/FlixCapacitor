@@ -140,6 +140,10 @@
   - Download button adds torrent to queue with full media metadata
   - TV shows include season/episode parsing
   - Error toast when no torrents available
+- ✅ **Torrent Provider Fix:** YTS API now working on Android
+  - CapacitorHttp bypasses CORS restrictions
+  - Updated to working yts.am mirror (-> yts.lt)
+  - Mirror reset prevents stale state across searches
 
 ### Services Implemented
 | Service | Description | API |
@@ -154,7 +158,8 @@
 - ✅ Full UI verification across all views (Browse, Favorites, Library, Downloads, Settings, Learning)
 - ✅ Add Torrent sheet functionality tested
 - ✅ No UI cut-offs on any screen
-- ⏳ Torrent streaming end-to-end test (pending real torrent)
+- ✅ Torrent search working (The Godfather: 3 torrents, 2160p/1080p/720p)
+- ⏳ Torrent streaming end-to-end test (pending real torrent playback)
 - ⏳ Chromecast device connection test (pending Chromecast device)
 
 ## Specification Format
@@ -189,4 +194,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-14 14:15 by Claude Code (claude-opus-4-5-20251101)*
+*Last Updated: 2025-12-14 14:35 by Claude Code (claude-opus-4-5-20251101)*
