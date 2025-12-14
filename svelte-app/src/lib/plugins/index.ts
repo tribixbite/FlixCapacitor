@@ -9,11 +9,11 @@ export type {
   FileInfo
 } from './torrent-streamer.svelte';
 
-export { TorrentDownloader, useTorrentDownloader } from './torrent-downloader';
+export { TorrentDownloader, useTorrentDownloader } from './torrent-downloader.svelte';
 export type {
   TorrentDownloaderPlugin,
   DownloadStatus
-} from './torrent-downloader';
+} from './torrent-downloader.svelte';
 
 // Native Capacitor plugins re-exported with types
 export { Preferences } from '@capacitor/preferences';

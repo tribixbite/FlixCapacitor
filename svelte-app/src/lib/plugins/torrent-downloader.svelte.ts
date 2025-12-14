@@ -109,6 +109,14 @@ export function useTorrentDownloader() {
     }
   }
 
+  /**
+   * Start a download with object options (preferred API)
+   */
+  async function startDownload(options: { magnetUri: string; title: string; savePath?: string }) {
+    const savePath = options.savePath || '/storage/emulated/0/Download/FlixCapacitor';
+    return addDownload(options.magnetUri, savePath, options.title);
+  }
+
   async function addDownload(magnetUri: string, savePath: string, title?: string) {
     try {
       error = null;
@@ -180,6 +188,7 @@ export function useTorrentDownloader() {
     get isInitialized() { return isInitialized; },
     get error() { return error; },
 
+    startDownload,
     addDownload,
     removeDownload,
     pauseDownload,
