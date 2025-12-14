@@ -15,14 +15,16 @@ import com.getcapacitor.annotation.CapacitorPlugin
 class DirectoryPickerPlugin : Plugin() {
 
     private var savedCall: PluginCall? = null
+    private lateinit var directoryPicker: androidx.activity.result.ActivityResultLauncher<Uri?>
 
     /**
-     * Activity result launcher for directory picker
-     * Uses Android Storage Access Framework (SAF)
-     * Lazy initialization to avoid issues with bridge availability during plugin construction
+     * Called when the plugin is loaded - register ActivityResultLauncher here
+     * This MUST be called before Activity is STARTED per Android lifecycle requirements
      */
-    private val directoryPicker by lazy {
-        bridge.registerForActivityResult(
+    override fun load() {
+        super.load()
+        // Register the ActivityResultLauncher in load() to satisfy Android lifecycle requirements
+        directoryPicker = bridge.registerForActivityResult(
             ActivityResultContracts.OpenDocumentTree()
         ) { uri ->
             handleDirectoryPickerResult(uri)
