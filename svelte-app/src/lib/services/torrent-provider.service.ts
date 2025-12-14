@@ -61,13 +61,16 @@ interface YTSMovieDetailsResponse {
 }
 
 // Provider base URLs - can be configured
-const YTS_API_BASE = 'https://yts.mx/api/v2';
+// YTS.am redirects to yts.lt which is currently working
+const YTS_API_BASE = 'https://yts.am/api/v2';
 const EZTV_API_BASE = 'https://eztvx.to/api';
 // Academic Torrents RSS feed - Android WebView may not enforce CORS
 const ACADEMIC_TORRENTS_RSS = 'https://academictorrents.com/rss.xml';
 
 // Alternative mirrors in case primary is down
+// yts.am -> yts.lt (working), yts.mx (DNS issues), others have 403/500
 const YTS_MIRRORS = [
+  'https://yts.am/api/v2',
   'https://yts.mx/api/v2',
   'https://yts.torrentbay.st/api/v2',
   'https://yts.rs/api/v2'
@@ -223,18 +226,35 @@ function formatSize(bytes: number): string {
 }
 
 /**
- * Fetch with timeout and retry
+ * Fetch with CapacitorHttp to bypass CORS on Android
+ * Returns a Response-like object for compatibility
  */
-async function fetchWithRetry(url: string, timeout = 10000): Promise<Response> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-
+async function fetchWithCapacitor(url: string, timeout = 10000): Promise<{ ok: boolean; status: number; json: () => Promise<unknown> }> {
   try {
-    const response = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    return response;
+    const response = await CapacitorHttp.request({
+      url,
+      method: 'GET',
+      readTimeout: timeout,
+      connectTimeout: timeout
+    });
+
+    return {
+      ok: response.status >= 200 && response.status < 300,
+      status: response.status,
+      json: async () => {
+        // CapacitorHttp automatically parses JSON for JSON responses
+        if (typeof response.data === 'object') {
+          return response.data;
+        }
+        // If it's a string, try to parse it
+        if (typeof response.data === 'string') {
+          return JSON.parse(response.data);
+        }
+        return response.data;
+      }
+    };
   } catch (error) {
-    clearTimeout(timeoutId);
+    console.error('CapacitorHttp error:', error);
     throw error;
   }
 }
@@ -251,9 +271,11 @@ class TorrentProviderService {
    * @returns Array of torrent info sorted by quality
    */
   async searchByImdbId(imdbId: string): Promise<TorrentInfo[]> {
+    // Reset to primary mirror at the start of each search
+    this.resetMirrors();
     try {
       const url = `${this.ytsBaseUrl}/list_movies.json?query_term=${imdbId}`;
-      const response = await fetchWithRetry(url);
+      const response = await fetchWithCapacitor(url);
 
       if (!response.ok) {
         throw new Error(`YTS API error: ${response.status}`);
@@ -290,13 +312,15 @@ class TorrentProviderService {
    * @returns Array of torrent info sorted by quality
    */
   async searchByTitle(title: string, year?: number): Promise<TorrentInfo[]> {
+    // Reset to primary mirror at the start of each search
+    this.resetMirrors();
     try {
       let url = `${this.ytsBaseUrl}/list_movies.json?query_term=${encodeURIComponent(title)}`;
       if (year) {
         url += `&year=${year}`;
       }
 
-      const response = await fetchWithRetry(url);
+      const response = await fetchWithCapacitor(url);
 
       if (!response.ok) {
         throw new Error(`YTS API error: ${response.status}`);
@@ -340,7 +364,7 @@ class TorrentProviderService {
   async getMovieDetails(ytsId: number): Promise<TorrentInfo[]> {
     try {
       const url = `${this.ytsBaseUrl}/movie_details.json?movie_id=${ytsId}&with_images=true&with_cast=false`;
-      const response = await fetchWithRetry(url);
+      const response = await fetchWithCapacitor(url);
 
       if (!response.ok) {
         throw new Error(`YTS API error: ${response.status}`);
@@ -365,11 +389,13 @@ class TorrentProviderService {
    * @returns Array of torrent info for all episodes
    */
   async searchTVShowByImdbId(imdbId: string): Promise<TorrentInfo[]> {
+    // Reset to primary mirror at the start of each search
+    this.resetMirrors();
     try {
       // EZTV expects IMDB ID without 'tt' prefix
       const cleanId = imdbId.replace(/^tt/, '');
       const url = `${this.eztvBaseUrl}/get-torrents?imdb_id=${cleanId}&limit=100`;
-      const response = await fetchWithRetry(url);
+      const response = await fetchWithCapacitor(url);
 
       if (!response.ok) {
         throw new Error(`EZTV API error: ${response.status}`);
