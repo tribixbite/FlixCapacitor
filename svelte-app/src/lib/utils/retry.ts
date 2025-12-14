@@ -119,8 +119,11 @@ export async function fetchWithRetry(
       isRetryable: (error) => {
         if (isNetworkError(error)) return true;
         if (error instanceof Error && error.message.startsWith('HTTP ')) {
-          const status = parseInt(error.message.split(' ')[1]);
-          return isRetryableStatus(status);
+          const statusStr = error.message.split(' ')[1];
+          if (statusStr) {
+            const status = parseInt(statusStr);
+            return isRetryableStatus(status);
+          }
         }
         return false;
       },

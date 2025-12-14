@@ -166,8 +166,9 @@
     <BlockTitle>Year Range</BlockTitle>
     <div class="px-4 pb-4 flex gap-4">
       <div class="flex-1">
-        <label class="text-xs text-zinc-400">From</label>
+        <label class="text-xs text-zinc-400" for="year-from">From</label>
         <input
+          id="year-from"
           type="number"
           min="1900"
           max={localYearTo}
@@ -176,8 +177,9 @@
         />
       </div>
       <div class="flex-1">
-        <label class="text-xs text-zinc-400">To</label>
+        <label class="text-xs text-zinc-400" for="year-to">To</label>
         <input
+          id="year-to"
           type="number"
           min={localYearFrom}
           max={new Date().getFullYear()}

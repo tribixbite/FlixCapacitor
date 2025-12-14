@@ -127,6 +127,7 @@
       initialValue={currentQuery || initialQuery}
       onSearch={handleSearchSubmit}
       autofocus={!initialQuery}
+      inline={true}
     />
   </div>
 

@@ -68,8 +68,8 @@
 
   function handlePlay() {
     // Navigate to player with first available torrent
-    if (torrents.length > 0) {
-      const bestTorrent = torrents[0];
+    const bestTorrent = torrents[0];
+    if (bestTorrent) {
       goto(`/player?type=movie&id=${movieId}&magnet=${encodeURIComponent(bestTorrent.magnetUri || '')}`);
     } else {
       uiStore.showToast('No torrents available', 'error');

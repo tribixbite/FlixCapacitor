@@ -404,9 +404,10 @@
 
     <!-- Magnet URI Input -->
     <div class="mb-4">
-      <label class="block text-sm text-zinc-400 mb-2">Magnet URI</label>
+      <label class="block text-sm text-zinc-400 mb-2" for="magnet-uri">Magnet URI</label>
       <div class="flex gap-2">
         <input
+          id="magnet-uri"
           type="text"
           bind:value={magnetUri}
           placeholder="magnet:?xt=urn:btih:..."
