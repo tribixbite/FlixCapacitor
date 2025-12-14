@@ -57,8 +57,8 @@ class ErrorReportingService {
       // Dynamic import to avoid bundling Sentry in dev builds without DSN
       if (Capacitor.isNativePlatform()) {
         // Use Capacitor Sentry plugin for native platforms
-        const { SentryCapacitor } = await import('@sentry/capacitor');
-        await SentryCapacitor.init({
+        const SentryCapacitor = await import('@sentry/capacitor');
+        SentryCapacitor.init({
           dsn: this.config.dsn,
           environment: this.config.environment,
           release: this.config.release,
@@ -102,7 +102,7 @@ class ErrorReportingService {
 
     try {
       if (Capacitor.isNativePlatform()) {
-        const { SentryCapacitor } = await import('@sentry/capacitor');
+        const SentryCapacitor = await import('@sentry/capacitor');
         return SentryCapacitor.captureException(error, {
           extra: context?.extra,
           tags: {
@@ -110,7 +110,7 @@ class ErrorReportingService {
             action: context?.action,
             ...context?.tags
           }
-        });
+        }) as string | null;
       } else {
         const Sentry = await import('@sentry/browser');
         return Sentry.captureException(error, {
@@ -120,7 +120,7 @@ class ErrorReportingService {
             action: context?.action,
             ...context?.tags
           }
-        });
+        }) as string | null;
       }
     } catch (e) {
       console.error('[ErrorReporting] Failed to capture exception:', e);
@@ -139,11 +139,11 @@ class ErrorReportingService {
 
     try {
       if (Capacitor.isNativePlatform()) {
-        const { SentryCapacitor } = await import('@sentry/capacitor');
-        return SentryCapacitor.captureMessage(message, level);
+        const SentryCapacitor = await import('@sentry/capacitor');
+        return SentryCapacitor.captureMessage(message, level) as string | null;
       } else {
         const Sentry = await import('@sentry/browser');
-        return Sentry.captureMessage(message, level);
+        return Sentry.captureMessage(message, level) as string | null;
       }
     } catch (e) {
       console.error('[ErrorReporting] Failed to capture message:', e);
@@ -159,11 +159,11 @@ class ErrorReportingService {
 
     try {
       if (Capacitor.isNativePlatform()) {
-        const { SentryCapacitor } = await import('@sentry/capacitor');
-        SentryCapacitor.setUser(user);
+        const SentryCapacitor = await import('@sentry/capacitor');
+        SentryCapacitor.setUser(user ?? null);
       } else {
         const Sentry = await import('@sentry/browser');
-        Sentry.setUser(user);
+        Sentry.setUser(user ?? null);
       }
     } catch (e) {
       console.error('[ErrorReporting] Failed to set user:', e);
@@ -178,7 +178,7 @@ class ErrorReportingService {
 
     try {
       if (Capacitor.isNativePlatform()) {
-        const { SentryCapacitor } = await import('@sentry/capacitor');
+        const SentryCapacitor = await import('@sentry/capacitor');
         SentryCapacitor.addBreadcrumb({
           message,
           category,

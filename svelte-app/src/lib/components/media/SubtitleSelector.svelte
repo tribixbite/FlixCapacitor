@@ -197,7 +197,7 @@
             </svg>
 
             <div class="flex-1 min-w-0 text-left">
-              <p class="text-white text-sm truncate">{subtitle.release || subtitle.filename}</p>
+              <p class="text-white text-sm truncate">{subtitle.release || subtitle.fileName}</p>
               <div class="flex items-center gap-2 mt-1 text-xs text-white/40">
                 {#if subtitle.downloads}
                   <span>{formatDownloads(subtitle.downloads)} downloads</span>

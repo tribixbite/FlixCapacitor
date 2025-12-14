@@ -5,8 +5,8 @@
   let {
     items,
     loading = false,
-    columns = 3,
-    gap = 3,
+    columns = 3 as 2 | 3 | 4,
+    gap = 3 as 2 | 3 | 4,
     onLoadMore,
     hasMore = false,
     emptyMessage = 'No content found',

@@ -277,6 +277,38 @@ class OpenSubtitlesService {
   }
 
   /**
+   * Generic subtitle search method
+   * Convenience method that auto-selects movie or episode search
+   */
+  async searchSubtitles(options: {
+    imdbId?: string;
+    tmdbId?: number;
+    query?: string;
+    season?: number;
+    episode?: number;
+    language?: string;
+  }): Promise<SubtitleResult[]> {
+    // If season and episode are provided, search for episode
+    if (options.season !== undefined && options.episode !== undefined) {
+      return this.searchForEpisode({
+        imdbId: options.imdbId,
+        tmdbId: options.tmdbId,
+        title: options.query,
+        season: options.season,
+        episode: options.episode,
+        language: options.language
+      });
+    }
+    // Otherwise search for movie
+    return this.searchForMovie({
+      imdbId: options.imdbId,
+      tmdbId: options.tmdbId,
+      title: options.query,
+      language: options.language
+    });
+  }
+
+  /**
    * Get supported languages
    * Returns common subtitle languages
    */
