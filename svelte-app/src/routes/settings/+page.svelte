@@ -3,7 +3,7 @@
   import { settingsStore } from '$lib/stores/settings.store';
   import { uiStore } from '$lib/stores/ui.store';
   import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
-  import { EXTERNAL_PLAYERS, type AppSettings, type ExternalPlayer } from '$types/settings.types';
+  import { EXTERNAL_PLAYERS, type AppSettings, type ExternalPlayer, type VideoQuality } from '$types/settings.types';
 
   const { impact } = useHaptics();
 
@@ -27,7 +27,7 @@
     uiStore.showToast('Settings reset to defaults', 'success');
   }
 
-  const qualityOptions = [
+  const qualityOptions: Array<{ value: VideoQuality; label: string }> = [
     { value: 'auto', label: 'Auto' },
     { value: '480p', label: '480p' },
     { value: '720p', label: '720p' },

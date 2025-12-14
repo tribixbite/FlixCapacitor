@@ -26,7 +26,7 @@
   let seasonTorrents = $derived.by(() => {
     return allTorrents.filter(t => {
       const match = t.name?.match(/S(\d+)E(\d+)/i);
-      if (!match) return false;
+      if (!match || !match[1]) return false;
       return parseInt(match[1], 10) === selectedSeason;
     });
   });
@@ -52,7 +52,10 @@
 
       // Set initial season to last season or 1
       if (seasons.length > 0) {
-        selectedSeason = seasons[seasons.length - 1].seasonNumber;
+        const lastSeason = seasons[seasons.length - 1];
+        if (lastSeason) {
+          selectedSeason = lastSeason.seasonNumber;
+        }
       }
 
       // Load torrents if we have external IDs
@@ -111,7 +114,7 @@
   function handleTorrentSelect(torrent: TorrentInfo) {
     // Parse season/episode from torrent name
     const match = torrent.name?.match(/S(\d+)E(\d+)/i);
-    if (match) {
+    if (match && match[1] && match[2]) {
       const season = parseInt(match[1], 10);
       const episode = parseInt(match[2], 10);
       goto(`/player?type=tv&id=${showId}&season=${season}&episode=${episode}&magnet=${encodeURIComponent(torrent.magnetUri || '')}`);
