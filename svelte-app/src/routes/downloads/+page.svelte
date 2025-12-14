@@ -22,7 +22,7 @@
   let showAddSheet = $state(false);
   let magnetUri = $state('');
   let isAddingTorrent = $state(false);
-  let torrentFileInput: HTMLInputElement;
+  let torrentFileInput = $state<HTMLInputElement | null>(null);
   let isParsingFile = $state(false);
 
   const tabs = [
@@ -123,7 +123,7 @@
     try {
       // Extract title from magnet URI if available
       const dnMatch = magnetUri.match(/dn=([^&]+)/);
-      const title = dnMatch ? decodeURIComponent(dnMatch[1].replace(/\+/g, ' ')) : 'Unknown Torrent';
+      const title = dnMatch?.[1] ? decodeURIComponent(dnMatch[1].replace(/\+/g, ' ')) : 'Unknown Torrent';
 
       closeAddSheet();
 
@@ -156,7 +156,7 @@
     try {
       // Extract title from magnet URI
       const dnMatch = magnetUri.match(/dn=([^&]+)/);
-      const title = dnMatch ? decodeURIComponent(dnMatch[1].replace(/\+/g, ' ')) : 'Unknown Torrent';
+      const title = dnMatch?.[1] ? decodeURIComponent(dnMatch[1].replace(/\+/g, ' ')) : 'Unknown Torrent';
 
       // Start background download
       await torrentDownloader.startDownload({
