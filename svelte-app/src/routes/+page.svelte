@@ -82,7 +82,13 @@
   <CategoryTabs
     {categories}
     selected={selectedCategory}
-    onChange={(id) => selectedCategory = id}
+    onChange={(id) => {
+      if (id === 'learning') {
+        goto('/learning');
+      } else {
+        selectedCategory = id;
+      }
+    }}
   />
 
   {#if loading}
