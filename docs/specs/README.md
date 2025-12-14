@@ -44,7 +44,7 @@
 - **Database:** SQLite via @capacitor-community/sqlite
 
 ### Key Metrics
-- **TypeScript Errors:** 13 (external library slot type issues in Konsta UI)
+- **TypeScript Errors:** 10 (external library slot type issues in Konsta UI)
 - **CSS Bundle:** 35.10 kB uncompressed, 6.17 kB gzipped
 - **JS Bundle:** 568.47 kB uncompressed, 170.18 kB gzipped
 - **APK Size:** 74 MB (debug build)
@@ -185,4 +185,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-14 by Claude Code (claude-opus-4-5-20251101)*
+*Last Updated: 2025-12-14 12:45 by Claude Code (claude-opus-4-5-20251101)*
