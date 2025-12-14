@@ -121,7 +121,7 @@
   - Magnet URI input with clipboard paste
   - Stream Now button (navigates to player)
   - Download button (background download)
-  - .torrent file picker placeholder
+  - .torrent file picker with parse-torrent integration
 - ✅ **Video File Picker:** For multi-file torrents
   - Auto-detects torrents with multiple video files
   - Shows file type badge (MKV/MP4/etc), filename, size
@@ -130,7 +130,8 @@
   - Directory picker with persistent permissions
   - File metadata parsing (title, year, quality)
   - Folder management with remove capability
-- ✅ **UI Safe Area Fix:** Content no longer cut off behind navbar
+  - Local video playback via external apps (ACTION_VIEW intent)
+- ✅ **UI Safe Area Fix:** Player header no longer cut off behind status bar
 
 ### Services Implemented
 | Service | Description | API |
