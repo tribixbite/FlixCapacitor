@@ -138,6 +138,44 @@ export type AcademicCategory =
   | 'tutorials'
   | 'all';
 
+// Video content categories (playable content)
+const VIDEO_CATEGORIES = ['course', 'lecture', 'documentary', 'tutorial', 'video', 'mooc'];
+
+// File extensions that indicate video content
+const VIDEO_EXTENSIONS = ['.mp4', '.mkv', '.avi', '.mov', '.webm', '.m4v', '.wmv', '.flv'];
+
+/**
+ * Check if a torrent is likely video content based on category and title
+ */
+function isVideoContent(torrent: TorrentInfo): boolean {
+  const category = (torrent.source || '').toLowerCase();
+  const title = (torrent.title || torrent.name || '').toLowerCase();
+
+  // Check if category indicates video
+  if (VIDEO_CATEGORIES.some(vc => category.includes(vc))) {
+    return true;
+  }
+
+  // Check for video file extensions in title
+  if (VIDEO_EXTENSIONS.some(ext => title.includes(ext))) {
+    return true;
+  }
+
+  // Check for video-related keywords in title
+  const videoKeywords = ['lecture', 'course', 'tutorial', 'documentary', 'video', 'lesson', 'class', 'mooc', 'stanford', 'mit', 'yale', 'harvard', 'coursera', 'edx', 'khan'];
+  if (videoKeywords.some(kw => title.includes(kw))) {
+    return true;
+  }
+
+  // Exclude known non-video content
+  const nonVideoKeywords = ['dataset', 'dump', 'wikipedia', 'wiki', 'database', 'corpus', 'text', 'pdf', 'papers', 'index', '.xml', '.csv', '.json', '.txt', '.bz2', '.gz', '.tar'];
+  if (nonVideoKeywords.some(kw => title.includes(kw))) {
+    return false;
+  }
+
+  return false;
+}
+
 /**
  * Parse quality string to TorrentQuality type
  */
@@ -406,20 +444,23 @@ class TorrentProviderService {
   /**
    * Search Academic Torrents for educational content
    * Uses RSS feed and filters locally since there's no search API
+   * Filters for video content by default (courses, lectures, documentaries)
    * @param query - Search query
    * @param category - Content category filter
+   * @param videoOnly - Filter for video content only (default: true)
    * @returns Array of torrent info for educational content
    */
   async searchAcademicTorrents(
     query: string,
-    category: AcademicCategory = 'all'
+    category: AcademicCategory = 'all',
+    videoOnly = true
   ): Promise<TorrentInfo[]> {
     try {
       // Fetch all content from RSS and filter locally
       const allTorrents = await this.fetchAcademicRSS();
       const queryLower = query.toLowerCase();
 
-      return allTorrents.filter(torrent => {
+      let results = allTorrents.filter(torrent => {
         // Filter by search query
         const matchesQuery = torrent.title?.toLowerCase().includes(queryLower) ||
                             torrent.name?.toLowerCase().includes(queryLower);
@@ -432,6 +473,13 @@ class TorrentProviderService {
         }
         return true;
       });
+
+      // Filter for video content by default
+      if (videoOnly) {
+        results = results.filter(isVideoContent);
+      }
+
+      return results;
     } catch (error) {
       console.error('Error searching Academic Torrents:', error);
       return [];
@@ -508,17 +556,20 @@ class TorrentProviderService {
 
   /**
    * Sample Academic Torrents data for demonstration when RSS is unavailable
+   * Only includes video content (courses, lectures, documentaries)
    */
   private getSampleAcademicTorrents(): TorrentInfo[] {
     const sampleData = [
-      { title: 'MIT OpenCourseWare - Introduction to Computer Science', hash: '1a2b3c4d5e6f7890abcdef1234567890abcdef12', category: 'Course', size: 5368709120 },
-      { title: 'Khan Academy - Linear Algebra', hash: '2b3c4d5e6f7890abcdef1234567890abcdef1234', category: 'Course', size: 3221225472 },
-      { title: 'Stanford Machine Learning Course - Andrew Ng', hash: '3c4d5e6f7890abcdef1234567890abcdef123456', category: 'Lecture', size: 8589934592 },
-      { title: 'Wikipedia Database Dump 2024', hash: '4d5e6f7890abcdef1234567890abcdef12345678', category: 'Dataset', size: 21474836480 },
-      { title: 'Project Gutenberg - Complete Collection', hash: '5e6f7890abcdef1234567890abcdef1234567890', category: 'Textbook', size: 42949672960 },
+      { title: 'MIT OpenCourseWare - Introduction to Computer Science (6.001)', hash: '1a2b3c4d5e6f7890abcdef1234567890abcdef12', category: 'Course', size: 5368709120 },
+      { title: 'Khan Academy - Linear Algebra Complete Course', hash: '2b3c4d5e6f7890abcdef1234567890abcdef1234', category: 'Course', size: 3221225472 },
+      { title: 'Stanford Machine Learning Course - Andrew Ng (CS229)', hash: '3c4d5e6f7890abcdef1234567890abcdef123456', category: 'Lecture', size: 8589934592 },
       { title: 'Yale Open Courses - Introduction to Psychology', hash: '6f7890abcdef1234567890abcdef12345678abcd', category: 'Course', size: 4294967296 },
-      { title: 'Harvard CS50 - Computer Science Course', hash: '7890abcdef1234567890abcdef12345678abcdef', category: 'Course', size: 12884901888 },
-      { title: 'Nature Scientific Papers Archive 2023', hash: '890abcdef1234567890abcdef12345678abcdef12', category: 'Paper', size: 10737418240 },
+      { title: 'Harvard CS50 - Introduction to Computer Science 2024', hash: '7890abcdef1234567890abcdef12345678abcdef', category: 'Course', size: 12884901888 },
+      { title: 'Coursera - Deep Learning Specialization (Andrew Ng)', hash: '890abcdef1234567890abcdef12345678abcdef12', category: 'Course', size: 15032385536 },
+      { title: 'MIT 18.06 Linear Algebra - Gilbert Strang Lectures', hash: 'abcdef1234567890abcdef12345678abcdef1234', category: 'Lecture', size: 6442450944 },
+      { title: 'The Story of Maths - BBC Documentary', hash: 'bcdef1234567890abcdef12345678abcdef12345', category: 'Documentary', size: 2147483648 },
+      { title: 'Cosmos: A Spacetime Odyssey - Complete Series', hash: 'cdef1234567890abcdef12345678abcdef123456', category: 'Documentary', size: 18253611008 },
+      { title: 'Python Programming Tutorial - Complete Course', hash: 'def1234567890abcdef12345678abcdef1234567', category: 'Tutorial', size: 4831838208 },
     ];
 
     return sampleData.map(item => ({
@@ -545,25 +596,39 @@ class TorrentProviderService {
   /**
    * Get popular/featured academic content
    * Uses RSS feed which shows recent/popular content
+   * Filters for video content by default (courses, lectures, documentaries)
    * @param category - Optional category filter
+   * @param videoOnly - Filter for video content only (default: true)
    * @returns Array of popular educational torrents
    */
-  async getPopularAcademic(category?: AcademicCategory): Promise<TorrentInfo[]> {
+  async getPopularAcademic(category?: AcademicCategory, videoOnly = true): Promise<TorrentInfo[]> {
     try {
       const allTorrents = await this.fetchAcademicRSS();
 
+      let filtered = allTorrents;
+
+      // Filter for video content by default
+      if (videoOnly) {
+        filtered = filtered.filter(isVideoContent);
+      }
+
       // Filter by category if specified
       if (category && category !== 'all') {
-        return allTorrents.filter(torrent => {
+        filtered = filtered.filter(torrent => {
           const torrentCategory = torrent.source?.toLowerCase() || '';
           return torrentCategory.includes(category.toLowerCase());
         });
       }
 
-      return allTorrents;
+      // If no video content found, fall back to sample video data
+      if (filtered.length === 0 && videoOnly) {
+        return this.getSampleAcademicTorrents();
+      }
+
+      return filtered;
     } catch (error) {
       console.error('Error fetching popular academic torrents:', error);
-      return [];
+      return this.getSampleAcademicTorrents();
     }
   }
 
