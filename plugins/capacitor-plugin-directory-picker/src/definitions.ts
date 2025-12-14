@@ -22,6 +22,12 @@ export interface DirectoryPickerPlugin {
    * Should be called when user removes a folder from library
    */
   releaseDirectory(options: ReleaseDirectoryOptions): Promise<void>;
+
+  /**
+   * Open a file with an external app using ACTION_VIEW intent
+   * Used to play local video files with native video players
+   */
+  openFile(options: OpenFileOptions): Promise<void>;
 }
 
 export interface PickDirectoryResult {
@@ -102,4 +108,17 @@ export interface ReleaseDirectoryOptions {
    * The content:// URI to release permissions for
    */
   uri: string;
+}
+
+export interface OpenFileOptions {
+  /**
+   * The content:// URI of the file to open
+   */
+  uri: string;
+
+  /**
+   * MIME type of the file (e.g., 'video/mp4')
+   * Default: 'video/*'
+   */
+  mimeType?: string;
 }

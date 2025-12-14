@@ -220,4 +220,41 @@ class DirectoryPickerPlugin : Plugin() {
             call.reject("Failed to release directory permissions: ${e.message}", e)
         }
     }
+
+    /**
+     * Open a file with an external app using ACTION_VIEW intent
+     * Used to play local video files with native video players
+     */
+    @PluginMethod
+    fun openFile(call: PluginCall) {
+        val uriString = call.getString("uri")
+        val mimeType = call.getString("mimeType", "video/*")
+
+        if (uriString == null) {
+            call.reject("URI is required")
+            return
+        }
+
+        try {
+            val uri = Uri.parse(uriString)
+
+            // Create intent to view the file
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, mimeType)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+            // Check if there's an app that can handle this
+            if (intent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(intent)
+                call.resolve()
+            } else {
+                call.reject("No app found to open this file type")
+            }
+
+        } catch (e: Exception) {
+            call.reject("Failed to open file: ${e.message}", e)
+        }
+    }
 }

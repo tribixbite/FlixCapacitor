@@ -7,6 +7,7 @@ import type {
   ListFilesResult,
   PersistedDirectoriesResult,
   ReleaseDirectoryOptions,
+  OpenFileOptions,
 } from './definitions';
 
 export class DirectoryPickerWeb
@@ -27,5 +28,9 @@ export class DirectoryPickerWeb
 
   async releaseDirectory(_options: ReleaseDirectoryOptions): Promise<void> {
     throw this.unimplemented('Release directory not implemented on web.');
+  }
+
+  async openFile(_options: OpenFileOptions): Promise<void> {
+    throw this.unimplemented('Open file not implemented on web.');
   }
 }

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
   import { Card, Button, BlockTitle, Progressbar } from 'konsta/svelte';
   import { CategoryTabs } from '$lib/components/content';
   import {
@@ -225,17 +224,24 @@
   }
 
   /**
-   * Handle tapping a library item - play in native player
+   * Handle tapping a library item - open with external video player
    */
-  function handleItemTap(item: LibraryItem) {
-    // Navigate to player with the file URI
+  async function handleItemTap(item: LibraryItem) {
     const uri = item.file_path;
     if (!uri) {
       uiStore.showToast('No file path available', 'error');
       return;
     }
 
-    goto(`/player?type=local&uri=${encodeURIComponent(uri)}&title=${encodeURIComponent(item.title)}`);
+    await impact(ImpactStyle.Light);
+
+    try {
+      // Open with external player via native intent
+      await directoryPickerService.openFile(uri);
+    } catch (error) {
+      console.error('Error opening file:', error);
+      uiStore.showToast('No video player found', 'error');
+    }
   }
 </script>
 

@@ -12,6 +12,7 @@ export interface DirectoryPickerPlugin {
   listFiles(options: ListFilesOptions): Promise<ListFilesResult>;
   getPersistedDirectories(): Promise<PersistedDirectoriesResult>;
   releaseDirectory(options: ReleaseDirectoryOptions): Promise<void>;
+  openFile(options: OpenFileOptions): Promise<void>;
 }
 
 export interface PickDirectoryResult {
@@ -43,6 +44,11 @@ export interface PersistedDirectoriesResult {
 
 export interface ReleaseDirectoryOptions {
   uri: string;
+}
+
+export interface OpenFileOptions {
+  uri: string;
+  mimeType?: string;
 }
 
 // Video file extensions to scan for
@@ -80,6 +86,9 @@ const DirectoryPicker = registerPlugin<DirectoryPickerPlugin>('DirectoryPicker',
     },
     async releaseDirectory(): Promise<void> {
       // No-op on web
+    },
+    async openFile(): Promise<void> {
+      throw new Error('openFile not supported on web');
     }
   })
 });
@@ -146,6 +155,13 @@ export const directoryPickerService = {
       console.error('Failed to release directory:', error);
       return false;
     }
+  },
+
+  /**
+   * Open a file with external app via native intent
+   */
+  async openFile(uri: string, mimeType = 'video/*'): Promise<void> {
+    await DirectoryPicker.openFile({ uri, mimeType });
   },
 
   /**
