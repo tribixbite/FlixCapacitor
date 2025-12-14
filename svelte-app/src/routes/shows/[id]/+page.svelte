@@ -6,7 +6,8 @@
   import { tmdbService } from '$services/tmdb.service';
   import { torrentProviderService } from '$services/torrent-provider.service';
   import { uiStore } from '$stores/ui.store';
-  import type { TVShow, Cast, Season, TorrentInfo } from '$types';
+  import { downloadsStore } from '$stores/downloads.store';
+  import type { TVShow, Cast, Season, TorrentInfo, Download } from '$types';
 
   let showId = $derived(Number($page.params.id));
 
@@ -124,12 +125,48 @@
   }
 
   function handleDownload() {
-    if (seasonTorrents.length > 0) {
-      uiStore.showToast('Download started', 'success');
-      // TODO: Implement download queue
-    } else {
+    const torrent = seasonTorrents[0];
+    if (!torrent || !show) {
       uiStore.showToast('No torrents available', 'error');
+      return;
     }
+
+    // Parse season/episode from torrent name if available
+    const match = torrent.name?.match(/S(\d+)E(\d+)/i);
+    const seasonNum = match?.[1] ? parseInt(match[1], 10) : selectedSeason;
+    const episodeNum = match?.[2] ? parseInt(match[2], 10) : undefined;
+
+    // Create download object from torrent and show info
+    const download: Download = {
+      id: crypto.randomUUID(),
+      torrentHash: torrent.hash || torrent.magnetUri?.match(/btih:([a-fA-F0-9]+)/)?.[1] || '',
+      title: `${show.name} S${String(seasonNum).padStart(2, '0')}${episodeNum ? `E${String(episodeNum).padStart(2, '0')}` : ''}`,
+      name: torrent.title || torrent.name || show.name,
+      status: 'queued',
+      progress: 0,
+      downloadSpeed: 0,
+      uploadSpeed: 0,
+      eta: null,
+      size: torrent.size || 0,
+      downloaded: 0,
+      seeders: torrent.seeders || 0,
+      leechers: torrent.leechers || 0,
+      savePath: '',
+      addedAt: Date.now(),
+      mediaInfo: {
+        mediaType: 'episode',
+        tmdbId: show.id,
+        title: show.name,
+        posterPath: show.posterPath ?? undefined,
+        backdropPath: show.backdropPath ?? undefined,
+        seasonNumber: seasonNum,
+        episodeNumber: episodeNum,
+        showName: show.name
+      }
+    };
+
+    downloadsStore.addDownload(download);
+    uiStore.showToast('Added to download queue', 'success');
   }
 
   function handleSeasonChange(seasonNumber: number) {

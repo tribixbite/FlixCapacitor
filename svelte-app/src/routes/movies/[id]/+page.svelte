@@ -6,7 +6,8 @@
   import { tmdbService } from '$services/tmdb.service';
   import { torrentProviderService } from '$services/torrent-provider.service';
   import { uiStore } from '$stores/ui.store';
-  import type { Movie, Cast, TorrentInfo } from '$types';
+  import { downloadsStore } from '$stores/downloads.store';
+  import type { Movie, Cast, TorrentInfo, Download } from '$types';
 
   let movieId = $derived(Number($page.params.id));
 
@@ -82,12 +83,42 @@
   }
 
   function handleDownload() {
-    if (torrents.length > 0) {
-      uiStore.showToast('Download started', 'success');
-      // TODO: Implement download queue
-    } else {
+    const torrent = torrents[0];
+    if (!torrent || !movie) {
       uiStore.showToast('No torrents available', 'error');
+      return;
     }
+
+    // Create download object from torrent and movie info
+    const download: Download = {
+      id: crypto.randomUUID(),
+      torrentHash: torrent.hash || torrent.magnetUri?.match(/btih:([a-fA-F0-9]+)/)?.[1] || '',
+      title: movie.title,
+      name: torrent.title || movie.title,
+      status: 'queued',
+      progress: 0,
+      downloadSpeed: 0,
+      uploadSpeed: 0,
+      eta: null,
+      size: torrent.size || 0,
+      downloaded: 0,
+      seeders: torrent.seeders || 0,
+      leechers: torrent.leechers || 0,
+      savePath: '',
+      addedAt: Date.now(),
+      mediaInfo: {
+        mediaType: 'movie',
+        tmdbId: movie.id,
+        imdbId: movie.imdbId ?? undefined,
+        title: movie.title,
+        year: movie.year,
+        posterPath: movie.posterPath ?? undefined,
+        backdropPath: movie.backdropPath ?? undefined
+      }
+    };
+
+    downloadsStore.addDownload(download);
+    uiStore.showToast('Added to download queue', 'success');
   }
 </script>
 
