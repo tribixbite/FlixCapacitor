@@ -3,6 +3,9 @@
  * Comprehensive types for movies, TV shows, episodes, and related content
  */
 
+// Note: TorrentInfo is imported from torrent.types (see re-export at bottom)
+import type { TorrentInfo } from './torrent.types';
+
 // Movie types
 export interface Movie {
   id: number;
@@ -124,22 +127,15 @@ export interface Network {
   originCountry?: string;
 }
 
-// Legacy torrent info (from existing codebase)
-export interface TorrentInfo {
-  url: string;
-  magnet?: string;
-  seed: number;
-  peer: number;
-  size: string;
-  filesize: number;
-  provider: string;
-  quality?: string;
-}
+// TorrentInfo is imported from torrent.types.ts
+// Re-export for backward compatibility
+export type { TorrentInfo } from './torrent.types';
 
 // Content union types
 export type MediaItem = Movie | TVShow;
 export type ContentType = 'movie' | 'tv' | 'anime';
-export type MediaType = 'movie' | 'tvshow' | 'episode' | 'other';
+// MediaType is defined in library.types.ts - re-export for compatibility
+export type { MediaType } from './library.types';
 
 // Image configuration
 export interface ImageConfig {

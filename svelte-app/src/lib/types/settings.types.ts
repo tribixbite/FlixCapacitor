@@ -3,6 +3,9 @@
  * Types for user preferences, configuration, and app settings
  */
 
+// Import VideoQuality from player.types to avoid duplication
+import type { VideoQuality } from './player.types';
+
 // Main application settings
 export interface AppSettings {
   // Playback settings
@@ -116,7 +119,8 @@ export interface AppSettings {
   enable1337x: boolean;
 }
 
-export type VideoQuality = '480p' | '720p' | '1080p' | '2160p' | 'auto';
+// VideoQuality is imported from player.types.ts - re-export for compatibility
+export type { VideoQuality } from './player.types';
 export type SubtitleSize = 'small' | 'medium' | 'large' | 'xlarge';
 export type ThemeMode = 'dark' | 'light' | 'system' | 'amoled';
 export type LogLevel = 'error' | 'warn' | 'info' | 'debug' | 'verbose';

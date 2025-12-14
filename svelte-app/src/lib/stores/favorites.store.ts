@@ -33,8 +33,9 @@ function createFavoritesStore(): FavoritesStore {
       const exists = favorites.some(f => f.id === item.id && f.type === type);
       if (exists) return favorites;
 
-      const title = 'title' in item ? item.title : item.name;
-      const posterPath = 'posterPath' in item ? item.posterPath : item.posterPath;
+      // Movie has 'title', TVShow has 'name'
+      const title = 'title' in item ? item.title : (item as TVShow).name;
+      const posterPath = item.posterPath;
 
       return [...favorites, {
         id: item.id,
@@ -55,8 +56,9 @@ function createFavoritesStore(): FavoritesStore {
       if (exists) {
         update(favorites => favorites.filter(f => !(f.id === item.id && f.type === type)));
       } else {
-        const title = 'title' in item ? item.title : item.name;
-        const posterPath = 'posterPath' in item ? item.posterPath : item.posterPath;
+        // Movie has 'title', TVShow has 'name'
+        const title = 'title' in item ? item.title : (item as TVShow).name;
+        const posterPath = item.posterPath;
         update(favorites => [...favorites, {
           id: item.id,
           type,

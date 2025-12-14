@@ -27,17 +27,19 @@
   let sentinel: HTMLDivElement | null = null;
 
   // Column classes based on prop
-  let gridCols = $derived({
+  const colsMap: Record<2 | 3 | 4, string> = {
     2: 'grid-cols-2',
     3: 'grid-cols-3',
     4: 'grid-cols-4'
-  }[columns]);
+  };
+  let gridCols = $derived(colsMap[columns]);
 
-  let gapClass = $derived({
+  const gapMap: Record<2 | 3 | 4, string> = {
     2: 'gap-2',
     3: 'gap-3',
     4: 'gap-4'
-  }[gap]);
+  };
+  let gapClass = $derived(gapMap[gap]);
 
   // Set up infinite scroll
   $effect(() => {
