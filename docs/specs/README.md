@@ -136,6 +136,10 @@
   - Auto-load on app startup
   - Wrapped store methods ensure all changes are persisted
 - ✅ **UI Safe Area Fix:** Player header no longer cut off behind status bar
+- ✅ **Download Queue Integration:** Movie/TV detail pages connect to downloads store
+  - Download button adds torrent to queue with full media metadata
+  - TV shows include season/episode parsing
+  - Error toast when no torrents available
 
 ### Services Implemented
 | Service | Description | API |
@@ -185,4 +189,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-14 12:45 by Claude Code (claude-opus-4-5-20251101)*
+*Last Updated: 2025-12-14 14:15 by Claude Code (claude-opus-4-5-20251101)*
