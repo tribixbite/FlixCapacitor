@@ -13,6 +13,7 @@
   import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
   import { useTorrentDownloader } from '$lib/plugins';
   import type { Download } from '$lib/types';
+  import parseTorrent from 'parse-torrent';
 
   const { impact } = useHaptics();
   const torrentDownloader = useTorrentDownloader();
@@ -21,6 +22,8 @@
   let showAddSheet = $state(false);
   let magnetUri = $state('');
   let isAddingTorrent = $state(false);
+  let torrentFileInput: HTMLInputElement;
+  let isParsingFile = $state(false);
 
   const tabs = [
     { id: 'active', label: 'Active' },
@@ -188,6 +191,63 @@
     } catch (error) {
       console.error('Failed to read clipboard:', error);
       uiStore.showToast('Cannot access clipboard', 'warning');
+    }
+  }
+
+  /**
+   * Trigger the hidden file input for .torrent files
+   */
+  function handlePickTorrentFile() {
+    torrentFileInput?.click();
+  }
+
+  /**
+   * Handle .torrent file selection
+   * Parses the file and extracts magnet URI
+   */
+  async function handleTorrentFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    if (!file.name.endsWith('.torrent')) {
+      uiStore.showToast('Please select a .torrent file', 'warning');
+      return;
+    }
+
+    isParsingFile = true;
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const torrent = await parseTorrent(new Uint8Array(buffer));
+
+      if (!torrent || !torrent.infoHash) {
+        throw new Error('Invalid torrent file');
+      }
+
+      // Build magnet URI from parsed torrent
+      const title = torrent.name || file.name.replace('.torrent', '');
+      const magnetLink = `magnet:?xt=urn:btih:${torrent.infoHash}&dn=${encodeURIComponent(title)}`;
+
+      // Add trackers if available
+      if (torrent.announce && torrent.announce.length > 0) {
+        const trackers = torrent.announce.slice(0, 5); // Limit to 5 trackers
+        trackers.forEach((tracker: string) => {
+          magnetLink.concat(`&tr=${encodeURIComponent(tracker)}`);
+        });
+      }
+
+      magnetUri = magnetLink;
+      uiStore.showToast(`Loaded: ${title}`, 'success');
+
+    } catch (error) {
+      console.error('Failed to parse torrent file:', error);
+      uiStore.showToast('Failed to parse torrent file', 'error');
+    } finally {
+      isParsingFile = false;
+      // Reset input so same file can be selected again
+      input.value = '';
     }
   }
 </script>
@@ -401,15 +461,30 @@
       <div class="flex-1 h-px bg-zinc-700"></div>
     </div>
 
-    <!-- File picker placeholder (TODO: implement file picker) -->
+    <!-- Hidden file input for .torrent files -->
+    <input
+      type="file"
+      accept=".torrent"
+      class="hidden"
+      bind:this={torrentFileInput}
+      onchange={handleTorrentFileChange}
+    />
+
+    <!-- .torrent file picker -->
     <button
       type="button"
-      class="w-full bg-zinc-800 border border-zinc-700 border-dashed rounded-xl p-6 text-center text-zinc-400 hover:border-zinc-600 transition-colors"
-      onclick={() => uiStore.showToast('File picker coming soon', 'info')}
+      class="w-full bg-zinc-800 border border-zinc-700 border-dashed rounded-xl p-6 text-center text-zinc-400 hover:border-zinc-600 transition-colors disabled:opacity-50"
+      onclick={handlePickTorrentFile}
+      disabled={isParsingFile}
     >
-      <span class="text-3xl mb-2 block">📁</span>
-      <span class="text-sm">Pick .torrent file</span>
-      <span class="text-xs block mt-1 text-zinc-500">(Coming soon)</span>
+      {#if isParsingFile}
+        <span class="text-3xl mb-2 block animate-spin">⏳</span>
+        <span class="text-sm">Parsing torrent...</span>
+      {:else}
+        <span class="text-3xl mb-2 block">📁</span>
+        <span class="text-sm">Pick .torrent file</span>
+        <span class="text-xs block mt-1 text-zinc-500">Select from device storage</span>
+      {/if}
     </button>
 
     <!-- Cancel Button -->
