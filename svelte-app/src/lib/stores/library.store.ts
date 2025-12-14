@@ -1,5 +1,9 @@
 import { writable, derived, type Writable, type Readable } from 'svelte/store';
+import { Preferences } from '@capacitor/preferences';
 import type { LibraryItem, LibraryFolder, ScanProgress } from '$types';
+
+const LIBRARY_ITEMS_KEY = 'library_items';
+const LIBRARY_FOLDERS_KEY = 'library_folders';
 
 interface LibraryStore extends Writable<LibraryItem[]> {
   addItem: (item: LibraryItem) => void;
@@ -9,45 +13,177 @@ interface LibraryStore extends Writable<LibraryItem[]> {
   updatePlaybackPosition: (id: string, position: number) => void;
   setItems: (items: LibraryItem[]) => void;
   clear: () => void;
+  load: () => Promise<void>;
+}
+
+async function persistItems(items: LibraryItem[]) {
+  try {
+    await Preferences.set({
+      key: LIBRARY_ITEMS_KEY,
+      value: JSON.stringify(items)
+    });
+  } catch (error) {
+    console.error('Failed to persist library items:', error);
+  }
 }
 
 function createLibraryStore(): LibraryStore {
-  const { subscribe, set, update } = writable<LibraryItem[]>([]);
+  const { subscribe, set: rawSet, update: rawUpdate } = writable<LibraryItem[]>([]);
+
+  // Wrap set to include persistence
+  const set = (items: LibraryItem[]) => {
+    rawSet(items);
+    persistItems(items);
+  };
+
+  // Wrap update to include persistence
+  const update = (fn: (items: LibraryItem[]) => LibraryItem[]) => {
+    rawUpdate(items => {
+      const updated = fn(items);
+      persistItems(updated);
+      return updated;
+    });
+  };
 
   return {
     subscribe,
     set,
     update,
 
-    addItem: (item: LibraryItem) => update(items => [...items, item]),
+    addItem: (item: LibraryItem) => rawUpdate(items => {
+      const updated = [...items, item];
+      persistItems(updated);
+      return updated;
+    }),
 
-    updateItem: (id: string, updates: Partial<LibraryItem>) => update(items =>
-      items.map(item => item.id === id ? { ...item, ...updates } : item)
-    ),
+    updateItem: (id: string, updates: Partial<LibraryItem>) => rawUpdate(items => {
+      const updated = items.map(item => item.id === id ? { ...item, ...updates } : item);
+      persistItems(updated);
+      return updated;
+    }),
 
-    removeItem: (id: string) => update(items => items.filter(item => item.id !== id)),
+    removeItem: (id: string) => rawUpdate(items => {
+      const updated = items.filter(item => item.id !== id);
+      persistItems(updated);
+      return updated;
+    }),
 
-    markAsWatched: (id: string) => update(items =>
-      items.map(item => item.id === id ? { ...item, isWatched: true } : item)
-    ),
+    markAsWatched: (id: string) => rawUpdate(items => {
+      const updated = items.map(item => item.id === id ? { ...item, isWatched: true } : item);
+      persistItems(updated);
+      return updated;
+    }),
 
-    updatePlaybackPosition: (id: string, position: number) => update(items =>
-      items.map(item => item.id === id
+    updatePlaybackPosition: (id: string, position: number) => rawUpdate(items => {
+      const updated = items.map(item => item.id === id
         ? { ...item, playbackPosition: position, lastPlayedAt: Date.now() }
         : item
-      )
-    ),
+      );
+      persistItems(updated);
+      return updated;
+    }),
 
-    setItems: (items: LibraryItem[]) => set(items),
+    setItems: (items: LibraryItem[]) => {
+      rawSet(items);
+      persistItems(items);
+    },
 
-    clear: () => set([])
+    clear: () => {
+      rawSet([]);
+      persistItems([]);
+    },
+
+    load: async () => {
+      try {
+        const { value } = await Preferences.get({ key: LIBRARY_ITEMS_KEY });
+        if (value) {
+          const loaded = JSON.parse(value) as LibraryItem[];
+          rawSet(loaded); // Don't trigger persistence when loading
+        }
+      } catch (error) {
+        console.error('Failed to load library items:', error);
+      }
+    }
   };
 }
 
 export const libraryStore = createLibraryStore();
 
-// Folders store
-export const libraryFolders = writable<LibraryFolder[]>([]);
+// Folders store with persistence
+interface LibraryFoldersStore extends Writable<LibraryFolder[]> {
+  addFolder: (folder: LibraryFolder) => void;
+  removeFolder: (path: string) => void;
+  updateFolder: (path: string, updates: Partial<LibraryFolder>) => void;
+  load: () => Promise<void>;
+}
+
+async function persistFolders(folders: LibraryFolder[]) {
+  try {
+    await Preferences.set({
+      key: LIBRARY_FOLDERS_KEY,
+      value: JSON.stringify(folders)
+    });
+  } catch (error) {
+    console.error('Failed to persist library folders:', error);
+  }
+}
+
+function createLibraryFoldersStore(): LibraryFoldersStore {
+  const { subscribe, set: rawSet, update: rawUpdate } = writable<LibraryFolder[]>([]);
+
+  // Wrap set to include persistence
+  const set = (folders: LibraryFolder[]) => {
+    rawSet(folders);
+    persistFolders(folders);
+  };
+
+  // Wrap update to include persistence
+  const update = (fn: (folders: LibraryFolder[]) => LibraryFolder[]) => {
+    rawUpdate(folders => {
+      const updated = fn(folders);
+      persistFolders(updated);
+      return updated;
+    });
+  };
+
+  return {
+    subscribe,
+    set,
+    update,
+
+    addFolder: (folder: LibraryFolder) => rawUpdate(folders => {
+      const updated = [...folders, folder];
+      persistFolders(updated);
+      return updated;
+    }),
+
+    removeFolder: (path: string) => rawUpdate(folders => {
+      const updated = folders.filter(f => f.path !== path);
+      persistFolders(updated);
+      return updated;
+    }),
+
+    updateFolder: (path: string, updates: Partial<LibraryFolder>) => rawUpdate(folders => {
+      const updated = folders.map(f => f.path === path ? { ...f, ...updates } : f);
+      persistFolders(updated);
+      return updated;
+    }),
+
+    load: async () => {
+      try {
+        const { value } = await Preferences.get({ key: LIBRARY_FOLDERS_KEY });
+        if (value) {
+          const loaded = JSON.parse(value) as LibraryFolder[];
+          rawSet(loaded); // Don't trigger persistence when loading
+        }
+      } catch (error) {
+        console.error('Failed to load library folders:', error);
+      }
+    }
+  };
+}
+
+export const libraryFolders = createLibraryFoldersStore();
 
 // Scan progress store
 export const scanProgress = writable<ScanProgress>({
@@ -99,3 +235,9 @@ export const libraryStats: Readable<{ total: number; movies: number; episodes: n
     watched: $library.filter(i => i.isWatched).length
   })
 );
+
+// Initialize stores on import (browser only)
+if (typeof window !== 'undefined') {
+  libraryStore.load();
+  libraryFolders.load();
+}
