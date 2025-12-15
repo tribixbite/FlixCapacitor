@@ -171,7 +171,10 @@
 - ✅ Chromecast mock mode removed (real Cast SDK integration only)
 - ✅ Video file picker modal simplified (shows file count, full list deferred for virtualization)
 - ✅ Multi-file detection working (queue badge shows "1 / 28620" for MIT course)
-- ⏳ Video file picker with virtualized list (performance optimization for 28K+ files)
+- ✅ Video file picker working with inline implementation
+  - Fixed JSON string serialization from native plugin (parse string to array)
+  - Shows first 50 video files with extension badges (MP4/MKV/OGV), names, sizes
+  - Bottom sheet modal with file selection for multi-file torrents
 
 ## Specification Format
 
@@ -205,4 +208,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-15 01:05 — claude-opus-4-5-20251101*
+*Last Updated: 2025-12-15 05:30 — opus-4-5-20251101*
