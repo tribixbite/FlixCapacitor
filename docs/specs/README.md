@@ -452,6 +452,27 @@
 - Svelte-check: 7 warnings (external Konsta UI types only)
 - JUnit tests: 26 passing (native torrent streaming)
 
+### Phase 12D: Documentation & Developer Experience (PARTIALLY COMPLETE)
+
+**Priority:** Medium | **Target:** Comprehensive documentation
+
+**Documentation Status:**
+| Document | Status | Location |
+|----------|--------|----------|
+| Technical Specs | ✅ | `docs/specs/README.md` (this file) |
+| API Reference | ✅ | Service JSDoc comments in `svelte-app/src/lib/services/` |
+| Implementation Roadmap | ✅ | `TODO-ROADMAP.md` |
+| Architecture Overview | ✅ | `docs/specs/ARCHITECTURE.md` |
+| Build Instructions | ✅ | `README.md`, `build-and-install.sh` |
+| User Guide | ⏳ | Not started |
+| Contributing Guide | ⏳ | Not started |
+
+**Existing Documentation:**
+- 16 specification files in `docs/specs/`
+- Inline code comments with JSDoc
+- Service layer fully documented
+- Component props and events documented
+
 ### Phase 12E: Production Release Preparation ✅ COMPLETE (2025-12-15)
 - ✅ **Crash Reporting (Sentry):**
   - `@sentry/capacitor@2.4.1` and `@sentry/browser@9.46.0` installed
