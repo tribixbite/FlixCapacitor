@@ -625,6 +625,8 @@
       {supportsPiP}
       bufferedPercent={bufferedPercent}
       hasSubtitles={!!currentSubtitleUrl}
+      currentFileIndex={selectedFileIndex}
+      totalFiles={videoFiles.length > 0 ? videoFiles.length : 1}
       onPlayPause={togglePlayPause}
       onSeek={seek}
       onSkipBack={() => seekRelative(-10)}
@@ -636,6 +638,7 @@
       onClose={handleClose}
       onQualitySelect={() => { showQualitySelector = true; }}
       onSubtitleSelect={() => { showSubtitleSelector = true; }}
+      onShowFilePicker={() => { showVideoFilePicker = true; }}
     />
   {/if}
 

@@ -13,6 +13,8 @@
     supportsPiP = false,
     bufferedPercent = 0,
     hasSubtitles = false,
+    currentFileIndex = 0,
+    totalFiles = 1,
     onPlayPause,
     onSeek,
     onSkipBack,
@@ -23,7 +25,8 @@
     onPiPToggle,
     onClose,
     onQualitySelect,
-    onSubtitleSelect
+    onSubtitleSelect,
+    onShowFilePicker
   } = $props<{
     title?: string;
     subtitle?: string;
@@ -38,6 +41,8 @@
     supportsPiP?: boolean;
     bufferedPercent?: number;
     hasSubtitles?: boolean;
+    currentFileIndex?: number;
+    totalFiles?: number;
     onPlayPause?: () => void;
     onSeek?: (time: number) => void;
     onSkipBack?: () => void;
@@ -49,7 +54,11 @@
     onClose?: () => void;
     onQualitySelect?: () => void;
     onSubtitleSelect?: () => void;
+    onShowFilePicker?: () => void;
   }>();
+
+  // Show queue badge when multiple files
+  let showQueueBadge = $derived(totalFiles > 1);
 
   let progressPercent = $derived(duration > 0 ? (currentTime / duration) * 100 : 0);
   let isSeeking = $state(false);
@@ -121,6 +130,21 @@
           <p class="text-white/60 text-sm truncate">{subtitle}</p>
         {/if}
       </div>
+
+      <!-- Queue Badge (multi-file torrents) -->
+      {#if showQueueBadge}
+        <button
+          type="button"
+          class="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+          onclick={onShowFilePicker}
+          aria-label="Show file list"
+        >
+          <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+          </svg>
+          <span class="text-white text-sm font-medium">{currentFileIndex + 1} / {totalFiles}</span>
+        </button>
+      {/if}
     </div>
   </div>
 
