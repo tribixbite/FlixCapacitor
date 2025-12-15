@@ -53,8 +53,10 @@
         // Get IMDB ID for torrent search
         imdbId = movie.imdbId || '';
       } else {
-        content = await tmdbService.getShowDetails(id);
-        // TODO: Get IMDB ID for shows via external IDs API
+        const show = await tmdbService.getShowDetails(id);
+        content = show;
+        // Extract IMDB ID from external_ids (added via append_to_response)
+        imdbId = show.imdbId || '';
       }
 
       // If no direct magnet, show torrent selector
