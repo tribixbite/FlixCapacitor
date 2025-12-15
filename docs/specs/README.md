@@ -46,9 +46,8 @@
 ### Key Metrics
 - **TypeScript Errors:** 0 (strict mode, all custom code)
 - **Svelte-Check Errors:** 7 (all Konsta UI slot type definitions - external library)
-- **JS Bundle:** 760 kB raw, ~160 kB gzipped (80% reduction with precompression)
-- **CSS Bundle:** 110 kB raw, ~17 kB gzipped (85% reduction with precompression)
-- **Total Transfer Size:** ~179 kB gzipped (vs ~875 kB uncompressed)
+- **JS Bundle:** 760 kB (largest chunk: 256 kB Konsta UI)
+- **CSS Bundle:** 110 kB (minified with esbuild)
 - **APK Size:** 74 MB (debug), 73 MB (release with ProGuard)
 - **Release Signing:** RSA 2048-bit, valid until 2053
 - **Minimum Android:** API Level 30 (Android 11+)
@@ -386,12 +385,12 @@
   - Advanced LazyImage component with IntersectionObserver (200px preload margin)
   - Hero images load eagerly (above-the-fold, no lazy loading)
 - ✅ **Build Optimization:**
-  - Enabled gzip precompression in svelte.config.js (`precompress: true`)
-  - Enabled CSS minification in vite.config.ts (`cssMinify: 'esbuild'`)
-  - Total transfer size: ~875 kB raw → ~179 kB gzipped (80% reduction)
+  - CSS minification enabled in vite.config.ts (`cssMinify: 'esbuild'`)
+  - Note: gzip precompression disabled for Capacitor (causes AAPT2 duplicate resource errors)
+  - For Capacitor apps, assets bundled in APK - compression doesn't help at runtime
 - ✅ **Bundle Analysis:**
-  - Largest JS chunk: 256 kB raw → 85 kB gzipped (Konsta UI)
-  - CSS bundle: 110 kB raw → 17 kB gzipped
+  - Largest JS chunk: 256 kB (Konsta UI)
+  - CSS bundle: 110 kB
   - Manual chunking tested but reverted (increased bundle size)
 - ✅ **Route-Based Code Splitting:**
   - SvelteKit automatically code-splits by route

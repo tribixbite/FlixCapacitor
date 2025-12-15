@@ -10,7 +10,8 @@ const config = {
       pages: 'build',
       assets: 'build',
       fallback: 'index.html',
-      precompress: true,  // Generate gzipped versions for faster loading
+      // Note: precompress disabled for Capacitor - assets bundled in APK, not served over HTTP
+      // precompress: true,
       strict: false
     }),
     prerender: {
