@@ -135,6 +135,16 @@ svelte-app/src/
 - ✅ **ProGuard/R8**: 254-line rules file for code minification
 - ✅ **SplashScreen**: AndroidX SplashScreen API configured
 - ✅ **UI Verification**: All 5 main tabs verified (Browse, Favorites, Library, Downloads, Settings)
+- ✅ **Live ADB Testing**: All tabs verified via wireless ADB navigation
+
+**Live ADB Verification (1440x2960 device):**
+| Tab | Elements Verified |
+|-----|-------------------|
+| Browse | Movies/TV/Anime/Learning tabs, TMDB content, ratings (7.3, 6.8, 7.7, 8.7) |
+| Favorites | Filter tabs (All/Movies/TV), saved content with poster thumbnails |
+| Library | SAF folder picker, "Movies" folder with 4 videos, scan FAB |
+| Downloads | Storage indicator, filter tabs (Active/Completed/All), add FAB |
+| Settings | Playback, External Player, Chromecast (1080p), Subtitles sections |
 
 **Technical Details:**
 - ErrorReportingService at `svelte-app/src/lib/services/error-reporting.service.ts`
