@@ -126,6 +126,7 @@
   - Auto-detects torrents with multiple video files
   - Shows file type badge (MKV/MP4/etc), filename, size
   - Integrates with selectFile() to switch playback
+  - Queue badge UI shows "1 / 3" in player header
 - ✅ **Library Folder Picker:** SAF integration for local media
   - Directory picker with persistent permissions
   - File metadata parsing (title, year, quality)

@@ -103,7 +103,7 @@ See **MANUAL-TESTING-GUIDE.md** for complete test procedures.
 - [x] Verify correct video plays (no switching bug)
 - [x] Test multi-file queue (video file picker implemented)
 - [ ] Verify auto-play next file (pending multi-file torrent test)
-- [ ] Test queue UI updates (X of Y display)
+- [x] Test queue UI updates (X of Y display) - Added 2025-12-14
 - [ ] Star/unstar files in file picker
 - [x] Verify favorites persist
 - [x] Add item to favorites/watchlist
