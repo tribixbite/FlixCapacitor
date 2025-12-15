@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { MovieCard, ShowCard, ContentRow, CategoryTabs } from '$components/content';
+  import { MovieCard, ShowCard, ContentRow, CategoryTabs, ContinueWatchingCard } from '$components/content';
   import { tmdbService } from '$services/tmdb.service';
+  import { watchHistoryContinue, watchHistoryStore, type WatchHistoryEntry } from '$stores/watch-history.store';
   import type { Movie, TVShow } from '$types';
 
   // Category state
@@ -83,6 +84,32 @@
   function handleSeeAllShows(section: string) {
     goto(`/shows?section=${section}`);
   }
+
+  // Handle tapping on continue watching card
+  function handleContinueWatchingTap(entry: WatchHistoryEntry) {
+    // Navigate to player with the saved magnet or content ID
+    if (entry.imdbId) {
+      // If we have IMDB ID, navigate to detail page which handles torrent selection
+      if (entry.mediaType === 'episode') {
+        // For TV episodes, go to show detail
+        goto(`/shows/${entry.imdbId.replace('tt', '')}`);
+      } else {
+        // For movies, go to movie detail
+        goto(`/movies/${entry.imdbId.replace('tt', '')}`);
+      }
+    } else if (entry.contentId.startsWith('magnet_')) {
+      // Direct magnet link - extract hash and navigate to player
+      const magnetHash = entry.contentId.replace('magnet_', '');
+      // Construct basic magnet URI
+      const magnetUri = `magnet:?xt=urn:btih:${magnetHash}`;
+      goto(`/player?magnet=${encodeURIComponent(magnetUri)}&title=${encodeURIComponent(entry.title)}`);
+    }
+  }
+
+  // Handle removing from continue watching
+  async function handleRemoveFromContinue(entry: WatchHistoryEntry) {
+    await watchHistoryStore.removeEntry(entry.contentId);
+  }
 </script>
 
 <svelte:head>
@@ -108,6 +135,26 @@
       <div class="animate-spin w-8 h-8 border-2 border-red-600 border-t-transparent rounded-full"></div>
     </div>
   {:else}
+    <!-- Continue Watching Row (shows on all tabs if there are items) -->
+    {#if $watchHistoryContinue.length > 0}
+      <section class="mb-6">
+        <div class="flex items-center justify-between px-4 mb-3">
+          <h2 class="text-lg font-semibold text-white">Continue Watching</h2>
+        </div>
+        <div class="flex overflow-x-auto gap-3 px-4 pb-2 scrollbar-hide">
+          {#each $watchHistoryContinue as entry (entry.contentId)}
+            <div class="flex-shrink-0 w-40">
+              <ContinueWatchingCard
+                {entry}
+                onTap={handleContinueWatchingTap}
+                onRemove={handleRemoveFromContinue}
+              />
+            </div>
+          {/each}
+        </div>
+      </section>
+    {/if}
+
     {#if selectedCategory === 'movies'}
       <!-- Trending Movies -->
       <ContentRow
@@ -247,3 +294,13 @@
     {/if}
   {/if}
 </div>
+
+<style>
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+</style>
