@@ -1,8 +1,8 @@
 # FlixCapacitor Mobile - Technical Specifications
 
 **Last Updated:** 2025-12-15
-**Version:** 2.1.7
-**Status:** Phase 10.11 Complete - Toast Notification System Added
+**Version:** 2.1.8
+**Status:** Phase 10.12 Complete - Bottom Nav Badge Counts
 
 ## Table of Contents
 
@@ -306,6 +306,29 @@
   - Spinner animation during refresh
   - Content translates down with pull distance
 
+### Phase 10.12: Bottom Nav Badge Counts ✅ COMPLETE (2025-12-15)
+- ✅ **Badge Component in BottomNav:**
+  - Red circular badge with white count text
+  - Positioned absolute top-right of nav icons
+  - Only displays when count > 0
+  - Caps at "99+" for large numbers
+- ✅ **Favorites Badge:**
+  - Shows total favorites count from favoritesCount derived store
+  - Updates in real-time when favorites added/removed
+  - Positioned on Favorites tab heart icon
+- ✅ **Downloads Badge:**
+  - Shows active + queued downloads count (excludes completed)
+  - Uses derived store combining activeDownloads + queuedDownloads
+  - Positioned on Downloads tab icon
+- ✅ **Store Integration:**
+  - Imports favoritesCount from favorites.store.ts
+  - Creates activeDownloadCount derived store
+  - Reactive updates via Svelte store subscriptions
+- ✅ **CSS Styling:**
+  - `.nav-icon-wrapper` for relative positioning
+  - `.nav-badge` with min-width 16px, red background, rounded-full
+  - Font size 10px, weight 600 for readability
+
 ### Phase 10.7: Continue Watching Feature ✅ COMPLETE (2025-12-15)
 - ✅ **ContinueWatchingCard Component:**
   - Poster/backdrop display with aspect-video ratio
@@ -394,4 +417,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-15 10:45 — opus-4-5-20251101*
+*Last Updated: 2025-12-15 11:35 — opus-4-5-20251101*
