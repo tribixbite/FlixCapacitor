@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/color-v23/abc_btn_colored_text_material.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/color-v23/abc_btn_colored_text_material.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/color-v23/abc_tint_seek_thumb.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/color-v23/abc_tint_seek_thumb.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/color-v23/abc_tint_switch_track.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/color-v23/abc_tint_switch_track.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/color-v23/abc_btn_colored_borderless_text_material.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/color-v23/abc_btn_colored_borderless_text_material.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/color-v23/abc_color_highlight_material.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/color-v23/abc_color_highlight_material.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/color-v23/abc_tint_btn_checkable.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/color-v23/abc_tint_btn_checkable.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/color-v23/abc_tint_default.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/color-v23/abc_tint_default.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/color-v23/abc_tint_edittext.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/color-v23/abc_tint_edittext.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/color-v23/abc_tint_spinner.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/color-v23/abc_tint_spinner.xml"
+    }
+]

@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/layout-watch-v20/abc_alert_dialog_button_bar_material.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/layout-watch-v20/abc_alert_dialog_button_bar_material.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/layout-watch-v20/abc_alert_dialog_title_material.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-appcompat-1.7.0-14:/layout-watch-v20/abc_alert_dialog_title_material.xml"
+    }
+]

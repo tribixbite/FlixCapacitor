@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-release-26:/layout-v21/notification_action_tombstone.xml",
+        "source": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-core-1.15.0-4:/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-release-26:/layout-v21/notification_template_custom_big.xml",
+        "source": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-core-1.15.0-4:/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-release-26:/layout-v21/notification_action.xml",
+        "source": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-core-1.15.0-4:/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-release-26:/layout-v21/notification_template_icon_group.xml",
+        "source": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-core-1.15.0-4:/layout-v21/notification_template_icon_group.xml"
+    }
+]

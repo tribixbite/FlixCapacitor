@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.flixcapacitor.torrent.capacitor-plugin-torrent-streamer-release-26:/values-land/values-land.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-land/values-land.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,125,196",
+                        "endColumns": "69,70,67",
+                        "endOffsets": "120,191,259"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.flixcapacitor.torrent.capacitor-plugin-torrent-streamer-mergeReleaseResources-24:/values-land/values-land.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-land/values-land.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,125,196",
+                        "endColumns": "69,70,67",
+                        "endOffsets": "120,191,259"
+                    }
+                }
+            ]
+        }
+    ]
+}

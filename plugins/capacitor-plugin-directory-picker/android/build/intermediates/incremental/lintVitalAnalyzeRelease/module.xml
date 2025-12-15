@@ -1,0 +1,18 @@
+<lint-module
+    format="1"
+    dir="/data/data/com.termux/files/home/git/pop/popcorn-mobile/plugins/capacitor-plugin-directory-picker/android"
+    name=":capacitor-plugin-directory-picker"
+    type="LIBRARY"
+    maven="android:capacitor-plugin-directory-picker:unspecified"
+    agpVersion="8.7.2"
+    buildFolder="build"
+    bootClassPath="/data/data/com.termux/files/home/android-sdk/platforms/android-35/android.jar:/data/data/com.termux/files/home/android-sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-35"
+    neverShrinking="true">
+  <lintOptions
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

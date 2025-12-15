@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.flixcapacitor.directorypicker" >
+    <!--
+        Directory Picker Plugin
+        Uses Storage Access Framework (SAF) for directory picking
+        No special permissions required - SAF handles permissions via user interaction
+    -->
+    <uses-sdk android:minSdkVersion="23" />
+
+</manifest>

@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-release-26:/values-xlarge-v4/values-xlarge-v4.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-xlarge-v4/values-xlarge-v4.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7",
+                        "startColumns": "4,4,4,4,4,4",
+                        "startOffsets": "55,126,197,267,337,405",
+                        "endColumns": "70,70,69,69,67,67",
+                        "endOffsets": "121,192,262,332,400,468"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-mergeReleaseResources-24:/values-xlarge-v4/values-xlarge-v4.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-xlarge-v4/values-xlarge-v4.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7",
+                        "startColumns": "4,4,4,4,4,4",
+                        "startOffsets": "55,126,197,267,337,405",
+                        "endColumns": "70,70,69,69,67,67",
+                        "endOffsets": "121,192,262,332,400,468"
+                    }
+                }
+            ]
+        }
+    ]
+}

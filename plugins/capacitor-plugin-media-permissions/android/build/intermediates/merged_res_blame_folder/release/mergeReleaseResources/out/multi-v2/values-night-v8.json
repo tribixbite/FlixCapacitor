@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/values-night-v8/values-night-v8.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-night-v8/values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,125,209,293,389,491,593,687",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "120,204,288,384,486,588,682,771"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-mergeReleaseResources-24:/values-night-v8/values-night-v8.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-night-v8/values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,125,209,293,389,491,593,687",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "120,204,288,384,486,588,682,771"
+                    }
+                }
+            ]
+        }
+    ]
+}

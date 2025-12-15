@@ -46,7 +46,7 @@ function createFAB(): void {
     fab.setAttribute('aria-label', 'Add torrent or magnet link');
 
     // Add click handler
-    fab.addEventListener('click', showAddTorrentDialog);
+    fab.addEventListener('click', () => showAddTorrentDialog());
 
     // Add to body
     document.body.appendChild(fab);

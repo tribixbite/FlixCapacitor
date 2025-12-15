@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.flixcapacitor.torrent.capacitor-plugin-torrent-streamer-mergeReleaseResources-24:/values-watch-v21/values-watch-v21.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-watch-v21/values-watch-v21.xml",
+                    "from": {
+                        "startLines": "2,6,10",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,271,499",
+                        "endLines": "5,9,13",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "266,494,724"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.flixcapacitor.torrent.capacitor-plugin-torrent-streamer-release-26:/values-watch-v21/values-watch-v21.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-watch-v21/values-watch-v21.xml",
+                    "from": {
+                        "startLines": "2,6,10",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,271,499",
+                        "endLines": "5,9,13",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "266,494,724"
+                    }
+                }
+            ]
+        }
+    ]
+}

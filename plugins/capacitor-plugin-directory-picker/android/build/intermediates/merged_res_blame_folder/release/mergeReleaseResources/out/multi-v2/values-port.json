@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-mergeReleaseResources-24:/values-port/values-port.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-port/values-port.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.flixcapacitor.directorypicker.capacitor-plugin-directory-picker-release-26:/values-port/values-port.xml",
+            "map": [
+                {
+                    "source": "/data/data/com.termux/files/home/.gradle/caches/8.11.1/transforms/9084271993d381c8ac309caaf3a77e64/transformed/appcompat-1.7.0/res/values-port/values-port.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    }
+                }
+            ]
+        }
+    ]
+}

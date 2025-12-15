@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/animator/fragment_open_enter.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-fragment-1.8.4-21:/animator/fragment_open_enter.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/animator/fragment_close_exit.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-fragment-1.8.4-21:/animator/fragment_close_exit.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/animator/fragment_open_exit.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-fragment-1.8.4-21:/animator/fragment_open_exit.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/animator/fragment_fade_exit.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-fragment-1.8.4-21:/animator/fragment_fade_exit.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/animator/fragment_fade_enter.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-fragment-1.8.4-21:/animator/fragment_fade_enter.xml"
+    },
+    {
+        "merged": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-release-26:/animator/fragment_close_enter.xml",
+        "source": "app.flixcapacitor.permissions.capacitor-plugin-media-permissions-fragment-1.8.4-21:/animator/fragment_close_enter.xml"
+    }
+]
