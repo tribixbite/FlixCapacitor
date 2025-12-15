@@ -133,7 +133,7 @@
   - Directory picker with persistent permissions
   - File metadata parsing (title, year, quality)
   - Folder management with remove capability
-  - Local video playback via external apps (ACTION_VIEW intent)
+  - Local video playback via internal VideoPlayer (not external app chooser)
 - ✅ **Library Persistence:** Folders and items persist across app restarts
   - Capacitor Preferences storage for folders and items
   - Auto-load on app startup
@@ -214,7 +214,7 @@
   - Folder picker opens system file browser
   - Persistent permissions granted after user approval
   - 4 local videos scanned and displayed with thumbnails
-  - Playback delegates to Android "Open with" intent chooser
+  - Playback uses internal VideoPlayer (fixed: no longer shows external app chooser)
 - ✅ **Add Torrent Sheet Verified:**
   - Magnet URI input validation ("✓ Valid magnet URI")
   - Stream Now / Download buttons responsive
