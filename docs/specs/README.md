@@ -1,8 +1,8 @@
 # FlixCapacitor Mobile - Technical Specifications
 
 **Last Updated:** 2025-12-15
-**Version:** 2.1.2
-**Status:** Phase 10.6 Complete - All Views Verified
+**Version:** 2.1.3
+**Status:** Phase 10.7 Complete - Continue Watching Feature Added
 
 ## Table of Contents
 
@@ -233,6 +233,23 @@
   - ProGuard didn't break any functionality
   - All UI components rendering correctly
 
+### Phase 10.7: Continue Watching Feature ✅ COMPLETE (2025-12-15)
+- ✅ **ContinueWatchingCard Component:**
+  - Poster/backdrop display with aspect-video ratio
+  - Progress bar at bottom showing watch percentage
+  - Episode badge (S1E2 format) for TV episodes
+  - Time remaining display ("45m left", "1h 30m left")
+  - Long press to remove from history
+- ✅ **Continue Watching Row on Browse Page:**
+  - Shows at top of all category tabs (Movies, TV Shows, Anime, Learning)
+  - Only displays when partially watched items exist (5-90% progress)
+  - Horizontal scrolling card list (wider cards than movie posters)
+  - Tapping resumes playback via detail page or direct magnet
+- ✅ **Watch History Integration:**
+  - Uses watchHistoryContinue derived store
+  - Position saved every 5 seconds during playback
+  - Supports both IMDB-identified content and direct magnet links
+
 ### Phase 10.6: Comprehensive View Verification ✅ COMPLETE (2025-12-15)
 - ✅ **Browse Page (All Tabs):**
   - Movies: Trending/Popular/Top Rated rows loading from TMDB
@@ -304,4 +321,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-15 09:00 — opus-4-5-20251101*
+*Last Updated: 2025-12-15 09:40 — opus-4-5-20251101*
