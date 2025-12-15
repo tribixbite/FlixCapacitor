@@ -162,7 +162,7 @@
 - ✅ TV show torrent search working (Stranger Things S5: 29 torrents via EZTV)
 - ✅ Academic torrent streaming tested (MIT 6.004: connected, buffering started)
 - ✅ Library folder picker and video playback (opens system "Open with" dialog)
-- ⏳ Full torrent playback test (pending high-seeder torrent)
+- ✅ Full torrent playback test (Shawshank Redemption 1080p: 5 peers, streaming service active)
 - ⏳ Chromecast device connection test (pending Chromecast device)
 
 ## Specification Format
