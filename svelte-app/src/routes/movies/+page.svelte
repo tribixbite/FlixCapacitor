@@ -156,7 +156,7 @@
   <ContentGrid
     items={movies}
     {loading}
-    columns={3}
+    columns={2}
     hasMore={currentPage < totalPages}
     onLoadMore={handleLoadMore}
     emptyMessage="No movies found"

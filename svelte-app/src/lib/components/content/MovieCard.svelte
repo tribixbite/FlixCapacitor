@@ -91,7 +91,7 @@
 
     {#if !compact}
       <div class="p-2">
-        <h3 class="font-medium text-sm truncate text-white">{movie.title}</h3>
+        <h3 class="font-medium text-sm line-clamp-2 text-white leading-tight">{movie.title}</h3>
       </div>
     {/if}
   </Card>
