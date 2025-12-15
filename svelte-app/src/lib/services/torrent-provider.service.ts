@@ -505,9 +505,11 @@ class TorrentProviderService {
         if (!matchesQuery) return false;
 
         // Filter by category if specified
+        // Normalize category to singular form (courses -> course, documentaries -> documentary)
         if (category !== 'all') {
           const torrentCategory = torrent.source?.toLowerCase() || '';
-          return torrentCategory.includes(category.toLowerCase());
+          const normalizedCategory = category.toLowerCase().replace(/ies$/, 'y').replace(/s$/, '');
+          return torrentCategory.includes(normalizedCategory);
         }
         return true;
       });
@@ -652,16 +654,33 @@ class TorrentProviderService {
       }
 
       // Filter by category if specified
+      // Normalize category to singular form for comparison (courses -> course, documentaries -> documentary)
       if (category && category !== 'all') {
+        const normalizedCategory = category.toLowerCase().replace(/ies$/, 'y').replace(/s$/, '');
         filtered = filtered.filter(torrent => {
           const torrentCategory = torrent.source?.toLowerCase() || '';
-          return torrentCategory.includes(category.toLowerCase());
+          return torrentCategory.includes(normalizedCategory);
         });
       }
 
-      // If no video content found, fall back to sample video data
-      if (filtered.length === 0 && videoOnly) {
-        return this.getSampleAcademicTorrents();
+      // If too few results found, fall back to sample video data for better UX
+      // This ensures "All" shows a diverse selection, not just 1-2 RSS items
+      const MIN_RESULTS_THRESHOLD = 5;
+      if (filtered.length < MIN_RESULTS_THRESHOLD && videoOnly) {
+        const sampleData = this.getSampleAcademicTorrents();
+        // For specific category, filter sample data too
+        if (category && category !== 'all') {
+          // Normalize category to singular form (courses -> course, documentaries -> documentary)
+          const normalizedCategory = category.toLowerCase().replace(/ies$/, 'y').replace(/s$/, '');
+          const sampleFiltered = sampleData.filter(torrent => {
+            const torrentCategory = torrent.source?.toLowerCase() || '';
+            return torrentCategory.includes(normalizedCategory);
+          });
+          // Use whichever has more results
+          return sampleFiltered.length > filtered.length ? sampleFiltered : filtered;
+        }
+        // For "all", use sample data if it's better
+        return sampleData.length > filtered.length ? sampleData : filtered;
       }
 
       return filtered;
