@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Card, Button, BlockTitle, Progressbar } from 'konsta/svelte';
   import { CategoryTabs } from '$lib/components/content';
+  import { goto } from '$app/navigation';
   import {
     libraryStore,
     movieLibrary,
@@ -224,7 +225,7 @@
   }
 
   /**
-   * Handle tapping a library item - open with external video player
+   * Handle tapping a library item - open with internal video player
    */
   async function handleItemTap(item: LibraryItem) {
     const uri = item.file_path;
@@ -235,13 +236,13 @@
 
     await impact(ImpactStyle.Light);
 
-    try {
-      // Open with external player via native intent
-      await directoryPickerService.openFile(uri);
-    } catch (error) {
-      console.error('Error opening file:', error);
-      uiStore.showToast('No video player found', 'error');
-    }
+    // Navigate to internal player with local file URI
+    const params = new URLSearchParams({
+      type: 'library',
+      file: uri,
+      title: item.title || item.filename || 'Video'
+    });
+    goto(`/player?${params.toString()}`);
   }
 </script>
 

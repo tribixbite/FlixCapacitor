@@ -17,6 +17,7 @@
 
   let {
     magnetUri = '',
+    localFileUri = '',
     title = '',
     subtitle = '',
     posterUrl = '',
@@ -28,6 +29,7 @@
     onNextEpisode
   } = $props<{
     magnetUri?: string;
+    localFileUri?: string;
     title?: string;
     subtitle?: string;
     posterUrl?: string;
@@ -38,6 +40,9 @@
     onError?: (error: string) => void;
     onNextEpisode?: () => void;
   }>();
+
+  // Determine if this is local file playback (no torrent streaming)
+  const isLocalFile = $derived(!!localFileUri && !magnetUri);
 
   const streamer = useTorrentStreamer();
   const { impact } = useHaptics();
@@ -74,6 +79,9 @@
   let selectedFileIndex = $state(0);
   let hasCheckedForMultipleFiles = $state(false);
 
+  // Track if video has actually started playing (first frame rendered)
+  let hasVideoStarted = $state(false);
+
 
   // Quality and subtitle state
   let showQualitySelector = $state(false);
@@ -92,11 +100,15 @@
   // Derived states
   let progressPercent = $derived(duration > 0 ? (currentTime / duration) * 100 : 0);
   let bufferedPercent = $derived(streamer.progress);
-  let isBuffering = $derived(streamer.isBuffering && isPlaying);
+  // Show buffering when: 1) torrent is buffering during playback, OR 2) streaming but video hasn't actually started yet
+  let isBuffering = $derived(
+    (streamer.isBuffering && isPlaying) ||
+    (streamer.isStreaming && !hasVideoStarted)
+  );
 
-  // Initialize streaming when magnetUri changes
+  // Initialize player when magnetUri or localFileUri changes
   $effect(() => {
-    if (magnetUri && !isInitialized) {
+    if ((magnetUri || localFileUri) && !isInitialized) {
       initializePlayer();
     }
   });
@@ -159,11 +171,20 @@
       await lockOrientation();
       await hideStatusBar();
 
-      // Start streaming
-      const url = await streamer.start(magnetUri);
-      if (url && videoElement) {
-        videoElement.src = url;
-        videoElement.load();
+      if (isLocalFile && localFileUri) {
+        // Local file playback - set src directly without torrent streaming
+        if (videoElement) {
+          videoElement.src = localFileUri;
+          videoElement.load();
+          hasVideoStarted = true; // Local files start immediately
+        }
+      } else if (magnetUri) {
+        // Torrent streaming
+        const url = await streamer.start(magnetUri);
+        if (url && videoElement) {
+          videoElement.src = url;
+          videoElement.load();
+        }
       }
 
       // Start position save interval (every 5 seconds during playback)
@@ -539,7 +560,10 @@
       positionSaveInterval = null;
     }
 
-    await streamer.stop();
+    // Only stop streamer for torrent playback
+    if (!isLocalFile) {
+      await streamer.stop();
+    }
     await unlockOrientation();
     await showStatusBar();
     onClose?.();
@@ -558,7 +582,10 @@
       if (duration > 0) {
         savePlaybackPosition();
       }
-      streamer.stop();
+      // Only stop streamer for torrent playback
+      if (!isLocalFile) {
+        streamer.stop();
+      }
       unlockOrientation();
       showStatusBar();
     };
@@ -577,10 +604,29 @@
     class="w-full h-full object-contain"
     playsinline
     autoplay
-    ontimeupdate={handleVideoTimeUpdate}
-    ondurationchange={handleVideoDurationChange}
-    onended={handleVideoEnded}
-    onerror={handleVideoError}
+    ontimeupdate={() => {
+      if (videoElement) {
+        currentTime = videoElement.currentTime;
+        isPlaying = !videoElement.paused;
+        isPaused = videoElement.paused;
+        // Mark video as started once we have actual playback time
+        if (currentTime > 0 && !hasVideoStarted) {
+          hasVideoStarted = true;
+        }
+      }
+    }}
+    ondurationchange={() => {
+      if (videoElement) {
+        duration = videoElement.duration;
+      }
+    }}
+    onended={() => {
+      isPlaying = false;
+      handleClose();
+    }}
+    onerror={(e) => {
+      console.error('[VideoPlayer] Video error:', e);
+    }}
     onwaiting={() => { /* handled by buffer indicator */ }}
     oncanplay={() => {
       isPlaying = !videoElement?.paused;
@@ -619,8 +665,8 @@
     offset={subtitleOffset}
   />
 
-  <!-- Buffer/Loading Indicator -->
-  {#if streamer.isLoading || isBuffering}
+  <!-- Buffer/Loading Indicator (only for torrent streaming) -->
+  {#if !isLocalFile && (streamer.isLoading || isBuffering)}
     <BufferIndicator
       progress={streamer.bufferProgress}
       downloadSpeed={streamer.downloadSpeed}
@@ -668,8 +714,8 @@
     />
   {/if}
 
-  <!-- Torrent Stats (debug, can be toggled) -->
-  {#if streamer.isStreaming && showControls}
+  <!-- Torrent Stats (debug, can be toggled) - only for torrent streaming -->
+  {#if !isLocalFile && streamer.isStreaming && showControls}
     <div class="absolute bottom-20 left-4 text-xs text-white/60 bg-black/40 px-2 py-1 rounded">
       <div>Peers: {streamer.numPeers} | DL: {formatSpeed(streamer.downloadSpeed)}</div>
       <div>Progress: {(streamer.progress * 100).toFixed(1)}%</div>

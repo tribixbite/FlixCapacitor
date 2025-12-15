@@ -7,11 +7,12 @@
   import TorrentSelector from './TorrentSelector.svelte';
   import type { Movie, TVShow } from '$types';
 
-  // Query params: type (movie/show/academic), id, magnetUri (optional direct play)
+  // Query params: type (movie/show/academic/library), id, magnetUri (optional direct play), file (local file URI)
   let type = $derived($page.url.searchParams.get('type') || 'movie');
   let id = $derived(Number($page.url.searchParams.get('id')));
   let directMagnet = $derived($page.url.searchParams.get('magnet') || '');
   let directTitle = $derived($page.url.searchParams.get('title') || '');
+  let directFile = $derived($page.url.searchParams.get('file') || '');
   let episode = $derived($page.url.searchParams.get('episode') || '');
   let season = $derived($page.url.searchParams.get('season') || '');
 
@@ -20,25 +21,30 @@
   let loading = $state(true);
   let showTorrentSelector = $state(false);
   let selectedMagnet = $state<string>('');
+  let selectedFile = $state<string>('');
   let isPlaying = $state(false);
 
-  // Load content details (only if we have an ID and not a direct magnet)
+  // Load content details (only if we have an ID and not a direct magnet/file)
   $effect(() => {
-    if (id && !directMagnet) {
+    if (id && !directMagnet && !directFile) {
       loadContent();
-    } else if (directMagnet) {
-      // Direct magnet play - no need to load content
+    } else if (directMagnet || directFile) {
+      // Direct magnet/file play - no need to load content
       loading = false;
-    } else if (!id && !directMagnet) {
-      // No id and no magnet - go back
+    } else if (!id && !directMagnet && !directFile) {
+      // No id, magnet, or file - go back
       goBack();
     }
   });
 
-  // Check for direct magnet play
+  // Check for direct magnet or file play
   $effect(() => {
     if (directMagnet) {
       selectedMagnet = directMagnet;
+      isPlaying = true;
+      loading = false;
+    } else if (directFile) {
+      selectedFile = directFile;
       isPlaying = true;
       loading = false;
     }
@@ -90,7 +96,10 @@
   }
 
   function goBack() {
-    if (type === 'academic') {
+    if (type === 'library') {
+      // Go back to Library page
+      goto('/library');
+    } else if (type === 'academic') {
       // Go back to Learning page
       goto('/?tab=learning');
     } else if (type === 'movie' && id) {
@@ -137,9 +146,10 @@
   <title>Player - FlixCapacitor</title>
 </svelte:head>
 
-{#if isPlaying && selectedMagnet}
+{#if isPlaying && (selectedMagnet || selectedFile)}
   <VideoPlayer
     magnetUri={selectedMagnet}
+    localFileUri={selectedFile}
     title={playerTitle()}
     subtitle={playerSubtitle()}
     posterUrl={posterUrl()}
