@@ -136,7 +136,7 @@
         <button
           type="button"
           class="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-          onclick={() => { console.log('[PlayerControls] Queue badge clicked'); onShowFilePicker?.(); }}
+          onclick={() => onShowFilePicker?.()}
           aria-label="Show file list"
         >
           <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">

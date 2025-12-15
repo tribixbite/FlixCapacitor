@@ -72,21 +72,8 @@
   let videoFiles = $state<VideoFile[]>([]);
   let selectedFileIndex = $state(0);
   let hasCheckedForMultipleFiles = $state(false);
-  let fileSearchQuery = $state('');
-  let filePageIndex = $state(0);
-  const FILE_PAGE_SIZE = 50;
-
-  // Pre-compute first 50 video files for picker display
-  let pickerFiles = $derived(videoFiles.slice(0, 50));
-
-  // Format file size for display
-  function formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  }
+  // TODO: Add file search and pagination when implementing full file list
+  // See commit history for virtualization attempt
 
   // Quality and subtitle state
   let showQualitySelector = $state(false);
