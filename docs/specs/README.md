@@ -245,6 +245,10 @@
   - YTS torrents with file size, seeds/peers
   - Health indicator bars (green = healthy)
   - Upload date metadata
+- ✅ **Add Torrent Sheet:**
+  - Magnet URI input with clipboard paste
+  - Stream Now / Download buttons
+  - Pick .torrent file option
 
 ## Specification Format
 
