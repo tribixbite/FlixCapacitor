@@ -145,6 +145,10 @@
   - CapacitorHttp bypasses CORS restrictions
   - Updated to working yts.am mirror (-> yts.lt)
   - Mirror reset prevents stale state across searches
+- ✅ **Deep Link Navigation:** Full app navigation via URL scheme
+  - Routes: settings, downloads, library, favorites, search, learning
+  - Content: movies/{id}, shows/{id} for detail pages
+  - Capacitor App plugin listener for appUrlOpen events
 
 ### Services Implemented
 | Service | Description | API |
