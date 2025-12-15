@@ -14,21 +14,11 @@
 ### Feature Specifications
 4. **[Multi-File Playback](MULTI-FILE-PLAYBACK.md)** - Sequential video queue with auto-next functionality
 5. **[Torrent Collections](TORRENT-COLLECTIONS.md)** - Playlist-like feature to organize torrents with cloud sync
-6. **[Library Folder Picker](LIBRARY-FOLDER-PICKER.md)** - SAF integration with persistent permissions
-7. **[File-Level Favorites](FILE-LEVEL-FAVORITES.md)** - Per-file bookmarking in multi-file torrents
-8. **[Subtitle Detection](SUBTITLE-DETECTION.md)** - Automatic subtitle file discovery and language detection
-9. **[Video Switching Bug Fix](VIDEO-SWITCHING-FIX.md)** - Request tracking to prevent race conditions
-10. **[Deep Linking](DEEP-LINKING.md)** - URL scheme handling for content navigation
-11. **[Theme System](THEME-SYSTEM.md)** - Dark mode with persistence and system preference detection
 
-### Mobile-Specific Specifications
-12. **[Capacitor Plugin Architecture](CAPACITOR-PLUGINS.md)** - Custom native plugin development (12 plugins)
-13. **[Mobile UI Design](MOBILE-UI-DESIGN.md)** - Touch-friendly responsive design with Tailwind CSS
-14. **[Android Build System](ANDROID-BUILD-SYSTEM.md)** - Custom ARM64 AAPT2 build pipeline
-
-### API & Integration Specifications
-15. **[Content Provider APIs](CONTENT-PROVIDERS.md)** - TMDB, OMDB, and demo provider integration
-16. **[External Player Fallback](EXTERNAL-PLAYER-FALLBACK.md)** - VLC/MX Player integration
+### Migration Documentation
+6. **[Svelte 5 Migration](MIGRATION-SVELTE5-KONSTA.md)** - Backbone.js to Svelte 5 migration guide
+7. **[Migration TODOs](MIGRATION-TODOS.md)** - Post-migration task tracking
+8. **[Torrent Fixes](TORRENT-FIXES-2024-12-10.md)** - Bug fixes for torrent streaming issues
 
 ## Quick Reference
 
