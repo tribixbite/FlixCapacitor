@@ -5,7 +5,7 @@
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import { BottomNav, TopNavbar, SearchBar } from '$components/navigation';
-  import { OfflineBanner } from '$components/ui';
+  import { OfflineBanner, Toast } from '$components/ui';
   import { settingsStore } from '$stores/settings.store';
   import { watchHistoryStore } from '$stores/watch-history.store';
   import { errorReportingService } from '$services';
@@ -112,6 +112,9 @@
 
 <!-- Offline Banner (renders at top when offline) -->
 <OfflineBanner />
+
+<!-- Toast Notifications -->
+<Toast />
 
 <KonstaApp theme="ios" dark={true} class="h-full">
   <Page class="!bg-black min-h-screen">

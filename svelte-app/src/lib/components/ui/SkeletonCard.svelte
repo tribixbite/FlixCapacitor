@@ -12,7 +12,8 @@
   }>();
 
   // Dimension classes based on variant
-  const variantClasses = {
+  type VariantType = 'poster' | 'landscape' | 'continue';
+  const variantClasses: Record<VariantType, string> = {
     poster: 'w-28 aspect-[2/3]',
     landscape: 'w-40 aspect-video',
     continue: 'w-40 aspect-video'

@@ -1,5 +1,6 @@
 import { writable, derived, type Writable, type Readable } from 'svelte/store';
 import type { Movie, TVShow, ContentType } from '$types';
+import { uiStore } from './ui.store';
 
 interface FavoriteItem {
   id: number;
@@ -53,11 +54,13 @@ function createFavoritesStore(): FavoritesStore {
 
     toggleFavorite: (item: Movie | TVShow, type: ContentType) => {
       const exists = currentValue.some(f => f.id === item.id && f.type === type);
+      // Movie has 'title', TVShow has 'name'
+      const title = 'title' in item ? item.title : (item as TVShow).name;
+
       if (exists) {
         update(favorites => favorites.filter(f => !(f.id === item.id && f.type === type)));
+        uiStore.showToast(`Removed "${title}" from favorites`, 'info', 2000);
       } else {
-        // Movie has 'title', TVShow has 'name'
-        const title = 'title' in item ? item.title : (item as TVShow).name;
         const posterPath = item.posterPath;
         update(favorites => [...favorites, {
           id: item.id,
@@ -67,6 +70,7 @@ function createFavoritesStore(): FavoritesStore {
           addedAt: Date.now(),
           data: item
         }]);
+        uiStore.showToast(`Added "${title}" to favorites`, 'success', 2000);
       }
     },
 
