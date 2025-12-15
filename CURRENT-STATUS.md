@@ -69,11 +69,18 @@ FlixCapacitor has been **completely rewritten** from Backbone.js to **Svelte 5**
 | Metric | Value |
 |--------|-------|
 | Build Time | ~14 seconds |
-| Total Build | 1.1 MB |
-| JS Bundle | 778 KB (chunked) |
-| CSS Bundle | 111 KB |
-| APK Size | ~74 MB (debug) |
+| JS Chunks | 708 KB (auto code-split by SvelteKit) |
+| CSS Bundle | 132 KB |
+| Route Nodes | 188 KB |
+| Total Web | ~1 MB |
+| APK Size | ~74 MB (debug, includes jlibtorrent natives) |
 | Plugins | 12 (3 custom) |
+
+### Optimization Status
+- Route-based code splitting: **Enabled** (automatic via SvelteKit)
+- Tree shaking: **Enabled** (Vite default)
+- Minification: **esbuild** (fast, efficient)
+- Largest chunk: 256KB (Konsta UI vendor)
 
 ---
 
@@ -114,9 +121,8 @@ e3ba31a7 fix(player): video file picker for multi-file torrents
 ## Next Steps
 
 1. **Manual S24 Testing** - Unlock device and verify all features
-2. **Performance Optimization** - Code splitting, lazy loading
-3. **Release Build** - Signed APK for Play Store
-4. **Documentation** - Update all legacy docs for Svelte 5
+2. **Release Build** - Signed APK for Play Store
+3. **Documentation** - Update all legacy docs for Svelte 5
 
 ---
 
