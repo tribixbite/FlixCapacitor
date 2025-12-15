@@ -234,6 +234,13 @@
 -dontwarn sun.misc.Unsafe
 -dontwarn java.lang.invoke.StringConcatFactory
 
+# ===== Google Error-Prone Annotations =====
+# Used by Tink crypto library (via Sentry/Supabase)
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.google.errorprone.annotations.CheckReturnValue
+-dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn com.google.errorprone.annotations.RestrictedApi
+
 # ===== Custom Rules for FlixCapacitor =====
 # Add any app-specific rules below
 

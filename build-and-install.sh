@@ -6,8 +6,16 @@
 
 set -e
 
+# Parse arguments: [clean] [release]
+CLEAN_BUILD=""
 BUILD_TYPE="debug"
-CLEAN_BUILD="${1:-}"
+
+for arg in "$@"; do
+    case $arg in
+        clean) CLEAN_BUILD="clean" ;;
+        release) BUILD_TYPE="release" ;;
+    esac
+done
 PACKAGE_NAME="app.flixcapacitor.mobile"
 
 echo "=== ⚡ FlixCapacitor Build and Install Tool ==="
@@ -154,7 +162,9 @@ else
 fi
 
 cd android
-if ./gradlew assembleDebug $GRADLE_OPTS; then
+# Capitalize first letter for gradle task name (debug -> Debug, release -> Release)
+GRADLE_TASK="assemble${BUILD_TYPE^}"
+if ./gradlew $GRADLE_TASK $GRADLE_OPTS; then
     echo "✅ Build successful!"
 else
     echo "❌ Build failed!"
@@ -165,7 +175,7 @@ cd ..
 # Step 6: Find the APK
 echo "Step 6: Locating APK file..."
 
-APK_PATH="android/app/build/outputs/apk/debug/app-debug.apk"
+APK_PATH="android/app/build/outputs/apk/$BUILD_TYPE/app-$BUILD_TYPE.apk"
 
 if [ ! -f "$APK_PATH" ]; then
     echo "❌ APK not found at expected location: $APK_PATH"
@@ -209,7 +219,7 @@ echo
 
 if [ "$INSTALLED" = true ]; then
     echo "📦 Creating backup copies..."
-    mkdir -p /sdcard/FlixCapacitor 2>/dev/null && cp "$APK_PATH" /sdcard/FlixCapacitor/latest-debug.apk 2>/dev/null && echo "  ✓ /sdcard/FlixCapacitor/latest-debug.apk"
+    mkdir -p /sdcard/FlixCapacitor 2>/dev/null && cp "$APK_PATH" /sdcard/FlixCapacitor/latest-$BUILD_TYPE.apk 2>/dev/null && echo "  ✓ /sdcard/FlixCapacitor/latest-$BUILD_TYPE.apk"
     exit 0
 fi
 
@@ -270,14 +280,14 @@ fi
 
 # Method 3: Copy to /sdcard/Download
 echo "Method 3: Copy to /sdcard/Download..."
-DOWNLOAD_PATH="/sdcard/Download/flixcapacitor-debug.apk"
+DOWNLOAD_PATH="/sdcard/Download/flixcapacitor-$BUILD_TYPE.apk"
 if cp "$APK_PATH" "$DOWNLOAD_PATH" 2>/dev/null; then
     echo "  ✅ APK copied to: $DOWNLOAD_PATH"
     echo
     echo "📱 Manual installation:"
     echo "  1. Open your file manager"
     echo "  2. Go to Downloads folder"
-    echo "  3. Tap 'flixcapacitor-debug.apk'"
+    echo "  3. Tap 'flixcapacitor-$BUILD_TYPE.apk'"
     echo "  4. Tap 'Install'"
 
     if command -v termux-open &>/dev/null; then
@@ -296,7 +306,7 @@ fi
 
 # Method 4: Copy to Termux storage
 echo "Method 4: Copy to Termux storage..."
-TERMUX_STORAGE="$HOME/storage/downloads/flixcapacitor-debug.apk"
+TERMUX_STORAGE="$HOME/storage/downloads/flixcapacitor-$BUILD_TYPE.apk"
 
 if [ ! -d "$HOME/storage" ]; then
     echo "  Setting up Termux storage access..."
@@ -310,7 +320,7 @@ if [ -d "$HOME/storage/downloads" ]; then
         echo
         echo "📱 Manual installation:"
         echo "  1. Open Downloads in file manager"
-        echo "  2. Tap 'flixcapacitor-debug.apk'"
+        echo "  2. Tap 'flixcapacitor-$BUILD_TYPE.apk'"
         echo "  3. Install the app"
 
         if command -v termux-open &>/dev/null; then
