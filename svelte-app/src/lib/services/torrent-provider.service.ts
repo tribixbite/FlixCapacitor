@@ -281,7 +281,7 @@ class TorrentProviderService {
         throw new Error(`YTS API error: ${response.status}`);
       }
 
-      const data: YTSResponse = await response.json();
+      const data = await response.json() as YTSResponse;
 
       if (data.status !== 'ok' || !data.data.movies?.length) {
         return [];
@@ -326,7 +326,7 @@ class TorrentProviderService {
         throw new Error(`YTS API error: ${response.status}`);
       }
 
-      const data: YTSResponse = await response.json();
+      const data = await response.json() as YTSResponse;
 
       if (data.status !== 'ok' || !data.data.movies?.length) {
         return [];
@@ -370,7 +370,7 @@ class TorrentProviderService {
         throw new Error(`YTS API error: ${response.status}`);
       }
 
-      const data: YTSMovieDetailsResponse = await response.json();
+      const data = await response.json() as YTSMovieDetailsResponse;
 
       if (data.status !== 'ok' || !data.data.movie) {
         return [];
@@ -401,7 +401,7 @@ class TorrentProviderService {
         throw new Error(`EZTV API error: ${response.status}`);
       }
 
-      const data: EZTVResponse = await response.json();
+      const data = await response.json() as EZTVResponse;
 
       if (!data.torrents?.length) {
         return [];
