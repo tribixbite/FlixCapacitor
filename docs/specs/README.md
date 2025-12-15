@@ -1,8 +1,8 @@
 # FlixCapacitor Mobile - Technical Specifications
 
 **Last Updated:** 2025-12-15
-**Version:** 2.1.6
-**Status:** Phase 10.10 Complete - Skeleton Loading States Added
+**Version:** 2.1.7
+**Status:** Phase 10.11 Complete - Toast Notification System Added
 
 ## Table of Contents
 
@@ -265,6 +265,28 @@
   - App feels more polished during initial load
   - Users see content structure before data arrives
   - Better perceived performance
+
+### Phase 10.11: Toast Notification System ✅ COMPLETE (2025-12-15)
+- ✅ **Toast Component:**
+  - Svelte 5 component with fly/fade transitions
+  - Support for 4 notification types: info (blue), success (green), warning (yellow), error (red)
+  - Icon per type (info circle, checkmark, warning triangle, X circle)
+  - Tap anywhere on toast to dismiss
+  - Auto-dismiss with configurable duration (default 3s)
+- ✅ **UI Store Integration:**
+  - Toast state managed in ui.store.ts (toasts array)
+  - `showToast(message, type, duration)` method
+  - `dismissToast(id)` method for manual dismissal
+  - Auto-cleanup timer removes toast after duration
+- ✅ **Favorites Integration:**
+  - Toast shows when adding item to favorites ("Added X to favorites")
+  - Toast shows when removing item ("Removed X from favorites")
+  - Different toast types (success for add, info for remove)
+- ✅ **Layout Integration:**
+  - Toast component added to +layout.svelte
+  - Positioned at bottom-20 (above bottom nav)
+  - z-index 50 for proper layering
+  - Proper accessibility (aria-live="polite", role="alert")
 
 ### Phase 10.9: Pull-to-Refresh ✅ COMPLETE (2025-12-15)
 - ✅ **PullToRefresh Component:**
