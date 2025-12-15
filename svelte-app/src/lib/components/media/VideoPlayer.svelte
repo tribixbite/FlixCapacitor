@@ -72,8 +72,7 @@
   let videoFiles = $state<VideoFile[]>([]);
   let selectedFileIndex = $state(0);
   let hasCheckedForMultipleFiles = $state(false);
-  // TODO: Add file search and pagination when implementing full file list
-  // See commit history for virtualization attempt
+
 
   // Quality and subtitle state
   let showQualitySelector = $state(false);
@@ -645,7 +644,11 @@
       onClose={handleClose}
       onQualitySelect={() => { showQualitySelector = true; }}
       onSubtitleSelect={() => { showSubtitleSelector = true; }}
-      onShowFilePicker={() => { console.log('[VideoPlayer] Opening file picker, videoFiles:', videoFiles.length); showVideoFilePicker = true; }}
+      onShowFilePicker={() => {
+        console.log('[VideoPlayer] Opening file picker, videoFiles:', videoFiles.length, 'showVideoFilePicker before:', showVideoFilePicker);
+        showVideoFilePicker = true;
+        console.log('[VideoPlayer] showVideoFilePicker after:', showVideoFilePicker);
+      }}
     />
   {/if}
 
@@ -680,29 +683,83 @@
     />
   {/if}
 
-  <!-- Video File Picker (for multi-file torrents) -->
-  {#if showVideoFilePicker}
-    <div
-      class="fixed inset-0 z-[10000] bg-black/90 flex items-center justify-center"
-      onclick={(e) => { if (e.target === e.currentTarget) showVideoFilePicker = false; }}
-      role="dialog"
-    >
-      <div class="bg-zinc-800 rounded-xl p-6 max-w-sm mx-4 w-full">
-        <h2 class="text-white text-xl font-bold mb-2">Select Video File</h2>
-        <p class="text-white/60 mb-4">{videoFiles.length} files in torrent</p>
-        <p class="text-white/40 text-sm mb-4">
-          Currently playing file 1. Multi-file selection coming in a future update.
-        </p>
+</div>
+
+<!-- Video File Picker (for multi-file torrents) - Inline implementation to avoid component mount issues -->
+{#if showVideoFilePicker}
+  {@const previewFiles = videoFiles.slice(0, 50)}
+  <div
+    class="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm"
+    onclick={(e) => { if (e.target === e.currentTarget) showVideoFilePicker = false; }}
+    onkeydown={(e) => { if (e.key === 'Escape') showVideoFilePicker = false; }}
+    role="dialog"
+    tabindex="-1"
+  >
+    <div class="absolute bottom-0 left-0 right-0 bg-zinc-900 rounded-t-2xl max-h-[80vh] flex flex-col">
+      <!-- Handle -->
+      <div class="flex justify-center py-3">
+        <div class="w-10 h-1 bg-white/20 rounded-full"></div>
+      </div>
+
+      <!-- Header -->
+      <div class="px-4 pb-3 border-b border-white/10">
+        <h2 class="text-lg font-semibold text-white">Select Video File</h2>
+        <p class="text-sm text-white/60">{title} · {videoFiles.length.toLocaleString()} files</p>
+      </div>
+
+      <!-- File List Preview -->
+      <div class="flex-1 overflow-y-auto py-2" style="max-height: 50vh;">
+        {#each previewFiles as file (file.index)}
+          {@const isSelected = file.index === selectedFileIndex}
+          {@const fileName = file.name ?? `File ${file.index}`}
+          {@const displayName = fileName.split('/').pop() || fileName}
+          {@const extension = fileName.split('.').pop()?.toUpperCase() || 'VIDEO'}
+          {@const fileSize = file.size ?? 0}
+          <button
+            type="button"
+            class="w-full flex items-start gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left {isSelected ? 'bg-white/10' : ''}"
+            onclick={async () => {
+              selectedFileIndex = file.index;
+              await handleVideoFileSelect(file);
+              showVideoFilePicker = false;
+            }}
+          >
+            <span class="bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded min-w-[40px] text-center mt-0.5">
+              {extension}
+            </span>
+            <div class="flex-1 min-w-0">
+              <p class="text-white text-sm leading-tight truncate">{displayName}</p>
+              <p class="text-white/50 text-xs mt-1">
+                {fileSize < 1024*1024 ? (fileSize / 1024).toFixed(1) + ' KB' : (fileSize / 1024 / 1024).toFixed(1) + ' MB'}
+              </p>
+            </div>
+            {#if isSelected}
+              <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+            {/if}
+          </button>
+        {/each}
+        {#if videoFiles.length > 50}
+          <div class="px-4 py-3 text-center text-white/40 text-sm">
+            Showing first 50 of {videoFiles.length.toLocaleString()} files
+          </div>
+        {/if}
+      </div>
+
+      <!-- Cancel Button -->
+      <div class="p-4 border-t border-white/10">
         <button
-          class="w-full py-3 bg-red-600 text-white rounded-lg font-medium"
+          type="button"
+          class="w-full py-3 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg transition-colors"
           onclick={() => { showVideoFilePicker = false; }}
         >
-          Close
+          Cancel
         </button>
       </div>
     </div>
-  {/if}
-</div>
+  </div>
+{/if}
 
 <script module lang="ts">
   function formatSpeed(bytesPerSecond: number): string {

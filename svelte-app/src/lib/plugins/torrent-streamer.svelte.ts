@@ -173,8 +173,15 @@ export function useTorrentStreamer() {
   async function getVideoFiles(): Promise<VideoFile[]> {
     try {
       const result = await TorrentStreamer.getVideoFileList();
-      videoFiles = result.files;
-      return result.files;
+      // Handle both cases: files as array or as JSON string (native serialization quirk)
+      let files: VideoFile[];
+      if (typeof result.files === 'string') {
+        files = JSON.parse(result.files) as VideoFile[];
+      } else {
+        files = result.files;
+      }
+      videoFiles = files;
+      return files;
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to get video files';
       return [];
@@ -184,8 +191,15 @@ export function useTorrentStreamer() {
   async function getAllFilesList(): Promise<FileInfo[]> {
     try {
       const result = await TorrentStreamer.getAllFiles();
-      allFiles = result.files;
-      return result.files;
+      // Handle both cases: files as array or as JSON string (native serialization quirk)
+      let files: FileInfo[];
+      if (typeof result.files === 'string') {
+        files = JSON.parse(result.files) as FileInfo[];
+      } else {
+        files = result.files;
+      }
+      allFiles = files;
+      return files;
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to get files';
       return [];
