@@ -1,7 +1,7 @@
 # FlixCapacitor Mobile - Technical Specifications
 
-**Last Updated:** 2025-12-14
-**Version:** 2.1.0
+**Last Updated:** 2025-12-15
+**Version:** 2.1.1
 **Status:** Phase 10.2 Complete - Downloads & Multi-File Support
 
 ## Table of Contents
@@ -159,16 +159,19 @@
 | chromecastService | Media casting | Google Cast |
 | errorReportingService | Crash tracking | Sentry |
 
-### Device Testing ✅ COMPLETE (2025-12-14)
+### Device Testing ✅ COMPLETE (2025-12-15)
 - ✅ Full UI verification across all views (Browse, Favorites, Library, Downloads, Settings, Learning)
 - ✅ Add Torrent sheet functionality tested (magnet URI, .torrent picker)
 - ✅ No UI cut-offs on any screen (safe area padding fix committed)
 - ✅ Movie torrent search working (The Godfather: 3 torrents via YTS)
 - ✅ TV show torrent search working (Stranger Things S5: 29 torrents via EZTV)
-- ✅ Academic torrent streaming tested (MIT 6.004: connected, buffering started)
+- ✅ Academic torrent streaming tested (MIT 6.004: connected, 3+ peers, 33KB/s download)
 - ✅ Library folder picker and video playback (opens system "Open with" dialog)
 - ✅ Full torrent playback test (Shawshank Redemption 1080p: 5 peers, streaming service active)
-- ⏳ Chromecast device connection test (pending Chromecast device)
+- ✅ Chromecast mock mode removed (real Cast SDK integration only)
+- ✅ Video file picker modal simplified (shows file count, full list deferred for virtualization)
+- ✅ Multi-file detection working (queue badge shows "1 / 28620" for MIT course)
+- ⏳ Video file picker with virtualized list (performance optimization for 28K+ files)
 
 ## Specification Format
 
@@ -202,4 +205,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-14 14:35 by Claude Code (claude-opus-4-5-20251101)*
+*Last Updated: 2025-12-15 01:05 — claude-opus-4-5-20251101*
