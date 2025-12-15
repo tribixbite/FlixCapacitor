@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-12-15
 **Version:** 2.1.11
-**Status:** Phase 12A Complete - Performance Optimization
+**Status:** Phase 12E Complete - Production Release Preparation
 
 ## Table of Contents
 
@@ -397,6 +397,35 @@
   - Learning page (heaviest): 19 kB server, dynamically loaded
   - For Capacitor apps, assets bundled in APK (network transfer not primary concern)
   - Parse time optimization via route splitting already optimal
+
+### Phase 12E: Production Release Preparation ✅ COMPLETE (2025-12-15)
+- ✅ **Crash Reporting (Sentry):**
+  - `@sentry/capacitor@2.4.1` and `@sentry/browser@9.46.0` installed
+  - `ErrorReportingService` with auto-init in +layout.svelte
+  - Supports both native (Capacitor) and web platforms
+  - Breadcrumb tracking, user context, exception capture
+  - Activated via `VITE_SENTRY_DSN` environment variable
+- ✅ **App Icons & Branding:**
+  - App name: "FlixCapacitor"
+  - Package: `app.flixcapacitor.mobile`
+  - Launcher icons in all densities (mdpi through xxxhdpi)
+  - Adaptive icon support for Android 8+ (API 26)
+  - Blue cross/X logo on light background
+  - Splash screen configured with AndroidX SplashScreen API
+- ✅ **Production Build Configuration:**
+  - Version: 2.1.0 (versionCode 21)
+  - Release signing: RSA 2048-bit keystore (valid until 2053)
+  - ProGuard/R8 minification enabled (254-line rules file)
+  - Resource shrinking enabled
+  - PNG crunching and zip alignment
+  - Logging removed in release builds (Log.v/d/i stripped)
+- ✅ **ProGuard Rules Coverage:**
+  - Capacitor core and community plugins preserved
+  - Custom plugins (directory-picker, media-permissions, torrent-streamer)
+  - jlibtorrent JNI native methods preserved
+  - JavaScript interface methods preserved
+  - Kotlin metadata and coroutines preserved
+  - Sentry crash reporting preserved with line numbers
 
 ### Phase 10.7: Continue Watching Feature ✅ COMPLETE (2025-12-15)
 - ✅ **ContinueWatchingCard Component:**
