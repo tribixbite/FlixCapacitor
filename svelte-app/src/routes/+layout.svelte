@@ -52,9 +52,16 @@
       try {
         // Parse URL: flixcapacitor://path or https://flixcapacitor.app/path
         const parsed = new URL(url);
-        const path = parsed.pathname || parsed.host;
+        // For custom schemes like flixcapacitor://movies/238:
+        // - host = "movies", pathname = "/238"
+        // For https URLs: pathname contains full path
+        const path = parsed.protocol === 'flixcapacitor:'
+          ? (parsed.host + parsed.pathname).replace(/^\//, '')
+          : parsed.pathname.replace(/^\//, '');
 
-        // Route mapping
+        console.log('[DeepLink] Parsed path:', path);
+
+        // Route mapping for simple routes
         const routes: Record<string, string> = {
           'settings': '/settings',
           'downloads': '/downloads',
