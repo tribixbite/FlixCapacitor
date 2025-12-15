@@ -113,21 +113,19 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="flex gap-3 mt-4">
-      <Button
-        large
-        rounded
-        class="flex-1 !bg-red-600"
+    <div class="flex items-center gap-2 mt-4">
+      <Fab
+        class="!relative !left-auto !right-auto !top-auto !bottom-auto !w-12 !h-12 !m-0"
+        color="red"
         onClick={handlePlay}
-      >
-        ▶ Play
-      </Button>
+        text="▶"
+      />
 
       <Button
         large
         rounded
         outline
-        class="!border-zinc-600"
+        class="flex-1 !border-zinc-600"
         onClick={onDownload}
       >
         ⬇ Download
@@ -137,7 +135,7 @@
         large
         rounded
         outline
-        class="!border-zinc-600 !w-12"
+        class="!border-zinc-600 !w-12 !px-0"
         onClick={toggleFavorite}
       >
         {isFavorite ? '❤️' : '🤍'}
