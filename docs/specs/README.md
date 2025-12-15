@@ -177,6 +177,20 @@
   - Fixed JSON string serialization from native plugin (parse string to array)
   - Shows first 50 video files with extension badges (MP4/MKV/OGV), names, sizes
   - Bottom sheet modal with file selection for multi-file torrents
+- ✅ **YTS Torrent Streaming Verified (2025-12-15):**
+  - Shawshank Redemption 720p streamed from YTS
+  - Connected to 19 peers, sustained 2.38 MB/s download speed
+  - Buffer progress reached 12.4% with player UI fully rendered
+  - Video controls, seek bar, time display all functional
+- ✅ **Library SAF Integration Verified:**
+  - Folder picker opens system file browser
+  - Persistent permissions granted after user approval
+  - 4 local videos scanned and displayed with thumbnails
+  - Playback delegates to Android "Open with" intent chooser
+- ✅ **Add Torrent Sheet Verified:**
+  - Magnet URI input validation ("✓ Valid magnet URI")
+  - Stream Now / Download buttons responsive
+  - .torrent file picker launches SAF correctly
 
 ### Phase 10.3: Anime Section ✅ COMPLETE (2025-12-15)
 - ✅ **Anime Tab Implementation:** Full anime browsing on Browse page
@@ -284,4 +298,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-15 07:00 — opus-4-5-20251101*
+*Last Updated: 2025-12-15 09:00 — opus-4-5-20251101*
