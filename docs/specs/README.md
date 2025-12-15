@@ -156,10 +156,13 @@
 
 ### Device Testing ✅ COMPLETE (2025-12-14)
 - ✅ Full UI verification across all views (Browse, Favorites, Library, Downloads, Settings, Learning)
-- ✅ Add Torrent sheet functionality tested
-- ✅ No UI cut-offs on any screen
-- ✅ Torrent search working (The Godfather: 3 torrents, 2160p/1080p/720p)
-- ⏳ Torrent streaming end-to-end test (pending real torrent playback)
+- ✅ Add Torrent sheet functionality tested (magnet URI, .torrent picker)
+- ✅ No UI cut-offs on any screen (safe area padding fix committed)
+- ✅ Movie torrent search working (The Godfather: 3 torrents via YTS)
+- ✅ TV show torrent search working (Stranger Things S5: 29 torrents via EZTV)
+- ✅ Academic torrent streaming tested (MIT 6.004: connected, buffering started)
+- ✅ Library folder picker and video playback (opens system "Open with" dialog)
+- ⏳ Full torrent playback test (pending high-seeder torrent)
 - ⏳ Chromecast device connection test (pending Chromecast device)
 
 ## Specification Format
