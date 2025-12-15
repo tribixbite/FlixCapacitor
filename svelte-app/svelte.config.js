@@ -10,7 +10,7 @@ const config = {
       pages: 'build',
       assets: 'build',
       fallback: 'index.html',
-      precompress: false,
+      precompress: true,  // Generate gzipped versions for faster loading
       strict: false
     }),
     prerender: {

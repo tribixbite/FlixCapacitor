@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
   build: {
     target: 'esnext',
-    minify: 'esbuild'
+    minify: 'esbuild',
+    cssMinify: 'esbuild'  // Ensure CSS is minified
   },
   server: {
     port: 5173,
