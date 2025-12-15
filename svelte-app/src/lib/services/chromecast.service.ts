@@ -75,7 +75,6 @@ class ChromecastService {
   private devices: CastDevice[] = [];
   private currentSession: CastSession | null = null;
   private listeners: Map<CastEventType, Set<CastEventCallback>> = new Map();
-  private scanInterval: number | null = null;
 
   constructor() {
     this.initialize();
@@ -108,9 +107,8 @@ class ChromecastService {
         this.setupNativeListeners();
         console.log('[Chromecast] Initialized successfully');
       } else {
-        // Fallback: simulate availability for testing
-        this.available = true;
-        console.log('[Chromecast] Native plugin not found, using mock mode');
+        console.log('[Chromecast] Native plugin not available');
+        this.available = false;
       }
     } catch (error) {
       console.error('[Chromecast] Initialization failed:', error);
@@ -192,24 +190,17 @@ class ChromecastService {
       // @ts-ignore
       const castPlugin = (window as any).CastPlugin;
 
-      if (castPlugin) {
-        await castPlugin.startDiscovery();
-
-        // Auto-stop after duration
-        setTimeout(() => {
-          this.stopDeviceScan();
-        }, duration);
-      } else {
-        // Mock mode: simulate device discovery
-        setTimeout(() => {
-          this.handleDeviceDiscovered({
-            id: 'mock-device-1',
-            name: 'Living Room TV',
-            modelName: 'Chromecast',
-            isConnected: false
-          });
-        }, 1000);
+      if (!castPlugin) {
+        console.error('[Chromecast] Native plugin not available');
+        return [];
       }
+
+      await castPlugin.startDiscovery();
+
+      // Auto-stop after duration
+      setTimeout(() => {
+        this.stopDeviceScan();
+      }, duration);
 
       return this.devices;
     } catch (error) {
@@ -252,22 +243,12 @@ class ChromecastService {
       // @ts-ignore
       const castPlugin = (window as any).CastPlugin;
 
-      if (castPlugin) {
-        await castPlugin.connect(deviceId);
-      } else {
-        // Mock mode
-        this.currentSession = {
-          device: { ...device, isConnected: true },
-          sessionId: `mock-session-${Date.now()}`,
-          playerState: 'IDLE',
-          currentTime: 0,
-          duration: 0,
-          volume: 1,
-          isMuted: false
-        };
-        this.emit('sessionStarted', this.currentSession);
+      if (!castPlugin) {
+        console.error('[Chromecast] Native plugin not available');
+        return false;
       }
 
+      await castPlugin.connect(deviceId);
       return true;
     } catch (error) {
       console.error('[Chromecast] Connection failed:', error);
@@ -288,11 +269,10 @@ class ChromecastService {
 
       if (castPlugin) {
         await castPlugin.disconnect();
-      } else {
-        // Mock mode
-        this.currentSession = null;
-        this.emit('sessionEnded', null);
       }
+
+      this.currentSession = null;
+      this.emit('sessionEnded', null);
     } catch (error) {
       console.error('[Chromecast] Disconnect failed:', error);
     }
@@ -311,27 +291,12 @@ class ChromecastService {
       // @ts-ignore
       const castPlugin = (window as any).CastPlugin;
 
-      if (castPlugin) {
-        await castPlugin.loadMedia(media);
-      } else {
-        // Mock mode
-        this.currentSession = {
-          ...this.currentSession,
-          mediaInfo: media,
-          playerState: 'LOADING'
-        };
-        this.emit('mediaStatusUpdated', this.currentSession);
-
-        // Simulate loading -> playing
-        setTimeout(() => {
-          if (this.currentSession) {
-            this.currentSession.playerState = 'PLAYING';
-            this.currentSession.duration = media.duration || 0;
-            this.emit('mediaStatusUpdated', this.currentSession);
-          }
-        }, 2000);
+      if (!castPlugin) {
+        console.error('[Chromecast] Native plugin not available');
+        return false;
       }
 
+      await castPlugin.loadMedia(media);
       return true;
     } catch (error) {
       console.error('[Chromecast] Cast media failed:', error);
@@ -349,12 +314,8 @@ class ChromecastService {
     try {
       // @ts-ignore
       const castPlugin = (window as any).CastPlugin;
-
       if (castPlugin) {
         await castPlugin.play();
-      } else {
-        this.currentSession.playerState = 'PLAYING';
-        this.emit('mediaStatusUpdated', this.currentSession);
       }
     } catch (error) {
       console.error('[Chromecast] Play failed:', error);
@@ -370,12 +331,8 @@ class ChromecastService {
     try {
       // @ts-ignore
       const castPlugin = (window as any).CastPlugin;
-
       if (castPlugin) {
         await castPlugin.pause();
-      } else {
-        this.currentSession.playerState = 'PAUSED';
-        this.emit('mediaStatusUpdated', this.currentSession);
       }
     } catch (error) {
       console.error('[Chromecast] Pause failed:', error);
@@ -391,13 +348,8 @@ class ChromecastService {
     try {
       // @ts-ignore
       const castPlugin = (window as any).CastPlugin;
-
       if (castPlugin) {
         await castPlugin.stop();
-      } else {
-        this.currentSession.playerState = 'IDLE';
-        this.currentSession.mediaInfo = undefined;
-        this.emit('mediaStatusUpdated', this.currentSession);
       }
     } catch (error) {
       console.error('[Chromecast] Stop failed:', error);
@@ -413,12 +365,8 @@ class ChromecastService {
     try {
       // @ts-ignore
       const castPlugin = (window as any).CastPlugin;
-
       if (castPlugin) {
         await castPlugin.seek(position);
-      } else {
-        this.currentSession.currentTime = position;
-        this.emit('mediaStatusUpdated', this.currentSession);
       }
     } catch (error) {
       console.error('[Chromecast] Seek failed:', error);
@@ -436,12 +384,8 @@ class ChromecastService {
     try {
       // @ts-ignore
       const castPlugin = (window as any).CastPlugin;
-
       if (castPlugin) {
         await castPlugin.setVolume(clampedVolume);
-      } else {
-        this.currentSession.volume = clampedVolume;
-        this.emit('volumeChanged', { volume: clampedVolume });
       }
     } catch (error) {
       console.error('[Chromecast] Set volume failed:', error);
@@ -457,12 +401,8 @@ class ChromecastService {
     try {
       // @ts-ignore
       const castPlugin = (window as any).CastPlugin;
-
       if (castPlugin) {
         await castPlugin.setMuted(!this.currentSession.isMuted);
-      } else {
-        this.currentSession.isMuted = !this.currentSession.isMuted;
-        this.emit('volumeChanged', { isMuted: this.currentSession.isMuted });
       }
     } catch (error) {
       console.error('[Chromecast] Toggle mute failed:', error);

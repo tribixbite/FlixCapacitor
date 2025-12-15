@@ -338,10 +338,15 @@
   }
 
   // Quality selector handlers
+  // Note: For torrent streaming, quality is determined by the selected torrent file.
+  // This selector shows the current quality but mid-stream switching requires
+  // selecting a different torrent source (not HLS adaptive streaming).
   function handleQualitySelect(quality: string) {
     currentQuality = quality;
-    // TODO: Implement actual quality switching when HLS is integrated
-    console.log('Quality selected:', quality);
+    // Quality switching for torrents would require stopping current stream
+    // and starting a new torrent with different quality - this is handled
+    // at the torrent selection stage, not during playback
+    console.log('[VideoPlayer] Quality display updated:', quality);
   }
 
   // Subtitle selector handlers
