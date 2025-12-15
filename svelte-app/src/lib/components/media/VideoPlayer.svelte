@@ -4,6 +4,7 @@
   import PlayerControls from './PlayerControls.svelte';
   import BufferIndicator from './BufferIndicator.svelte';
   import QualitySelector from './QualitySelector.svelte';
+  import SpeedSelector from './SpeedSelector.svelte';
   import SubtitleSelector from './SubtitleSelector.svelte';
   import SubtitleOverlay from './SubtitleOverlay.svelte';
   import VideoFilePicker from './VideoFilePicker.svelte';
@@ -83,6 +84,10 @@
   let subtitleText = $state('');
   let subtitleCues = $state<Array<{ start: number; end: number; text: string }>>([]);
   let subtitleOffset = $state(0); // Timing offset in seconds
+
+  // Playback speed state
+  let showSpeedSelector = $state(false);
+  let currentSpeed = $state(1);
 
   // Derived states
   let progressPercent = $derived(duration > 0 ? (currentTime / duration) * 100 : 0);
@@ -348,6 +353,15 @@
     // and starting a new torrent with different quality - this is handled
     // at the torrent selection stage, not during playback
     console.log('[VideoPlayer] Quality display updated:', quality);
+  }
+
+  // Playback speed handler - applies to video element playbackRate
+  function handleSpeedSelect(speed: number) {
+    currentSpeed = speed;
+    if (videoElement) {
+      videoElement.playbackRate = speed;
+    }
+    console.log('[VideoPlayer] Playback speed set to:', speed);
   }
 
   // Subtitle selector handlers
@@ -644,6 +658,8 @@
       onClose={handleClose}
       onQualitySelect={() => { showQualitySelector = true; }}
       onSubtitleSelect={() => { showSubtitleSelector = true; }}
+      onSpeedSelect={() => { showSpeedSelector = true; }}
+      {currentSpeed}
       onShowFilePicker={() => {
         console.log('[VideoPlayer] Opening file picker, videoFiles:', videoFiles.length, 'showVideoFilePicker before:', showVideoFilePicker);
         showVideoFilePicker = true;
@@ -667,6 +683,15 @@
       {currentQuality}
       onSelect={handleQualitySelect}
       onClose={() => { showQualitySelector = false; }}
+    />
+  {/if}
+
+  <!-- Speed Selector Modal -->
+  {#if showSpeedSelector}
+    <SpeedSelector
+      {currentSpeed}
+      onSelect={handleSpeedSelect}
+      onClose={() => { showSpeedSelector = false; }}
     />
   {/if}
 

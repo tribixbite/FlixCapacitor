@@ -15,6 +15,7 @@
     hasSubtitles = false,
     currentFileIndex = 0,
     totalFiles = 1,
+    currentSpeed = 1,
     onPlayPause,
     onSeek,
     onSkipBack,
@@ -26,7 +27,8 @@
     onClose,
     onQualitySelect,
     onSubtitleSelect,
-    onShowFilePicker
+    onShowFilePicker,
+    onSpeedSelect
   } = $props<{
     title?: string;
     subtitle?: string;
@@ -43,6 +45,7 @@
     hasSubtitles?: boolean;
     currentFileIndex?: number;
     totalFiles?: number;
+    currentSpeed?: number;
     onPlayPause?: () => void;
     onSeek?: (time: number) => void;
     onSkipBack?: () => void;
@@ -55,6 +58,7 @@
     onQualitySelect?: () => void;
     onSubtitleSelect?: () => void;
     onShowFilePicker?: () => void;
+    onSpeedSelect?: () => void;
   }>();
 
   // Show queue badge when multiple files
@@ -257,6 +261,16 @@
           <svg class="w-5 h-5 {hasSubtitles ? 'text-red-500' : 'text-white'}" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6v-2zm0 4h8v2H6v-2zm10 0h2v2h-2v-2zm-6-4h8v2h-8v-2z"/>
           </svg>
+        </button>
+
+        <!-- Speed -->
+        <button
+          type="button"
+          class="p-2 rounded-full hover:bg-white/10 transition-colors flex items-center gap-0.5"
+          onclick={onSpeedSelect}
+          aria-label="Select playback speed"
+        >
+          <span class="text-xs font-semibold {currentSpeed !== 1 ? 'text-orange-400' : 'text-white'}">{currentSpeed}x</span>
         </button>
 
         <!-- Quality -->

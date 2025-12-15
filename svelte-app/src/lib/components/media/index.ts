@@ -6,3 +6,4 @@ export { default as QualitySelector } from './QualitySelector.svelte';
 export { default as SubtitleSelector } from './SubtitleSelector.svelte';
 export { default as SubtitleOverlay } from './SubtitleOverlay.svelte';
 export { default as VideoFilePicker } from './VideoFilePicker.svelte';
+export { default as SpeedSelector } from './SpeedSelector.svelte';
