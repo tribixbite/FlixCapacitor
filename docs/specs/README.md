@@ -191,6 +191,12 @@
   - Magnet URI input validation ("✓ Valid magnet URI")
   - Stream Now / Download buttons responsive
   - .torrent file picker launches SAF correctly
+- ✅ **Search & Movie Detail Verified (2025-12-15):**
+  - TMDB search working: "matrix" returns 13 results
+  - Movies (11) / TV Shows (2) filter tabs
+  - Movie detail page: poster, metadata, genres, overview
+  - YTS torrent sources with quality tabs and health indicators
+  - Fixed: Play button FAB now displays correctly (was cut off)
 
 ### Phase 10.3: Anime Section ✅ COMPLETE (2025-12-15)
 - ✅ **Anime Tab Implementation:** Full anime browsing on Browse page
