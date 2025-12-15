@@ -1,8 +1,8 @@
 # FlixCapacitor Mobile - Technical Specifications
 
 **Last Updated:** 2025-12-15
-**Version:** 2.1.1
-**Status:** Phase 10.3 Complete - Anime Section
+**Version:** 2.1.2
+**Status:** Phase 10.5 Complete - Release Build
 
 ## Table of Contents
 
@@ -47,7 +47,8 @@
 - **TypeScript Errors:** 10 (external library slot type issues in Konsta UI)
 - **CSS Bundle:** 35.10 kB uncompressed, 6.17 kB gzipped
 - **JS Bundle:** 568.47 kB uncompressed, 170.18 kB gzipped
-- **APK Size:** 74 MB (debug build)
+- **APK Size:** 74 MB (debug), 73 MB (release with ProGuard)
+- **Release Signing:** RSA 2048-bit, valid until 2053
 - **Minimum Android:** API Level 30 (Android 11+)
 - **Plugins:** 12 Capacitor plugins (3 custom)
 
@@ -192,6 +193,24 @@
   - "See All" navigation to filtered show lists
 - ✅ **Content Displayed:** Frieren, One Piece, My Hero Academia, Spy x Family, etc.
 
+### Phase 10.5: Release Build ✅ COMPLETE (2025-12-15)
+- ✅ **Release APK Build:**
+  - ProGuard/R8 minification enabled
+  - Google error-prone annotations rules added
+  - APK size: 73 MB (1 MB smaller than debug)
+- ✅ **Release Signing:**
+  - RSA 2048-bit keystore created
+  - Valid until 2053 (10,000 days)
+  - Keystore: `android/app/flixcapacitor-release.keystore`
+- ✅ **Build Script Enhancement:**
+  - `./build-and-install.sh release` command
+  - Dynamic APK path based on build type
+  - Updated backup/download filenames
+- ✅ **Device Testing:**
+  - Pixel 3 XL: All navigation verified (Movies, Anime, Settings, Downloads)
+  - ProGuard didn't break any functionality
+  - All UI components rendering correctly
+
 ## Specification Format
 
 Each specification document follows this structure:
@@ -224,4 +243,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-15 11:45 — opus-4-5-20251101*
+*Last Updated: 2025-12-15 06:25 — opus-4-5-20251101*
