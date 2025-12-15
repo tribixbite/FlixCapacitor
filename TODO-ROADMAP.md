@@ -3,9 +3,61 @@
 ## Overview
 This document provides a prioritized roadmap for implementing outstanding TODO items in the codebase.
 
-**Last Updated:** 2025-11-14
-**Status:** ✅ **ALL PHASES 1-11 COMPLETE** 🎉
-**Total Completed:** 10 major features/fixes + Phases 8-11 (4 major phases)
+**Last Updated:** 2025-12-15
+**Status:** ✅ **SVELTE 5 REWRITE COMPLETE - PHASE 10.3** 🎉
+**Architecture:** Svelte 5 + SvelteKit + Capacitor 7
+
+---
+
+## 🎉 Svelte 5 Migration Complete (2025-12)
+
+The entire codebase was rewritten from Backbone.js to Svelte 5 with modern architecture:
+
+### New Tech Stack
+- **Framework:** Svelte 5 with Runes ($state, $derived, $effect, $props)
+- **Router:** SvelteKit with static adapter
+- **UI Library:** Konsta UI (iOS/Material Design components)
+- **CSS:** Tailwind CSS 3.x
+- **Build:** Vite 6.x
+- **Native:** Capacitor 7.x with 12 plugins (3 custom)
+
+### Phase 10.3 Status (Current)
+- ✅ Browse: Movies, TV Shows, Anime (NEW), Learning tabs
+- ✅ Search: TMDB multi-search with filters
+- ✅ Detail Pages: Movie/TV/Anime with seasons, torrents, downloads
+- ✅ Player: Quality selector, subtitles, PiP, multi-file support
+- ✅ Downloads: Add torrent sheet, magnet URI, .torrent picker
+- ✅ Library: SAF folder picker, local media playback
+- ✅ Favorites: Per-content bookmarking
+- ✅ Settings: VPN/proxy, external player, quality filters
+- ✅ Deep Linking: 7 URL patterns for navigation
+
+### Key Files (Svelte 5)
+```
+svelte-app/src/
+├── routes/           # SvelteKit pages
+│   ├── +page.svelte  # Browse (Movies/TV/Anime/Learning)
+│   ├── movies/       # Movie detail
+│   ├── shows/        # TV show detail
+│   ├── player/       # Video player
+│   ├── search/       # Search results
+│   ├── downloads/    # Download manager
+│   ├── library/      # Local media
+│   ├── favorites/    # Bookmarks
+│   └── settings/     # App config
+└── lib/
+    ├── components/   # Reusable UI components
+    ├── services/     # API services (TMDB, torrents)
+    └── stores/       # Svelte stores for state
+```
+
+---
+
+## Legacy Documentation (Pre-Svelte 5)
+
+> **Note:** The sections below document the original Backbone.js implementation.
+> File paths reference the old `src/app/lib/` structure which no longer exists.
+> Kept for historical reference only.
 
 ---
 
