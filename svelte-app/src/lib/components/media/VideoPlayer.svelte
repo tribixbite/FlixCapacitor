@@ -76,16 +76,8 @@
   let filePageIndex = $state(0);
   const FILE_PAGE_SIZE = 50;
 
-  // Derived: filtered and paginated video files
-  let filteredVideoFiles = $derived(
-    fileSearchQuery
-      ? videoFiles.filter(f => f.name.toLowerCase().includes(fileSearchQuery.toLowerCase()))
-      : videoFiles
-  );
-  let displayedVideoFiles = $derived(
-    filteredVideoFiles.slice(0, (filePageIndex + 1) * FILE_PAGE_SIZE)
-  );
-  let hasMoreVideoFiles = $derived(displayedVideoFiles.length < filteredVideoFiles.length);
+  // Pre-compute first 50 video files for picker display
+  let pickerFiles = $derived(videoFiles.slice(0, 50));
 
   // Format file size for display
   function formatFileSize(bytes: number): string {
@@ -703,11 +695,17 @@
 
   <!-- Video File Picker (for multi-file torrents) -->
   {#if showVideoFilePicker}
-    <div class="fixed inset-0 z-[10000] bg-black/90 flex items-center justify-center">
+    <div
+      class="fixed inset-0 z-[10000] bg-black/90 flex items-center justify-center"
+      onclick={(e) => { if (e.target === e.currentTarget) showVideoFilePicker = false; }}
+      role="dialog"
+    >
       <div class="bg-zinc-800 rounded-xl p-6 max-w-sm mx-4 w-full">
         <h2 class="text-white text-xl font-bold mb-2">Select Video File</h2>
         <p class="text-white/60 mb-4">{videoFiles.length} files in torrent</p>
-        <p class="text-white/40 text-sm mb-4">File picker coming soon...</p>
+        <p class="text-white/40 text-sm mb-4">
+          Currently playing file 1. Multi-file selection coming in a future update.
+        </p>
         <button
           class="w-full py-3 bg-red-600 text-white rounded-lg font-medium"
           onclick={() => { showVideoFilePicker = false; }}
