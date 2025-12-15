@@ -122,9 +122,9 @@ See **MANUAL-TESTING-GUIDE.md** for complete test procedures.
 
 ### Security
 - [ ] **API Keys**: Configure TMDB/OMDB keys in Settings (currently empty defaults)
-- [ ] **Permissions Review**: Verify only necessary Android permissions requested
-- [ ] **Network Security**: Confirm HTTPS for API calls, localhost for streaming
-- [ ] **Data Privacy**: Review what data is stored locally (only SQLite, no cloud)
+- [x] **Permissions Review**: Verified - INTERNET, WAKE_LOCK, FOREGROUND_SERVICE, media access only
+- [x] **Network Security**: HTTPS for all APIs, localhost-only for streaming server
+- [x] **Data Privacy**: Local-only storage via Capacitor Preferences (settings, library, watch history)
 - [ ] **Code Signing**: Generate release signing key for production APK
 
 ### Performance
