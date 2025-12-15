@@ -233,6 +233,18 @@
   - External Player toggle
   - Chromecast settings (Enable, Cast Quality)
   - Subtitles section visible
+- ✅ **Movie Detail Page:**
+  - Backdrop + poster display
+  - Title, year, runtime, rating (★ 7.4)
+  - Genre tags (Thriller, Mystery, Drama)
+  - Play, Download, Favorite buttons
+  - Full plot overview
+  - Cast photos section
+- ✅ **Torrent Sources:**
+  - Quality filter tabs (All, 2160p, 1080p, 720p, 480p)
+  - YTS torrents with file size, seeds/peers
+  - Health indicator bars (green = healthy)
+  - Upload date metadata
 
 ## Specification Format
 
