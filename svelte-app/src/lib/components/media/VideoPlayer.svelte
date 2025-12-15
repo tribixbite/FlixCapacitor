@@ -72,6 +72,29 @@
   let videoFiles = $state<VideoFile[]>([]);
   let selectedFileIndex = $state(0);
   let hasCheckedForMultipleFiles = $state(false);
+  let fileSearchQuery = $state('');
+  let filePageIndex = $state(0);
+  const FILE_PAGE_SIZE = 50;
+
+  // Derived: filtered and paginated video files
+  let filteredVideoFiles = $derived(
+    fileSearchQuery
+      ? videoFiles.filter(f => f.name.toLowerCase().includes(fileSearchQuery.toLowerCase()))
+      : videoFiles
+  );
+  let displayedVideoFiles = $derived(
+    filteredVideoFiles.slice(0, (filePageIndex + 1) * FILE_PAGE_SIZE)
+  );
+  let hasMoreVideoFiles = $derived(displayedVideoFiles.length < filteredVideoFiles.length);
+
+  // Format file size for display
+  function formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
 
   // Quality and subtitle state
   let showQualitySelector = $state(false);
@@ -643,7 +666,7 @@
       onClose={handleClose}
       onQualitySelect={() => { showQualitySelector = true; }}
       onSubtitleSelect={() => { showSubtitleSelector = true; }}
-      onShowFilePicker={() => { showVideoFilePicker = true; }}
+      onShowFilePicker={() => { console.log('[VideoPlayer] Opening file picker, videoFiles:', videoFiles.length); showVideoFilePicker = true; }}
     />
   {/if}
 
@@ -680,13 +703,19 @@
 
   <!-- Video File Picker (for multi-file torrents) -->
   {#if showVideoFilePicker}
-    <VideoFilePicker
-      files={videoFiles}
-      currentIndex={selectedFileIndex}
-      torrentName={streamer.torrentName}
-      onSelect={handleVideoFileSelect}
-      onClose={() => { showVideoFilePicker = false; }}
-    />
+    <div class="fixed inset-0 z-[10000] bg-black/90 flex items-center justify-center">
+      <div class="bg-zinc-800 rounded-xl p-6 max-w-sm mx-4 w-full">
+        <h2 class="text-white text-xl font-bold mb-2">Select Video File</h2>
+        <p class="text-white/60 mb-4">{videoFiles.length} files in torrent</p>
+        <p class="text-white/40 text-sm mb-4">File picker coming soon...</p>
+        <button
+          class="w-full py-3 bg-red-600 text-white rounded-lg font-medium"
+          onclick={() => { showVideoFilePicker = false; }}
+        >
+          Close
+        </button>
+      </div>
+    </div>
   {/if}
 </div>
 
@@ -711,5 +740,21 @@
 
   video::-webkit-media-controls {
     display: none !important;
+  }
+
+  /* File picker slide-up animation */
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 </style>

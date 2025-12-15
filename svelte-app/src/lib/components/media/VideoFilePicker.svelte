@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { useHaptics, ImpactStyle } from '$lib/plugins/platform';
   import type { VideoFile } from '$lib/plugins';
 
@@ -7,16 +8,44 @@
     currentIndex = 0,
     torrentName = '',
     onSelect,
-    onClose
+    onClose,
+    hidden = false
   } = $props<{
     files?: VideoFile[];
     currentIndex?: number;
     torrentName?: string;
     onSelect?: (file: VideoFile) => void;
     onClose?: () => void;
+    hidden?: boolean;
   }>();
 
   const { impact } = useHaptics();
+
+  // Pagination for large file lists (performance optimization)
+  const PAGE_SIZE = 50;
+  let currentPage = $state(0);
+  let searchQuery = $state('');
+
+  // Filter and paginate files for display
+  let filteredFiles = $derived(
+    searchQuery
+      ? files.filter(f => f.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      : files
+  );
+
+  let displayedFiles = $derived(
+    filteredFiles.slice(0, (currentPage + 1) * PAGE_SIZE)
+  );
+
+  let hasMoreFiles = $derived(displayedFiles.length < filteredFiles.length);
+
+  function loadMore() {
+    currentPage++;
+  }
+
+  onMount(() => {
+    console.log('[VideoFilePicker] Mounted with', files.length, 'files');
+  });
 
   /**
    * Format file size for display
@@ -76,7 +105,8 @@
 
 <!-- Backdrop -->
 <div
-  class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm"
+  class="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm"
+  class:hidden={hidden}
   onclick={handleBackdropClick}
   onkeydown={(e) => { if (e.key === 'Escape') onClose?.(); }}
   role="dialog"
@@ -94,16 +124,32 @@
     <!-- Header -->
     <div class="px-4 pb-3 border-b border-white/10">
       <h2 class="text-lg font-semibold text-white">Select Video File</h2>
-      {#if torrentName}
-        <p class="text-sm text-white/60 truncate">{torrentName}</p>
-      {:else}
-        <p class="text-sm text-white/60">{files.length} video files found</p>
-      {/if}
+      <p class="text-sm text-white/60">
+        {#if searchQuery}
+          {filteredFiles.length} of {files.length} files match
+        {:else if torrentName}
+          {torrentName} · {files.length} files
+        {:else}
+          {files.length} video files found
+        {/if}
+      </p>
     </div>
+
+    <!-- Search (for large file lists) -->
+    {#if files.length > PAGE_SIZE}
+      <div class="px-4 py-2 border-b border-white/10">
+        <input
+          type="text"
+          placeholder="Search files..."
+          class="w-full px-3 py-2 bg-white/10 rounded-lg text-white text-sm placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500"
+          bind:value={searchQuery}
+        />
+      </div>
+    {/if}
 
     <!-- File List -->
     <div class="flex-1 overflow-y-auto py-2">
-      {#each files as file, i}
+      {#each displayedFiles as file, i}
         {@const isSelected = file.index === currentIndex}
         {@const displayName = getDisplayName(file.name)}
         <button
@@ -135,9 +181,24 @@
         </button>
       {/each}
 
+      <!-- Load More Button -->
+      {#if hasMoreFiles}
+        <button
+          type="button"
+          class="w-full py-3 text-red-400 text-sm font-medium hover:bg-white/5"
+          onclick={loadMore}
+        >
+          Load more ({filteredFiles.length - displayedFiles.length} remaining)
+        </button>
+      {/if}
+
       {#if files.length === 0}
         <div class="px-4 py-8 text-center">
           <p class="text-white/40">No video files found in torrent</p>
+        </div>
+      {:else if filteredFiles.length === 0}
+        <div class="px-4 py-8 text-center">
+          <p class="text-white/40">No files match your search</p>
         </div>
       {/if}
     </div>
