@@ -398,6 +398,32 @@
   - For Capacitor apps, assets bundled in APK (network transfer not primary concern)
   - Parse time optimization via route splitting already optimal
 
+### Phase 12B: Backend Integration (PLANNED)
+
+**Priority:** Medium | **Target:** Cloud sync and analytics
+
+**Goals:**
+- RESTful API for collection sharing (replace localStorage)
+- User authentication and profiles (optional)
+- Cloud backup for favorites and settings
+- Analytics and usage tracking
+- Remote configuration support
+
+**API Endpoints:**
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/collections` | POST | Share collection with unique code |
+| `/api/collections/:code` | GET | Fetch shared collection |
+| `/api/favorites/sync` | POST | Sync favorites to cloud |
+| `/api/favorites/sync` | GET | Fetch favorites from cloud |
+| `/api/analytics/event` | POST | Track usage events |
+
+**Infrastructure Options:**
+- **BaaS:** Firebase, Supabase (recommended for rapid development)
+- **Custom:** Node.js + PostgreSQL + CloudFlare CDN
+- **Authentication:** JWT or OAuth 2.0
+- **Status:** Deferred - app fully functional offline-first
+
 ### Phase 12C: Testing & Quality Assurance (IN PROGRESS)
 
 **Priority:** High | **Target:** Comprehensive feature testing before release
