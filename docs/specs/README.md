@@ -1,8 +1,8 @@
 # FlixCapacitor Mobile - Technical Specifications
 
 **Last Updated:** 2025-12-15
-**Version:** 2.1.4
-**Status:** Phase 10.8 Complete - Playback Speed Controls Added
+**Version:** 2.1.5
+**Status:** Phase 10.9 Complete - Pull-to-Refresh Added
 
 ## Table of Contents
 
@@ -248,6 +248,24 @@
   - Direct playbackRate control on video element
   - Speed persists during playback session
 
+### Phase 10.9: Pull-to-Refresh ✅ COMPLETE (2025-12-15)
+- ✅ **PullToRefresh Component:**
+  - Touch gesture handling (touchstart, touchmove, touchend)
+  - Pull threshold of 80px with max pull distance of 120px
+  - Resistance factor (0.5x) for natural pull feel
+  - Animated indicator with rotation and spinner
+- ✅ **Haptic Feedback:**
+  - Light impact when crossing threshold during pull
+  - Medium impact when refresh triggered
+- ✅ **Browse Page Integration:**
+  - Wrapped content below CategoryTabs
+  - Triggers loadContent() on refresh
+  - Disabled during loading state
+- ✅ **Visual Feedback:**
+  - Arrow rotates 0-180° as user pulls
+  - Spinner animation during refresh
+  - Content translates down with pull distance
+
 ### Phase 10.7: Continue Watching Feature ✅ COMPLETE (2025-12-15)
 - ✅ **ContinueWatchingCard Component:**
   - Poster/backdrop display with aspect-video ratio
@@ -336,4 +354,4 @@ When adding new features:
 
 ---
 
-*Last Updated: 2025-12-15 09:40 — opus-4-5-20251101*
+*Last Updated: 2025-12-15 10:35 — opus-4-5-20251101*
