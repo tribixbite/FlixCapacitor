@@ -1,10 +1,12 @@
 # ⚡ FlixCapacitor Mobile
 
+> **Note (2025-12-15):** This README documents the legacy Backbone.js codebase. The app has been completely rewritten to **Svelte 5**. See [CURRENT-STATUS.md](CURRENT-STATUS.md) for the current architecture and status.
+
 A modern, mobile-first streaming app built with Capacitor and native torrent support.
 
-**Status:** ✅ Production-ready (98%), all autonomous work complete!
-**Version:** 1.0.0 (Pre-Release)
-**Last Updated:** 2025-11-18
+**Status:** Phase 10.4 - Production Testing
+**Version:** 2.0.0 (Svelte 5 Rewrite)
+**Last Updated:** 2025-12-15
 
 > **📖 [Complete Documentation Index](DOCS-INDEX.md)** - Navigate all 14 docs + 6 automation scripts
 
@@ -44,13 +46,16 @@ A modern, mobile-first streaming app built with Capacitor and native torrent sup
 
 ## 🛠️ Technologies
 
-- **Platform**: Capacitor 7.x (web → native Android)
-- **Language**: TypeScript 5.9.3 (strict mode)
+**Current Stack (v2.0.0 - Svelte 5):**
+- **Framework**: Svelte 5 with Runes ($state, $derived, $effect)
+- **Router**: SvelteKit with static adapter
+- **UI Library**: Konsta UI (iOS/Material Design)
 - **CSS Framework**: Tailwind CSS 3.x
-- **Build Tool**: Vite 7.1.9
-- **Torrent Engine**: jlibtorrent (native Android via custom plugin)
+- **Build Tool**: Vite 6.x
+- **Platform**: Capacitor 7.x (web → native Android)
+- **Torrent Engine**: jlibtorrent 2.0.11 (native Android via custom plugin)
 - **Database**: SQLite (via @capacitor-community/sqlite)
-- **HTTP Streaming**: NanoHTTPD server with dynamic port allocation (ephemeral ports)
+- **HTTP Streaming**: NanoHTTPD server with dynamic port allocation
 - **Runtime**: Android 11+ (API level 30+)
 
 ## Quick Start

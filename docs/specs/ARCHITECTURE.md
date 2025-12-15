@@ -1,8 +1,10 @@
 # FlixCapacitor Mobile - System Architecture
 
-**Document Version:** 1.0.0
+> **Note (2025-12-15):** This document describes the legacy Backbone.js/Marionette architecture. The app has been completely rewritten to **Svelte 5 with Runes**. See [CURRENT-STATUS.md](../../CURRENT-STATUS.md) for current architecture.
+
+**Document Version:** 1.0.0 (Legacy)
 **Last Updated:** 2025-11-13
-**Status:** Production Ready
+**Status:** Historical Reference (Svelte 5 rewrite completed)
 
 ## Overview
 
