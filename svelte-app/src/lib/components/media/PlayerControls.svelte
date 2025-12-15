@@ -101,8 +101,8 @@
 </script>
 
 <div class="player-controls absolute inset-0 flex flex-col justify-between pointer-events-none">
-  <!-- Top Bar: Title and Close (with safe area inset for notched devices) -->
-  <div class="top-bar bg-gradient-to-b from-black/80 to-transparent p-4 pointer-events-auto" style="padding-top: calc(env(safe-area-inset-top, 0px) + 1rem)">
+  <!-- Top Bar: Title and Close (with safe area inset for notched devices, min 24px for Android) -->
+  <div class="top-bar bg-gradient-to-b from-black/80 to-transparent p-4 pointer-events-auto" style="padding-top: max(calc(env(safe-area-inset-top, 0px) + 1rem), 24px)">
     <div class="flex items-center gap-4">
       <button
         type="button"

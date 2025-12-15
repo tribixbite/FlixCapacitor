@@ -56,7 +56,7 @@
 <Navbar
   title={displayTitle()}
   class="fixed top-0 left-0 right-0 z-40"
-  style="padding-top: env(safe-area-inset-top, 0px)"
+  style="padding-top: max(env(safe-area-inset-top, 0px), 8px)"
   transparent={transparent}
   bgClass={transparent ? '' : 'bg-black/95 backdrop-blur-xl'}
   innerClass="!px-4"
