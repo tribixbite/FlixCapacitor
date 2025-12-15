@@ -1,6 +1,9 @@
 import { writable, derived, type Writable, type Readable } from 'svelte/store';
+import { Preferences } from '@capacitor/preferences';
 import type { Movie, TVShow, ContentType } from '$types';
 import { uiStore } from './ui.store';
+
+const FAVORITES_STORAGE_KEY = 'favorites';
 
 interface FavoriteItem {
   id: number;
@@ -17,20 +20,48 @@ interface FavoritesStore extends Writable<FavoriteItem[]> {
   toggleFavorite: (item: Movie | TVShow, type: ContentType) => void;
   isFavorite: (id: number, type: ContentType) => boolean;
   clear: () => void;
+  load: () => Promise<void>;
+}
+
+// Persist favorites to Capacitor Preferences
+async function persistFavorites(favorites: FavoriteItem[]) {
+  try {
+    await Preferences.set({
+      key: FAVORITES_STORAGE_KEY,
+      value: JSON.stringify(favorites)
+    });
+  } catch (error) {
+    console.error('Failed to persist favorites:', error);
+  }
 }
 
 function createFavoritesStore(): FavoritesStore {
-  const { subscribe, set, update } = writable<FavoriteItem[]>([]);
+  const { subscribe, set: rawSet, update: rawUpdate } = writable<FavoriteItem[]>([]);
 
   let currentValue: FavoriteItem[] = [];
   subscribe(value => { currentValue = value; });
+
+  // Wrap set to include persistence
+  const set = (favorites: FavoriteItem[]) => {
+    rawSet(favorites);
+    persistFavorites(favorites);
+  };
+
+  // Wrap update to include persistence
+  const update = (fn: (favorites: FavoriteItem[]) => FavoriteItem[]) => {
+    rawUpdate(favorites => {
+      const updated = fn(favorites);
+      persistFavorites(updated);
+      return updated;
+    });
+  };
 
   return {
     subscribe,
     set,
     update,
 
-    addFavorite: (item: Movie | TVShow, type: ContentType) => update(favorites => {
+    addFavorite: (item: Movie | TVShow, type: ContentType) => rawUpdate(favorites => {
       const exists = favorites.some(f => f.id === item.id && f.type === type);
       if (exists) return favorites;
 
@@ -38,7 +69,7 @@ function createFavoritesStore(): FavoritesStore {
       const title = 'title' in item ? item.title : (item as TVShow).name;
       const posterPath = item.posterPath;
 
-      return [...favorites, {
+      const updated = [...favorites, {
         id: item.id,
         type,
         title,
@@ -46,11 +77,15 @@ function createFavoritesStore(): FavoritesStore {
         addedAt: Date.now(),
         data: item
       }];
+      persistFavorites(updated);
+      return updated;
     }),
 
-    removeFavorite: (id: number, type: ContentType) => update(favorites =>
-      favorites.filter(f => !(f.id === id && f.type === type))
-    ),
+    removeFavorite: (id: number, type: ContentType) => rawUpdate(favorites => {
+      const updated = favorites.filter(f => !(f.id === id && f.type === type));
+      persistFavorites(updated);
+      return updated;
+    }),
 
     toggleFavorite: (item: Movie | TVShow, type: ContentType) => {
       const exists = currentValue.some(f => f.id === item.id && f.type === type);
@@ -58,18 +93,26 @@ function createFavoritesStore(): FavoritesStore {
       const title = 'title' in item ? item.title : (item as TVShow).name;
 
       if (exists) {
-        update(favorites => favorites.filter(f => !(f.id === item.id && f.type === type)));
+        rawUpdate(favorites => {
+          const updated = favorites.filter(f => !(f.id === item.id && f.type === type));
+          persistFavorites(updated);
+          return updated;
+        });
         uiStore.showToast(`Removed "${title}" from favorites`, 'info', 2000);
       } else {
         const posterPath = item.posterPath;
-        update(favorites => [...favorites, {
-          id: item.id,
-          type,
-          title,
-          posterPath,
-          addedAt: Date.now(),
-          data: item
-        }]);
+        rawUpdate(favorites => {
+          const updated = [...favorites, {
+            id: item.id,
+            type,
+            title,
+            posterPath,
+            addedAt: Date.now(),
+            data: item
+          }];
+          persistFavorites(updated);
+          return updated;
+        });
         uiStore.showToast(`Added "${title}" to favorites`, 'success', 2000);
       }
     },
@@ -77,7 +120,23 @@ function createFavoritesStore(): FavoritesStore {
     isFavorite: (id: number, type: ContentType) =>
       currentValue.some(f => f.id === id && f.type === type),
 
-    clear: () => set([])
+    clear: () => {
+      rawSet([]);
+      persistFavorites([]);
+    },
+
+    load: async () => {
+      try {
+        const { value } = await Preferences.get({ key: FAVORITES_STORAGE_KEY });
+        if (value) {
+          const loaded = JSON.parse(value) as FavoriteItem[];
+          rawSet(loaded); // Don't trigger persistence when loading
+          console.log(`Loaded ${loaded.length} favorites from storage`);
+        }
+      } catch (error) {
+        console.error('Failed to load favorites:', error);
+      }
+    }
   };
 }
 
@@ -108,3 +167,8 @@ export const recentFavorites: Readable<FavoriteItem[]> = derived(
   favoritesStore,
   $favorites => [...$favorites].sort((a, b) => b.addedAt - a.addedAt).slice(0, 10)
 );
+
+// Initialize store on import (browser only)
+if (typeof window !== 'undefined') {
+  favoritesStore.load();
+}

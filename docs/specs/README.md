@@ -1,8 +1,8 @@
 # FlixCapacitor Mobile - Technical Specifications
 
 **Last Updated:** 2025-12-15
-**Version:** 2.1.8
-**Status:** Phase 10.12 Complete - Bottom Nav Badge Counts
+**Version:** 2.1.9
+**Status:** Phase 10.13 Complete - Favorites Persistence
 
 ## Table of Contents
 
@@ -328,6 +328,28 @@
   - `.nav-icon-wrapper` for relative positioning
   - `.nav-badge` with min-width 16px, red background, rounded-full
   - Font size 10px, weight 600 for readability
+
+### Phase 10.13: Favorites Persistence ✅ COMPLETE (2025-12-15)
+- ✅ **Capacitor Preferences Integration:**
+  - `persistFavorites()` async function saves favorites array to storage
+  - Uses `@capacitor/preferences` plugin for native key-value storage
+  - Storage key: `favorites` with JSON serialized data
+- ✅ **Auto-Save on Changes:**
+  - Wrapped `set()` and `update()` methods to auto-persist
+  - `addFavorite()`, `removeFavorite()`, `toggleFavorite()` all persist automatically
+  - `clear()` method persists empty array
+- ✅ **Auto-Load on App Start:**
+  - `load()` async method reads from storage and populates store
+  - Uses `rawSet()` to avoid re-triggering persistence on load
+  - Browser-only initialization check: `if (typeof window !== 'undefined')`
+  - Console log shows loaded favorites count
+- ✅ **Store Interface Update:**
+  - Added `load: () => Promise<void>` to FavoritesStore interface
+  - Follows same pattern as library.store.ts
+- ✅ **Device Testing:**
+  - Added favorite, force stopped app, relaunched
+  - Favorite persisted and displayed on Favorites page
+  - Badge count "1" shown on restart
 
 ### Phase 10.7: Continue Watching Feature ✅ COMPLETE (2025-12-15)
 - ✅ **ContinueWatchingCard Component:**
