@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { MovieCard, ShowCard, ContentRow, CategoryTabs, ContinueWatchingCard } from '$components/content';
-  import { PullToRefresh } from '$components/ui';
+  import { PullToRefresh, SkeletonRow } from '$components/ui';
   import { tmdbService } from '$services/tmdb.service';
   import { watchHistoryContinue, watchHistoryStore, type WatchHistoryEntry } from '$stores/watch-history.store';
   import type { Movie, TVShow } from '$types';
@@ -134,8 +134,11 @@
   <!-- Pull to Refresh Content -->
   <PullToRefresh onRefresh={loadContent} disabled={loading}>
   {#if loading}
-    <div class="flex justify-center py-20">
-      <div class="animate-spin w-8 h-8 border-2 border-red-600 border-t-transparent rounded-full"></div>
+    <!-- Skeleton loading state -->
+    <div class="pt-2">
+      <SkeletonRow title="Trending This Week" count={5} />
+      <SkeletonRow title="Popular" count={5} />
+      <SkeletonRow title="Top Rated" count={5} />
     </div>
   {:else}
     <!-- Continue Watching Row (shows on all tabs if there are items) -->
