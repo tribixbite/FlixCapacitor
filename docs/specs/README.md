@@ -208,6 +208,7 @@
   - Updated backup/download filenames
 - ✅ **Device Testing:**
   - Pixel 3 XL: All navigation verified (Movies, Anime, Settings, Downloads)
+  - Samsung S24 Ultra: Release APK installed and running
   - ProGuard didn't break any functionality
   - All UI components rendering correctly
 
