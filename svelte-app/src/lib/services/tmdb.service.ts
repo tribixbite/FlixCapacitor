@@ -468,6 +468,79 @@ class TMDBService {
   }
 
   /**
+   * Anime API
+   * Uses Animation genre (16) with Japanese origin filtering for authentic anime
+   */
+  async getTrendingAnime(page = 1): Promise<{ shows: TVShow[]; totalPages: number }> {
+    // Use discover with Animation genre and Japanese origin
+    const params: Record<string, string> = {
+      page: String(page),
+      sort_by: 'popularity.desc',
+      with_genres: '16', // Animation
+      with_origin_country: 'JP', // Japan
+      'vote_count.gte': '50' // Ensure some popularity
+    };
+
+    const data = await this.fetch<TMDBResponse<TMDBTVShow>>('/discover/tv', params);
+    return {
+      shows: data.results.map(s => this.transformTVShow(s)),
+      totalPages: data.total_pages
+    };
+  }
+
+  async getPopularAnime(page = 1): Promise<{ shows: TVShow[]; totalPages: number }> {
+    // Popular anime sorted by vote average
+    const params: Record<string, string> = {
+      page: String(page),
+      sort_by: 'vote_average.desc',
+      with_genres: '16', // Animation
+      with_origin_country: 'JP', // Japan
+      'vote_count.gte': '200' // Only well-rated anime
+    };
+
+    const data = await this.fetch<TMDBResponse<TMDBTVShow>>('/discover/tv', params);
+    return {
+      shows: data.results.map(s => this.transformTVShow(s)),
+      totalPages: data.total_pages
+    };
+  }
+
+  async getTopRatedAnime(page = 1): Promise<{ shows: TVShow[]; totalPages: number }> {
+    // Top rated anime by vote average with high vote count
+    const params: Record<string, string> = {
+      page: String(page),
+      sort_by: 'vote_average.desc',
+      with_genres: '16', // Animation
+      with_origin_country: 'JP', // Japan
+      'vote_count.gte': '500', // Well-established anime only
+      'vote_average.gte': '8' // High rated
+    };
+
+    const data = await this.fetch<TMDBResponse<TMDBTVShow>>('/discover/tv', params);
+    return {
+      shows: data.results.map(s => this.transformTVShow(s)),
+      totalPages: data.total_pages
+    };
+  }
+
+  async getAnimeMovies(page = 1): Promise<{ movies: Movie[]; totalPages: number }> {
+    // Japanese animated movies
+    const params: Record<string, string> = {
+      page: String(page),
+      sort_by: 'popularity.desc',
+      with_genres: '16', // Animation
+      with_original_language: 'ja', // Japanese language
+      'vote_count.gte': '100'
+    };
+
+    const data = await this.fetch<TMDBResponse<TMDBMovie>>('/discover/movie', params);
+    return {
+      movies: data.results.map(m => this.transformMovie(m)),
+      totalPages: data.total_pages
+    };
+  }
+
+  /**
    * Multi Search
    */
   async multiSearch(query: string, page = 1): Promise<{

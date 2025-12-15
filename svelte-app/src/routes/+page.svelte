@@ -20,6 +20,9 @@
   let topRatedMovies = $state<Movie[]>([]);
   let trendingShows = $state<TVShow[]>([]);
   let popularShows = $state<TVShow[]>([]);
+  let trendingAnime = $state<TVShow[]>([]);
+  let popularAnime = $state<TVShow[]>([]);
+  let topRatedAnime = $state<TVShow[]>([]);
   let loading = $state(true);
 
   onMount(async () => {
@@ -34,13 +37,19 @@
         popularRes,
         topRatedRes,
         trendingShowsRes,
-        popularShowsRes
+        popularShowsRes,
+        trendingAnimeRes,
+        popularAnimeRes,
+        topRatedAnimeRes
       ] = await Promise.all([
         tmdbService.getTrendingMovies('week'),
         tmdbService.getPopularMovies(),
         tmdbService.getTopRatedMovies(),
         tmdbService.getTrendingShows('week'),
-        tmdbService.getPopularShows()
+        tmdbService.getPopularShows(),
+        tmdbService.getTrendingAnime(),
+        tmdbService.getPopularAnime(),
+        tmdbService.getTopRatedAnime()
       ]);
 
       trendingMovies = trendingRes.movies.slice(0, 10);
@@ -48,6 +57,9 @@
       topRatedMovies = topRatedRes.movies.slice(0, 10);
       trendingShows = trendingShowsRes.shows.slice(0, 10);
       popularShows = popularShowsRes.shows.slice(0, 10);
+      trendingAnime = trendingAnimeRes.shows.slice(0, 10);
+      popularAnime = popularAnimeRes.shows.slice(0, 10);
+      topRatedAnime = topRatedAnimeRes.shows.slice(0, 10);
     } catch (error) {
       console.error('Failed to load content:', error);
     } finally {
@@ -172,11 +184,50 @@
         {/snippet}
       </ContentRow>
     {:else if selectedCategory === 'anime'}
-      <!-- Anime section - can be expanded later -->
-      <div class="flex flex-col items-center justify-center py-20 text-zinc-500">
-        <span class="text-4xl mb-4">🎌</span>
-        <p>Anime section coming soon</p>
-      </div>
+      <!-- Trending Anime -->
+      <ContentRow
+        title="Trending Anime"
+        items={trendingAnime}
+        onSeeAll={() => handleSeeAllShows('anime-trending')}
+      >
+        {#snippet children(show)}
+          <ShowCard
+            {show}
+            compact
+            onTap={handleShowTap}
+          />
+        {/snippet}
+      </ContentRow>
+
+      <!-- Popular Anime -->
+      <ContentRow
+        title="Popular"
+        items={popularAnime}
+        onSeeAll={() => handleSeeAllShows('anime-popular')}
+      >
+        {#snippet children(show)}
+          <ShowCard
+            {show}
+            compact
+            onTap={handleShowTap}
+          />
+        {/snippet}
+      </ContentRow>
+
+      <!-- Top Rated Anime -->
+      <ContentRow
+        title="Top Rated"
+        items={topRatedAnime}
+        onSeeAll={() => handleSeeAllShows('anime-top-rated')}
+      >
+        {#snippet children(show)}
+          <ShowCard
+            {show}
+            compact
+            onTap={handleShowTap}
+          />
+        {/snippet}
+      </ContentRow>
     {:else if selectedCategory === 'learning'}
       <!-- Learning section - redirect to full learning page -->
       <div class="flex flex-col items-center justify-center py-20 text-center px-4">
