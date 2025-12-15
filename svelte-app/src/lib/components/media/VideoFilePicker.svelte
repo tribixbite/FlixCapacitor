@@ -36,7 +36,7 @@
       return [];
     }
     console.log('[VideoFilePicker] Filtering files with query:', searchQuery);
-    return files.filter(f => f.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    return files.filter((f: VideoFile) => f.name.toLowerCase().includes(searchQuery.toLowerCase()));
   });
 
   // Determine if we have a large file count
