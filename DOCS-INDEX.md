@@ -4,6 +4,18 @@ Complete guide to all project documentation and development tools.
 
 ---
 
+> **NOTE: Svelte 5 Rewrite (December 2025)**
+>
+> The app was completely rewritten from Backbone.js to Svelte 5. Much of the documentation below references the old architecture. For current status, see:
+>
+> - **[CURRENT-STATUS.md](CURRENT-STATUS.md)** - Current project status (v2.0.0)
+> - **[docs/specs/README.md](docs/specs/README.md)** - Updated technical specs
+> - **[TODO-ROADMAP.md](TODO-ROADMAP.md)** - Development roadmap
+>
+> **New Stack:** Svelte 5 + SvelteKit + Capacitor 7 + Tailwind CSS
+
+---
+
 ## 🚀 **Quick Start** (Start Here!)
 
 ### Project Status (v1.0.0 Pre-Launch)
