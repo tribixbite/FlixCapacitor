@@ -44,7 +44,8 @@
 - **Database:** SQLite via @capacitor-community/sqlite
 
 ### Key Metrics
-- **TypeScript Errors:** 0 (all custom code passes strict mode)
+- **TypeScript Errors:** 0 (strict mode, all custom code)
+- **Svelte-Check Errors:** 7 (all Konsta UI slot type definitions - external library)
 - **CSS Bundle:** 35.10 kB uncompressed, 6.17 kB gzipped
 - **JS Bundle:** 568.47 kB uncompressed, 170.18 kB gzipped
 - **APK Size:** 74 MB (debug), 73 MB (release with ProGuard)
