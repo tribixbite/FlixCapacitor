@@ -398,6 +398,34 @@
   - For Capacitor apps, assets bundled in APK (network transfer not primary concern)
   - Parse time optimization via route splitting already optimal
 
+### Phase 12C: Testing & Quality Assurance (IN PROGRESS)
+
+**Priority:** High | **Target:** Comprehensive feature testing before release
+
+**Testing Checklist:**
+| Test Area | Status | Description |
+|-----------|--------|-------------|
+| Deep Linking | ⏳ | All 7 URL patterns (flixcapacitor://) |
+| Share Functionality | ⏳ | Movies, shows, torrents, collections |
+| Animations | ⏳ | Transitions, skeletons, pull-to-refresh |
+| Gestures | ⏳ | Swipe navigation, long press, drag |
+| Accessibility | ⏳ | ARIA labels, screen reader, TalkBack |
+| Keyboard Nav | ⏳ | Focus management, tab order |
+| Offline Mode | ⏳ | Network error handling, cached content |
+| Low Bandwidth | ⏳ | Slow connection behavior, timeouts |
+| Memory Constraints | ⏳ | Low RAM device performance |
+| Battery Optimization | ⏳ | Background playback, wake locks |
+
+**Testing Devices:**
+- Pixel 3 XL (Android 12, 1440x2960)
+- Samsung S24 Ultra (Android 14)
+- Target: Android 11+ (API 30+)
+
+**Automated Testing:**
+- TypeScript strict mode: 0 errors
+- Svelte-check: 7 warnings (external Konsta UI types only)
+- JUnit tests: 26 passing (native torrent streaming)
+
 ### Phase 12E: Production Release Preparation ✅ COMPLETE (2025-12-15)
 - ✅ **Crash Reporting (Sentry):**
   - `@sentry/capacitor@2.4.1` and `@sentry/browser@9.46.0` installed
