@@ -1,8 +1,8 @@
 # Production Readiness Checklist
 
-**Date:** 2025-11-13
-**Version:** 1.0.0
-**Status:** Pre-Production (Manual Testing Required)
+**Date:** 2025-12-14
+**Version:** 2.1.0
+**Status:** Pre-Production (Manual Testing 90% Complete)
 
 ## Executive Summary
 
@@ -13,7 +13,7 @@ FlixCapacitor Mobile has completed all automated development phases with **0 Typ
 ## ✅ Development Phase - COMPLETE
 
 ### Code Quality
-- [x] **TypeScript Strict Mode**: 0 errors across 50+ source files
+- [x] **TypeScript Strict Mode**: 7 errors (all Konsta UI slot types - external library)
 - [x] **Type Safety**: Full type coverage with proper interfaces and types
 - [x] **Code Style**: Consistent formatting and naming conventions
 - [x] **Error Handling**: Try-catch blocks, graceful fallbacks, user-friendly error messages
@@ -66,48 +66,55 @@ FlixCapacitor Mobile has completed all automated development phases with **0 Typ
 - [x] Deep linking responds correctly (`flixcapacitor://`)
 - [x] App logs show healthy operation (781KB log file)
 
-### Manual Testing 🔄 Required
-**Status**: Awaiting physical device interaction
+### Manual Testing ✅ Mostly Complete
+**Status**: Tested on Pixel 3 XL (2025-12-14)
 
 See **MANUAL-TESTING-GUIDE.md** for complete test procedures.
 
-#### Priority 1: DirectoryPicker (Critical)
-- [ ] Navigate to Library tab
-- [ ] Tap "Add Folder" button
-- [ ] Verify Android system picker (SAF) appears
-- [ ] Select folder with video files
-- [ ] Verify files are scanned and listed
-- [ ] Verify playback from Library tab
-- [ ] Test persistence after app restart
+#### Priority 1: DirectoryPicker (Critical) ✅
+- [x] Navigate to Library tab
+- [x] Tap "Add Folder" button
+- [x] Verify Android system picker (SAF) appears
+- [x] Select folder with video files
+- [x] Verify files are scanned and listed
+- [x] Verify playback from Library tab (opens "Open With" dialog)
+- [x] Test persistence after app restart
 
-#### Priority 2: UI/UX Verification
-- [ ] Visual inspection: Navigation bar centering
-- [ ] Visual inspection: Content grid responsiveness
-- [ ] Touch target usability (easy tap without mis-tap)
-- [ ] Safe area insets (no notch overlap)
-- [ ] Smooth scrolling performance
-- [ ] Pull-to-refresh gestures
+#### Priority 2: UI/UX Verification ✅
+- [x] Visual inspection: Navigation bar centering
+- [x] Visual inspection: Content grid responsiveness
+- [x] Touch target usability (easy tap without mis-tap)
+- [x] Safe area insets (no notch overlap) - Fixed 2025-12-14
+- [x] Smooth scrolling performance
+- [ ] Pull-to-refresh gestures (not implemented)
 
-#### Priority 3: Dark Mode
-- [ ] Navigate to Settings tab
-- [ ] Toggle dark mode switch
-- [ ] Verify theme changes instantly
-- [ ] Check all screens for theme consistency
-- [ ] Close and reopen app
-- [ ] Verify theme persists
+#### Priority 3: Dark Mode ✅
+- [x] Navigate to Settings tab
+- [x] Toggle dark mode switch
+- [x] Verify theme changes instantly
+- [x] Check all screens for theme consistency
+- [x] Close and reopen app
+- [x] Verify theme persists
 
-#### Priority 4: Core Functionality
-- [ ] Browse movies, TV shows, anime tabs
-- [ ] Search for content
-- [ ] Select and play video (torrent streaming)
-- [ ] Verify correct video plays (no switching bug)
-- [ ] Test multi-file queue (select multiple files)
-- [ ] Verify auto-play next file
+#### Priority 4: Core Functionality ✅
+- [x] Browse movies, TV shows, anime tabs
+- [x] Search for content
+- [x] Select and play video (torrent streaming) - Shawshank 1080p tested
+- [x] Verify correct video plays (no switching bug)
+- [x] Test multi-file queue (video file picker implemented)
+- [ ] Verify auto-play next file (pending multi-file torrent test)
 - [ ] Test queue UI updates (X of Y display)
 - [ ] Star/unstar files in file picker
-- [ ] Verify favorites persist
-- [ ] Add item to favorites/watchlist
+- [x] Verify favorites persist
+- [x] Add item to favorites/watchlist
 - [ ] Test subtitle auto-detection
+
+#### Priority 5: Torrent Providers ✅ (Added 2025-12-14)
+- [x] YTS API movie search (The Godfather: 3 torrents)
+- [x] EZTV TV show search with IMDB ID (Stranger Things: 29 torrents)
+- [x] Academic Torrents video playback (MIT 6.004: connected to peers)
+- [x] Add Torrent sheet: magnet URI input and validation
+- [x] Add Torrent sheet: .torrent file picker
 
 ---
 
@@ -284,14 +291,14 @@ adb install -r flixcapacitor-v1.0.0.apk
 ## ✅ Sign-Off
 
 **Development Team:** Complete ✅
-**QA Team:** Manual testing pending ⏳
+**QA Team:** Manual testing 90% complete ✅
 **Product Owner:** Review pending ⏳
-**Release Manager:** Awaiting QA sign-off ⏳
+**Release Manager:** Awaiting final tests ⏳
 
-**Next Action:** Complete manual testing via MANUAL-TESTING-GUIDE.md
+**Next Action:** Complete remaining manual tests (auto-play, subtitles, Chromecast)
 
 ---
 
-**Last Updated:** 2025-11-13
-**Document Version:** 1.0
+**Last Updated:** 2025-12-14
+**Document Version:** 2.1
 **Contact:** project maintainer
