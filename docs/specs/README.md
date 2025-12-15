@@ -1,8 +1,8 @@
 # FlixCapacitor Mobile - Technical Specifications
 
 **Last Updated:** 2025-12-15
-**Version:** 2.1.3
-**Status:** Phase 10.7 Complete - Continue Watching Feature Added
+**Version:** 2.1.4
+**Status:** Phase 10.8 Complete - Playback Speed Controls Added
 
 ## Table of Contents
 
@@ -232,6 +232,21 @@
   - Samsung S24 Ultra: Release APK installed and running
   - ProGuard didn't break any functionality
   - All UI components rendering correctly
+
+### Phase 10.8: Playback Speed Controls ✅ COMPLETE (2025-12-15)
+- ✅ **SpeedSelector Component:**
+  - Bottom sheet modal with speed options (0.5x, 0.75x, 1x, 1.25x, 1.5x, 1.75x, 2x)
+  - Color-coded badges (blue=slow, green=normal, orange=fast)
+  - Selected speed indicator checkmark
+  - Haptic feedback on selection
+- ✅ **PlayerControls Integration:**
+  - Speed button in bottom control bar showing current speed (e.g., "1x")
+  - Orange text highlight when non-default speed selected
+  - Positioned between subtitles and quality buttons
+- ✅ **VideoPlayer Speed Control:**
+  - Speed state management with currentSpeed variable
+  - Direct playbackRate control on video element
+  - Speed persists during playback session
 
 ### Phase 10.7: Continue Watching Feature ✅ COMPLETE (2025-12-15)
 - ✅ **ContinueWatchingCard Component:**
