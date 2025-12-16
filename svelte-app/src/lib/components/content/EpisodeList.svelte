@@ -59,12 +59,12 @@
     {#each seasons as season}
       {#if season.seasonNumber > 0}
         <Chip
-          class={selectedSeason === season.seasonNumber
+          class="{selectedSeason === season.seasonNumber
             ? '!bg-red-600 !text-white'
-            : '!bg-zinc-800 !text-zinc-300'}
+            : '!bg-zinc-800 !text-zinc-300'} flex-shrink-0 whitespace-nowrap"
           onClick={() => onSeasonChange?.(season.seasonNumber)}
         >
-          Season {season.seasonNumber}
+          S{season.seasonNumber}
         </Chip>
       {/if}
     {/each}
