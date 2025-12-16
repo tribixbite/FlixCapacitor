@@ -9,6 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+#### Phase 12C Testing & QA (2025-12-15)
+
+**6 bug fixes and improvements, all verified via ADB device testing**
+
+- **CRITICAL: Player page magnet type navigation bug**
+  - **Problem**: Tapping "Stream Now" with magnet URI navigated back to Browse (/) instead of opening player
+  - **Root cause**: $effect block's condition triggered goBack() before URL params were parsed
+  - **Solution**: Added `type !== 'magnet'` check to prevent premature navigation
+  - **Also fixed**: goBack() now returns to /downloads when type='magnet'
+  - **File**: `svelte-app/src/routes/player/+page.svelte`
+  - **Commit**: 3f886d9f
+
+- **VideoFilePicker display bug**
+  - **Problem**: Video file list showed truncated/small items
+  - **Solution**: Fixed list container styling and item display
+  - **File**: `svelte-app/src/lib/components/media/VideoFilePicker.svelte`
+
+- **Component improvements**
+  - ContentRow, MovieCard, ShowCard styling refinements
+  - Downloads page torrent sheet improvements
+
+- **Verification results**
+  - Torrent streaming via magnet URI: WORKING
+  - Library add folder button: WORKING (SAF picker opens correctly)
+  - Player page navigation: WORKING (stays on player instead of redirecting)
+
 #### UI & Runtime Fixes (2025-11-18) - Session 8
 
 **Production readiness improvements across 5 rounds of fixes (18 commits)**
