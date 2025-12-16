@@ -140,11 +140,14 @@ svelte-app/src/
 **Live ADB Verification (1440x2960 device):**
 | Tab | Elements Verified |
 |-----|-------------------|
-| Browse | Movies/TV/Anime/Learning tabs, TMDB content, ratings (7.3, 6.8, 7.7, 8.7) |
-| Favorites | Filter tabs (All/Movies/TV), saved content with poster thumbnails |
+| Browse - Movies | Trending (7.3, 6.8, 6.3), Popular (7.7, 6.8, 7.3), Top Rated (8.7, 8.7, 8.6) |
+| Browse - TV Shows | Trending (8.3, 8.6, 8.0), Popular (8.6, 8.3, 6.2) with years 2016-2025 |
+| Browse - Anime | Trending (8.4, 8.4, 8.6), Popular (8.7), Top Rated (8.7) from 1999-2023 |
+| Favorites | Filter tabs (All/Movies/TV), saved "Wake Up Dead Man" (7.4) |
 | Library | SAF folder picker, "Movies" folder with 4 videos, scan FAB |
-| Downloads | Storage indicator, filter tabs (Active/Completed/All), add FAB |
+| Downloads | Storage indicator 0B/0B, filter tabs (Active/Completed/All), add FAB |
 | Settings | Playback, External Player, Chromecast (1080p), Subtitles sections |
+| Movie Detail | Full metadata, poster, Play/Download/Favorite buttons, overview |
 
 **Technical Details:**
 - ErrorReportingService at `svelte-app/src/lib/services/error-reporting.service.ts`
