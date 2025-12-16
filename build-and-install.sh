@@ -172,20 +172,38 @@ else
 fi
 cd ..
 
-# Step 6: Find the APK
+# Step 6: Find the APK (with ABI splits support)
 echo "Step 6: Locating APK file..."
 
-APK_PATH="android/app/build/outputs/apk/$BUILD_TYPE/app-$BUILD_TYPE.apk"
+APK_DIR="android/app/build/outputs/apk/$BUILD_TYPE"
 
-if [ ! -f "$APK_PATH" ]; then
-    echo "❌ APK not found at expected location: $APK_PATH"
+# Check for ABI-specific APKs first (prioritize arm64-v8a for modern devices)
+if [ -f "$APK_DIR/app-arm64-v8a-$BUILD_TYPE.apk" ]; then
+    APK_PATH="$APK_DIR/app-arm64-v8a-$BUILD_TYPE.apk"
+    echo "✅ Using arm64-v8a APK (optimized for 64-bit devices)"
+elif [ -f "$APK_DIR/app-armeabi-v7a-$BUILD_TYPE.apk" ]; then
+    APK_PATH="$APK_DIR/app-armeabi-v7a-$BUILD_TYPE.apk"
+    echo "✅ Using armeabi-v7a APK (32-bit ARM)"
+elif [ -f "$APK_DIR/app-universal-$BUILD_TYPE.apk" ]; then
+    APK_PATH="$APK_DIR/app-universal-$BUILD_TYPE.apk"
+    echo "✅ Using universal APK (all architectures)"
+elif [ -f "$APK_DIR/app-$BUILD_TYPE.apk" ]; then
+    APK_PATH="$APK_DIR/app-$BUILD_TYPE.apk"
+    echo "✅ Using standard APK"
+else
+    echo "❌ APK not found at expected location: $APK_DIR/"
     echo "Searching for APK files..."
     find android -name "*.apk" -type f 2>/dev/null | head -5
     exit 1
 fi
 
-echo "✅ APK found: $APK_PATH"
+echo "📦 APK: $APK_PATH"
 ls -lh "$APK_PATH"
+
+# Also show available APK variants
+echo
+echo "Available APK variants:"
+ls -lh "$APK_DIR"/*.apk 2>/dev/null || echo "  (none found)"
 
 # Step 7: Multi-tier installation
 echo "Step 7: Installing APK (multi-tier auto-install)..."
