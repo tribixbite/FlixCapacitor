@@ -47,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Downloads tab: ✅ Storage indicator, tab filters, empty state, FAB
   - Downloads/Add Torrent Sheet: ✅ Magnet URI input, Stream Now/Download buttons, .torrent file picker
   - Settings tab: ✅ Playback, External Player, Chromecast, Subtitles sections
-  - Device: Samsung Galaxy S9+ (1440x2960), Android
+  - TV Show Detail: ✅ Poster, backdrop, metadata (title/year/rating/genres), Play/Download/Favorites buttons, Overview, Seasons & Episodes tabs
+  - Devices tested: Samsung Galaxy S9+ (1440x2960), Generic (1080x2340)
   - All 5 bottom navigation tabs + 4 category tabs + detail views verified
 
 #### UI & Runtime Fixes (2025-11-18) - Session 8
