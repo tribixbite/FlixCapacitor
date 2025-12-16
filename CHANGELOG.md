@@ -36,13 +36,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Player page navigation: WORKING (stays on player instead of redirecting)
 
 - **Full UI verification via ADB (2025-12-15)**
-  - Browse tab: ✅ Category tabs, movie posters, trending/popular sections
+  - Browse tab: ✅ Category tabs (Movies, TV Shows, Anime, Learning)
+  - Browse/Movies: ✅ Movie posters, ratings, trending/popular sections
+  - Browse/TV Shows: ✅ Show posters with ratings, content rows
+  - Browse/Anime: ✅ Anime posters (Frieren, One Piece, etc.), ratings
+  - Browse/Learning: ✅ Search bar, filter tabs (All/Courses/Lectures/Documentaries), educational content
+  - Movie Detail: ✅ Poster, metadata, Stream Now/Download buttons, favorites toggle
   - Favorites tab: ✅ Filter tabs, favorited items display correctly
   - Library tab: ✅ Folder management, video grid, FABs functional
   - Downloads tab: ✅ Storage indicator, tab filters, empty state, FAB
+  - Downloads/Add Torrent Sheet: ✅ Magnet URI input, Stream Now/Download buttons, .torrent file picker
   - Settings tab: ✅ Playback, External Player, Chromecast, Subtitles sections
   - Device: Samsung Galaxy S9+ (1440x2960), Android
-  - All 5 bottom navigation tabs verified working correctly
+  - All 5 bottom navigation tabs + 4 category tabs + detail views verified
 
 #### UI & Runtime Fixes (2025-11-18) - Session 8
 
