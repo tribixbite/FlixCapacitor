@@ -48,7 +48,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Downloads/Add Torrent Sheet: ✅ Magnet URI input, Stream Now/Download buttons, .torrent file picker
   - Settings tab: ✅ Playback, External Player, Chromecast, Subtitles sections
   - TV Show Detail: ✅ Poster, backdrop, metadata (title/year/rating/genres), Play/Download/Favorites buttons, Overview, Seasons & Episodes tabs
-  - Devices tested: Samsung Galaxy S9+ (1440x2960), Generic (1080x2340)
+  - Anime Detail: ✅ Poster, backdrop, metadata (Frieren 8.7, 2023), genres (Animation/Action/Drama), Play/Download/Favorites, Overview, Season tabs
+  - Episode List: ✅ Season tabs, episode titles/descriptions/duration/ratings (Stranger Things S1: E1-E4 verified)
+  - Devices tested: Samsung Galaxy S9+ (1440x2960), Samsung Galaxy S24 Ultra SM_S938U1 (1080x2340)
   - All 5 bottom navigation tabs + 4 category tabs + detail views verified
 
 #### UI & Runtime Fixes (2025-11-18) - Session 8
