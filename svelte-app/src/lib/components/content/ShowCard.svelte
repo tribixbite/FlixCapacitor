@@ -95,11 +95,10 @@
       {/if}
     </div>
 
-    {#if !compact}
-      <div class="p-2">
-        <h3 class="font-medium text-sm line-clamp-2 text-white leading-tight">{show.name}</h3>
-      </div>
-    {/if}
+    <!-- Always show title -->
+    <div class="p-2">
+      <h3 class="font-medium text-sm line-clamp-1 text-white leading-tight">{show.name}</h3>
+    </div>
   </Card>
 </button>
 

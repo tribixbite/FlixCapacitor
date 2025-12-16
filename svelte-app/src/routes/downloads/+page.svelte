@@ -228,13 +228,13 @@
 
       // Build magnet URI from parsed torrent
       const title = torrent.name || file.name.replace('.torrent', '');
-      const magnetLink = `magnet:?xt=urn:btih:${torrent.infoHash}&dn=${encodeURIComponent(title)}`;
+      let magnetLink = `magnet:?xt=urn:btih:${torrent.infoHash}&dn=${encodeURIComponent(title)}`;
 
       // Add trackers if available
       if (torrent.announce && torrent.announce.length > 0) {
         const trackers = torrent.announce.slice(0, 5); // Limit to 5 trackers
         trackers.forEach((tracker: string) => {
-          magnetLink.concat(`&tr=${encodeURIComponent(tracker)}`);
+          magnetLink += `&tr=${encodeURIComponent(tracker)}`;
         });
       }
 

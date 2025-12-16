@@ -31,8 +31,8 @@
     } else if (directMagnet || directFile) {
       // Direct magnet/file play - no need to load content
       loading = false;
-    } else if (!id && !directMagnet && !directFile) {
-      // No id, magnet, or file - go back
+    } else if (!id && !directMagnet && !directFile && type !== 'magnet') {
+      // No id, magnet, or file - go back (but wait if type=magnet, params may still be loading)
       goBack();
     }
   });
@@ -102,6 +102,9 @@
     } else if (type === 'academic') {
       // Go back to Learning page
       goto('/?tab=learning');
+    } else if (type === 'magnet') {
+      // Go back to Downloads page for direct magnet streaming
+      goto('/downloads');
     } else if (type === 'movie' && id) {
       goto(`/movies/${id}`);
     } else if (type === 'show' && id) {

@@ -29,7 +29,7 @@
 
   <div class="flex overflow-x-auto gap-3 px-4 pb-2 scrollbar-hide">
     {#each items as item, index (item.id)}
-      <div class="flex-shrink-0 w-28">
+      <div class="flex-shrink-0 w-36">
         {@render children(item, index)}
       </div>
     {/each}

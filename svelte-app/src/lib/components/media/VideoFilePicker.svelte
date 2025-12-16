@@ -28,12 +28,11 @@
   let searchQuery = $state('');
   let containerRef: HTMLDivElement;
 
-  // For large file counts, only filter when user actually searches
-  // This avoids expensive operations during initial render
+  // Filter files by search query - returns all files when no query
   let filteredFiles = $derived.by(() => {
     if (!searchQuery) {
-      // Return empty array if no search - template handles showing preview
-      return [];
+      // Return all files when no search query
+      return files;
     }
     console.log('[VideoFilePicker] Filtering files with query:', searchQuery);
     return files.filter((f: VideoFile) => f.name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -155,37 +154,6 @@
       {:else if searchQuery && filteredFiles.length === 0}
         <div class="px-4 py-8 text-center">
           <p class="text-white/40">No files match your search</p>
-        </div>
-      {:else if searchQuery && filteredFiles.length > 0}
-        <!-- Search results -->
-        <div class="overflow-y-auto h-[50vh] py-2">
-          {#each filteredFiles.slice(0, 100) as file (file.index)}
-            {@const isSelected = file.index === currentIndex}
-            {@const displayName = getDisplayName(file.name)}
-            <button
-              type="button"
-              class="w-full flex items-start gap-3 px-4 py-3 hover:bg-white/5 transition-colors {isSelected ? 'bg-white/10' : ''}"
-              onclick={() => handleSelect(file)}
-            >
-              <span class="{getExtensionColor(file.name)} text-white text-[10px] font-bold px-2 py-1 rounded min-w-[40px] text-center mt-0.5">
-                {getExtension(file.name)}
-              </span>
-              <div class="flex-1 text-left min-w-0">
-                <p class="text-white text-sm leading-tight truncate">{displayName}</p>
-                <p class="text-white/50 text-xs mt-1">{formatSize(file.size)}</p>
-              </div>
-              {#if isSelected}
-                <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                </svg>
-              {/if}
-            </button>
-          {/each}
-          {#if filteredFiles.length > 100}
-            <div class="px-4 py-3 text-center text-white/40 text-sm">
-              Showing first 100 of {filteredFiles.length.toLocaleString()} matches
-            </div>
-          {/if}
         </div>
       {:else if isLargeList}
         <!-- Large file list - show search hint -->
